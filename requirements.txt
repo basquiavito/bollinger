@@ -1,4 +1,10 @@
 streamlit
 yfinance
 pandas
+numpy
+matplotlib
 plotly
+streamlit_autorefresh
+ta
+scipy
+requests_cache
