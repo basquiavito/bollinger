@@ -45,6 +45,9 @@ def main():
     start_date = st.date_input("Start Date", default_start)
     end_date = st.date_input("End Date", today)
 
+    # Checkbox to show only regular trading hours
+    filter_rth = st.checkbox("Show Regular Trading Hours Only (9:30 AM – 4:00 PM)", value=True)
+
     start_str = start_date.strftime('%Y-%m-%d')
     end_str = (end_date + timedelta(days=1)).strftime('%Y-%m-%d')  # yfinance end is exclusive
 
@@ -53,6 +56,13 @@ def main():
             df = yf.download(ticker, start=start_str, end=end_str, interval=interval, progress=False)
 
         if not df.empty:
+            if filter_rth:
+                try:
+                    df.index = df.index.tz_localize(None)  # remove tz if present
+                    df = df.between_time("09:30", "16:00")
+                except:
+                    pass  # fallback if index is already naive
+
             df = calculate_bollinger_bands(df)
             fig = plot_candlestick_with_bb(df, ticker)
             st.plotly_chart(fig, use_container_width=True)
