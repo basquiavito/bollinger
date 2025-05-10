@@ -2807,21 +2807,21 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(go.Scatter(
                         x=intraday['Time'],
                         y=intraday['Upper'],
-                        line=dict(color='red', width=1),
+                        line=dict(color='gray', width=1),
                         name='Upper Band'
                     ), row=1, col=1)
 
                     fig.add_trace(go.Scatter(
                         x=intraday['Time'],
                         y=intraday['MA20'],
-                        line=dict(color='gray', width=1, dash='dot'),
+                        line=dict(color='white', width=1, dash='dot'),
                         name='20 MA'
                     ), row=1, col=1)
 
                     fig.add_trace(go.Scatter(
                         x=intraday['Time'],
                         y=intraday['Lower'],
-                        line=dict(color='blue', width=1),
+                        line=dict(color='gray', width=1),
                         name='Lower Band'
                     ), row=1, col=1)
 
