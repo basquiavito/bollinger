@@ -3020,271 +3020,10 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    intraday["Tenkan"] = (intraday["High"].rolling(window=9).max() + intraday["Low"].rolling(window=9).min()) / 2
-                    intraday["Kijun"] = (intraday["High"].rolling(window=26).max() + intraday["Low"].rolling(window=26).min()) / 2
-                    intraday["SpanA"] = ((intraday["Tenkan"] + intraday["Kijun"]) / 2)
-                    intraday["SpanB"] = (intraday["High"].rolling(window=52).max() + intraday["Low"].rolling(window=52).min()) / 2
-                    # Fill early NaNs so cloud appears fully from 9:30 AM
-                    intraday["SpanA"] = intraday["SpanA"].bfill()
-                    intraday["SpanB"] = intraday["SpanB"].bfill()
-
-                    intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
-                    intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
-
-                    # Fill again after F%-conversion to guarantee values exist
-                    intraday["SpanA_F"] = intraday["SpanA_F"].bfill()
-                    intraday["SpanB_F"] = intraday["SpanB_F"].bfill()
-
-
-                    intraday["Chikou"] = intraday["Close"].shift(-26)
-
-
-                    # Chikou moved ABOVE price (🕵🏻‍♂️) — signal at time when it actually happened
-                    chikou_above_mask = (intraday["Chikou"] > intraday["Close"]).shift(26)
-                    chikou_above = intraday[chikou_above_mask.fillna(False)]
-
-                    # Chikou moved BELOW price (👮🏻‍♂️)
-                    chikou_below_mask = (intraday["Chikou"] < intraday["Close"]).shift(26)
-                    chikou_below = intraday[chikou_below_mask.fillna(False)]
-
-
-
-                   # Calculate Chikou (lagging span) using Close price shifted BACKWARD
-                    intraday["Chikou"] = intraday["Close"].shift(-26)
-
-                    # Calculate Chikou_F using shifted price, keeping Time as-is
-                    intraday["Chikou_F"] = ((intraday["Chikou"] - prev_close) / prev_close) * 10000
-
-                    # Drop rows where Chikou_F is NaN (due to shifting)
-                    chikou_plot = intraday.dropna(subset=["Chikou_F"])
-
-                    # # Plot without shifting time
-                    # chikou_line = go.Scatter(
-                    #     x=chikou_plot["Time"],
-                    #     y=chikou_plot["Chikou_F"],
-                    #     mode="lines",
-                    #     name="Chikou (F%)",
-                    #     line=dict(color="purple", dash="dash")
-                    # )
-                    # fig.add_trace(chikou_line, row=1, col=1)
-
-
- # 🟢   SPAN A & SPAN B
 
 
 
 
-                    intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
-                    intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
-
-
-
-                    #                     # Span A – Yellow Line
-                    # span_a_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanA_F"],
-                    #     mode="lines",
-                    #     line=dict(color="yellow", width=2),
-                    #     name="Span A (F%)"
-                    # )
-                    # fig.add_trace(span_a_line, row=1, col=1)
-
-                    # # Span B – Blue Line
-                    # span_b_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanB_F"],
-                    #     mode="lines",
-                    #     line=dict(color="blue", width=2),
-                    #     name="Span B (F%)"
-                    # )
-                    # fig.add_trace(span_b_line, row=1, col=1)
-
-                    # # Invisible SpanA for cloud base
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanA_F"],
-                    #     line=dict(width=0),
-                    #     mode='lines',
-                    #     showlegend=False
-                    # ), row=1, col=1)
-
-                    # # SpanB with fill → grey Kumo
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanB_F"],
-                    #     fill='tonexty',
-                    #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                    #     line=dict(width=0),
-                    #     mode='lines',
-                    #     name='Kumo Cloud'
-                    # ), row=1, col=1)
-
-
-
-#                     # Kumo Twist Bullish (👼🏼): SpanA crosses above SpanB
-#                     twist_bullish = (intraday["SpanA_F"] > intraday["SpanB_F"]) & (intraday["SpanA_F"].shift(1) <= intraday["SpanB_F"].shift(1))
-
-#                     scatter_twist_bullish = go.Scatter(
-#                         x=intraday.loc[twist_bullish, "Time"],
-#                         y=intraday.loc[twist_bullish, "SpanA_F"] + 89,
-#                         mode="text",
-#                         text=["👼🏼"] * twist_bullish.sum(),
-#                         textposition="top center",
-#                         textfont=dict(size=34),
-#                         name="Kumo Twist Bullish (👼🏼)",
-#                         hovertemplate="Time: %{x}<br>👼🏼 SpanA crossed above SpanB<extra></extra>"
-#                     )
-
-#                     # Kumo Twist Bearish (👺): SpanA crosses below SpanB
-#                     twist_bearish = (intraday["SpanA_F"] < intraday["SpanB_F"]) & (intraday["SpanA_F"].shift(1) >= intraday["SpanB_F"].shift(1))
-
-#                     scatter_twist_bearish = go.Scatter(
-#                         x=intraday.loc[twist_bearish, "Time"],
-#                         y=intraday.loc[twist_bearish, "SpanA_F"] - 89,
-#                         mode="text",
-#                         text=["👺"] * twist_bearish.sum(),
-#                         textposition="bottom center",
-#                         textfont=dict(size=34),
-#                         name="Kumo Twist Bearish (👺)",
-#                         hovertemplate="Time: %{x}<br>👺 SpanA crossed below SpanB<extra></extra>"
-#                     )
-
-#                     # Add to the F% plot
-#                     fig.add_trace(scatter_twist_bullish, row=1, col=1)
-#                     fig.add_trace(scatter_twist_bearish, row=1, col=1)
-
-
-
-
-#                                     # Calculate Chikou relation to current price
-#                     intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
-#                                                 np.where(intraday["Chikou"] < intraday["Close"], "below", "equal"))
-
-#                     # Detect changes in Chikou relation
-#                     intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
-
-#                     # Filter first occurrence and changes
-#                     chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
-
-#                     # Assign emojis for only these changes
-#                     intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
-#                                                 np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
-
-#                     mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
-
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday.loc[mask_chikou_above, "Time"],
-#                         y=intraday.loc[mask_chikou_above, "F_numeric"] + 55,
-#                         mode="text",
-#                         text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
-#                         textposition="top center",
-#                         textfont=dict(size=34),
-#                         name="Chikou Above Price",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
-#                     ), row=1, col=1)
-
-#                     mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
-
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday.loc[mask_chikou_below, "Time"],
-#                         y=intraday.loc[mask_chikou_below, "F_numeric"] - 55,
-#                         mode="text",
-#                         text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
-#                         textposition="bottom center",
-#                         textfont=dict(size=34),
-#                         name="Chikou Below Price",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
-#                     ), row=1, col=1)
-
-
-
-#                     kijun_line = go.Scatter(
-#                     x=intraday["Time"],
-#                     y=intraday["Kijun_F"],
-#                     mode="lines",
-#                     line=dict(color="green", width=2),
-#                     name="Kijun (F% scale)"
-#                 )
-#                     fig.add_trace(kijun_line, row=1, col=1)
-
-
-
-
-#                     # (C) CTOD Buy/Sell Triggers (Red & Green Dots)
-#                     # ----------------------------------------------
-#                     mask_ctod_buy = intraday["CTOD Alert"] == "Buy"
-#                     mask_ctod_sell = intraday["CTOD Alert"] == "Sell"
-
-#                     # Buy Alert (Green Dot)
-#                     scatter_ctod_buy = go.Scatter(
-#                         x=intraday.loc[mask_ctod_buy, "Time"],
-#                         y=intraday.loc[mask_ctod_buy, "F_numeric"],
-#                         mode="markers",
-#                         marker=dict(symbol="circle", size=5, color="green"),
-#                         name="CTOD Buy Signal",
-#                         text="Buy Triggered",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                     )
-#                     fig.add_trace(scatter_ctod_buy, row=1, col=1)
-
-#                     # Sell Alert (Red Dot)
-#                     scatter_ctod_sell = go.Scatter(
-#                         x=intraday.loc[mask_ctod_sell, "Time"],
-#                         y=intraday.loc[mask_ctod_sell, "F_numeric"],
-#                         mode="markers",
-#                         marker=dict(symbol="circle", size=5, color="red"),
-#                         name="CTOD Sell Signal",
-#                         text="Sell Triggered",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                     )
-#                     fig.add_trace(scatter_ctod_sell, row=1, col=1)
-
-
-
-
-#                                     # Mask for different RVOL thresholds
-#                     mask_rvol_extreme = intraday["RVOL_5"] > 1.8
-#                     mask_rvol_strong = (intraday["RVOL_5"] >= 1.5) & (intraday["RVOL_5"] < 1.8)
-#                     mask_rvol_moderate = (intraday["RVOL_5"] >= 1.2) & (intraday["RVOL_5"] < 1.5)
-
-#                     # Scatter plot for extreme volume spikes (red triangle)
-#                     scatter_rvol_extreme = go.Scatter(
-#                         x=intraday.loc[mask_rvol_extreme, "Time"],
-#                         y=intraday.loc[mask_rvol_extreme, "F_numeric"] + 3,
-#                         mode="markers",
-#                         marker=dict(symbol="triangle-up", size=8, color="red"),
-#                         name="RVOL > 1.8 (Extreme Surge)",
-#                         text="Extreme Volume",
-
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                     )
-
-#                     # Scatter plot for strong volume spikes (orange triangle)
-#                     scatter_rvol_strong = go.Scatter(
-#                         x=intraday.loc[mask_rvol_strong, "Time"],
-#                         y=intraday.loc[mask_rvol_strong, "F_numeric"] + 3,
-#                         mode="markers",
-#                         marker=dict(symbol="triangle-up", size=8, color="orange"),
-#                         name="RVOL 1.5-1.79 (Strong Surge)",
-#                         text="Strong Volume",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                     )
-
-#                     # Scatter plot for moderate volume spikes (pink triangle)
-#                     scatter_rvol_moderate = go.Scatter(
-#                         x=intraday.loc[mask_rvol_moderate, "Time"],
-#                         y=intraday.loc[mask_rvol_moderate, "F_numeric"] + 3,
-#                         mode="markers",
-#                         marker=dict(symbol="triangle-up", size=8, color="pink"),
-#                         name="RVOL 1.2-1.49 (Moderate Surge)",
-#                         text="Moderate Volume",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                     )
-
-#                     # Add to the F% plot (Row 1)
-#                     fig.add_trace(scatter_rvol_extreme, row=1, col=1)
-#                     fig.add_trace(scatter_rvol_strong, row=1, col=1)
-#                     fig.add_trace(scatter_rvol_moderate, row=1, col=1)
 
 
 
@@ -3340,101 +3079,8 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(tenkan_line, row=1, col=1)
 
 
-# # ------------------------------------------------------------------------------------------------------------------------
 
 
-#                     # Mask for Tenkan-Kijun Crosses
-#                     mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-#                     mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
-
-#                     # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-#                     scatter_tk_sun = go.Scatter(
-#                         x=intraday.loc[mask_tk_sun, "Time"],
-#                         y=intraday.loc[mask_tk_sun, "F_numeric"] + 244,  # Offset for visibility
-#                         mode="text",
-#                         text="🌞",
-#                         textposition="top center",
-#                         textfont=dict(size=55),
-#                         name="Tenkan-Kijun Bullish Cross",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-#                     )
-
-#                     # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-#                     scatter_tk_moon = go.Scatter(
-#                         x=intraday.loc[mask_tk_moon, "Time"],
-#                         y=intraday.loc[mask_tk_moon, "F_numeric"] - 244,  # Offset for visibility
-#                         mode="text",
-#                         text="🌙",
-#                         textposition="bottom center",
-#                         textfont=dict(size=55),
-#                         name="Tenkan-Kijun Bearish Cross",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-#                     )
-
-#                     # Add to the F% Plot
-#                     fig.add_trace(scatter_tk_sun, row=1, col=1)
-#                     fig.add_trace(scatter_tk_moon, row=1, col=1)
-
-#                     # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
-#                     y_open_f_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
-#                         mode="lines",
-#                         line=dict(color="grey", dash="dash"),
-#                         name="Yesterday Open (F%)"
-#                     )
-
-#                     # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
-#                     y_high_f_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
-#                         mode="lines",
-#                         line=dict(color="green", dash="dash"),
-#                         name="Yesterday High (F%)"
-#                     )
-
-#                     # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
-#                     y_low_f_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
-#                         mode="lines",
-#                         line=dict(color="red", dash="dash"),
-#                         name="Yesterday Low (F%)"
-#                     )
-
-#                     # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
-#                     y_close_f_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=[0] * len(intraday),
-#                         mode="lines",
-#                         line=dict(color="blue", dash="dash"),
-#                         name="Yesterday Close (F%)"
-#                     )
-
-
-#                   # (D) TD Trap Arrows - Only First Sell TD Trap
-#                     # ----------------------------------------------
-#                     td_trap_mask = intraday["TD Trap"].str.contains("Sell", na=False)  # Only Sell TD Traps
-
-#                     if not td_trap_mask.empty and td_trap_mask.any():
-#                         first_sell_trap_idx = td_trap_mask.idxmax()  # Get first occurrence index
-#                         first_sell_trap_time = intraday.loc[first_sell_trap_idx, "Time"]
-#                         first_sell_trap_value = intraday.loc[first_sell_trap_idx, "F_numeric"]
-
-#                         # Add annotation for first Sell TD Trap (Short = ST)
-#                         fig.add_annotation(
-#                             x=first_sell_trap_time,
-#                             y=first_sell_trap_value - 10,  # Offset to avoid overlap
-#                             text="ST",  # Short label instead of full text
-#                             showarrow=True,
-#                             arrowhead=2,
-#                             arrowsize=1.5,
-#                             arrowcolor="yellow",
-#                             font=dict(size=12, color="red", family="Arial Black"),
-#                         )
-
-#                     fig.update_xaxes(title_text="Time", row=1, col=1)
-#                     fig.update_yaxes(title_text="F% Scale", row=1, col=1)
 
 
 
@@ -3478,22 +3124,22 @@ if st.sidebar.button("Run Analysis"):
 #  #  🟢 ADX Expansion
 
 
-#           # Mask for ADX Alerts (♨️, 🧨)
-#                     mask_adx_alert = intraday["ADX_Alert"] != ""
+          # Mask for ADX Alerts (♨️, 🧨)
+                    mask_adx_alert = intraday["ADX_Alert"] != ""
 
-#                     scatter_adx_alert = go.Scatter(
-#                         x=intraday.loc[mask_adx_alert, "Time"],
-#                         y=intraday.loc[mask_adx_alert, "F_numeric"] + 55,  # Offset for visibility
-#                         mode="text",
-#                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
-#                         textposition="bottom center",
-#                         textfont=dict(size=13),
-#                         name="ADX Expansion Alert",
-#                         hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
-#                         customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
-#                     )
+                    scatter_adx_alert = go.Scatter(
+                        x=intraday.loc[mask_adx_alert, "Time"],
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 55,  # Offset for visibility
+                        mode="text",
+                        text=intraday.loc[mask_adx_alert, "ADX_Alert"],
+                        textposition="bottom center",
+                        textfont=dict(size=13),
+                        name="ADX Expansion Alert",
+                        hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
+                    )
 
-#                     fig.add_trace(scatter_adx_alert, row=1, col=1)
+                    fig.add_trace(scatter_adx_alert, row=1, col=1)
 
 
 
@@ -3513,21 +3159,21 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(scatter_std_alert, row=1, col=1)
 
-# #  🟢   ATR Expansion
-#                     mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
+#  🟢   ATR Expansion
+                    mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
 
-#                     atr_alert_scatter = go.Scatter(
-#                         x=intraday.loc[mask_atr_alert, "Time"],
-#                         y=intraday.loc[mask_atr_alert, "F_numeric"]  + 34,  # place below F%
-#                         mode="text",
-#                         text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
-#                         textfont=dict(size=21),
-#                         name="ATR Expansion",
-#                         hoverinfo="text",
-#                         hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
-#                     )
+                    atr_alert_scatter = go.Scatter(
+                        x=intraday.loc[mask_atr_alert, "Time"],
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 34,  # place below F%
+                        mode="text",
+                        text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
+                        textfont=dict(size=21),
+                        name="ATR Expansion",
+                        hoverinfo="text",
+                        hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
+                    )
 
-#                     fig.add_trace(atr_alert_scatter, row=1, col=1)
+                    fig.add_trace(atr_alert_scatter, row=1, col=1)
 
 # # 🟢 TD SUPPLY
 
