@@ -3285,38 +3285,6 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-
-                # 🏇 Mike rides real VWAP up
-                mask_vwap_up = intraday["VWAP_Cross_Emoji"] == "🥁"
-                scatter_vwap_up = go.Scatter(
-                    x=intraday.loc[mask_vwap_up, "Time"],
-                    y=intraday.loc[mask_vwap_up, "F_numeric"] +89,
-                    mode="text",
-                    text="🏇",
-                    textposition="top center",
-                    textfont=dict(size=55, color="blue"),
-                    name="Mike Rides VWAP 🏇",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>True Bullish VWAP Cross 🏇<extra></extra>"
-                )
-
-                # 🎠 Carousel fake-out (bearish VWAP cross)
-                mask_vwap_down = intraday["VWAP_Cross_Emoji"] == "🎻"
-                scatter_vwap_down = go.Scatter(
-                    x=intraday.loc[mask_vwap_down, "Time"],
-                    y=intraday.loc[mask_vwap_down, "F_numeric"] - 89,
-                    mode="text",
-                    text="🎠",
-                    textposition="bottom center",
-                    textfont=dict(size=55, color="deeppink"),
-                    name="Carousel Trap 🎠",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Bearish VWAP Cross — Carousel Trap 🎠<extra></extra>"
-                )
-
-                fig.add_trace(scatter_vwap_up, row=1, col=1)
-                fig.add_trace(scatter_vwap_down, row=1, col=1)
-
-
                 # Update layout overall
                 fig.update_layout(
                     title=f"{t} – Pure Demark",
