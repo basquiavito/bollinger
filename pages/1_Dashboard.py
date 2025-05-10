@@ -2717,62 +2717,6 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-                # def get_kijun_streak_log_with_dollar(df):
-                #     """
-                #     Returns list of Kijun streaks with their dollar change.
-                #     Format: 'K+5 : $2.45', 'K-3 : $-1.20'
-                #     """
-                #     if "F_numeric" not in df.columns or "Kijun_F" not in df.columns or "Close" not in df.columns:
-                #         return []
-
-                #     streaks = []
-                #     current_streak = 0
-                #     current_state = None
-                #     start_price = None
-
-                #     for i in range(len(df)):
-                #         f_val = df["F_numeric"].iloc[i]
-                #         k_val = df["Kijun_F"].iloc[i]
-                #         close_price = df["Close"].iloc[i]
-
-                #         if pd.isna(f_val) or pd.isna(k_val) or pd.isna(close_price):
-                #             continue
-
-                #         is_above = f_val > k_val
-
-                #         if current_state is None:
-                #             current_state = is_above
-                #             current_streak = 1
-                #             start_price = close_price
-                #         elif is_above == current_state:
-                #             current_streak += 1
-                #         else:
-                #             end_price = df["Close"].iloc[i - 1]
-                #             dollar_return = end_price - start_price
-                #             label = f"K+{current_streak}" if current_state else f"K-{current_streak}"
-                #             streaks.append(f"{label} : ${dollar_return:.2f}")
-                #             current_state = is_above
-                #             current_streak = 1
-                #             start_price = close_price
-
-                #     if current_streak > 0 and start_price is not None:
-                #         end_price = df["Close"].iloc[-1]
-                #         dollar_return = end_price - start_price
-                #         label = f"K+{current_streak}" if current_state else f"K-{current_streak}"
-                #         streaks.append(f"{label} : ${dollar_return:.2f}")
-
-                #     return streaks
-
-
-
-                # log_with_returns = get_kijun_streak_log_with_dollar(intraday)
-
-                # st.markdown("### 📘 Full Kijun Streak Log with $ Returns:")
-                # for line in log_with_returns:
-                #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
-
-
                 # 1️⃣   compute θ on a lightly-smoothed F%
                 intraday["F_smoothed"] = intraday["F_numeric"].ewm(span=3, adjust=False).mean()
                 intraday["F_theta"]    = np.degrees(np.arctan(intraday["F_smoothed"].diff()))  # no scale factor
@@ -2821,7 +2765,11 @@ if st.sidebar.button("Run Analysis"):
                 # Calculate RVOL 5 (Relative Volume vs last 5 bars)
                 intraday['RVOL_5'] = intraday['Volume'] / intraday['Volume'].rolling(5).mean()
 
-
+                # Bollinger Bands (20-period)
+                intraday['MA20'] = intraday['Close'].rolling(window=20).mean()
+                intraday['STD'] = intraday['Close'].rolling(window=20).std()
+                intraday['Upper'] = intraday['MA20'] + 2 * intraday['STD']
+                intraday['Lower'] = intraday['MA20'] - 2 * intraday['STD']
 
                 # UPPER WICK DETECTION (simple and lightweight)
 
@@ -2856,27 +2804,47 @@ if st.sidebar.button("Run Analysis"):
                         close=intraday['Close'],
                         name='Candles'),
                         row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday['Time'],
+                        y=intraday['Upper'],
+                        line=dict(color='red', width=1),
+                        name='Upper Band'
+                    ), row=1, col=1)
 
-                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
-                                            line=dict(color='red'), name='Tenkan-sen'),
-                                row=1, col=1)
-                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'],
-                                            line=dict(color='green'), name='Kijun-sen'),
-                                row=1, col=1)
-                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
-                                            line=dict(color='yellow'), name='Span A'),
-                                row=1, col=1)
-                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
-                                            line=dict(color='blue'), name='Span B'),
-                                row=1, col=1)
-                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'],
-                                            line=dict(color='purple'), name='Chikou'),
-                                row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday['Time'],
+                        y=intraday['MA20'],
+                        line=dict(color='gray', width=1, dash='dot'),
+                        name='20 MA'
+                    ), row=1, col=1)
 
-                    # cloud
-                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
-                                            line=dict(width=0), showlegend=False),
-                                row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday['Time'],
+                        y=intraday['Lower'],
+                        line=dict(color='blue', width=1),
+                        name='Lower Band'
+                    ), row=1, col=1)
+
+                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
+                    #                         line=dict(color='red'), name='Tenkan-sen'),
+                    #             row=1, col=1)
+                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'],
+                    #                         line=dict(color='green'), name='Kijun-sen'),
+                    #             row=1, col=1)
+                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
+                    #                         line=dict(color='yellow'), name='Span A'),
+                    #             row=1, col=1)
+                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
+                    #                         line=dict(color='blue'), name='Span B'),
+                    #             row=1, col=1)
+                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'],
+                    #                         line=dict(color='purple'), name='Chikou'),
+                    #             row=1, col=1)
+
+                    # # cloud
+                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
+                    #                         line=dict(width=0), showlegend=False),
+                    #             row=1, col=1)
                     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
                                             fill='tonexty',
                                             fillcolor='rgba(128,128,128,0.2)',
