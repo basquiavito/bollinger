@@ -2896,7 +2896,7 @@ if st.sidebar.button("Run Analysis"):
                     fig.update_layout(
                         title="Ichimoku Candlestick Chart + Volume",
                         xaxis_rangeslider_visible=False,  # rangeslider only once
-                        height=600,
+                        height=300,
                         margin=dict(l=30, r=30, t=40, b=20)
                     )
                     if 'RVOL_5' in intraday.columns:
@@ -2929,22 +2929,6 @@ if st.sidebar.button("Run Analysis"):
                         ), row=2, col=1)
 
 
-
-
-                    # Plot an emoji for detected upper wicks
-                    intraday['UpperWickEmoji'] = intraday['UpperWickFlag'].apply(lambda x: "♟️" if x else "")
-
-                    mask_upperwick = intraday['UpperWickEmoji'] != ""
-
-                    fig.add_trace(go.Scatter(
-                        x=intraday.loc[mask_upperwick, 'Time'],
-                        y=intraday.loc[mask_upperwick, 'High'],
-                        mode='text',
-                        text=intraday.loc[mask_upperwick, 'UpperWickEmoji'],
-                        textposition='top center',
-                        textfont=dict(size=21),
-                        showlegend=False
-                    ), row=1, col=1)
 
 
                     st.plotly_chart(fig, use_container_width=True)
