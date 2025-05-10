@@ -2766,8 +2766,8 @@ if st.sidebar.button("Run Analysis"):
                 intraday['RVOL_5'] = intraday['Volume'] / intraday['Volume'].rolling(5).mean()
 
                 # Bollinger Bands (20-period)
-                intraday['MA20'] = intraday['Close'].rolling(window=20).mean()
-                intraday['STD'] = intraday['Close'].rolling(window=20).std()
+                intraday['MA20'] = intraday['Close'].rolling(window=14).mean()
+                intraday['STD'] = intraday['Close'].rolling(window=14).std()
                 intraday['Upper'] = intraday['MA20'] + 2 * intraday['STD']
                 intraday['Lower'] = intraday['MA20'] - 2 * intraday['STD']
 
