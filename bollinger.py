@@ -7,7 +7,6 @@ import plotly.graph_objects as go
 # ----------------------------
 # Streamlit Page Setup
 # ----------------------------
-st.set_page_config(page_title="Daily Candlestick Chart", layout="wide")
 st.title("📆 Daily Candlestick Chart Viewer")
 
 # ----------------------------
