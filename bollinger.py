@@ -41,35 +41,55 @@ def main():
     interval = st.selectbox("Interval", ['5m', '15m', '1h'])
     today = datetime.today()
 
-    default_start = today - timedelta(days=7)
+    default_start = today - timedelta(days=3)
     start_date = st.date_input("Start Date", default_start)
     end_date = st.date_input("End Date", today)
 
-    # Checkbox to show only regular trading hours
-    filter_rth = st.checkbox("Show Regular Trading Hours Only (9:30 AM – 4:00 PM)", value=True)
-
     start_str = start_date.strftime('%Y-%m-%d')
-    end_str = (end_date + timedelta(days=1)).strftime('%Y-%m-%d')  # yfinance end is exclusive
+    end_str = (end_date + timedelta(days=1)).strftime('%Y-%m-%d')
+
+    filter_rth = st.checkbox("Show Regular Trading Hours Only (9:30 AM – 4:00 PM)", value=True)
 
     if ticker:
         with st.spinner("Fetching data..."):
-            df = yf.download(ticker, start=start_str, end=end_str, interval=interval, progress=False)
+            df = yf.download(
+                ticker,
+                start=start_str,
+                end=end_str,
+                interval=interval,
+                progress=False
+            )
 
-        if not df.empty:
-           # Ensure the index is timezone-aware and localized to Eastern Time
-            if df.index.tz is None:
-                df.index = df.index.tz_localize("UTC").tz_convert("US/Eastern")
-            else:
-                df.index = df.index.tz_convert("US/Eastern")
-
-            # Filter to regular trading hours if checkbox is on
-            if filter_rth:
-                df = df.between_time("09:30", "16:00")
-
-
-            df = calculate_bollinger_bands(df)
-            fig = plot_candlestick_with_bb(df, ticker)
-            st.plotly_chart(fig, use_container_width=True)
-        else:
+        if df.empty:
             st.warning("No data found for this range.")
+            return
+
+        df.reset_index(inplace=True)
+
+        # Fix datetime like your dashboard:
+        if "Datetime" in df.columns:
+            df.rename(columns={"Datetime": "Date"}, inplace=True)
+
+        if df["Date"].dtype == "datetime64[ns]":
+            df["Date"] = df["Date"].dt.tz_localize("UTC").dt.tz_convert("America/New_York")
+        else:
+            df["Date"] = df["Date"].dt.tz_convert("America/New_York")
+
+        df["Date"] = df["Date"].dt.tz_localize(None)
+
+        if filter_rth:
+            df = df[df["Date"].dt.time.between(datetime.strptime("09:30", "%H:%M").time(),
+                                               datetime.strptime("16:00", "%H:%M").time())]
+
+        df.set_index("Date", inplace=True)
+
+        if df.shape[0] < 20:
+            st.warning("Not enough bars to calculate Bollinger Bands.")
+            st.dataframe(df)
+            return
+
+        df = calculate_bollinger_bands(df)
+        fig = plot_candlestick_with_bb(df, ticker)
+        st.plotly_chart(fig, use_container_width=True)
+
 
