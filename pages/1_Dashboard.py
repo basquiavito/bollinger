@@ -2867,34 +2867,34 @@ if st.sidebar.button("Run Analysis"):
                         height=300,
                         margin=dict(l=30, r=30, t=40, b=20)
                     )
-                    if 'RVOL_5' in intraday.columns:
-                        # Initialize no markers first
-                        intraday['MarkerColor'] = None
-                        intraday['MarkerLabel'] = None
+                    # if 'RVOL_5' in intraday.columns:
+                    #     # Initialize no markers first
+                    #     intraday['MarkerColor'] = None
+                    #     intraday['MarkerLabel'] = None
 
-                        # Prioritize higher RVOL first
-                        for thr, color, label in [(1.8, '#ff0000', 'RVOL ≥ 1.8'),
-                                                (1.5, '#ffd700', 'RVOL ≥ 1.5'),
-                                                (1.2, '#ff69b4', 'RVOL ≥ 1.2')]:
-                            mask = (intraday['RVOL_5'] >= thr) & (intraday['MarkerColor'].isna())
-                            intraday.loc[mask, 'MarkerColor'] = color
-                            intraday.loc[mask, 'MarkerLabel'] = label
+                    #     # Prioritize higher RVOL first
+                    #     for thr, color, label in [(1.8, '#ff0000', 'RVOL ≥ 1.8'),
+                    #                             (1.5, '#ffd700', 'RVOL ≥ 1.5'),
+                    #                             (1.2, '#ff69b4', 'RVOL ≥ 1.2')]:
+                    #         mask = (intraday['RVOL_5'] >= thr) & (intraday['MarkerColor'].isna())
+                    #         intraday.loc[mask, 'MarkerColor'] = color
+                    #         intraday.loc[mask, 'MarkerLabel'] = label
 
-                        # Now plot only once per bar
-                        mask_final = intraday['MarkerColor'].notna()
-                        fig.add_trace(go.Scatter(
-                            x=intraday.loc[mask_final, 'Time'],
-                            y=intraday.loc[mask_final, 'Volume'],
-                            mode='markers',
-                            marker=dict(
-                                symbol='triangle-up',
-                                size=10,
-                                color=intraday.loc[mask_final, 'MarkerColor']
-                            ),
-                            name='RVOL Marker',
-                            customdata=intraday.loc[mask_final, 'RVOL_5'],
-                            hovertemplate='%{x}<br>Vol: %{y}<br>RVOL_5: %{customdata:.2f}',
-                        ), row=2, col=1)
+                    #     # Now plot only once per bar
+                    #     mask_final = intraday['MarkerColor'].notna()
+                    #     fig.add_trace(go.Scatter(
+                    #         x=intraday.loc[mask_final, 'Time'],
+                    #         y=intraday.loc[mask_final, 'Volume'],
+                    #         mode='markers',
+                    #         marker=dict(
+                    #             symbol='triangle-up',
+                    #             size=10,
+                    #             color=intraday.loc[mask_final, 'MarkerColor']
+                    #         ),
+                    #         name='RVOL Marker',
+                    #         customdata=intraday.loc[mask_final, 'RVOL_5'],
+                    #         hovertemplate='%{x}<br>Vol: %{y}<br>RVOL_5: %{customdata:.2f}',
+                    #     ), row=2, col=1)
 
 
 
