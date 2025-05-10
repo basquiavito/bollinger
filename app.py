@@ -1,10 +1,10 @@
 # app.py
 import streamlit as st
 
-# ← MUST be the first Streamlit command in the file
+# ── THIS MUST BE THE FIRST Streamlit COMMAND IN THE FILE ──
 st.set_page_config(page_title="Bollinger Bands Viewer", layout="wide")
 
-import bollinger  # now safe to import your other modules
+import bollinger  # now safe to import your module
 
 def main():
     bollinger.main()
