@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 from datetime import date
 
 
-st.set_page_config(page_title="Dashboard", layout="wide")
+st.set_page_config(page_title="bollinger", layout="wide")
 
 
 st.title("📈 VST Dashboard")
