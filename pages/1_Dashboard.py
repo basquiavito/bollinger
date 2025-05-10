@@ -3295,49 +3295,49 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                     # (B) Upper Band
-#                     upper_band = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=intraday["F% Upper"],
-#                         mode="lines",
-#                         line=dict(dash="solid", color="grey"),
-#                         name="Upper Band"
-#                     )
+                    # (B) Upper Band
+                    upper_band = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F% Upper"],
+                        mode="lines",
+                        line=dict(dash="solid", color="grey"),
+                        name="Upper Band"
+                    )
 
-#                     # (C) Lower Band
-#                     lower_band = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=intraday["F% Lower"],
-#                         mode="lines",
-#                         line=dict(dash="solid", color="grey"),
-#                         name="Lower Band"
-#                     )
+                    # (C) Lower Band
+                    lower_band = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F% Lower"],
+                        mode="lines",
+                        line=dict(dash="solid", color="grey"),
+                        name="Lower Band"
+                    )
 
-#                     # (D) Moving Average (Middle Band)
-#                     middle_band = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=intraday["F% MA"],
-#                         mode="lines",
-#                         line=dict(color="white", dash="dash"),  # Set dash style
-#                         name="Middle Band (14-MA)"
-#                     )
+                    # (D) Moving Average (Middle Band)
+                    middle_band = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F% MA"],
+                        mode="lines",
+                        line=dict(color="white", dash="dash"),  # Set dash style
+                        name="Middle Band (14-MA)"
+                    )
 
-#                     # Add all traces
+                    # Add all traces
 
-#                     fig.add_trace(upper_band, row=1, col=1)
-#                     fig.add_trace(lower_band, row=1, col=1)
-#                     fig.add_trace(middle_band, row=1, col=1)
+                    fig.add_trace(upper_band, row=1, col=1)
+                    fig.add_trace(lower_band, row=1, col=1)
+                    fig.add_trace(middle_band, row=1, col=1)
 
 
 
-#                     tenkan_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=intraday["Tenkan_F"],
-#                         mode="lines",
-#                         line=dict(color="red", width=2, dash="dot"),
-#                         name="Tenkan (F%)"
-#                     )
-#                     fig.add_trace(tenkan_line, row=1, col=1)
+                    # tenkan_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["Tenkan_F"],
+                    #     mode="lines",
+                    #     line=dict(color="red", width=2, dash="dot"),
+                    #     name="Tenkan (F%)"
+                    # )
+                    # fig.add_trace(tenkan_line, row=1, col=1)
 
 
 # # ------------------------------------------------------------------------------------------------------------------------
@@ -3438,41 +3438,41 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#            # BBW Tight Compression (🐝) – 3 of last 5 bars under threshold
-#                     mask_bbw_tight = intraday["BBW_Tight_Emoji"] == "🐝"
-#                     scatter_bbw_tight = go.Scatter(
-#                         x=intraday.loc[mask_bbw_tight, "Time"],
-#                         y=intraday.loc[mask_bbw_tight, "F_numeric"] + 13,  # Offset upward
-#                         mode="text",
-#                         text=["🐝"] * mask_bbw_tight.sum(),
-#                         textposition="top center",
-#                         textfont=dict(size=21),
-#                         name="BBW Tight Compression (🐝)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression (🐝)<extra></extra>"
-#                     )
+           # BBW Tight Compression (🐝) – 3 of last 5 bars under threshold
+                    mask_bbw_tight = intraday["BBW_Tight_Emoji"] == "🐝"
+                    scatter_bbw_tight = go.Scatter(
+                        x=intraday.loc[mask_bbw_tight, "Time"],
+                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 13,  # Offset upward
+                        mode="text",
+                        text=["🐝"] * mask_bbw_tight.sum(),
+                        textposition="top center",
+                        textfont=dict(size=21),
+                        name="BBW Tight Compression (🐝)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression (🐝)<extra></extra>"
+                    )
 
-#                     fig.add_trace(scatter_bbw_tight, row=1, col=1)
-
-
+                    fig.add_trace(scatter_bbw_tight, row=1, col=1)
 
 
-#  # 🟢 BBW Expansion
 
-#                     mask_bbw_alert = intraday["BBW Alert"] != ""
 
-#                     scatter_bbw_alert = go.Scatter(
-#                         x=intraday.loc[mask_bbw_alert, "Time"],
-#                         y=intraday.loc[mask_bbw_alert, "F_numeric"] + 8,  # Offset above F%
-#                         mode="text",
-#                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
-#                         textposition="top center",
-#                         textfont=dict(size=13),
-#                         name="BBW Expansion Alert",
-#                         hovertemplate="Time: %{x}<br>BBW Ratio: %{customdata:.2f}<extra></extra>",
-#                         customdata=intraday.loc[mask_bbw_alert, "BBW_Ratio"]
-#                     )
+ # 🟢 BBW Expansion
 
-#                     fig.add_trace(scatter_bbw_alert, row=1, col=1)
+                    mask_bbw_alert = intraday["BBW Alert"] != ""
+
+                    scatter_bbw_alert = go.Scatter(
+                        x=intraday.loc[mask_bbw_alert, "Time"],
+                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 8,  # Offset above F%
+                        mode="text",
+                        text=intraday.loc[mask_bbw_alert, "BBW Alert"],
+                        textposition="top center",
+                        textfont=dict(size=13),
+                        name="BBW Expansion Alert",
+                        hovertemplate="Time: %{x}<br>BBW Ratio: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_bbw_alert, "BBW_Ratio"]
+                    )
+
+                    fig.add_trace(scatter_bbw_alert, row=1, col=1)
 
 
 #  #  🟢 ADX Expansion
