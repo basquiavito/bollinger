@@ -4,9 +4,9 @@ import yfinance as yf
 import pandas as pd
 import plotly.graph_objects as go
 
-# ----------------------------
-# Streamlit Page Setup
-# ----------------------------
+# ✅ MUST BE FIRST Streamlit command
+st.set_page_config(page_title="Daily Candlestick Chart", layout="wide")
+
 st.title("📆 Daily Candlestick Chart Viewer")
 
 # ----------------------------
@@ -26,7 +26,6 @@ if ticker:
         if df.empty:
             st.warning(f"No data available for {ticker}.")
         else:
-            # Clean columns and ensure 'Date'
             df.reset_index(inplace=True)
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
@@ -34,7 +33,6 @@ if ticker:
                 df["Date"] = df.index
             df["Date"] = pd.to_datetime(df["Date"])
 
-            # Plot candlesticks
             fig = go.Figure()
             fig.add_trace(go.Candlestick(
                 x=df["Date"],
