@@ -3217,84 +3217,10 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-      # 🪫 Emoji at LOD (Low of Day)
-                    lod_index = intraday["Low"].idxmin()  # Find the index of the lowest low
-                    lod_time = intraday.loc[lod_index, "Time"]
-                    lod_value = intraday.loc[lod_index, "F_numeric"]
-
-                    fig.add_trace(go.Scatter(
-                        x=[lod_time],
-                        y=[lod_value - 55],  # offset below the actual low
-                        mode="text",
-                        text=["🪫"],
-                        textposition="bottom center",
-                        textfont=dict(size=21),
-                        name="Low of Day (🪫)",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-                    ))
-
-                    # 🔋 Emoji at HOD (High of Day)
-                    hod_index = intraday["High"].idxmax()  # Find the index of the highest high
-                    hod_time = intraday.loc[hod_index, "Time"]
-                    hod_value = intraday.loc[hod_index, "F_numeric"]
-
-                    fig.add_trace(go.Scatter(
-                        x=[hod_time],
-                        y=[hod_value + 55],  # offset above the actual high
-                        mode="text",
-                        text=["🔋"],
-                        textposition="top center",
-                        textfont=dict(size=21),
-                        name="High of Day (🔋)",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-                    ))
 
 
 
 
-                    threshold = 0.5  # or even 1.0 depending on your scaling
-                    intraday["Kijun_F_Cross_Emoji"] = np.where(
-                        (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
-                        "♕",
-                        np.where(
-                            (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
-                            "♛",
-                            ""
-                        )
-                    )
-
-
-                 # Create separate masks for upward and downward crosses:
-                    mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
-                    mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
-
-                    # Upward Cross Trace (♕)
-                    up_cross_trace = go.Scatter(
-                        x=intraday.loc[mask_kijun_up, "Time"],
-                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 55,  # Offset upward (adjust as needed)
-                        mode="text",
-                        text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
-                        textposition="top center",  # Positioned above the point
-                        textfont=dict(size=55, color="green"),
-                        name="Kijun Cross Up (♕)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
-                    )
-
-                    # Downward Cross Trace (♛)
-                    down_cross_trace = go.Scatter(
-                        x=intraday.loc[mask_kijun_down, "Time"],
-                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 55,  # Offset downward
-                        mode="text",
-                        text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
-                        textposition="bottom center",  # Positioned below the point
-                        textfont=dict(size=55, color="red"),
-                        name="Kijun Cross Down (♛)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
-                    )
-
-
-                    fig.add_trace(up_cross_trace,   row=1, col=1)
-                    fig.add_trace(down_cross_trace, row=1, col=1)
 
 
 
