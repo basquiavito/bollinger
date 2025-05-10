@@ -3093,6 +3093,57 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(middle_band, row=1, col=1)
 
 
+
+                    intraday["Tenkan"] = (intraday["High"].rolling(window=9).max() + intraday["Low"].rolling(window=9).min()) / 2
+                    intraday["Kijun"] = (intraday["High"].rolling(window=26).max() + intraday["Low"].rolling(window=26).min()) / 2
+                    intraday["SpanA"] = ((intraday["Tenkan"] + intraday["Kijun"]) / 2)
+                    intraday["SpanB"] = (intraday["High"].rolling(window=52).max() + intraday["Low"].rolling(window=52).min()) / 2
+                    # Fill early NaNs so cloud appears fully from 9:30 AM
+                    intraday["SpanA"] = intraday["SpanA"].bfill()
+                    intraday["SpanB"] = intraday["SpanB"].bfill()
+
+                    intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
+                    intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
+
+                    # Fill again after F%-conversion to guarantee values exist
+                    intraday["SpanA_F"] = intraday["SpanA_F"].bfill()
+                    intraday["SpanB_F"] = intraday["SpanB_F"].bfill()
+
+
+                    intraday["Chikou"] = intraday["Close"].shift(-26)
+
+
+                    # Chikou moved ABOVE price (🕵🏻‍♂️) — signal at time when it actually happened
+                    chikou_above_mask = (intraday["Chikou"] > intraday["Close"]).shift(26)
+                    chikou_above = intraday[chikou_above_mask.fillna(False)]
+
+                    # Chikou moved BELOW price (👮🏻‍♂️)
+                    chikou_below_mask = (intraday["Chikou"] < intraday["Close"]).shift(26)
+                    chikou_below = intraday[chikou_below_mask.fillna(False)]
+
+
+
+                   # Calculate Chikou (lagging span) using Close price shifted BACKWARD
+                    intraday["Chikou"] = intraday["Close"].shift(-26)
+
+                    # Calculate Chikou_F using shifted price, keeping Time as-is
+                    intraday["Chikou_F"] = ((intraday["Chikou"] - prev_close) / prev_close) * 10000
+
+                    # Drop rows where Chikou_F is NaN (due to shifting)
+                    chikou_plot = intraday.dropna(subset=["Chikou_F"])
+
+                    # Plot without shifting time
+                    chikou_line = go.Scatter(
+                        x=chikou_plot["Time"],
+                        y=chikou_plot["Chikou_F"],
+                        mode="lines",
+                        name="Chikou (F%)",
+                        line=dict(color="purple", dash="dash")
+                    )
+                    fig.add_trace(chikou_line, row=1, col=1)
+
+
+
                     kijun_line = go.Scatter(
                     x=intraday["Time"],
                     y=intraday["Kijun_F"],
