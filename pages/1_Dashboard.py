@@ -3278,7 +3278,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["🏷️"] * upper_tag.sum(),
                         textposition="top center",
-                        textfont=dict(size=18),
+                        textfont=dict(size=8),
                         name="BB Upper Tag (🏷️)",
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Upper Band<extra></extra>"
                     ),
@@ -3293,7 +3293,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["🏷️"] * lower_tag.sum(),
                         textposition="bottom center",
-                        textfont=dict(size=18),
+                        textfont=dict(size=8),
                         name="BB Lower Tag (🏷️)",
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Lower Band<extra></extra>"
                     ),
