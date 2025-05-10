@@ -1,16 +1,9 @@
 # app.py
 import streamlit as st
-
-# This must be the first Streamlit command
-st.set_page_config(page_title="Bollinger Bands Viewer", layout="wide")
-
-import bollinger  # your bollinger.py script
+import bollinger  # This assumes bollinger.py is in the same directory
 
 def main():
-    try:
-        bollinger.main()
-    except Exception as e:
-        st.error(f"⚠️ Error in `bollinger.main()`: {e}")
+    bollinger.main()
 
 if __name__ == "__main__":
     main()
