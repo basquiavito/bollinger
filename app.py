@@ -10,7 +10,7 @@ st.sidebar.markdown("Created by [Your Name]")
 
 # Main content
 st.title("📊 Welcome to Options Wealth")
-st.markdown("- 📈 Dashboard")
+st.markdown("- 📈 bollinger")
 st.markdown("- 💰 Option Pricing")
 st.markdown("-  Volatility Screener")
 st.markdown("-  Analysis")
