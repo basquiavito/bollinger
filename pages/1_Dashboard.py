@@ -2891,7 +2891,7 @@ if st.sidebar.button("Run Analysis"):
                     fig.update_layout(
                         title="Ichimoku Candlestick Chart + Volume",
                         xaxis_rangeslider_visible=False,  # rangeslider only once
-                        height=300,
+                        height=500,
                         margin=dict(l=30, r=30, t=40, b=20)
                     )
                     if 'RVOL_5' in intraday.columns:
