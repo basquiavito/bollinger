@@ -56,12 +56,16 @@ def main():
             df = yf.download(ticker, start=start_str, end=end_str, interval=interval, progress=False)
 
         if not df.empty:
+           # Ensure the index is timezone-aware and localized to Eastern Time
+            if df.index.tz is None:
+                df.index = df.index.tz_localize("UTC").tz_convert("US/Eastern")
+            else:
+                df.index = df.index.tz_convert("US/Eastern")
+
+            # Filter to regular trading hours if checkbox is on
             if filter_rth:
-                try:
-                    df.index = df.index.tz_localize(None)  # remove tz if present
-                    df = df.between_time("09:30", "16:00")
-                except:
-                    pass  # fallback if index is already naive
+                df = df.between_time("09:30", "16:00")
+
 
             df = calculate_bollinger_bands(df)
             fig = plot_candlestick_with_bb(df, ticker)
