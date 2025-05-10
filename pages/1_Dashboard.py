@@ -3175,408 +3175,58 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(atr_alert_scatter, row=1, col=1)
 
-# # 🟢 TD SUPPLY
-
-#           # 🟤 TD Supply Line (F%)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday['Time'],
-#                             y=intraday['TD Supply Line F'],
-#                             mode='lines',
-#                             line=dict(width=1, color="#a9a9a9", dash='dot'),
-#                             name='TD Supply F%',
-#                             hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
-#                         ),
-#                         row=1, col=1
-#                     )
 
 
 
-# #🟢 TD DEMAND
 
 
-#                     # 🔵 TD Demand Line (F%)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday['Time'],
-#                             y=intraday['TD Demand Line F'],
-#                             mode='lines',
-#                             line=dict(width=1, color="DarkSeaGreen", dash='dot'),
-#                             name='TD Demand F%',
-#                             hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
-#                         ),
-#                         row=1, col=1
-#                     )
 
 
 
 
 
-#                # Extract only the rows where TDST just formed
-#                     tdst_points = intraday["TDST"].notna()
 
-#                     tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-#                     tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
 
 
 
-#                     tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-#                     tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
 
 
-#                     # Buy TDST marker (⎯)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday.loc[tdst_buy_mask, "Time"],
-#                             y=intraday.loc[tdst_buy_mask, "F_numeric"],
-#                             mode="text",
-#                             text=["⎯"] * tdst_buy_mask.sum(),
-#                             textposition="middle center",
-#                             textfont=dict(size=55, color="green"),
-#                             name="Buy TDST",
-#                             hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                         ),
-#                         row=1, col=1
-#                     )
-
-#                     # Sell TDST marker (⎯)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday.loc[tdst_sell_mask, "Time"],
-#                             y=intraday.loc[tdst_sell_mask, "F_numeric"],
-#                             mode="text",
-#                             text=["⎯"] * tdst_sell_mask.sum(),
-#                             textposition="middle center",
-#                             textfont=dict(size=55, color="red"),
-#                             name="Sell TDST",
-#                             hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                         ),
-#                         row=1, col=1
-#                     )
-
 
 
-
-#                     cloud_mask = intraday["Heaven_Cloud"] == "☁️"
 
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday.loc[cloud_mask, "Time"],
-#                         y=intraday.loc[cloud_mask, "F_numeric"] + 89,
-#                         mode="text",
-#                         text=intraday.loc[cloud_mask, "Heaven_Cloud"],
-#                         textposition="top center",
-#                         textfont=dict(size=34),
-#                         name="Heaven ☁️",
-#                         hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
-#                     ), row=1, col=1)
-
-#                     # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
-#                     intraday["Drizzle_Emoji"] = None
-#                     below_demand = False
-
-#                     for i in range(1, len(intraday)):
-#                         f = intraday["F_numeric"].iloc[i]
-#                         demand = intraday["TD Demand Line F"].iloc[i]
-
-#                         if pd.notna(demand) and f < demand:
-#                             below_demand = True
-#                         elif pd.notna(demand) and f >= demand:
-#                             below_demand = False
-
-#                         if below_demand:
-#                             intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
-
-
-
-#                     # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
-#                     drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
-
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday.loc[drizzle_mask, "Time"],
-#                         y=intraday.loc[drizzle_mask, "F_numeric"] + 89,  # Position below the bar
-#                         mode="text",
-#                         text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
-#                         textposition="bottom center",
-#                         textfont=dict(size=32),
-#                         name="Price Dropped Below Demand 🌧️",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
-#                     ), row=1, col=1)
-
-
-
-
-#                     # 🪫 Emoji at LOD (Low of Day)
-#                     lod_index = intraday["Low"].idxmin()  # Find the index of the lowest low
-#                     lod_time = intraday.loc[lod_index, "Time"]
-#                     lod_value = intraday.loc[lod_index, "F_numeric"]
-
-#                     fig.add_trace(go.Scatter(
-#                         x=[lod_time],
-#                         y=[lod_value - 55],  # offset below the actual low
-#                         mode="text",
-#                         text=["🪫"],
-#                         textposition="bottom center",
-#                         textfont=dict(size=21),
-#                         name="Low of Day (🪫)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-#                     ))
-
-#                     # 🔋 Emoji at HOD (High of Day)
-#                     hod_index = intraday["High"].idxmax()  # Find the index of the highest high
-#                     hod_time = intraday.loc[hod_index, "Time"]
-#                     hod_value = intraday.loc[hod_index, "F_numeric"]
-
-#                     fig.add_trace(go.Scatter(
-#                         x=[hod_time],
-#                         y=[hod_value + 55],  # offset above the actual high
-#                         mode="text",
-#                         text=["🔋"],
-#                         textposition="top center",
-#                         textfont=dict(size=21),
-#                         name="High of Day (🔋)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-#                     ))
-
-
-#                     intraday["F_shift"] = intraday["F_numeric"].shift(1)
-
-#                     tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-#                     tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
-
-#                                         # Step 1: For each Buy TDST bar, get the F% level
-#                     buy_tdst_levels = intraday.loc[tdst_buy_mask, "F_numeric"]
-
-#                     # Step 2: Loop through each Buy TDST and track from that point forward
-#                     for buy_idx, tdst_level in buy_tdst_levels.items():
-#                         # Get index location of the TDST signal
-#                         i = intraday.index.get_loc(buy_idx)
-
-#                         # Look at all bars forward from the TDST bar
-#                         future = intraday.iloc[i+1:].copy()
-
-#                         # Find where F% crosses and stays above the TDST level for 2 bars
-#                         above = future["F_numeric"] > tdst_level
-#                         two_bar_hold = above & above.shift(-1)
-
-#                         # Find the first time this happens
-#                         if two_bar_hold.any():
-#                             ghost_idx = two_bar_hold[two_bar_hold].index[0]  # first valid bar
-
-#                             # Plot 👻 emoji on the first bar
-#                             fig.add_trace(
-#                                 go.Scatter(
-#                                     x=[intraday.at[ghost_idx, "Time"]],
-#                                     y=[intraday.at[ghost_idx, "F_numeric"] + 144],
-#                                     mode="text",
-#                                     text=["👻"],
-#                                     textposition="middle center",
-#                                     textfont=dict(size=40, color="purple"),
-#                                     name="Confirmed Buy TDST Breakout",
-#                                     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                                 ),
-#                                 row=1, col=1
-#                             )
-
-
-#                     # Step 1: Get all Sell TDST points (each defines its own world)
-#                     sell_tdst_levels = intraday.loc[tdst_sell_mask, "F_numeric"]
-#                     sell_tdst_indices = list(sell_tdst_levels.index) + [intraday.index[-1]]  # add end of session as last boundary
-
-#                     # Step 2: Loop through each Sell TDST "world"
-#                     for i in range(len(sell_tdst_levels)):
-#                         tdst_idx = sell_tdst_levels.index[i]
-#                         tdst_level = sell_tdst_levels.iloc[i]
-
-#                         # Define the domain: from this Sell TDST until the next one (or end of day)
-#                         domain_start = intraday.index.get_loc(tdst_idx) + 1
-#                         domain_end = intraday.index.get_loc(sell_tdst_indices[i+1])  # next TDST or end
-
-#                         domain = intraday.iloc[domain_start:domain_end]
-
-#                         # Condition: F% crosses below and stays below for 2 bars
-#                         below = domain["F_numeric"] < tdst_level
-#                         confirmed = below & below.shift(-1)
-
-#                         if confirmed.any():
-#                             ghost_idx = confirmed[confirmed].index[0]
-#                             fig.add_trace(
-#                                 go.Scatter(
-#                                     x=[intraday.at[ghost_idx, "Time"]],
-#                                     y=[intraday.at[ghost_idx, "F_numeric"] - 144],
-#                                     mode="text",
-#                                     text=["🫥"],
-#                                     textposition="middle center",
-#                                     textfont=dict(size=40, color="purple"),
-#                                     name="Confirmed Sell TDST Breakdown",
-#                                     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                                 ),
-#                                 row=1, col=1
-#                             )
-
-
-
-#                     # ✈️ Upward Crosses ABOVE Yesterday High
-#                     up_high_mask = intraday["Y_High_Cross"] == "✈️"
-#                     up_high_trace = go.Scatter(
-#                         x=intraday.loc[up_high_mask, "Time"],
-#                         y=intraday.loc[up_high_mask, "F_numeric"] + 144,
-#                         mode="text",
-#                         text=intraday.loc[up_high_mask, "Y_High_Cross"],
-#                         textposition="top center",
-#                         textfont=dict(size=55),
-#                         name="Cross Above Y-High (✈️)"
-#                     )
-
-#                     # 🪂 Downward Crosses BELOW Yesterday High
-#                     down_high_mask = intraday["Y_High_Cross"] == "🪂"
-#                     down_high_trace = go.Scatter(
-#                         x=intraday.loc[down_high_mask, "Time"],
-#                         y=intraday.loc[down_high_mask, "F_numeric"] - 144,
-#                         mode="text",
-#                         text=intraday.loc[down_high_mask, "Y_High_Cross"],
-#                         textposition="bottom center",
-#                         textfont=dict(size=55),
-#                         name="Cross Below Y-High (🪂)"
-#                     )
-
-#                     # Add to figure
-#                     fig.add_trace(up_high_trace, row=1, col=1)
-#                     fig.add_trace(down_high_trace, row=1, col=1)
-
-
-
-
 
 
-
-#                     astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
+                 # Create separate masks for upward and downward crosses:
+                    mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
+                    mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
 
-#                     scatter_astronaut = go.Scatter(
-#                         x=astronaut_points["Time"],
-#                         y=astronaut_points["F_numeric"] + 188,  # Higher offset
-#                         mode="text",
-#                         text=astronaut_points["Astronaut_Emoji"],
-#                         textposition="top center",
-#                         name="New Highs 👨🏽‍🚀",
-#                         textfont=dict(size=34),
-#                         showlegend=False
-#                     )
-
-#                     fig.add_trace(scatter_astronaut, row=1, col=1)
-
-
-
-#                     # Filter where the Astronaut or Moon emoji exist
-#                     astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
-
-#                     scatter_astronaut = go.Scatter(
-#                         x=astronaut_points["Time"],
-#                         y=astronaut_points["F_numeric"] + 188,  # Offset so it floats higher
-#                         mode="text",
-#                         text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-#                         textposition="top center",
-#                         name="New Highs 🌒",
-#                         textfont=dict(size=34),
-#                         showlegend=False
-#                     )
-
-#                     fig.add_trace(scatter_astronaut, row=1, col=1)
-
-
-
-#                     # Filter where Swimmer or Squid exist
-#                     swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
-
-#                     scatter_swimmer = go.Scatter(
-#                         x=swimmer_points["Time"],
-#                         y=swimmer_points["F_numeric"] - 188,  # Offset downward so it floats below price
-#                         mode="text",
-#                         text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
-#                         textposition="bottom center",
-#                         name="New Lows 🏊🏽‍♂️🦑",
-#                         textfont=dict(size=55),
-#                         showlegend=False
-#                     )
-
-#                     fig.add_trace(scatter_swimmer, row=1, col=1)
-
-
-
-#                     mask_green_king = intraday["King_Signal"] == "👑"
-#                     scatter_green_king = go.Scatter(
-#                         x=intraday.loc[mask_green_king, "Time"],
-#                         y=intraday.loc[mask_green_king, "F_numeric"] + 89,
-#                         mode="text",
-#                         text=["♔"] * mask_green_king.sum(),
-#                         textfont=dict(size=55, color="green"),
-#                         name="Green King Signal (♔)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>👑 Green Kingdom Crowned ♔<extra></extra>"
-#                     )
-
-
-#                     mask_red_king = intraday["King_Signal"] == "🔻👑"
-#                     scatter_red_king = go.Scatter(
-#                         x=intraday.loc[mask_red_king, "Time"],
-#                         y=intraday.loc[mask_red_king, "F_numeric"] - 89,
-#                         mode="text",
-#                         text=["♔"] * mask_red_king.sum(),
-#                         textfont=dict(size=55, color="red"),
-#                         name="Red King Signal (♔)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🔻👑 Red Kingdom Crowned ♔<extra></extra>"
-#                     )
-
-
-#                     fig.add_trace(scatter_green_king, row=1, col=1)
-#                     fig.add_trace(scatter_red_king, row=1, col=1)
-
-
-
-
-
-#                     threshold = 0.5  # or even 1.0 depending on your scaling
-#                     intraday["Kijun_F_Cross_Emoji"] = np.where(
-#                         (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
-#                         "♕",
-#                         np.where(
-#                             (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
-#                             "♛",
-#                             ""
-#                         )
-#                     )
-
-
-
-#                  # Create separate masks for upward and downward crosses:
-#                     mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
-#                     mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
-
-#                     # Upward Cross Trace (♕)
-#                     up_cross_trace = go.Scatter(
-#                         x=intraday.loc[mask_kijun_up, "Time"],
-#                         y=intraday.loc[mask_kijun_up, "F_numeric"] + 55,  # Offset upward (adjust as needed)
-#                         mode="text",
-#                         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
-#                         textposition="top center",  # Positioned above the point
-#                         textfont=dict(size=55, color="green"),
-#                         name="Kijun Cross Up (♕)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
-#                     )
-
-#                     # Downward Cross Trace (♛)
-#                     down_cross_trace = go.Scatter(
-#                         x=intraday.loc[mask_kijun_down, "Time"],
-#                         y=intraday.loc[mask_kijun_down, "F_numeric"] - 55,  # Offset downward
-#                         mode="text",
-#                         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
-#                         textposition="bottom center",  # Positioned below the point
-#                         textfont=dict(size=55, color="red"),
-#                         name="Kijun Cross Down (♛)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
-#                     )
-
-
-#                     fig.add_trace(up_cross_trace,   row=1, col=1)
-#                     fig.add_trace(down_cross_trace, row=1, col=1)
+                    # Upward Cross Trace (♕)
+                    up_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_up, "Time"],
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 55,  # Offset upward (adjust as needed)
+                        mode="text",
+                        text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
+                        textposition="top center",  # Positioned above the point
+                        textfont=dict(size=55, color="green"),
+                        name="Kijun Cross Up (♕)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
+                    )
+
+                    # Downward Cross Trace (♛)
+                    down_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_down, "Time"],
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 55,  # Offset downward
+                        mode="text",
+                        text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
+                        textposition="bottom center",  # Positioned below the point
+                        textfont=dict(size=55, color="red"),
+                        name="Kijun Cross Down (♛)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
+                    )
+
+
+                    fig.add_trace(up_cross_trace,   row=1, col=1)
+                    fig.add_trace(down_cross_trace, row=1, col=1)
 
 
 
