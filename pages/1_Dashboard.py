@@ -3497,21 +3497,21 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-# # 🟢  STD Expansion  (🐦‍🔥)
-#                     mask_std_alert = intraday["STD_Alert"] != ""
+# 🟢  STD Expansion  (🐦‍🔥)
+                    mask_std_alert = intraday["STD_Alert"] != ""
 
-#                     scatter_std_alert = go.Scatter(
-#                         x=intraday.loc[mask_std_alert, "Time"],
-#                         y=intraday.loc[mask_std_alert, "F_numeric"] + 55,  # Offset above F%
-#                         mode="text",
-#                         text=intraday.loc[mask_std_alert, "STD_Alert"],
-#                         textposition="top center",
-#                         textfont=dict(size=21),
-#                         name="F% STD Expansion",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
-#                     )
+                    scatter_std_alert = go.Scatter(
+                        x=intraday.loc[mask_std_alert, "Time"],
+                        y=intraday.loc[mask_std_alert, "F_numeric"] + 55,  # Offset above F%
+                        mode="text",
+                        text=intraday.loc[mask_std_alert, "STD_Alert"],
+                        textposition="top center",
+                        textfont=dict(size=21),
+                        name="F% STD Expansion",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
+                    )
 
-#                     fig.add_trace(scatter_std_alert, row=1, col=1)
+                    fig.add_trace(scatter_std_alert, row=1, col=1)
 
 # #  🟢   ATR Expansion
 #                     mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
@@ -4036,39 +4036,39 @@ if st.sidebar.button("Run Analysis"):
 #                 fig.add_trace(scatter_rook_up, row=1, col=1)
 #                 fig.add_trace(scatter_rook_down, row=1, col=1)
 
-#                     # 1) build Boolean masks (you can tighten with a small buffer if you like)
-#                 upper_tag = intraday["F_numeric"] >= intraday["F% Upper"]
-#                 lower_tag = intraday["F_numeric"] <= intraday["F% Lower"]
+                    # 1) build Boolean masks (you can tighten with a small buffer if you like)
+                upper_tag = intraday["F_numeric"] >= intraday["F% Upper"]
+                lower_tag = intraday["F_numeric"] <= intraday["F% Lower"]
 
-#                 # 2) scatter for upper‑band tags
-#                 fig.add_trace(
-#                     go.Scatter(
-#                         x=intraday.loc[upper_tag, "Time"],
-#                         y=intraday.loc[upper_tag, "F_numeric"] +13,       # nudge up a bit
-#                         mode="text",
-#                         text=["🏷️"] * upper_tag.sum(),
-#                         textposition="top center",
-#                         textfont=dict(size=18),
-#                         name="BB Upper Tag (🏷️)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Upper Band<extra></extra>"
-#                     ),
-#                     row=1, col=1
-#                 )
+                # 2) scatter for upper‑band tags
+                fig.add_trace(
+                    go.Scatter(
+                        x=intraday.loc[upper_tag, "Time"],
+                        y=intraday.loc[upper_tag, "F_numeric"] +13,       # nudge up a bit
+                        mode="text",
+                        text=["🏷️"] * upper_tag.sum(),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="BB Upper Tag (🏷️)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Upper Band<extra></extra>"
+                    ),
+                    row=1, col=1
+                )
 
-#                 # 3) scatter for lower‑band tags
-#                 fig.add_trace(
-#                     go.Scatter(
-#                         x=intraday.loc[lower_tag, "Time"],
-#                         y=intraday.loc[lower_tag, "F_numeric"] - 13,       # nudge down a bit
-#                         mode="text",
-#                         text=["🏷️"] * lower_tag.sum(),
-#                         textposition="bottom center",
-#                         textfont=dict(size=18),
-#                         name="BB Lower Tag (🏷️)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Lower Band<extra></extra>"
-#                     ),
-#                     row=1, col=1
-#                 )
+                # 3) scatter for lower‑band tags
+                fig.add_trace(
+                    go.Scatter(
+                        x=intraday.loc[lower_tag, "Time"],
+                        y=intraday.loc[lower_tag, "F_numeric"] - 13,       # nudge down a bit
+                        mode="text",
+                        text=["🏷️"] * lower_tag.sum(),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        name="BB Lower Tag (🏷️)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Lower Band<extra></extra>"
+                    ),
+                    row=1, col=1
+                )
 
 
 
