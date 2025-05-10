@@ -2840,114 +2840,114 @@ if st.sidebar.button("Run Analysis"):
                 # Final condition: big upper wick + valid body
                 intraday['UpperWickFlag'] = intraday['LongUpperWick'] & intraday['ValidBody']
 
-                # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
-                #     # ❶ create a 2-row figure (70 % price, 30 % volume)
-                #     fig = make_subplots(rows=2, cols=1,
-                #                         shared_xaxes=True,
-                #                         vertical_spacing=0.03,
-                #                         row_heights=[0.7, 0.3])
+                with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+                    # ❶ create a 2-row figure (70 % price, 30 % volume)
+                    fig = make_subplots(rows=2, cols=1,
+                                        shared_xaxes=True,
+                                        vertical_spacing=0.03,
+                                        row_heights=[0.7, 0.3])
 
-                #     # ❷ ── price & Ichimoku (row 1) ──────────────────────────────────────
-                #     fig.add_trace(go.Candlestick(
-                #         x=intraday['Time'],
-                #         open=intraday['Open'],
-                #         high=intraday['High'],
-                #         low=intraday['Low'],
-                #         close=intraday['Close'],
-                #         name='Candles'),
-                #         row=1, col=1)
+                    # ❷ ── price & Ichimoku (row 1) ──────────────────────────────────────
+                    fig.add_trace(go.Candlestick(
+                        x=intraday['Time'],
+                        open=intraday['Open'],
+                        high=intraday['High'],
+                        low=intraday['Low'],
+                        close=intraday['Close'],
+                        name='Candles'),
+                        row=1, col=1)
 
-                #     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
-                #                             line=dict(color='red'), name='Tenkan-sen'),
-                #                 row=1, col=1)
-                #     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'],
-                #                             line=dict(color='green'), name='Kijun-sen'),
-                #                 row=1, col=1)
-                #     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
-                #                             line=dict(color='yellow'), name='Span A'),
-                #                 row=1, col=1)
-                #     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
-                #                             line=dict(color='blue'), name='Span B'),
-                #                 row=1, col=1)
-                #     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'],
-                #                             line=dict(color='purple'), name='Chikou'),
-                #                 row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
+                                            line=dict(color='red'), name='Tenkan-sen'),
+                                row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'],
+                                            line=dict(color='green'), name='Kijun-sen'),
+                                row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
+                                            line=dict(color='yellow'), name='Span A'),
+                                row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
+                                            line=dict(color='blue'), name='Span B'),
+                                row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'],
+                                            line=dict(color='purple'), name='Chikou'),
+                                row=1, col=1)
 
-                #     # cloud
-                #     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
-                #                             line=dict(width=0), showlegend=False),
-                #                 row=1, col=1)
-                #     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
-                #                             fill='tonexty',
-                #                             fillcolor='rgba(128,128,128,0.2)',
-                #                             line=dict(width=0),
-                #                             showlegend=False),
-                #                 row=1, col=1)
+                    # cloud
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
+                                            line=dict(width=0), showlegend=False),
+                                row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
+                                            fill='tonexty',
+                                            fillcolor='rgba(128,128,128,0.2)',
+                                            line=dict(width=0),
+                                            showlegend=False),
+                                row=1, col=1)
 
-                #     # ❸ ── volume bars (row 2) ──────────────────────────────────────────
-                #     fig.add_trace(go.Bar(
-                #         x=intraday['Time'],
-                #         y=intraday['Volume'],
-                #         marker=dict(opacity=0.5),
-                #         name='Volume'),
-                #         row=2, col=1)
+                    # ❸ ── volume bars (row 2) ──────────────────────────────────────────
+                    fig.add_trace(go.Bar(
+                        x=intraday['Time'],
+                        y=intraday['Volume'],
+                        marker=dict(opacity=0.5),
+                        name='Volume'),
+                        row=2, col=1)
 
-                #     # ❹ layout tweaks
-                #     fig.update_layout(
-                #         title="Ichimoku Candlestick Chart + Volume",
-                #         xaxis_rangeslider_visible=False,  # rangeslider only once
-                #         height=600,
-                #         margin=dict(l=30, r=30, t=40, b=20)
-                #     )
-                #     if 'RVOL_5' in intraday.columns:
-                #         # Initialize no markers first
-                #         intraday['MarkerColor'] = None
-                #         intraday['MarkerLabel'] = None
+                    # ❹ layout tweaks
+                    fig.update_layout(
+                        title="Ichimoku Candlestick Chart + Volume",
+                        xaxis_rangeslider_visible=False,  # rangeslider only once
+                        height=600,
+                        margin=dict(l=30, r=30, t=40, b=20)
+                    )
+                    if 'RVOL_5' in intraday.columns:
+                        # Initialize no markers first
+                        intraday['MarkerColor'] = None
+                        intraday['MarkerLabel'] = None
 
-                #         # Prioritize higher RVOL first
-                #         for thr, color, label in [(1.8, '#ff0000', 'RVOL ≥ 1.8'),
-                #                                 (1.5, '#ffd700', 'RVOL ≥ 1.5'),
-                #                                 (1.2, '#ff69b4', 'RVOL ≥ 1.2')]:
-                #             mask = (intraday['RVOL_5'] >= thr) & (intraday['MarkerColor'].isna())
-                #             intraday.loc[mask, 'MarkerColor'] = color
-                #             intraday.loc[mask, 'MarkerLabel'] = label
+                        # Prioritize higher RVOL first
+                        for thr, color, label in [(1.8, '#ff0000', 'RVOL ≥ 1.8'),
+                                                (1.5, '#ffd700', 'RVOL ≥ 1.5'),
+                                                (1.2, '#ff69b4', 'RVOL ≥ 1.2')]:
+                            mask = (intraday['RVOL_5'] >= thr) & (intraday['MarkerColor'].isna())
+                            intraday.loc[mask, 'MarkerColor'] = color
+                            intraday.loc[mask, 'MarkerLabel'] = label
 
-                #         # Now plot only once per bar
-                #         mask_final = intraday['MarkerColor'].notna()
-                #         fig.add_trace(go.Scatter(
-                #             x=intraday.loc[mask_final, 'Time'],
-                #             y=intraday.loc[mask_final, 'Volume'],
-                #             mode='markers',
-                #             marker=dict(
-                #                 symbol='triangle-up',
-                #                 size=10,
-                #                 color=intraday.loc[mask_final, 'MarkerColor']
-                #             ),
-                #             name='RVOL Marker',
-                #             customdata=intraday.loc[mask_final, 'RVOL_5'],
-                #             hovertemplate='%{x}<br>Vol: %{y}<br>RVOL_5: %{customdata:.2f}',
-                #         ), row=2, col=1)
-
-
+                        # Now plot only once per bar
+                        mask_final = intraday['MarkerColor'].notna()
+                        fig.add_trace(go.Scatter(
+                            x=intraday.loc[mask_final, 'Time'],
+                            y=intraday.loc[mask_final, 'Volume'],
+                            mode='markers',
+                            marker=dict(
+                                symbol='triangle-up',
+                                size=10,
+                                color=intraday.loc[mask_final, 'MarkerColor']
+                            ),
+                            name='RVOL Marker',
+                            customdata=intraday.loc[mask_final, 'RVOL_5'],
+                            hovertemplate='%{x}<br>Vol: %{y}<br>RVOL_5: %{customdata:.2f}',
+                        ), row=2, col=1)
 
 
-                #     # Plot an emoji for detected upper wicks
-                #     intraday['UpperWickEmoji'] = intraday['UpperWickFlag'].apply(lambda x: "♟️" if x else "")
-
-                #     mask_upperwick = intraday['UpperWickEmoji'] != ""
-
-                #     fig.add_trace(go.Scatter(
-                #         x=intraday.loc[mask_upperwick, 'Time'],
-                #         y=intraday.loc[mask_upperwick, 'High'],
-                #         mode='text',
-                #         text=intraday.loc[mask_upperwick, 'UpperWickEmoji'],
-                #         textposition='top center',
-                #         textfont=dict(size=21),
-                #         showlegend=False
-                #     ), row=1, col=1)
 
 
-                #     st.plotly_chart(fig, use_container_width=True)
+                    # Plot an emoji for detected upper wicks
+                    intraday['UpperWickEmoji'] = intraday['UpperWickFlag'].apply(lambda x: "♟️" if x else "")
+
+                    mask_upperwick = intraday['UpperWickEmoji'] != ""
+
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[mask_upperwick, 'Time'],
+                        y=intraday.loc[mask_upperwick, 'High'],
+                        mode='text',
+                        text=intraday.loc[mask_upperwick, 'UpperWickEmoji'],
+                        textposition='top center',
+                        textfont=dict(size=21),
+                        showlegend=False
+                    ), row=1, col=1)
+
+
+                    st.plotly_chart(fig, use_container_width=True)
 
 
 
@@ -3475,25 +3475,25 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(scatter_bbw_alert, row=1, col=1)
 
 
-#  #  🟢 ADX Expansion
+ #  🟢 ADX Expansion
 
 
-#           # Mask for ADX Alerts (♨️, 🧨)
-#                     mask_adx_alert = intraday["ADX_Alert"] != ""
+          # Mask for ADX Alerts (♨️, 🧨)
+                    mask_adx_alert = intraday["ADX_Alert"] != ""
 
-#                     scatter_adx_alert = go.Scatter(
-#                         x=intraday.loc[mask_adx_alert, "Time"],
-#                         y=intraday.loc[mask_adx_alert, "F_numeric"] + 55,  # Offset for visibility
-#                         mode="text",
-#                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
-#                         textposition="bottom center",
-#                         textfont=dict(size=13),
-#                         name="ADX Expansion Alert",
-#                         hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
-#                         customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
-#                     )
+                    scatter_adx_alert = go.Scatter(
+                        x=intraday.loc[mask_adx_alert, "Time"],
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 55,  # Offset for visibility
+                        mode="text",
+                        text=intraday.loc[mask_adx_alert, "ADX_Alert"],
+                        textposition="bottom center",
+                        textfont=dict(size=13),
+                        name="ADX Expansion Alert",
+                        hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
+                    )
 
-#                     fig.add_trace(scatter_adx_alert, row=1, col=1)
+                    fig.add_trace(scatter_adx_alert, row=1, col=1)
 
 
 
@@ -3513,21 +3513,21 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(scatter_std_alert, row=1, col=1)
 
-# #  🟢   ATR Expansion
-#                     mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
+#  🟢   ATR Expansion
+                    mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
 
-#                     atr_alert_scatter = go.Scatter(
-#                         x=intraday.loc[mask_atr_alert, "Time"],
-#                         y=intraday.loc[mask_atr_alert, "F_numeric"]  + 34,  # place below F%
-#                         mode="text",
-#                         text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
-#                         textfont=dict(size=21),
-#                         name="ATR Expansion",
-#                         hoverinfo="text",
-#                         hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
-#                     )
+                    atr_alert_scatter = go.Scatter(
+                        x=intraday.loc[mask_atr_alert, "Time"],
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 34,  # place below F%
+                        mode="text",
+                        text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
+                        textfont=dict(size=21),
+                        name="ATR Expansion",
+                        hoverinfo="text",
+                        hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
+                    )
 
-#                     fig.add_trace(atr_alert_scatter, row=1, col=1)
+                    fig.add_trace(atr_alert_scatter, row=1, col=1)
 
 # # 🟢 TD SUPPLY
 
@@ -3887,50 +3887,50 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                     threshold = 0.5  # or even 1.0 depending on your scaling
-#                     intraday["Kijun_F_Cross_Emoji"] = np.where(
-#                         (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
-#                         "♕",
-#                         np.where(
-#                             (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
-#                             "♛",
-#                             ""
-#                         )
-#                     )
+                    threshold = 0.5  # or even 1.0 depending on your scaling
+                    intraday["Kijun_F_Cross_Emoji"] = np.where(
+                        (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
+                        "♕",
+                        np.where(
+                            (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
+                            "♛",
+                            ""
+                        )
+                    )
 
 
 
-#                  # Create separate masks for upward and downward crosses:
-#                     mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
-#                     mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
+                 # Create separate masks for upward and downward crosses:
+                    mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
+                    mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
 
-#                     # Upward Cross Trace (♕)
-#                     up_cross_trace = go.Scatter(
-#                         x=intraday.loc[mask_kijun_up, "Time"],
-#                         y=intraday.loc[mask_kijun_up, "F_numeric"] + 55,  # Offset upward (adjust as needed)
-#                         mode="text",
-#                         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
-#                         textposition="top center",  # Positioned above the point
-#                         textfont=dict(size=55, color="green"),
-#                         name="Kijun Cross Up (♕)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
-#                     )
+                    # Upward Cross Trace (♕)
+                    up_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_up, "Time"],
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 55,  # Offset upward (adjust as needed)
+                        mode="text",
+                        text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
+                        textposition="top center",  # Positioned above the point
+                        textfont=dict(size=55, color="green"),
+                        name="Kijun Cross Up (♕)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
+                    )
 
-#                     # Downward Cross Trace (♛)
-#                     down_cross_trace = go.Scatter(
-#                         x=intraday.loc[mask_kijun_down, "Time"],
-#                         y=intraday.loc[mask_kijun_down, "F_numeric"] - 55,  # Offset downward
-#                         mode="text",
-#                         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
-#                         textposition="bottom center",  # Positioned below the point
-#                         textfont=dict(size=55, color="red"),
-#                         name="Kijun Cross Down (♛)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
-#                     )
+                    # Downward Cross Trace (♛)
+                    down_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_down, "Time"],
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 55,  # Offset downward
+                        mode="text",
+                        text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
+                        textposition="bottom center",  # Positioned below the point
+                        textfont=dict(size=55, color="red"),
+                        name="Kijun Cross Down (♛)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
+                    )
 
 
-#                     fig.add_trace(up_cross_trace,   row=1, col=1)
-#                     fig.add_trace(down_cross_trace, row=1, col=1)
+                    fig.add_trace(up_cross_trace,   row=1, col=1)
+                    fig.add_trace(down_cross_trace, row=1, col=1)
 
 
 
