@@ -5,6 +5,8 @@ import plotly.graph_objects as go
 import streamlit as st
 from datetime import datetime, timedelta
 
+
+
 def calculate_bollinger_bands(df, window=20, num_std=2):
     df['MA20'] = df['Close'].rolling(window=window).mean()
     df['STD'] = df['Close'].rolling(window=window).std()
@@ -17,14 +19,24 @@ def plot_candlestick_with_bb(df, ticker):
 
     fig.add_trace(go.Candlestick(
         x=df.index,
-        open=df['Open'], high=df['High'],
-        low=df['Low'], close=df['Close'],
-        name='Candles'
+        open=df['Open'],
+        high=df['High'],
+        low=df['Low'],
+        close=df['Close'],
+        name='Candles',
+        increasing_line_color='lime',
+        decreasing_line_color='red',
+        increasing_fillcolor='rgba(50,205,50,0.5)',
+        decreasing_fillcolor='rgba(255,0,0,0.5)',
+        showlegend=True
     ))
 
-    fig.add_trace(go.Scatter(x=df.index, y=df['Upper'], line=dict(color='red', width=1), name='Upper Band'))
-    fig.add_trace(go.Scatter(x=df.index, y=df['MA20'], line=dict(color='gray', width=1), name='MA20'))
-    fig.add_trace(go.Scatter(x=df.index, y=df['Lower'], line=dict(color='blue', width=1), name='Lower Band'))
+    fig.add_trace(go.Scatter(x=df.index, y=df['Upper'],
+                             line=dict(color='red', width=1), name='Upper Band'))
+    fig.add_trace(go.Scatter(x=df.index, y=df['MA20'],
+                             line=dict(color='gray', width=1), name='MA20'))
+    fig.add_trace(go.Scatter(x=df.index, y=df['Lower'],
+                             line=dict(color='blue', width=1), name='Lower Band'))
 
     fig.update_layout(
         title=f'{ticker} - Bollinger Bands (Intraday)',
@@ -33,6 +45,7 @@ def plot_candlestick_with_bb(df, ticker):
     )
 
     return fig
+
 
 def main():
     st.title("📈 Intraday Bollinger Bands Viewer")
@@ -87,6 +100,8 @@ def main():
             st.warning("Not enough bars to calculate Bollinger Bands.")
             st.dataframe(df)
             return
+        st.write("Preview of data going into chart:")
+        st.dataframe(df.tail(10))  # look at last few rows
 
         df = calculate_bollinger_bands(df)
         fig = plot_candlestick_with_bb(df, ticker)
