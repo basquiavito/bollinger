@@ -3251,16 +3251,16 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-               threshold = 0.5  # or even 1.0 depending on your scaling
-                    intraday["Kijun_F_Cross_Emoji"] = np.where(
-                        (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
-                        "♕",
-                        np.where(
-                            (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
-                            "♛",
-                            ""
-                        )
-                    )
+                    threshold = 0.5  # or even 1.0 depending on your scaling
+                            intraday["Kijun_F_Cross_Emoji"] = np.where(
+                                (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
+                                "♕",
+                                np.where(
+                                    (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
+                                    "♛",
+                                    ""
+                                )
+                            )
 
 
 
