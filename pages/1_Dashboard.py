@@ -3093,6 +3093,16 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(middle_band, row=1, col=1)
 
 
+                    kijun_line = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Kijun_F"],
+                    mode="lines",
+                    line=dict(color="green", width=2),
+                    name="Kijun (F% scale)"
+                )
+                    fig.add_trace(kijun_line, row=1, col=1)
+
+
 
 
 
