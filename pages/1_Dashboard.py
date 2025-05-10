@@ -2764,12 +2764,18 @@ if st.sidebar.button("Run Analysis"):
 
                 # Calculate RVOL 5 (Relative Volume vs last 5 bars)
                 intraday['RVOL_5'] = intraday['Volume'] / intraday['Volume'].rolling(5).mean()
+                # BB(9)
+                intraday['MA9'] = intraday['Close'].rolling(window=9).mean()
+                intraday['STD9'] = intraday['Close'].rolling(window=9).std()
+                intraday['Upper9'] = intraday['MA9'] + 2 * intraday['STD9']
+                intraday['Lower9'] = intraday['MA9'] - 2 * intraday['STD9']
 
-                # Bollinger Bands (20-period)
-                intraday['MA20'] = intraday['Close'].rolling(window=14).mean()
-                intraday['STD'] = intraday['Close'].rolling(window=14).std()
-                intraday['Upper'] = intraday['MA20'] + 2 * intraday['STD']
-                intraday['Lower'] = intraday['MA20'] - 2 * intraday['STD']
+                # BB(20)
+                intraday['MA20'] = intraday['Close'].rolling(window=20).mean()
+                intraday['STD20'] = intraday['Close'].rolling(window=20).std()
+                intraday['Upper20'] = intraday['MA20'] + 2 * intraday['STD20']
+                intraday['Lower20'] = intraday['MA20'] - 2 * intraday['STD20']
+
 
                 # UPPER WICK DETECTION (simple and lightweight)
 
@@ -2804,25 +2810,46 @@ if st.sidebar.button("Run Analysis"):
                         close=intraday['Close'],
                         name='Candles'),
                         row=1, col=1)
+                            # Use .dropna() to avoid early NaNs
+                    bb9 = intraday.dropna(subset=["Upper9", "Lower9", "MA9"])
+                    bb20 = intraday.dropna(subset=["Upper20", "Lower20", "MA20"])
+
+                    # BB(9) — thinner & more transparent
                     fig.add_trace(go.Scatter(
-                        x=intraday['Time'],
-                        y=intraday['Upper'],
-                        line=dict(color='gray', width=1),
-                        name='Upper Band'
+                        x=bb9["Time"], y=bb9["Upper9"],
+                        line=dict(color='orange', width=1),
+                        name="BB(9) Upper"
                     ), row=1, col=1)
 
                     fig.add_trace(go.Scatter(
-                        x=intraday['Time'],
-                        y=intraday['MA20'],
-                        line=dict(color='white', width=1, dash='dot'),
-                        name='20 MA'
+                        x=bb9["Time"], y=bb9["MA9"],
+                        line=dict(color='orange', width=1, dash='dot'),
+                        name="BB(9) MA"
                     ), row=1, col=1)
 
                     fig.add_trace(go.Scatter(
-                        x=intraday['Time'],
-                        y=intraday['Lower'],
+                        x=bb9["Time"], y=bb9["Lower9"],
+                        line=dict(color='orange', width=1),
+                        name="BB(9) Lower"
+                    ), row=1, col=1)
+
+                    # BB(20) — classic dark gray
+                    fig.add_trace(go.Scatter(
+                        x=bb20["Time"], y=bb20["Upper20"],
                         line=dict(color='gray', width=1),
-                        name='Lower Band'
+                        name="BB(20) Upper"
+                    ), row=1, col=1)
+
+                    fig.add_trace(go.Scatter(
+                        x=bb20["Time"], y=bb20["MA20"],
+                        line=dict(color='gray', width=1, dash='dot'),
+                        name="BB(20) MA"
+                    ), row=1, col=1)
+
+                    fig.add_trace(go.Scatter(
+                        x=bb20["Time"], y=bb20["Lower20"],
+                        line=dict(color='gray', width=1),
+                        name="BB(20) Lower"
                     ), row=1, col=1)
 
                     # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
