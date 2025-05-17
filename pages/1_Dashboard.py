@@ -2757,100 +2757,100 @@ if st.sidebar.button("Run Analysis"):
                     st.warning(gap_alert)
 
 
-                from plotly.subplots import make_subplots
-                import plotly.graph_objects as go
+                # from plotly.subplots import make_subplots
+                # import plotly.graph_objects as go
 
 
 
-                # Calculate RVOL 5 (Relative Volume vs last 5 bars)
-                intraday['RVOL_5'] = intraday['Volume'] / intraday['Volume'].rolling(5).mean()
-                # BB(9)
-                intraday['MA9'] = intraday['Close'].rolling(window=9).mean()
-                intraday['STD9'] = intraday['Close'].rolling(window=9).std()
-                intraday['Upper9'] = intraday['MA9'] + 2 * intraday['STD9']
-                intraday['Lower9'] = intraday['MA9'] - 2 * intraday['STD9']
+                # # Calculate RVOL 5 (Relative Volume vs last 5 bars)
+                # intraday['RVOL_5'] = intraday['Volume'] / intraday['Volume'].rolling(5).mean()
+                # # BB(9)
+                # intraday['MA9'] = intraday['Close'].rolling(window=9).mean()
+                # intraday['STD9'] = intraday['Close'].rolling(window=9).std()
+                # intraday['Upper9'] = intraday['MA9'] + 2 * intraday['STD9']
+                # intraday['Lower9'] = intraday['MA9'] - 2 * intraday['STD9']
 
-                # BB(20)
-                intraday['MA20'] = intraday['Close'].rolling(window=20).mean()
-                intraday['STD20'] = intraday['Close'].rolling(window=20).std()
-                intraday['Upper20'] = intraday['MA20'] + 2 * intraday['STD20']
-                intraday['Lower20'] = intraday['MA20'] - 2 * intraday['STD20']
+                # # BB(20)
+                # intraday['MA20'] = intraday['Close'].rolling(window=20).mean()
+                # intraday['STD20'] = intraday['Close'].rolling(window=20).std()
+                # intraday['Upper20'] = intraday['MA20'] + 2 * intraday['STD20']
+                # intraday['Lower20'] = intraday['MA20'] - 2 * intraday['STD20']
 
 
-                # UPPER WICK DETECTION (simple and lightweight)
+                # # UPPER WICK DETECTION (simple and lightweight)
 
-                # Calculate candle parts
-                intraday['Body'] = (intraday['Close'] - intraday['Open']).abs()
-                intraday['UpperWick'] = intraday['High'] - intraday[['Close', 'Open']].max(axis=1)
-                intraday['LowerWick'] = intraday[['Close', 'Open']].min(axis=1) - intraday['Low']
+                # # Calculate candle parts
+                # intraday['Body'] = (intraday['Close'] - intraday['Open']).abs()
+                # intraday['UpperWick'] = intraday['High'] - intraday[['Close', 'Open']].max(axis=1)
+                # intraday['LowerWick'] = intraday[['Close', 'Open']].min(axis=1) - intraday['Low']
 
-                # Define simple upper wick condition
-                # Long upper wick if upper wick > 2x body
-                intraday['LongUpperWick'] = intraday['UpperWick'] > 2.2 * intraday['Body']
+                # # Define simple upper wick condition
+                # # Long upper wick if upper wick > 2x body
+                # intraday['LongUpperWick'] = intraday['UpperWick'] > 2.2 * intraday['Body']
 
-                # Optional: Filter tiny bodies
-                intraday['ValidBody'] = intraday['Body'] > 0
+                # # Optional: Filter tiny bodies
+                # intraday['ValidBody'] = intraday['Body'] > 0
 
-                # Final condition: big upper wick + valid body
-                intraday['UpperWickFlag'] = intraday['LongUpperWick'] & intraday['ValidBody']
+                # # Final condition: big upper wick + valid body
+                # intraday['UpperWickFlag'] = intraday['LongUpperWick'] & intraday['ValidBody']
 
-                with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
-                    # ❶ create a 2-row figure (70 % price, 30 % volume)
-                    fig = make_subplots(rows=2, cols=1,
-                                        shared_xaxes=True,
-                                        vertical_spacing=0.03,
-                                        row_heights=[0.7, 0.3])
+                # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+                #     # ❶ create a 2-row figure (70 % price, 30 % volume)
+                #     fig = make_subplots(rows=2, cols=1,
+                #                         shared_xaxes=True,
+                #                         vertical_spacing=0.03,
+                #                         row_heights=[0.7, 0.3])
 
-                    # ❷ ── price & Ichimoku (row 1) ──────────────────────────────────────
-                    fig.add_trace(go.Candlestick(
-                        x=intraday['Time'],
-                        open=intraday['Open'],
-                        high=intraday['High'],
-                        low=intraday['Low'],
-                        close=intraday['Close'],
-                        name='Candles'),
-                        row=1, col=1)
-                            # Use .dropna() to avoid early NaNs
-                    bb9 = intraday.dropna(subset=["Upper9", "Lower9", "MA9"])
-                    bb20 = intraday.dropna(subset=["Upper20", "Lower20", "MA20"])
+                #     # ❷ ── price & Ichimoku (row 1) ──────────────────────────────────────
+                #     fig.add_trace(go.Candlestick(
+                #         x=intraday['Time'],
+                #         open=intraday['Open'],
+                #         high=intraday['High'],
+                #         low=intraday['Low'],
+                #         close=intraday['Close'],
+                #         name='Candles'),
+                #         row=1, col=1)
+                #             # Use .dropna() to avoid early NaNs
+                #     bb9 = intraday.dropna(subset=["Upper9", "Lower9", "MA9"])
+                #     bb20 = intraday.dropna(subset=["Upper20", "Lower20", "MA20"])
 
-                    # BB(9) — thinner & more transparent
-                    fig.add_trace(go.Scatter(
-                        x=bb9["Time"], y=bb9["Upper9"],
-                        line=dict(color='orange', width=1),
-                        name="BB(9) Upper"
-                    ), row=1, col=1)
+                #     # BB(9) — thinner & more transparent
+                #     fig.add_trace(go.Scatter(
+                #         x=bb9["Time"], y=bb9["Upper9"],
+                #         line=dict(color='orange', width=1),
+                #         name="BB(9) Upper"
+                #     ), row=1, col=1)
 
-                    fig.add_trace(go.Scatter(
-                        x=bb9["Time"], y=bb9["MA9"],
-                        line=dict(color='orange', width=1, dash='dot'),
-                        name="BB(9) MA"
-                    ), row=1, col=1)
+                #     fig.add_trace(go.Scatter(
+                #         x=bb9["Time"], y=bb9["MA9"],
+                #         line=dict(color='orange', width=1, dash='dot'),
+                #         name="BB(9) MA"
+                #     ), row=1, col=1)
 
-                    fig.add_trace(go.Scatter(
-                        x=bb9["Time"], y=bb9["Lower9"],
-                        line=dict(color='orange', width=1),
-                        name="BB(9) Lower"
-                    ), row=1, col=1)
+                #     fig.add_trace(go.Scatter(
+                #         x=bb9["Time"], y=bb9["Lower9"],
+                #         line=dict(color='orange', width=1),
+                #         name="BB(9) Lower"
+                #     ), row=1, col=1)
 
-                    # BB(20) — classic dark gray
-                    fig.add_trace(go.Scatter(
-                        x=bb20["Time"], y=bb20["Upper20"],
-                        line=dict(color='gray', width=1),
-                        name="BB(20) Upper"
-                    ), row=1, col=1)
+                #     # BB(20) — classic dark gray
+                #     fig.add_trace(go.Scatter(
+                #         x=bb20["Time"], y=bb20["Upper20"],
+                #         line=dict(color='gray', width=1),
+                #         name="BB(20) Upper"
+                #     ), row=1, col=1)
 
-                    fig.add_trace(go.Scatter(
-                        x=bb20["Time"], y=bb20["MA20"],
-                        line=dict(color='gray', width=1, dash='dot'),
-                        name="BB(20) MA"
-                    ), row=1, col=1)
+                #     fig.add_trace(go.Scatter(
+                #         x=bb20["Time"], y=bb20["MA20"],
+                #         line=dict(color='gray', width=1, dash='dot'),
+                #         name="BB(20) MA"
+                #     ), row=1, col=1)
 
-                    fig.add_trace(go.Scatter(
-                        x=bb20["Time"], y=bb20["Lower20"],
-                        line=dict(color='gray', width=1),
-                        name="BB(20) Lower"
-                    ), row=1, col=1)
+                #     fig.add_trace(go.Scatter(
+                #         x=bb20["Time"], y=bb20["Lower20"],
+                #         line=dict(color='gray', width=1),
+                #         name="BB(20) Lower"
+                #     ), row=1, col=1)
 
                     # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
                     #                         line=dict(color='red'), name='Tenkan-sen'),
@@ -2880,53 +2880,53 @@ if st.sidebar.button("Run Analysis"):
                     #             row=1, col=1)
 
                     # ❸ ── volume bars (row 2) ──────────────────────────────────────────
-                    fig.add_trace(go.Bar(
-                        x=intraday['Time'],
-                        y=intraday['Volume'],
-                        marker=dict(opacity=0.5),
-                        name='Volume'),
-                        row=2, col=1)
+                    # fig.add_trace(go.Bar(
+                    #     x=intraday['Time'],
+                    #     y=intraday['Volume'],
+                    #     marker=dict(opacity=0.5),
+                    #     name='Volume'),
+                    #     row=2, col=1)
 
-                    # ❹ layout tweaks
-                    fig.update_layout(
-                        title="Ichimoku Candlestick Chart + Volume",
-                        xaxis_rangeslider_visible=False,  # rangeslider only once
-                        height=500,
-                        margin=dict(l=30, r=30, t=40, b=20)
-                    )
-                    if 'RVOL_5' in intraday.columns:
-                        # Initialize no markers first
-                        intraday['MarkerColor'] = None
-                        intraday['MarkerLabel'] = None
+                    # # ❹ layout tweaks
+                    # fig.update_layout(
+                    #     title="Ichimoku Candlestick Chart + Volume",
+                    #     xaxis_rangeslider_visible=False,  # rangeslider only once
+                    #     height=500,
+                    #     margin=dict(l=30, r=30, t=40, b=20)
+                    # )
+                    # if 'RVOL_5' in intraday.columns:
+                    #     # Initialize no markers first
+                    #     intraday['MarkerColor'] = None
+                    #     intraday['MarkerLabel'] = None
 
-                        # Prioritize higher RVOL first
-                        for thr, color, label in [(1.8, '#ff0000', 'RVOL ≥ 1.8'),
-                                                (1.5, '#ffd700', 'RVOL ≥ 1.5'),
-                                                (1.2, '#ff69b4', 'RVOL ≥ 1.2')]:
-                            mask = (intraday['RVOL_5'] >= thr) & (intraday['MarkerColor'].isna())
-                            intraday.loc[mask, 'MarkerColor'] = color
-                            intraday.loc[mask, 'MarkerLabel'] = label
+                    #     # Prioritize higher RVOL first
+                    #     for thr, color, label in [(1.8, '#ff0000', 'RVOL ≥ 1.8'),
+                    #                             (1.5, '#ffd700', 'RVOL ≥ 1.5'),
+                    #                             (1.2, '#ff69b4', 'RVOL ≥ 1.2')]:
+                    #         mask = (intraday['RVOL_5'] >= thr) & (intraday['MarkerColor'].isna())
+                    #         intraday.loc[mask, 'MarkerColor'] = color
+                    #         intraday.loc[mask, 'MarkerLabel'] = label
 
-                        # Now plot only once per bar
-                        mask_final = intraday['MarkerColor'].notna()
-                        fig.add_trace(go.Scatter(
-                            x=intraday.loc[mask_final, 'Time'],
-                            y=intraday.loc[mask_final, 'Volume'],
-                            mode='markers',
-                            marker=dict(
-                                symbol='triangle-up',
-                                size=10,
-                                color=intraday.loc[mask_final, 'MarkerColor']
-                            ),
-                            name='RVOL Marker',
-                            customdata=intraday.loc[mask_final, 'RVOL_5'],
-                            hovertemplate='%{x}<br>Vol: %{y}<br>RVOL_5: %{customdata:.2f}',
-                        ), row=2, col=1)
-
-
+                    #     # Now plot only once per bar
+                    #     mask_final = intraday['MarkerColor'].notna()
+                    #     fig.add_trace(go.Scatter(
+                    #         x=intraday.loc[mask_final, 'Time'],
+                    #         y=intraday.loc[mask_final, 'Volume'],
+                    #         mode='markers',
+                    #         marker=dict(
+                    #             symbol='triangle-up',
+                    #             size=10,
+                    #             color=intraday.loc[mask_final, 'MarkerColor']
+                    #         ),
+                    #         name='RVOL Marker',
+                    #         customdata=intraday.loc[mask_final, 'RVOL_5'],
+                    #         hovertemplate='%{x}<br>Vol: %{y}<br>RVOL_5: %{customdata:.2f}',
+                    #     ), row=2, col=1)
 
 
-                    st.plotly_chart(fig, use_container_width=True)
+
+
+                    # st.plotly_chart(fig, use_container_width=True)
 
 
 
