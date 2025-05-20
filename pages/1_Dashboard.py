@@ -3900,37 +3900,37 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                  # Create separate masks for upward and downward crosses:
-#                     mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
-#                     mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
+                 # Create separate masks for upward and downward crosses:
+                    mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
+                    mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
 
-#                     # Upward Cross Trace (♕)
-#                     up_cross_trace = go.Scatter(
-#                         x=intraday.loc[mask_kijun_up, "Time"],
-#                         y=intraday.loc[mask_kijun_up, "F_numeric"] + 55,  # Offset upward (adjust as needed)
-#                         mode="text",
-#                         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
-#                         textposition="top center",  # Positioned above the point
-#                         textfont=dict(size=55, color="green"),
-#                         name="Kijun Cross Up (♕)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
-#                     )
+                    # Upward Cross Trace (♕)
+                    up_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_up, "Time"],
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 55,  # Offset upward (adjust as needed)
+                        mode="text",
+                        text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
+                        textposition="top center",  # Positioned above the point
+                        textfont=dict(size=55, color="green"),
+                        name="Kijun Cross Up (♕)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
+                    )
 
-#                     # Downward Cross Trace (♛)
-#                     down_cross_trace = go.Scatter(
-#                         x=intraday.loc[mask_kijun_down, "Time"],
-#                         y=intraday.loc[mask_kijun_down, "F_numeric"] - 55,  # Offset downward
-#                         mode="text",
-#                         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
-#                         textposition="bottom center",  # Positioned below the point
-#                         textfont=dict(size=55, color="red"),
-#                         name="Kijun Cross Down (♛)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
-#                     )
+                    # Downward Cross Trace (♛)
+                    down_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_down, "Time"],
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 55,  # Offset downward
+                        mode="text",
+                        text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
+                        textposition="bottom center",  # Positioned below the point
+                        textfont=dict(size=55, color="red"),
+                        name="Kijun Cross Down (♛)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
+                    )
 
 
-#                     fig.add_trace(up_cross_trace,   row=1, col=1)
-#                     fig.add_trace(down_cross_trace, row=1, col=1)
+                    fig.add_trace(up_cross_trace,   row=1, col=1)
+                    fig.add_trace(down_cross_trace, row=1, col=1)
 
 
 
@@ -3969,38 +3969,38 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_horse_sell, row=1, col=1)
 
 
-                # 🟢 BBW Expansion – Add Bishop ♗ (up) and Bishop ♝ (down)
-                # 🧙 Kijun Cross Bishops (♗ ♝)
+                🟢 BBW Expansion – Add Bishop ♗ (up) and Bishop ♝ (down)
+                🧙 Kijun Cross Bishops (♗ ♝)
 
-                # mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
-                # mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
+                mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
+                mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
 
-                # # Bishop Up (♗)
-                # scatter_bishop_up = go.Scatter(
-                #     x=intraday.loc[mask_bishop_up, "Time"],
-                #     y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
-                #     mode="text",
-                #     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
-                #     textposition="top center",
-                #     textfont=dict(size=34, color="green"),
-                #     name="Kijun Cross Bishop (Buy ♗)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
-                # )
+                # Bishop Up (♗)
+                scatter_bishop_up = go.Scatter(
+                    x=intraday.loc[mask_bishop_up, "Time"],
+                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
+                    mode="text",
+                    text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
+                    textposition="top center",
+                    textfont=dict(size=34, color="green"),
+                    name="Kijun Cross Bishop (Buy ♗)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
+                )
 
-                # # Bishop Down (♝)
-                # scatter_bishop_down = go.Scatter(
-                #     x=intraday.loc[mask_bishop_down, "Time"],
-                #     y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
-                #     mode="text",
-                #     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
-                #     textposition="bottom center",
-                #     textfont=dict(size=34, color="red"),
-                #     name="Kijun Cross Bishop (Sell ♝)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
-                # )
+                # Bishop Down (♝)
+                scatter_bishop_down = go.Scatter(
+                    x=intraday.loc[mask_bishop_down, "Time"],
+                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
+                    mode="text",
+                    text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
+                    textposition="bottom center",
+                    textfont=dict(size=34, color="red"),
+                    name="Kijun Cross Bishop (Sell ♝)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
+                )
 
-                # fig.add_trace(scatter_bishop_up, row=1, col=1)
-                # fig.add_trace(scatter_bishop_down, row=1, col=1)
+                fig.add_trace(scatter_bishop_up, row=1, col=1)
+                fig.add_trace(scatter_bishop_down, row=1, col=1)
 
 
 
