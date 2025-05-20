@@ -3937,70 +3937,70 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                 # Mask for each horse
-#                 mask_horse_buy = intraday["Kijun_Cross_Horse"] == "♘"
-#                 mask_horse_sell = intraday["Kijun_Cross_Horse"] == "♞"
+                # Mask for each horse
+                mask_horse_buy = intraday["Kijun_Cross_Horse"] == "♘"
+                mask_horse_sell = intraday["Kijun_Cross_Horse"] == "♞"
 
-#                 # Buy Horse (♘) → normal above
-#                 scatter_horse_buy = go.Scatter(
-#                     x=intraday.loc[mask_horse_buy, "Time"],
-#                     y=intraday.loc[mask_horse_buy, "F_numeric"] + 34,
-#                     mode="text",
-#                     text=["♘"] * mask_horse_buy.sum(),
-#                     textposition="top center",
-#                     textfont=dict(size=34, color="green"),  # You can make it white if you want
-#                     name="Horse After Buy Kijun Cross",
-#                     hovertemplate="Time: %{x}<br>F%: %{y}<br>♘ Horse after Buy<extra></extra>"
-#                 )
+                # Buy Horse (♘) → normal above
+                scatter_horse_buy = go.Scatter(
+                    x=intraday.loc[mask_horse_buy, "Time"],
+                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 34,
+                    mode="text",
+                    text=["♘"] * mask_horse_buy.sum(),
+                    textposition="top center",
+                    textfont=dict(size=34, color="green"),  # You can make it white if you want
+                    name="Horse After Buy Kijun Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>♘ Horse after Buy<extra></extra>"
+                )
 
-#                 # Sell Horse (♞) → below and red
-#                 scatter_horse_sell = go.Scatter(
-#                     x=intraday.loc[mask_horse_sell, "Time"],
-#                     y=intraday.loc[mask_horse_sell, "F_numeric"] - 34,
-#                     mode="text",
-#                     text=["♞"] * mask_horse_sell.sum(),
-#                     textposition="bottom center",
-#                     textfont=dict(size=34, color="red"),
-#                     name="Horse After Sell Kijun Cross",
-#                     hovertemplate="Time: %{x}<br>F%: %{y}<br>♞ Horse after Sell<extra></extra>"
-#                 )
+                # Sell Horse (♞) → below and red
+                scatter_horse_sell = go.Scatter(
+                    x=intraday.loc[mask_horse_sell, "Time"],
+                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 34,
+                    mode="text",
+                    text=["♞"] * mask_horse_sell.sum(),
+                    textposition="bottom center",
+                    textfont=dict(size=34, color="red"),
+                    name="Horse After Sell Kijun Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>♞ Horse after Sell<extra></extra>"
+                )
 
-#                 fig.add_trace(scatter_horse_buy, row=1, col=1)
-#                 fig.add_trace(scatter_horse_sell, row=1, col=1)
+                fig.add_trace(scatter_horse_buy, row=1, col=1)
+                fig.add_trace(scatter_horse_sell, row=1, col=1)
 
 
                 # 🟢 BBW Expansion – Add Bishop ♗ (up) and Bishop ♝ (down)
                 # 🧙 Kijun Cross Bishops (♗ ♝)
 
-                mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
-                mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
+                # mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
+                # mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
 
-                # Bishop Up (♗)
-                scatter_bishop_up = go.Scatter(
-                    x=intraday.loc[mask_bishop_up, "Time"],
-                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
-                    mode="text",
-                    text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
-                    textposition="top center",
-                    textfont=dict(size=34, color="green"),
-                    name="Kijun Cross Bishop (Buy ♗)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
-                )
+                # # Bishop Up (♗)
+                # scatter_bishop_up = go.Scatter(
+                #     x=intraday.loc[mask_bishop_up, "Time"],
+                #     y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
+                #     mode="text",
+                #     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
+                #     textposition="top center",
+                #     textfont=dict(size=34, color="green"),
+                #     name="Kijun Cross Bishop (Buy ♗)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
+                # )
 
-                # Bishop Down (♝)
-                scatter_bishop_down = go.Scatter(
-                    x=intraday.loc[mask_bishop_down, "Time"],
-                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
-                    mode="text",
-                    text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
-                    textposition="bottom center",
-                    textfont=dict(size=34, color="red"),
-                    name="Kijun Cross Bishop (Sell ♝)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
-                )
+                # # Bishop Down (♝)
+                # scatter_bishop_down = go.Scatter(
+                #     x=intraday.loc[mask_bishop_down, "Time"],
+                #     y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
+                #     mode="text",
+                #     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
+                #     textposition="bottom center",
+                #     textfont=dict(size=34, color="red"),
+                #     name="Kijun Cross Bishop (Sell ♝)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
+                # )
 
-                fig.add_trace(scatter_bishop_up, row=1, col=1)
-                fig.add_trace(scatter_bishop_down, row=1, col=1)
+                # fig.add_trace(scatter_bishop_up, row=1, col=1)
+                # fig.add_trace(scatter_bishop_down, row=1, col=1)
 
 
 
