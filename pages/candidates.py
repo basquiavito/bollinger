@@ -18,7 +18,7 @@ selected_tickers = st.multiselect(
 )
 
 # Define your timeframes (cleaned)
-intervals = ["2m","5m","15m"]
+intervals = ["5m","15m"]
 
 # Date range selection like original
 today = datetime.today()
