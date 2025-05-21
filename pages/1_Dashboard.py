@@ -3438,96 +3438,96 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#            # BBW Tight Compression (🐝) – 3 of last 5 bars under threshold
-#                     mask_bbw_tight = intraday["BBW_Tight_Emoji"] == "🐝"
-#                     scatter_bbw_tight = go.Scatter(
-#                         x=intraday.loc[mask_bbw_tight, "Time"],
-#                         y=intraday.loc[mask_bbw_tight, "F_numeric"] + 13,  # Offset upward
-#                         mode="text",
-#                         text=["🐝"] * mask_bbw_tight.sum(),
-#                         textposition="top center",
-#                         textfont=dict(size=21),
-#                         name="BBW Tight Compression (🐝)",
-#                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression (🐝)<extra></extra>"
-#                     )
+           # BBW Tight Compression (🐝) – 3 of last 5 bars under threshold
+                    mask_bbw_tight = intraday["BBW_Tight_Emoji"] == "🐝"
+                    scatter_bbw_tight = go.Scatter(
+                        x=intraday.loc[mask_bbw_tight, "Time"],
+                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 13,  # Offset upward
+                        mode="text",
+                        text=["🐝"] * mask_bbw_tight.sum(),
+                        textposition="top center",
+                        textfont=dict(size=21),
+                        name="BBW Tight Compression (🐝)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression (🐝)<extra></extra>"
+                    )
 
-#                     fig.add_trace(scatter_bbw_tight, row=1, col=1)
-
-
-
-
-#  # 🟢 BBW Expansion
-
-#                     mask_bbw_alert = intraday["BBW Alert"] != ""
-
-#                     scatter_bbw_alert = go.Scatter(
-#                         x=intraday.loc[mask_bbw_alert, "Time"],
-#                         y=intraday.loc[mask_bbw_alert, "F_numeric"] + 8,  # Offset above F%
-#                         mode="text",
-#                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
-#                         textposition="top center",
-#                         textfont=dict(size=13),
-#                         name="BBW Expansion Alert",
-#                         hovertemplate="Time: %{x}<br>BBW Ratio: %{customdata:.2f}<extra></extra>",
-#                         customdata=intraday.loc[mask_bbw_alert, "BBW_Ratio"]
-#                     )
-
-#                     fig.add_trace(scatter_bbw_alert, row=1, col=1)
-
-
-#  #  🟢 ADX Expansion
-
-
-#           # Mask for ADX Alerts (♨️, 🧨)
-#                     mask_adx_alert = intraday["ADX_Alert"] != ""
-
-#                     scatter_adx_alert = go.Scatter(
-#                         x=intraday.loc[mask_adx_alert, "Time"],
-#                         y=intraday.loc[mask_adx_alert, "F_numeric"] + 55,  # Offset for visibility
-#                         mode="text",
-#                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
-#                         textposition="bottom center",
-#                         textfont=dict(size=13),
-#                         name="ADX Expansion Alert",
-#                         hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
-#                         customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
-#                     )
-
-#                     fig.add_trace(scatter_adx_alert, row=1, col=1)
+                    fig.add_trace(scatter_bbw_tight, row=1, col=1)
 
 
 
-# # 🟢  STD Expansion  (🐦‍🔥)
-#                     mask_std_alert = intraday["STD_Alert"] != ""
 
-#                     scatter_std_alert = go.Scatter(
-#                         x=intraday.loc[mask_std_alert, "Time"],
-#                         y=intraday.loc[mask_std_alert, "F_numeric"] + 55,  # Offset above F%
-#                         mode="text",
-#                         text=intraday.loc[mask_std_alert, "STD_Alert"],
-#                         textposition="top center",
-#                         textfont=dict(size=21),
-#                         name="F% STD Expansion",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
-#                     )
+ # 🟢 BBW Expansion
 
-#                     fig.add_trace(scatter_std_alert, row=1, col=1)
+                    mask_bbw_alert = intraday["BBW Alert"] != ""
 
-# #  🟢   ATR Expansion
-#                     mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
+                    scatter_bbw_alert = go.Scatter(
+                        x=intraday.loc[mask_bbw_alert, "Time"],
+                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 8,  # Offset above F%
+                        mode="text",
+                        text=intraday.loc[mask_bbw_alert, "BBW Alert"],
+                        textposition="top center",
+                        textfont=dict(size=13),
+                        name="BBW Expansion Alert",
+                        hovertemplate="Time: %{x}<br>BBW Ratio: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_bbw_alert, "BBW_Ratio"]
+                    )
 
-#                     atr_alert_scatter = go.Scatter(
-#                         x=intraday.loc[mask_atr_alert, "Time"],
-#                         y=intraday.loc[mask_atr_alert, "F_numeric"]  + 34,  # place below F%
-#                         mode="text",
-#                         text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
-#                         textfont=dict(size=21),
-#                         name="ATR Expansion",
-#                         hoverinfo="text",
-#                         hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
-#                     )
+                    fig.add_trace(scatter_bbw_alert, row=1, col=1)
 
-#                     fig.add_trace(atr_alert_scatter, row=1, col=1)
+
+ #  🟢 ADX Expansion
+
+
+          # Mask for ADX Alerts (♨️, 🧨)
+                    mask_adx_alert = intraday["ADX_Alert"] != ""
+
+                    scatter_adx_alert = go.Scatter(
+                        x=intraday.loc[mask_adx_alert, "Time"],
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 55,  # Offset for visibility
+                        mode="text",
+                        text=intraday.loc[mask_adx_alert, "ADX_Alert"],
+                        textposition="bottom center",
+                        textfont=dict(size=13),
+                        name="ADX Expansion Alert",
+                        hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
+                    )
+
+                    fig.add_trace(scatter_adx_alert, row=1, col=1)
+
+
+
+# 🟢  STD Expansion  (🐦‍🔥)
+                    mask_std_alert = intraday["STD_Alert"] != ""
+
+                    scatter_std_alert = go.Scatter(
+                        x=intraday.loc[mask_std_alert, "Time"],
+                        y=intraday.loc[mask_std_alert, "F_numeric"] + 55,  # Offset above F%
+                        mode="text",
+                        text=intraday.loc[mask_std_alert, "STD_Alert"],
+                        textposition="top center",
+                        textfont=dict(size=21),
+                        name="F% STD Expansion",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
+                    )
+
+                    fig.add_trace(scatter_std_alert, row=1, col=1)
+
+#  🟢   ATR Expansion
+                    mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
+
+                    atr_alert_scatter = go.Scatter(
+                        x=intraday.loc[mask_atr_alert, "Time"],
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 34,  # place below F%
+                        mode="text",
+                        text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
+                        textfont=dict(size=21),
+                        name="ATR Expansion",
+                        hoverinfo="text",
+                        hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
+                    )
+
+                    fig.add_trace(atr_alert_scatter, row=1, col=1)
 
 # # 🟢 TD SUPPLY
 
