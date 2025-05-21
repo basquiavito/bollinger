@@ -3529,132 +3529,132 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(atr_alert_scatter, row=1, col=1)
 
-# # 🟢 TD SUPPLY
+# 🟢 TD SUPPLY
 
-#           # 🟤 TD Supply Line (F%)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday['Time'],
-#                             y=intraday['TD Supply Line F'],
-#                             mode='lines',
-#                             line=dict(width=1, color="#a9a9a9", dash='dot'),
-#                             name='TD Supply F%',
-#                             hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
-#                         ),
-#                         row=1, col=1
-#                     )
-
-
-
-# #🟢 TD DEMAND
-
-
-#                     # 🔵 TD Demand Line (F%)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday['Time'],
-#                             y=intraday['TD Demand Line F'],
-#                             mode='lines',
-#                             line=dict(width=1, color="DarkSeaGreen", dash='dot'),
-#                             name='TD Demand F%',
-#                             hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
-#                         ),
-#                         row=1, col=1
-#                     )
+          # 🟤 TD Supply Line (F%)
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday['Time'],
+                            y=intraday['TD Supply Line F'],
+                            mode='lines',
+                            line=dict(width=1, color="#a9a9a9", dash='dot'),
+                            name='TD Supply F%',
+                            hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
+                        ),
+                        row=1, col=1
+                    )
 
 
 
+#🟢 TD DEMAND
 
 
-#                # Extract only the rows where TDST just formed
-#                     tdst_points = intraday["TDST"].notna()
-
-#                     tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-#                     tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
-
-
-
-#                     tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-#                     tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
-
-
-#                     # Buy TDST marker (⎯)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday.loc[tdst_buy_mask, "Time"],
-#                             y=intraday.loc[tdst_buy_mask, "F_numeric"],
-#                             mode="text",
-#                             text=["⎯"] * tdst_buy_mask.sum(),
-#                             textposition="middle center",
-#                             textfont=dict(size=55, color="green"),
-#                             name="Buy TDST",
-#                             hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                         ),
-#                         row=1, col=1
-#                     )
-
-#                     # Sell TDST marker (⎯)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday.loc[tdst_sell_mask, "Time"],
-#                             y=intraday.loc[tdst_sell_mask, "F_numeric"],
-#                             mode="text",
-#                             text=["⎯"] * tdst_sell_mask.sum(),
-#                             textposition="middle center",
-#                             textfont=dict(size=55, color="red"),
-#                             name="Sell TDST",
-#                             hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                         ),
-#                         row=1, col=1
-#                     )
+                    # 🔵 TD Demand Line (F%)
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday['Time'],
+                            y=intraday['TD Demand Line F'],
+                            mode='lines',
+                            line=dict(width=1, color="DarkSeaGreen", dash='dot'),
+                            name='TD Demand F%',
+                            hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
+                        ),
+                        row=1, col=1
+                    )
 
 
 
 
-#                     cloud_mask = intraday["Heaven_Cloud"] == "☁️"
 
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday.loc[cloud_mask, "Time"],
-#                         y=intraday.loc[cloud_mask, "F_numeric"] + 89,
-#                         mode="text",
-#                         text=intraday.loc[cloud_mask, "Heaven_Cloud"],
-#                         textposition="top center",
-#                         textfont=dict(size=34),
-#                         name="Heaven ☁️",
-#                         hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
-#                     ), row=1, col=1)
+               # Extract only the rows where TDST just formed
+                    tdst_points = intraday["TDST"].notna()
 
-#                     # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
-#                     intraday["Drizzle_Emoji"] = None
-#                     below_demand = False
-
-#                     for i in range(1, len(intraday)):
-#                         f = intraday["F_numeric"].iloc[i]
-#                         demand = intraday["TD Demand Line F"].iloc[i]
-
-#                         if pd.notna(demand) and f < demand:
-#                             below_demand = True
-#                         elif pd.notna(demand) and f >= demand:
-#                             below_demand = False
-
-#                         if below_demand:
-#                             intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
+                    tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
+                    tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
 
 
 
-#                     # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
-#                     drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
+                    tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
+                    tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
 
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday.loc[drizzle_mask, "Time"],
-#                         y=intraday.loc[drizzle_mask, "F_numeric"] + 89,  # Position below the bar
-#                         mode="text",
-#                         text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
-#                         textposition="bottom center",
-#                         textfont=dict(size=32),
-#                         name="Price Dropped Below Demand 🌧️",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
-#                     ), row=1, col=1)
+
+                    # Buy TDST marker (⎯)
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday.loc[tdst_buy_mask, "Time"],
+                            y=intraday.loc[tdst_buy_mask, "F_numeric"],
+                            mode="text",
+                            text=["⎯"] * tdst_buy_mask.sum(),
+                            textposition="middle center",
+                            textfont=dict(size=55, color="green"),
+                            name="Buy TDST",
+                            hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                        ),
+                        row=1, col=1
+                    )
+
+                    # Sell TDST marker (⎯)
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday.loc[tdst_sell_mask, "Time"],
+                            y=intraday.loc[tdst_sell_mask, "F_numeric"],
+                            mode="text",
+                            text=["⎯"] * tdst_sell_mask.sum(),
+                            textposition="middle center",
+                            textfont=dict(size=55, color="red"),
+                            name="Sell TDST",
+                            hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                        ),
+                        row=1, col=1
+                    )
+
+
+
+
+                    cloud_mask = intraday["Heaven_Cloud"] == "☁️"
+
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[cloud_mask, "Time"],
+                        y=intraday.loc[cloud_mask, "F_numeric"] + 89,
+                        mode="text",
+                        text=intraday.loc[cloud_mask, "Heaven_Cloud"],
+                        textposition="top center",
+                        textfont=dict(size=34),
+                        name="Heaven ☁️",
+                        hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
+                    ), row=1, col=1)
+
+                    # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
+                    intraday["Drizzle_Emoji"] = None
+                    below_demand = False
+
+                    for i in range(1, len(intraday)):
+                        f = intraday["F_numeric"].iloc[i]
+                        demand = intraday["TD Demand Line F"].iloc[i]
+
+                        if pd.notna(demand) and f < demand:
+                            below_demand = True
+                        elif pd.notna(demand) and f >= demand:
+                            below_demand = False
+
+                        if below_demand:
+                            intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
+
+
+
+                    # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
+                    drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
+
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[drizzle_mask, "Time"],
+                        y=intraday.loc[drizzle_mask, "F_numeric"] + 89,  # Position below the bar
+                        mode="text",
+                        text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
+                        textposition="bottom center",
+                        textfont=dict(size=32),
+                        name="Price Dropped Below Demand 🌧️",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
+                    ), row=1, col=1)
 
 
 
