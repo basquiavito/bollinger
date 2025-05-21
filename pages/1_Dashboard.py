@@ -3692,7 +3692,7 @@ if st.sidebar.button("Run Analysis"):
 #                     ))
 
 
-#                     intraday["F_shift"] = intraday["F_numeric"].shift(1)
+                    intraday["F_shift"] = intraday["F_numeric"].shift(1)
 
 #                     tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
 #                     tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
