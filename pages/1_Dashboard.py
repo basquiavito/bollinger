@@ -3343,73 +3343,73 @@ if st.sidebar.button("Run Analysis"):
 # # ------------------------------------------------------------------------------------------------------------------------
 
 
-#                     # Mask for Tenkan-Kijun Crosses
-#                     mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-#                     mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
+                    # Mask for Tenkan-Kijun Crosses
+                    mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+                    mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-#                     # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-#                     scatter_tk_sun = go.Scatter(
-#                         x=intraday.loc[mask_tk_sun, "Time"],
-#                         y=intraday.loc[mask_tk_sun, "F_numeric"] + 244,  # Offset for visibility
-#                         mode="text",
-#                         text="🌞",
-#                         textposition="top center",
-#                         textfont=dict(size=55),
-#                         name="Tenkan-Kijun Bullish Cross",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-#                     )
+                    # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                    scatter_tk_sun = go.Scatter(
+                        x=intraday.loc[mask_tk_sun, "Time"],
+                        y=intraday.loc[mask_tk_sun, "F_numeric"] + 244,  # Offset for visibility
+                        mode="text",
+                        text="🌞",
+                        textposition="top center",
+                        textfont=dict(size=55),
+                        name="Tenkan-Kijun Bullish Cross",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                    )
 
-#                     # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-#                     scatter_tk_moon = go.Scatter(
-#                         x=intraday.loc[mask_tk_moon, "Time"],
-#                         y=intraday.loc[mask_tk_moon, "F_numeric"] - 244,  # Offset for visibility
-#                         mode="text",
-#                         text="🌙",
-#                         textposition="bottom center",
-#                         textfont=dict(size=55),
-#                         name="Tenkan-Kijun Bearish Cross",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-#                     )
+                    # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                    scatter_tk_moon = go.Scatter(
+                        x=intraday.loc[mask_tk_moon, "Time"],
+                        y=intraday.loc[mask_tk_moon, "F_numeric"] - 244,  # Offset for visibility
+                        mode="text",
+                        text="🌙",
+                        textposition="bottom center",
+                        textfont=dict(size=55),
+                        name="Tenkan-Kijun Bearish Cross",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                    )
 
-#                     # Add to the F% Plot
-#                     fig.add_trace(scatter_tk_sun, row=1, col=1)
-#                     fig.add_trace(scatter_tk_moon, row=1, col=1)
+                    # Add to the F% Plot
+                    fig.add_trace(scatter_tk_sun, row=1, col=1)
+                    fig.add_trace(scatter_tk_moon, row=1, col=1)
 
-#                     # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
-#                     y_open_f_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
-#                         mode="lines",
-#                         line=dict(color="grey", dash="dash"),
-#                         name="Yesterday Open (F%)"
-#                     )
+                    # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
+                    y_open_f_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
+                        mode="lines",
+                        line=dict(color="grey", dash="dash"),
+                        name="Yesterday Open (F%)"
+                    )
 
-#                     # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
-#                     y_high_f_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
-#                         mode="lines",
-#                         line=dict(color="green", dash="dash"),
-#                         name="Yesterday High (F%)"
-#                     )
+                    # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
+                    y_high_f_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
+                        mode="lines",
+                        line=dict(color="green", dash="dash"),
+                        name="Yesterday High (F%)"
+                    )
 
-#                     # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
-#                     y_low_f_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
-#                         mode="lines",
-#                         line=dict(color="red", dash="dash"),
-#                         name="Yesterday Low (F%)"
-#                     )
+                    # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
+                    y_low_f_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
+                        mode="lines",
+                        line=dict(color="red", dash="dash"),
+                        name="Yesterday Low (F%)"
+                    )
 
-#                     # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
-#                     y_close_f_line = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=[0] * len(intraday),
-#                         mode="lines",
-#                         line=dict(color="blue", dash="dash"),
-#                         name="Yesterday Close (F%)"
-#                     )
+                    # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
+                    y_close_f_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=[0] * len(intraday),
+                        mode="lines",
+                        line=dict(color="blue", dash="dash"),
+                        name="Yesterday Close (F%)"
+                    )
 
 
 #                   # (D) TD Trap Arrows - Only First Sell TD Trap
