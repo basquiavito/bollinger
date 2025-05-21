@@ -23,7 +23,7 @@ st.title("Options Wealth")
 # ======================================
 st.sidebar.header("Input Options")
 
-default_tickers = ["NVDA", "AVGO","AMD","PLTR","MRVL","uber","AMZN","AAPL","googl","MSFT","META","tsla","sbux","nke","chwy","DKNG","GM","cmg","c","wfc","hood","coin","bac","jpm","PYPL","tgt"]
+default_tickers = ["SPY","NVDA", "AVGO","AMD","PLTR","MRVL","uber","AMZN","AAPL","googl","MSFT","META","tsla","sbux","nke","chwy","DKNG","GM","cmg","c","wfc","hood","coin","bac","jpm","PYPL","tgt"]
 tickers = st.sidebar.multiselect(
     "Select Tickers",
     options=default_tickers,
