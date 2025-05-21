@@ -2050,33 +2050,64 @@ if st.sidebar.button("Run Analysis"):
                 # intraday = detect_kijun_f_cross(intraday)
 
  
-                def detect_kijun_f_cross(df, min_angle_deg=45):
+                  def detect_kijun_f_cross(df, min_angle_deg=45):
                     """
-                    Marks a Buy/Sell Kijun cross only if the NEXT bar follows through
-                    with at least `min_angle_deg` slope.
-                    Result stored in df['Kijun_F_Cross'].
+                    Enhanced Kijun Cross detection:
+                    - Confirms Buy/Sell only if follow-through occurs in next 3 bars.
+                    - Follow-through requires:
+                        1. Direction match (next bar must continue same direction).
+                        2. Slope angle ≥ min_angle_deg.
+                        3. High (for Buy) or Low (for Sell) of cross bar must be surpassed.
                     """
-                    df["Kijun_F_Cross"] = ""       # clear old column
+                    df["Kijun_F_Cross"] = ""  # Clear old values
                 
-                    for i in range(1, len(df) - 1):            # we look one bar ahead
-                        prev_f, curr_f, next_f = df.loc[i-1, "F_numeric"], df.loc[i, "F_numeric"], df.loc[i+1, "F_numeric"]
-                        prev_k,       curr_k     = df.loc[i-1, "Kijun_F"], df.loc[i, "Kijun_F"]
+                    for i in range(1, len(df) - 3):
+                        prev_f = df.loc[i - 1, "F_numeric"]
+                        curr_f = df.loc[i, "F_numeric"]
+                        next_f_1 = df.loc[i + 1, "F_numeric"]
+                        next_f_2 = df.loc[i + 2, "F_numeric"]
+                        next_f_3 = df.loc[i + 3, "F_numeric"]
                 
-                        # ---------- BUY side ----------
+                        prev_k = df.loc[i - 1, "Kijun_F"]
+                        curr_k = df.loc[i, "Kijun_F"]
+                
+                        cross_high = df.loc[i, "High"]
+                        cross_low = df.loc[i, "Low"]
+                
+                        # === BUY SIDE ===
                         if prev_f < prev_k and curr_f >= curr_k:
-                            slope   = next_f - curr_f
-                            angle   = abs(np.degrees(np.arctan(slope)))
-                            if angle >= min_angle_deg and next_f > curr_f:      # direction must match
-                                df.loc[i, "Kijun_F_Cross"] = "Buy Kijun Cross"
+                            # Look for any of the next 3 bars with confirmation
+                            for j in range(1, 4):
+                                f_future = df.loc[i + j, "F_numeric"]
+                                slope = f_future - curr_f
+                                angle = abs(np.degrees(np.arctan(slope)))
                 
-                        # ---------- SELL side ----------
+                                # Conditions:
+                                if (
+                                    f_future > curr_f and  # Same direction
+                                    angle >= min_angle_deg and
+                                    df.loc[i + j, "High"] > cross_high  # High of cross bar surpassed
+                                ):
+                                    df.loc[i, "Kijun_F_Cross"] = "Buy Kijun Cross"
+                                    break  # Only need one confirmation
+                
+                        # === SELL SIDE ===
                         elif prev_f > prev_k and curr_f <= curr_k:
-                            slope   = next_f - curr_f
-                            angle   = abs(np.degrees(np.arctan(slope)))
-                            if angle >= min_angle_deg and next_f < curr_f:
-                                df.loc[i, "Kijun_F_Cross"] = "Sell Kijun Cross"
+                            for j in range(1, 4):
+                                f_future = df.loc[i + j, "F_numeric"]
+                                slope = f_future - curr_f
+                                angle = abs(np.degrees(np.arctan(slope)))
+                
+                                if (
+                                    f_future < curr_f and
+                                    angle >= min_angle_deg and
+                                    df.loc[i + j, "Low"] < cross_low
+                                ):
+                                    df.loc[i, "Kijun_F_Cross"] = "Sell Kijun Cross"
+                                    break
                 
                     return df
+                
 
                 intraday = detect_kijun_f_cross(intraday)
 
