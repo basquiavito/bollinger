@@ -2022,34 +2022,63 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def detect_kijun_f_cross(df):
+                # def detect_kijun_f_cross(df):
+                #     """
+                #     Detects when F% crosses above or below Kijun_F%.
+                #     - "Buy Kijun Cross" → F_numeric crosses above Kijun_F
+                #     - "Sell Kijun Cross" → F_numeric crosses below Kijun_F
+                #     """
+                #     df["Kijun_F_Cross"] = ""
+
+                #     for i in range(1, len(df)):
+                #         prev_f = df.loc[i - 1, "F_numeric"]
+                #         prev_kijun = df.loc[i - 1, "Kijun_F"]
+                #         curr_f = df.loc[i, "F_numeric"]
+                #         curr_kijun = df.loc[i, "Kijun_F"]
+
+                #         # Bullish Cross (Buy Signal)
+                #         if prev_f < prev_kijun and curr_f >= curr_kijun:
+                #             df.loc[i, "Kijun_F_Cross"] = "Buy Kijun Cross"
+
+                #         # Bearish Cross (Sell Signal)
+                #         elif prev_f > prev_kijun and curr_f <= curr_kijun:
+                #             df.loc[i, "Kijun_F_Cross"] = "Sell Kijun Cross"
+
+                #     return df
+
+                # # Apply function to detect Kijun F% crosses
+                # intraday = detect_kijun_f_cross(intraday)
+
+ 
+                def detect_kijun_f_cross(df, min_angle_deg=45):
                     """
-                    Detects when F% crosses above or below Kijun_F%.
-                    - "Buy Kijun Cross" → F_numeric crosses above Kijun_F
-                    - "Sell Kijun Cross" → F_numeric crosses below Kijun_F
+                    Marks a Buy/Sell Kijun cross only if the NEXT bar follows through
+                    with at least `min_angle_deg` slope.
+                    Result stored in df['Kijun_F_Cross'].
                     """
-                    df["Kijun_F_Cross"] = ""
-
-                    for i in range(1, len(df)):
-                        prev_f = df.loc[i - 1, "F_numeric"]
-                        prev_kijun = df.loc[i - 1, "Kijun_F"]
-                        curr_f = df.loc[i, "F_numeric"]
-                        curr_kijun = df.loc[i, "Kijun_F"]
-
-                        # Bullish Cross (Buy Signal)
-                        if prev_f < prev_kijun and curr_f >= curr_kijun:
-                            df.loc[i, "Kijun_F_Cross"] = "Buy Kijun Cross"
-
-                        # Bearish Cross (Sell Signal)
-                        elif prev_f > prev_kijun and curr_f <= curr_kijun:
-                            df.loc[i, "Kijun_F_Cross"] = "Sell Kijun Cross"
-
+                    df["Kijun_F_Cross"] = ""       # clear old column
+                
+                    for i in range(1, len(df) - 1):            # we look one bar ahead
+                        prev_f, curr_f, next_f = df.loc[i-1, "F_numeric"], df.loc[i, "F_numeric"], df.loc[i+1, "F_numeric"]
+                        prev_k,       curr_k     = df.loc[i-1, "Kijun_F"], df.loc[i, "Kijun_F"]
+                
+                        # ---------- BUY side ----------
+                        if prev_f < prev_k and curr_f >= curr_k:
+                            slope   = next_f - curr_f
+                            angle   = abs(np.degrees(np.arctan(slope)))
+                            if angle >= min_angle_deg and next_f > curr_f:      # direction must match
+                                df.loc[i, "Kijun_F_Cross"] = "Buy Kijun Cross"
+                
+                        # ---------- SELL side ----------
+                        elif prev_f > prev_k and curr_f <= curr_k:
+                            slope   = next_f - curr_f
+                            angle   = abs(np.degrees(np.arctan(slope)))
+                            if angle >= min_angle_deg and next_f < curr_f:
+                                df.loc[i, "Kijun_F_Cross"] = "Sell Kijun Cross"
+                
                     return df
 
-                # Apply function to detect Kijun F% crosses
                 intraday = detect_kijun_f_cross(intraday)
-
-
 
                 # Calculate VWAP
                 intraday["TP"] = (intraday["High"] + intraday["Low"] + intraday["Close"]) / 3
