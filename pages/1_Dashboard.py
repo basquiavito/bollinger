@@ -3969,8 +3969,6 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_horse_sell, row=1, col=1)
 
 
-                🟢 BBW Expansion – Add Bishop ♗ (up) and Bishop ♝ (down)
-                🧙 Kijun Cross Bishops (♗ ♝)
 
                 mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
                 mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
