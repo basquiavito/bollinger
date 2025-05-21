@@ -2084,10 +2084,9 @@ if st.sidebar.button("Run Analysis"):
                                 if future_low < cross_low:
                                     df.loc[i, "Kijun_F_Cross"] = "Sell Kijun Cross"
                                     break
-                
-                    return df
 
-                
+                        return df
+
 
                 intraday = detect_kijun_f_cross(intraday)
 
