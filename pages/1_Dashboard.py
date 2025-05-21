@@ -1849,35 +1849,34 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it to the dataset BEFORE calculating BBW
                 intraday = calculate_f_std_bands(intraday, window=20)
 
-             def detect_kijun_cross_emoji(df, lookahead=3, threshold=0.30):
-                """
-                Only crown the “🕊️” or “🐦‍⬛” if, after a true Kijun_F% cross,
-                price closes at least `threshold` above/below the cross-bar close
-                within the next `lookahead` bars.
-                """
-                df["Kijun_F_Cross_Emoji"] = ""
-            
-                for i in range(1, len(df) - lookahead):
-                    prev_F, curr_F = df.loc[i-1, "F_numeric"], df.loc[i, "F_numeric"]
-                    prev_K, curr_K = df.loc[i-1, "Kijun_F"],   df.loc[i,   "Kijun_F"]
-                    cross_close    = df.loc[i,   "Close"]
-            
-                    # — BUY cross detected —
-                    if prev_F < prev_K and curr_F >= curr_K:
-                        # look for confirmation within the next lookahead bars
-                        for j in range(1, lookahead + 1):
-                            if df.loc[i+j, "Close"] > cross_close + threshold:
-                                df.loc[i, "Kijun_F_Cross_Emoji"] = "🕊️"
-                                break
-            
-                    # — SELL cross detected —
-                    elif prev_F > prev_K and curr_F <= curr_K:
-                        for j in range(1, lookahead + 1):
-                            if df.loc[i+j, "Close"] < cross_close - threshold:
-                                df.loc[i, "Kijun_F_Cross_Emoji"] = "🐦‍⬛"
-                                break
-            
-                return df
+           def detect_kijun_cross_emoji(df, lookahead, threshold):
+            df["Kijun_F_Cross_Emoji"] = ""
+        
+            for i in range(1, len(df) - lookahead):
+                prev_F = df.loc[i - 1, "F_numeric"]
+                curr_F = df.loc[i, "F_numeric"]
+                prev_K = df.loc[i - 1, "Kijun_F"]
+                curr_K = df.loc[i, "Kijun_F"]
+                cross_close = df.loc[i, "Close"]
+        
+                # Buy cross
+                if prev_F < prev_K and curr_F >= curr_K:
+                    for j in range(1, lookahead + 1):
+                        future_close = df.loc[i + j, "Close"]
+                        if future_close > cross_close + threshold:
+                            df.loc[i, "Kijun_F_Cross_Emoji"] = "🕊️"
+                            break
+        
+                # Sell cross
+                elif prev_F > prev_K and curr_F <= curr_K:
+                    for j in range(1, lookahead + 1):
+                        future_close = df.loc[i + j, "Close"]
+                        if future_close < cross_close - threshold:
+                            df.loc[i, "Kijun_F_Cross_Emoji"] = "🐦‍⬛"
+                            break
+        
+                    return df
+
 
             # Then replace your plotting call with:
             intraday = detect_kijun_cross_emoji(intraday, lookahead=3, threshold=0.30)
