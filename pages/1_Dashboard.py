@@ -1849,8 +1849,7 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it to the dataset BEFORE calculating BBW
                 intraday = calculate_f_std_bands(intraday, window=20)
 
-
-              def detect_kijun_cross_emoji(df):
+                def detect_kijun_cross_emoji(df):
                     """
                     Detects when F_numeric crosses above or below Kijun_F and
                     assigns an emoji accordingly:
@@ -1871,7 +1870,7 @@ if st.sidebar.button("Run Analysis"):
                         # Downward cross: Was above the Kijun, now at or below
                         elif prev_F > prev_K and curr_F <= curr_K:
                             df.loc[i, "Kijun_F_Cross_Emoji"] = "🐦‍⬛"
-                    return df
+                      return df
 
                 intraday = detect_kijun_cross_emoji(intraday)
 
