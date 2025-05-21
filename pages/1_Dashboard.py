@@ -3295,38 +3295,38 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                     # (B) Upper Band
-#                     upper_band = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=intraday["F% Upper"],
-#                         mode="lines",
-#                         line=dict(dash="solid", color="grey"),
-#                         name="Upper Band"
-#                     )
+                    # (B) Upper Band
+                    upper_band = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F% Upper"],
+                        mode="lines",
+                        line=dict(dash="solid", color="grey"),
+                        name="Upper Band"
+                    )
 
-#                     # (C) Lower Band
-#                     lower_band = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=intraday["F% Lower"],
-#                         mode="lines",
-#                         line=dict(dash="solid", color="grey"),
-#                         name="Lower Band"
-#                     )
+                    # (C) Lower Band
+                    lower_band = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F% Lower"],
+                        mode="lines",
+                        line=dict(dash="solid", color="grey"),
+                        name="Lower Band"
+                    )
 
-#                     # (D) Moving Average (Middle Band)
-#                     middle_band = go.Scatter(
-#                         x=intraday["Time"],
-#                         y=intraday["F% MA"],
-#                         mode="lines",
-#                         line=dict(color="white", dash="dash"),  # Set dash style
-#                         name="Middle Band (14-MA)"
-#                     )
+                    # (D) Moving Average (Middle Band)
+                    middle_band = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F% MA"],
+                        mode="lines",
+                        line=dict(color="white", dash="dash"),  # Set dash style
+                        name="Middle Band (14-MA)"
+                    )
 
-#                     # Add all traces
+                    # Add all traces
 
-#                     fig.add_trace(upper_band, row=1, col=1)
-#                     fig.add_trace(lower_band, row=1, col=1)
-#                     fig.add_trace(middle_band, row=1, col=1)
+                    fig.add_trace(upper_band, row=1, col=1)
+                    fig.add_trace(lower_band, row=1, col=1)
+                    fig.add_trace(middle_band, row=1, col=1)
 
 
 
