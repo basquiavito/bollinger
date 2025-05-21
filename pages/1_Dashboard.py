@@ -2050,7 +2050,7 @@ if st.sidebar.button("Run Analysis"):
                 # intraday = detect_kijun_f_cross(intraday)
 
  
-               def detect_kijun_f_cross(df, lookahead=5):
+                def detect_kijun_f_cross(df, lookahead=5):
                     """
                     Marks a Buy/Sell Kijun Cross only if there is valid follow-through:
                     - A bar crosses Kijun (up or down),
