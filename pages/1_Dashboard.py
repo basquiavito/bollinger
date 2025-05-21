@@ -1878,12 +1878,11 @@ if st.sidebar.button("Run Analysis"):
                                 df.loc[i, "Kijun_F_Cross_Emoji"] = "🐦‍⬛"
                                 break
             
-                     return df
+                         return df
 
                 # Then replace your plotting call with:
                 intraday = detect_kijun_cross_emoji(intraday, lookahead=3, threshold=0.30)
 
-                intraday = detect_kijun_cross_emoji(intraday)
 
 
 
