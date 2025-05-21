@@ -1870,7 +1870,7 @@ if st.sidebar.button("Run Analysis"):
                         # Downward cross: Was above the Kijun, now at or below
                         elif prev_F > prev_K and curr_F <= curr_K:
                             df.loc[i, "Kijun_F_Cross_Emoji"] = "🐦‍⬛"
-                      return df
+                    return df
 
                 intraday = detect_kijun_cross_emoji(intraday)
 
