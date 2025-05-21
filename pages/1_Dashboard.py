@@ -3242,49 +3242,49 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                                     # Mask for different RVOL thresholds
-#                     mask_rvol_extreme = intraday["RVOL_5"] > 1.8
-#                     mask_rvol_strong = (intraday["RVOL_5"] >= 1.5) & (intraday["RVOL_5"] < 1.8)
-#                     mask_rvol_moderate = (intraday["RVOL_5"] >= 1.2) & (intraday["RVOL_5"] < 1.5)
+                                    # Mask for different RVOL thresholds
+                    mask_rvol_extreme = intraday["RVOL_5"] > 1.8
+                    mask_rvol_strong = (intraday["RVOL_5"] >= 1.5) & (intraday["RVOL_5"] < 1.8)
+                    mask_rvol_moderate = (intraday["RVOL_5"] >= 1.2) & (intraday["RVOL_5"] < 1.5)
 
-#                     # Scatter plot for extreme volume spikes (red triangle)
-#                     scatter_rvol_extreme = go.Scatter(
-#                         x=intraday.loc[mask_rvol_extreme, "Time"],
-#                         y=intraday.loc[mask_rvol_extreme, "F_numeric"] + 3,
-#                         mode="markers",
-#                         marker=dict(symbol="triangle-up", size=8, color="red"),
-#                         name="RVOL > 1.8 (Extreme Surge)",
-#                         text="Extreme Volume",
+                    # Scatter plot for extreme volume spikes (red triangle)
+                    scatter_rvol_extreme = go.Scatter(
+                        x=intraday.loc[mask_rvol_extreme, "Time"],
+                        y=intraday.loc[mask_rvol_extreme, "F_numeric"] + 3,
+                        mode="markers",
+                        marker=dict(symbol="triangle-up", size=8, color="red"),
+                        name="RVOL > 1.8 (Extreme Surge)",
+                        text="Extreme Volume",
 
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                     )
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    )
 
-#                     # Scatter plot for strong volume spikes (orange triangle)
-#                     scatter_rvol_strong = go.Scatter(
-#                         x=intraday.loc[mask_rvol_strong, "Time"],
-#                         y=intraday.loc[mask_rvol_strong, "F_numeric"] + 3,
-#                         mode="markers",
-#                         marker=dict(symbol="triangle-up", size=8, color="orange"),
-#                         name="RVOL 1.5-1.79 (Strong Surge)",
-#                         text="Strong Volume",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                     )
+                    # Scatter plot for strong volume spikes (orange triangle)
+                    scatter_rvol_strong = go.Scatter(
+                        x=intraday.loc[mask_rvol_strong, "Time"],
+                        y=intraday.loc[mask_rvol_strong, "F_numeric"] + 3,
+                        mode="markers",
+                        marker=dict(symbol="triangle-up", size=8, color="orange"),
+                        name="RVOL 1.5-1.79 (Strong Surge)",
+                        text="Strong Volume",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    )
 
-#                     # Scatter plot for moderate volume spikes (pink triangle)
-#                     scatter_rvol_moderate = go.Scatter(
-#                         x=intraday.loc[mask_rvol_moderate, "Time"],
-#                         y=intraday.loc[mask_rvol_moderate, "F_numeric"] + 3,
-#                         mode="markers",
-#                         marker=dict(symbol="triangle-up", size=8, color="pink"),
-#                         name="RVOL 1.2-1.49 (Moderate Surge)",
-#                         text="Moderate Volume",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-#                     )
+                    # Scatter plot for moderate volume spikes (pink triangle)
+                    scatter_rvol_moderate = go.Scatter(
+                        x=intraday.loc[mask_rvol_moderate, "Time"],
+                        y=intraday.loc[mask_rvol_moderate, "F_numeric"] + 3,
+                        mode="markers",
+                        marker=dict(symbol="triangle-up", size=8, color="pink"),
+                        name="RVOL 1.2-1.49 (Moderate Surge)",
+                        text="Moderate Volume",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    )
 
-#                     # Add to the F% plot (Row 1)
-#                     fig.add_trace(scatter_rvol_extreme, row=1, col=1)
-#                     fig.add_trace(scatter_rvol_strong, row=1, col=1)
-#                     fig.add_trace(scatter_rvol_moderate, row=1, col=1)
+                    # Add to the F% plot (Row 1)
+                    fig.add_trace(scatter_rvol_extreme, row=1, col=1)
+                    fig.add_trace(scatter_rvol_strong, row=1, col=1)
+                    fig.add_trace(scatter_rvol_moderate, row=1, col=1)
 
 
 
