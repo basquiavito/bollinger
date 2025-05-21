@@ -1850,7 +1850,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_f_std_bands(intraday, window=20)
 
 
-               def detect_kijun_cross_emoji(df, lookahead=3, threshold=0.30):
+                def detect_kijun_cross_emoji(df, lookahead=3, threshold=0.30):
                 """
                 Only crown the “🕊️” or “🐦‍⬛” if, after a true Kijun_F% cross,
                 price closes at least `threshold` above/below the cross-bar close
@@ -1878,7 +1878,7 @@ if st.sidebar.button("Run Analysis"):
                                 df.loc[i, "Kijun_F_Cross_Emoji"] = "🐦‍⬛"
                                 break
             
-                return df
+                     return df
 
                 # Then replace your plotting call with:
                 intraday = detect_kijun_cross_emoji(intraday, lookahead=3, threshold=0.30)
