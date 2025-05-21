@@ -2050,7 +2050,7 @@ if st.sidebar.button("Run Analysis"):
                 # intraday = detect_kijun_f_cross(intraday)
 
  
-                  def detect_kijun_f_cross(df, min_angle_deg=45):
+                def detect_kijun_f_cross(df, min_angle_deg=45):
                     """
                     Enhanced Kijun Cross detection:
                     - Confirms Buy/Sell only if follow-through occurs in next 3 bars.
