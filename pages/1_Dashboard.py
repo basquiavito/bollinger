@@ -2988,7 +2988,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
+                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
