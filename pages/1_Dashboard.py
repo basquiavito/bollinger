@@ -506,8 +506,8 @@ if st.sidebar.button("Run Analysis"):
                 
                     return df
                     # Calculate angles for both bands
-                    intraday = calculate_bollinger_band_angles(intraday, band_col="F% Upper", angle_col="Upper Angle")
-                    intraday = calculate_bollinger_band_angles(intraday, band_col="F% Lower", angle_col="Lower Angle")
+                intraday = calculate_bollinger_band_angles(intraday, band_col="F% Upper", angle_col="Upper Angle")
+                intraday = calculate_bollinger_band_angles(intraday, band_col="F% Lower", angle_col="Lower Angle")
                             
 
 
