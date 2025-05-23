@@ -2985,13 +2985,13 @@ if st.sidebar.button("Run Analysis"):
                     #"CTOD Alert","Alert_Kijun","Alert_Mid","Wealth Signal","BBW Alert"
 
 
-                # with st.expander("Show/Hide Data Table",  expanded=False):
-                #                 # Show data table, including new columns
-                #     cols_to_show = [
-                #                     "Time","RVOL_5","RVOL_Alert","F% Theta", "BBW_Tight_Emoji","BBW Alert","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","KumoTwistAlert"
-                #                 ]
+                with st.expander("Show/Hide Data Table",  expanded=False):
+                                # Show data table, including new columns
+                    cols_to_show = [
+                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
+                                ]
 
-                #     st.dataframe(intraday[cols_to_show])
+                    st.dataframe(intraday[cols_to_show])
 
                 ticker_tabs = st.tabs(["Interactive F% & Momentum", "Intraday Data Table"])
 
