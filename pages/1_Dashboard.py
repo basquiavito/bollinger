@@ -3760,37 +3760,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig.add_trace(scatter_rei_bullish, row=1, col=1)
                     fig.add_trace(scatter_rei_bearish, row=1, col=1)
-                    
-                    # --- Step 6: Plot REI velocity (row 2) ---
-                    trace_velocity = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["TD_REI_Velocity"],
-                        mode="lines",
-                        name="TD REI Velocity",
-                        line=dict(color="purple"),
-                        hovertemplate="Time: %{x}<br>REI Velocity: %{y:.2f}<extra></extra>"
-                    )
-                    
-                    # Threshold lines
-                    trace_threshold_pos = go.Scatter(
-                        x=intraday["Time"],
-                        y=[rei_expansion_threshold] * len(intraday),
-                        mode="lines",
-                        name="Threshold (+)",
-                        line=dict(color="gray", dash="dash")
-                    )
-                    
-                    trace_threshold_neg = go.Scatter(
-                        x=intraday["Time"],
-                        y=[-rei_expansion_threshold] * len(intraday),
-                        mode="lines",
-                        name="Threshold (-)",
-                        line=dict(color="gray", dash="dash")
-                    )
-                    
-                    fig.add_trace(trace_velocity, row=2, col=1)
-                    fig.add_trace(trace_threshold_pos, row=2, col=1)
-                    fig.add_trace(trace_threshold_neg, row=2, col=1)
+                
                     
           
                                                   
