@@ -4314,7 +4314,7 @@ if st.sidebar.button("Run Analysis"):
                 )
 
                 # # Add to the F% plot (Row 1)
-                # fig.add_trace(scatter_secant_spike, row=1, col=1)
+                fig.add_trace(scatter_secant_spike, row=1, col=1)
 
 # #  TRIGONOMETRIC COTAGENT / SECANT / TENKAN
 # #**************************************************************************************************************************************************************************
