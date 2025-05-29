@@ -4251,44 +4251,44 @@ if st.sidebar.button("Run Analysis"):
 
 # # #*******************************************************************************************************************************************************************************
 
-# # #  Cotangent Spikes (Skull 💀) - Catches both >3 and <-3
-# #                 mask_cotangent_spike = intraday["F% Cotangent"].abs() > 3
+#  Cotangent Spikes (Skull 💀) - Catches both >3 and <-3
+                mask_cotangent_spike = intraday["F% Cotangent"].abs() > 3
 
 
-# #                 scatter_cotangent_spike = go.Scatter(
-# #                     x=intraday.loc[mask_cotangent_spike, "Time"],
-# #                     y=intraday.loc[mask_cotangent_spike, "F_numeric"] - 89,  # Slightly offset for visibility
-# #                     mode="text",
-# #                     text="💀",
-# #                     textposition="top center",
-# #                     textfont=dict(size=18),  # Larger for emphasis
-# #                     name="Cotangent Spike",
-# #                     hovertext=intraday.loc[mask_cotangent_spike, "F% Cotangent"].round(2),  # Display rounded cotangent value
-# #                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Cotangent: %{hovertext}<extra></extra>"
-# #                 )
+                scatter_cotangent_spike = go.Scatter(
+                    x=intraday.loc[mask_cotangent_spike, "Time"],
+                    y=intraday.loc[mask_cotangent_spike, "F_numeric"] - 89,  # Slightly offset for visibility
+                    mode="text",
+                    text="💀",
+                    textposition="top center",
+                    textfont=dict(size=18),  # Larger for emphasis
+                    name="Cotangent Spike",
+                    hovertext=intraday.loc[mask_cotangent_spike, "F% Cotangent"].round(2),  # Display rounded cotangent value
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Cotangent: %{hovertext}<extra></extra>"
+                )
 
-# #     # Add to the F% plot (Row 1)
-# #                 fig.add_trace(scatter_cotangent_spike, row=1, col=1)
+    # Add to the F% plot (Row 1)
+                fig.add_trace(scatter_cotangent_spike, row=1, col=1)
 
 # # #-------------------------------------------------------------------------------------
 
 # #     #  Cosecant Spikes (Lightning ⚡) - Detects |F% Cosecant| > 20
-# #                 mask_cosecant_spike = intraday["F% Cosecant"].abs() > 20
+                mask_cosecant_spike = intraday["F% Cosecant"].abs() > 20
 
-# #                 scatter_cosecant_spike = go.Scatter(
-# #                     x=intraday.loc[mask_cosecant_spike, "Time"],
-# #                     y=intraday.loc[mask_cosecant_spike, "F_numeric"] + 20,  # Offset for visibility
-# #                     mode="text",
-# #                     text="⚡",
-# #                     textposition="top center",
-# #                     textfont=dict(size=18, color="orange"),  # Larger and orange for emphasis
-# #                     name="Cosecant Spike",
-# #                     hovertext=intraday.loc[mask_cosecant_spike, "F% Cosecant"].round(2),  # Display rounded cosecant value
-# #                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Cosecant: %{hovertext}<extra></extra>"
-# #                 )
+                scatter_cosecant_spike = go.Scatter(
+                    x=intraday.loc[mask_cosecant_spike, "Time"],
+                    y=intraday.loc[mask_cosecant_spike, "F_numeric"] + 20,  # Offset for visibility
+                    mode="text",
+                    text="⚡",
+                    textposition="top center",
+                    textfont=dict(size=18, color="orange"),  # Larger and orange for emphasis
+                    name="Cosecant Spike",
+                    hovertext=intraday.loc[mask_cosecant_spike, "F% Cosecant"].round(2),  # Display rounded cosecant value
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Cosecant: %{hovertext}<extra></extra>"
+                )
 
-# #                 # Add to the F% plot (Row 1)
-# #                 fig.add_trace(scatter_cosecant_spike, row=1, col=1)
+                # Add to the F% plot (Row 1)
+                fig.add_trace(scatter_cosecant_spike, row=1, col=1)
 
 
 
@@ -4299,68 +4299,68 @@ if st.sidebar.button("Run Analysis"):
 
 
 #                 # # 🔵 Secant Spikes (Tornado 🌪) - Detects |F% Secant| > 3
-#                 # mask_secant_spike = intraday["F% Secant"].abs() > 5
+                mask_secant_spike = intraday["F% Secant"].abs() > 5
 
-#                 # scatter_secant_spike = go.Scatter(
-#                 #     x=intraday.loc[mask_secant_spike, "Time"],
-#                 #     y=intraday.loc[mask_secant_spike, "F_numeric"] + 20,  # Offset for visibility
-#                 #     mode="text",
-#                 #     text="🌪",
-#                 #     textposition="top center",
-#                 #     textfont=dict(size=18, color="blue"),  # Large and blue for emphasis
-#                 #     name="Secant Spike",
-#                 #     hovertext=intraday.loc[mask_secant_spike, "F% Secant"].round(2),  # Display rounded secant value
-#                 #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Secant: %{hovertext}<extra></extra>"
-#                 # )
+                scatter_secant_spike = go.Scatter(
+                    x=intraday.loc[mask_secant_spike, "Time"],
+                    y=intraday.loc[mask_secant_spike, "F_numeric"] + 20,  # Offset for visibility
+                    mode="text",
+                    text="🌪",
+                    textposition="top center",
+                    textfont=dict(size=18, color="blue"),  # Large and blue for emphasis
+                    name="Secant Spike",
+                    hovertext=intraday.loc[mask_secant_spike, "F% Secant"].round(2),  # Display rounded secant value
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Secant: %{hovertext}<extra></extra>"
+                )
 
-#                 # # Add to the F% plot (Row 1)
-#                 # fig.add_trace(scatter_secant_spike, row=1, col=1)
+                # # Add to the F% plot (Row 1)
+                # fig.add_trace(scatter_secant_spike, row=1, col=1)
 
 # #  TRIGONOMETRIC COTAGENT / SECANT / TENKAN
 # #**************************************************************************************************************************************************************************
 
 
 
-#                 # 🎯 Add all lines to the F% plot
-#                 fig.add_trace(y_open_f_line, row=1, col=1)
-#                 fig.add_trace(y_high_f_line, row=1, col=1)
-#                 fig.add_trace(y_low_f_line, row=1, col=1)
-#                 fig.add_trace(y_close_f_line, row=1, col=1)
+                # 🎯 Add all lines to the F% plot
+                fig.add_trace(y_open_f_line, row=1, col=1)
+                fig.add_trace(y_high_f_line, row=1, col=1)
+                fig.add_trace(y_low_f_line, row=1, col=1)
+                fig.add_trace(y_close_f_line, row=1, col=1)
 
 
 
 
 
-                # # 1. Calculate 1.618x Fib targets for both TD lines
-                # intraday["Supply_Target"] = intraday["TD Supply Line F"] * 1.618
-                # intraday["Demand_Target"] = intraday["TD Demand Line F"] * 1.618
+                # 1. Calculate 1.618x Fib targets for both TD lines
+                intraday["Supply_Target"] = intraday["TD Supply Line F"] * 1.618
+                intraday["Demand_Target"] = intraday["TD Demand Line F"] * 1.618
 
-                # # 2. Check if both F_numeric and the corresponding TD line confirm the breakout
-                # bullish_mask = (intraday["F_numeric"] > intraday["Supply_Target"]) & (intraday["TD Supply Line F"] > 0)
-                # bearish_mask = (intraday["F_numeric"] < intraday["Demand_Target"]) & (intraday["TD Demand Line F"] < 0)
+                # 2. Check if both F_numeric and the corresponding TD line confirm the breakout
+                bullish_mask = (intraday["F_numeric"] > intraday["Supply_Target"]) & (intraday["TD Supply Line F"] > 0)
+                bearish_mask = (intraday["F_numeric"] < intraday["Demand_Target"]) & (intraday["TD Demand Line F"] < 0)
 
-                # # 3. Add emojis to the plot
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[bullish_mask, "Time"],
-                #     y=intraday.loc[bullish_mask, "F_numeric"] + 144,
-                #     mode="text",
-                #     text=["🏝️"] * bullish_mask.sum(),
-                #     textposition="top center",
-                #     textfont=dict(size=34),
-                #     name="Bullish Fib Target (🏝️)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Breakout above Fib Target<extra></extra>"
-                # ))
+                # 3. Add emojis to the plot
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[bullish_mask, "Time"],
+                    y=intraday.loc[bullish_mask, "F_numeric"] + 144,
+                    mode="text",
+                    text=["🏝️"] * bullish_mask.sum(),
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Bullish Fib Target (🏝️)",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Breakout above Fib Target<extra></extra>"
+                ))
 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[bearish_mask, "Time"],
-                #     y=intraday.loc[bearish_mask, "F_numeric"] - 143,
-                #     mode="text",
-                #     text=["🌋"] * bearish_mask.sum(),
-                #     textposition="bottom center",
-                #     textfont=dict(size=21),
-                #     name="Bearish Fib Target (🌋)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Breakdown below Fib Target<extra></extra>"
-                # ))
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[bearish_mask, "Time"],
+                    y=intraday.loc[bearish_mask, "F_numeric"] - 143,
+                    mode="text",
+                    text=["🌋"] * bearish_mask.sum(),
+                    textposition="bottom center",
+                    textfont=dict(size=21),
+                    name="Bearish Fib Target (🌋)",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Breakdown below Fib Target<extra></extra>"
+                ))
                 # # 🏇 Mike rides real VWAP up
                 # mask_vwap_up = intraday["VWAP_Cross_Emoji"] == "🥁"
                 # scatter_vwap_up = go.Scatter(
