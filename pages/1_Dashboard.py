@@ -3709,16 +3709,30 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                                # Shift TD Pressure to compare with the previous value
+                                       # Calculate TD Pressure delta and velocity (rolling change)
+                    intraday["TD_Pressure_Delta"] = intraday["TD Pressure"] - intraday["TD Pressure"].shift(1)
+                    intraday["TD_Pressure_Velocity"] = intraday["TD_Pressure_Delta"].rolling(window=3).mean()
+                    
+                    # Define expansion threshold (top 15% of absolute velocity)
+                    expansion_threshold = intraday["TD_Pressure_Velocity"].abs().quantile(0.85)
+                    
+                    # Previous TD Pressure for flip detection
                     prev_td_pressure = intraday["TD Pressure"].shift(1)
-
-                    # Create mask for **bullish** TD Pressure flips (previously negative, now positive)
-                    mask_td_bullish = (prev_td_pressure < 0) & (intraday["TD Pressure"] >= 0)
-
-                    # Create mask for **bearish** TD Pressure flips (previously positive, now negative)
-                    mask_td_bearish = (prev_td_pressure > 0) & (intraday["TD Pressure"] <= 0)
-
-
+                    
+                    # Bullish TD Pressure flip + expansion
+                    mask_td_bullish = (
+                        (prev_td_pressure < 0) &
+                        (intraday["TD Pressure"] >= 0) &
+                        (intraday["TD_Pressure_Velocity"] > expansion_threshold)
+                    )
+                    
+                    # Bearish TD Pressure flip + expansion
+                    mask_td_bearish = (
+                        (prev_td_pressure > 0) &
+                        (intraday["TD Pressure"] <= 0) &
+                        (intraday["TD_Pressure_Velocity"] < -expansion_threshold)
+                    )
+                    
                     # 🎈 Bullish TD Pressure Flip (Fire Emoji)
                     scatter_td_bullish = go.Scatter(
                         x=intraday.loc[mask_td_bullish, "Time"],
@@ -3728,9 +3742,9 @@ if st.sidebar.button("Run Analysis"):
                         textposition="top center",
                         textfont=dict(size=18, color="red"),
                         name="TD Pressure Bullish Flip",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD Pressure: %{text}<extra></extra>"
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD Pressure Flip: 🎈<extra></extra>"
                     )
-
+                    
                     # 💧 Bearish TD Pressure Flip (Water Emoji)
                     scatter_td_bearish = go.Scatter(
                         x=intraday.loc[mask_td_bearish, "Time"],
@@ -3740,12 +3754,13 @@ if st.sidebar.button("Run Analysis"):
                         textposition="bottom center",
                         textfont=dict(size=18, color="blue"),
                         name="TD Pressure Bearish Flip",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD Pressure: %{text}<extra></extra>"
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD Pressure Flip: 💧<extra></extra>"
                     )
-
-                    # Add these traces to the F% plot (Row 1)
+                    
+                    # Add to figure
                     fig.add_trace(scatter_td_bullish, row=1, col=1)
                     fig.add_trace(scatter_td_bearish, row=1, col=1)
+
 
                     # 🪫 Emoji at LOD (Low of Day)
                     lod_index = intraday["Low"].idxmin()  # Find the index of the lowest low
