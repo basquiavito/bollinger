@@ -3707,60 +3707,93 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                     ), row=1, col=1)
 
+ 
 
-
-                                       # Calculate TD Pressure delta and velocity (rolling change)
-                    intraday["TD_Pressure_Delta"] = intraday["TD Pressure"] - intraday["TD Pressure"].shift(1)
-                    intraday["TD_Pressure_Velocity"] = intraday["TD_Pressure_Delta"].rolling(window=3).mean()
+                    # --- Step 1: Calculate REI velocity ---
+                    intraday["TD_REI_Delta"] = intraday["TD REI"] - intraday["TD REI"].shift(1)
+                    intraday["TD_REI_Velocity"] = intraday["TD_REI_Delta"].rolling(window=3).mean()
                     
-                    # Define expansion threshold (top 15% of absolute velocity)
-                    expansion_threshold = intraday["TD_Pressure_Velocity"].abs().quantile(0.85)
+                    # --- Step 2: Expansion threshold (top 15% velocity) ---
+                    rei_expansion_threshold = intraday["TD_REI_Velocity"].abs().quantile(0.85)
                     
-                    # Previous TD Pressure for flip detection
-                    prev_td_pressure = intraday["TD Pressure"].shift(1)
+                    # --- Step 3: Flip detection ---
+                    prev_td_rei = intraday["TD REI"].shift(1)
                     
-                    # Bullish TD Pressure flip + expansion
-                    mask_td_bullish = (
-                        (prev_td_pressure < 0) &
-                        (intraday["TD Pressure"] >= 0) &
-                        (intraday["TD_Pressure_Velocity"] > expansion_threshold)
+                    # Bullish REI flip: crosses up with velocity
+                    mask_rei_bullish = (
+                        (prev_td_rei < 0) &
+                        (intraday["TD REI"] >= 0) &
+                        (intraday["TD_REI_Velocity"] > rei_expansion_threshold)
                     )
                     
-                    # Bearish TD Pressure flip + expansion
-                    mask_td_bearish = (
-                        (prev_td_pressure > 0) &
-                        (intraday["TD Pressure"] <= 0) &
-                        (intraday["TD_Pressure_Velocity"] < -expansion_threshold)
+                    # Bearish REI flip: crosses down with velocity
+                    mask_rei_bearish = (
+                        (prev_td_rei > 0) &
+                        (intraday["TD REI"] <= 0) &
+                        (intraday["TD_REI_Velocity"] < -rei_expansion_threshold)
                     )
                     
-                    # 🎈 Bullish TD Pressure Flip (Fire Emoji)
-                    scatter_td_bullish = go.Scatter(
-                        x=intraday.loc[mask_td_bullish, "Time"],
-                        y=intraday.loc[mask_td_bullish, "F_numeric"] + 5,  # Slightly above for visibility
+                     
+                    
+                    # --- Step 5: Add Flip Emojis to F% chart (row 1) ---
+                    scatter_rei_bullish = go.Scatter(
+                        x=intraday.loc[mask_rei_bullish, "Time"],
+                        y=intraday.loc[mask_rei_bullish, "F_numeric"] + 5,
                         mode="text",
                         text="🎈",
                         textposition="top center",
-                        textfont=dict(size=18, color="red"),
-                        name="TD Pressure Bullish Flip",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD Pressure Flip: 🎈<extra></extra>"
+                        textfont=dict(size=18, color="green"),
+                        name="TD REI Bullish Flip",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD REI Flip: 🎈<extra></extra>"
                     )
                     
-                    # 💧 Bearish TD Pressure Flip (Water Emoji)
-                    scatter_td_bearish = go.Scatter(
-                        x=intraday.loc[mask_td_bearish, "Time"],
-                        y=intraday.loc[mask_td_bearish, "F_numeric"] - 5,  # Slightly below for visibility
+                    scatter_rei_bearish = go.Scatter(
+                        x=intraday.loc[mask_rei_bearish, "Time"],
+                        y=intraday.loc[mask_rei_bearish, "F_numeric"] - 5,
                         mode="text",
                         text="💧",
                         textposition="bottom center",
                         textfont=dict(size=18, color="blue"),
-                        name="TD Pressure Bearish Flip",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD Pressure Flip: 💧<extra></extra>"
+                        name="TD REI Bearish Flip",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD REI Flip: 💧<extra></extra>"
                     )
                     
-                    # Add to figure
-                    fig.add_trace(scatter_td_bullish, row=1, col=1)
-                    fig.add_trace(scatter_td_bearish, row=1, col=1)
-
+                    fig.add_trace(scatter_rei_bullish, row=1, col=1)
+                    fig.add_trace(scatter_rei_bearish, row=1, col=1)
+                    
+                    # --- Step 6: Plot REI velocity (row 2) ---
+                    trace_velocity = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["TD_REI_Velocity"],
+                        mode="lines",
+                        name="TD REI Velocity",
+                        line=dict(color="purple"),
+                        hovertemplate="Time: %{x}<br>REI Velocity: %{y:.2f}<extra></extra>"
+                    )
+                    
+                    # Threshold lines
+                    trace_threshold_pos = go.Scatter(
+                        x=intraday["Time"],
+                        y=[rei_expansion_threshold] * len(intraday),
+                        mode="lines",
+                        name="Threshold (+)",
+                        line=dict(color="gray", dash="dash")
+                    )
+                    
+                    trace_threshold_neg = go.Scatter(
+                        x=intraday["Time"],
+                        y=[-rei_expansion_threshold] * len(intraday),
+                        mode="lines",
+                        name="Threshold (-)",
+                        line=dict(color="gray", dash="dash")
+                    )
+                    
+                    fig.add_trace(trace_velocity, row=2, col=1)
+                    fig.add_trace(trace_threshold_pos, row=2, col=1)
+                    fig.add_trace(trace_threshold_neg, row=2, col=1)
+                    
+          
+                                                  
 
                     # 🪫 Emoji at LOD (Low of Day)
                     lod_index = intraday["Low"].idxmin()  # Find the index of the lowest low
