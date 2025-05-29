@@ -3709,6 +3709,43 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                                # Shift TD Pressure to compare with the previous value
+                    prev_td_pressure = intraday["TD Pressure"].shift(1)
+
+                    # Create mask for **bullish** TD Pressure flips (previously negative, now positive)
+                    mask_td_bullish = (prev_td_pressure < 0) & (intraday["TD Pressure"] >= 0)
+
+                    # Create mask for **bearish** TD Pressure flips (previously positive, now negative)
+                    mask_td_bearish = (prev_td_pressure > 0) & (intraday["TD Pressure"] <= 0)
+
+
+                    # 🎈 Bullish TD Pressure Flip (Fire Emoji)
+                    scatter_td_bullish = go.Scatter(
+                        x=intraday.loc[mask_td_bullish, "Time"],
+                        y=intraday.loc[mask_td_bullish, "F_numeric"] + 5,  # Slightly above for visibility
+                        mode="text",
+                        text="🎈",
+                        textposition="top center",
+                        textfont=dict(size=18, color="red"),
+                        name="TD Pressure Bullish Flip",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD Pressure: %{text}<extra></extra>"
+                    )
+
+                    # 💧 Bearish TD Pressure Flip (Water Emoji)
+                    scatter_td_bearish = go.Scatter(
+                        x=intraday.loc[mask_td_bearish, "Time"],
+                        y=intraday.loc[mask_td_bearish, "F_numeric"] - 5,  # Slightly below for visibility
+                        mode="text",
+                        text="💧",
+                        textposition="bottom center",
+                        textfont=dict(size=18, color="blue"),
+                        name="TD Pressure Bearish Flip",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD Pressure: %{text}<extra></extra>"
+                    )
+
+                    # Add these traces to the F% plot (Row 1)
+                    fig.add_trace(scatter_td_bullish, row=1, col=1)
+                    fig.add_trace(scatter_td_bearish, row=1, col=1)
 
                     # 🪫 Emoji at LOD (Low of Day)
                     lod_index = intraday["Low"].idxmin()  # Find the index of the lowest low
