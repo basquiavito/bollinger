@@ -3489,20 +3489,22 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-           # BBW Tight Compression (🐝) – 3 of last 5 bars under threshold
+                             # BBW Tight → Pink Bishops ♗
                     mask_bbw_tight = intraday["BBW_Tight_Emoji"] == "🐝"
-                    scatter_bbw_tight = go.Scatter(
+                    
+                    scatter_bishop_tight = go.Scatter(
                         x=intraday.loc[mask_bbw_tight, "Time"],
-                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 13,  # Offset upward
+                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 28,  # Adjusted Y offset
                         mode="text",
-                        text=["🐝"] * mask_bbw_tight.sum(),
+                        text=["♗"] * mask_bbw_tight.sum(),  # ♗ as symbol
                         textposition="top center",
-                        textfont=dict(size=21),
-                        name="BBW Tight Compression (🐝)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression (🐝)<extra></extra>"
+                        textfont=dict(size=30, color="mediumvioletred"),  # 🎯 Pink / Purple shade
+                        name="BBW Tight Bishop (♗🐝)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression ♗🐝<extra></extra>"
                     )
+                    
+                    fig.add_trace(scatter_bishop_tight, row=1, col=1)
 
-                    fig.add_trace(scatter_bbw_tight, row=1, col=1)
 
 
 
