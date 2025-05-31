@@ -4305,7 +4305,7 @@ if st.sidebar.button("Run Analysis"):
 
                 # Add to F% plot
                 mask_ops_bear = intraday["OPS Transition"] == "🐻"
-                mask_ops_panda = intraday["OPS Transition"] == "🐂 "
+                mask_ops_panda = intraday["OPS Transition"] == "🐼"
 
                 scatter_ops_bear = go.Scatter(
                     x=intraday.loc[mask_ops_bear, "Time"],
@@ -4322,7 +4322,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday.loc[mask_ops_panda, "Time"],
                     y=intraday.loc[mask_ops_panda, "F_numeric"] + 7,  # Offset to avoid overlap
                     mode="text",
-                    text="🐂",
+                    text="🐼",
                     textposition="top center",
                     textfont=dict(size=22, color="green"),
                     name="OPS Bullish Flip",
