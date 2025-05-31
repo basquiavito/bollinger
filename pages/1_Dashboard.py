@@ -3172,80 +3172,80 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                     # Kumo Twist Bullish (👼🏼): SpanA crosses above SpanB
-#                     twist_bullish = (intraday["SpanA_F"] > intraday["SpanB_F"]) & (intraday["SpanA_F"].shift(1) <= intraday["SpanB_F"].shift(1))
+                    # Kumo Twist Bullish (👼🏼): SpanA crosses above SpanB
+                    twist_bullish = (intraday["SpanA_F"] > intraday["SpanB_F"]) & (intraday["SpanA_F"].shift(1) <= intraday["SpanB_F"].shift(1))
 
-#                     scatter_twist_bullish = go.Scatter(
-#                         x=intraday.loc[twist_bullish, "Time"],
-#                         y=intraday.loc[twist_bullish, "SpanA_F"] + 89,
-#                         mode="text",
-#                         text=["👼🏼"] * twist_bullish.sum(),
-#                         textposition="top center",
-#                         textfont=dict(size=34),
-#                         name="Kumo Twist Bullish (👼🏼)",
-#                         hovertemplate="Time: %{x}<br>👼🏼 SpanA crossed above SpanB<extra></extra>"
-#                     )
+                    scatter_twist_bullish = go.Scatter(
+                        x=intraday.loc[twist_bullish, "Time"],
+                        y=intraday.loc[twist_bullish, "SpanA_F"] + 89,
+                        mode="text",
+                        text=["👼🏼"] * twist_bullish.sum(),
+                        textposition="top center",
+                        textfont=dict(size=34),
+                        name="Kumo Twist Bullish (👼🏼)",
+                        hovertemplate="Time: %{x}<br>👼🏼 SpanA crossed above SpanB<extra></extra>"
+                    )
 
-#                     # Kumo Twist Bearish (👺): SpanA crosses below SpanB
-#                     twist_bearish = (intraday["SpanA_F"] < intraday["SpanB_F"]) & (intraday["SpanA_F"].shift(1) >= intraday["SpanB_F"].shift(1))
+                    # Kumo Twist Bearish (👺): SpanA crosses below SpanB
+                    twist_bearish = (intraday["SpanA_F"] < intraday["SpanB_F"]) & (intraday["SpanA_F"].shift(1) >= intraday["SpanB_F"].shift(1))
 
-#                     scatter_twist_bearish = go.Scatter(
-#                         x=intraday.loc[twist_bearish, "Time"],
-#                         y=intraday.loc[twist_bearish, "SpanA_F"] - 89,
-#                         mode="text",
-#                         text=["👺"] * twist_bearish.sum(),
-#                         textposition="bottom center",
-#                         textfont=dict(size=34),
-#                         name="Kumo Twist Bearish (👺)",
-#                         hovertemplate="Time: %{x}<br>👺 SpanA crossed below SpanB<extra></extra>"
-#                     )
+                    scatter_twist_bearish = go.Scatter(
+                        x=intraday.loc[twist_bearish, "Time"],
+                        y=intraday.loc[twist_bearish, "SpanA_F"] - 89,
+                        mode="text",
+                        text=["👺"] * twist_bearish.sum(),
+                        textposition="bottom center",
+                        textfont=dict(size=34),
+                        name="Kumo Twist Bearish (👺)",
+                        hovertemplate="Time: %{x}<br>👺 SpanA crossed below SpanB<extra></extra>"
+                    )
 
-#                     # Add to the F% plot
-#                     fig.add_trace(scatter_twist_bullish, row=1, col=1)
-#                     fig.add_trace(scatter_twist_bearish, row=1, col=1)
-
-
+                    # Add to the F% plot
+                    fig.add_trace(scatter_twist_bullish, row=1, col=1)
+                    fig.add_trace(scatter_twist_bearish, row=1, col=1)
 
 
-#                                     # Calculate Chikou relation to current price
-#                     intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
-#                                                 np.where(intraday["Chikou"] < intraday["Close"], "below", "equal"))
 
-#                     # Detect changes in Chikou relation
-#                     intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
 
-#                     # Filter first occurrence and changes
-#                     chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
+                                    # Calculate Chikou relation to current price
+                    intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
+                                                np.where(intraday["Chikou"] < intraday["Close"], "below", "equal"))
 
-#                     # Assign emojis for only these changes
-#                     intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
-#                                                 np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+                    # Detect changes in Chikou relation
+                    intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
 
-#                     mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                    # Filter first occurrence and changes
+                    chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
 
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday.loc[mask_chikou_above, "Time"],
-#                         y=intraday.loc[mask_chikou_above, "F_numeric"] + 55,
-#                         mode="text",
-#                         text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
-#                         textposition="top center",
-#                         textfont=dict(size=34),
-#                         name="Chikou Above Price",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
-#                     ), row=1, col=1)
+                    # Assign emojis for only these changes
+                    intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
+                                                np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-#                     mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
+                    mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday.loc[mask_chikou_below, "Time"],
-#                         y=intraday.loc[mask_chikou_below, "F_numeric"] - 55,
-#                         mode="text",
-#                         text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
-#                         textposition="bottom center",
-#                         textfont=dict(size=34),
-#                         name="Chikou Below Price",
-#                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
-#                     ), row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[mask_chikou_above, "Time"],
+                        y=intraday.loc[mask_chikou_above, "F_numeric"] + 55,
+                        mode="text",
+                        text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
+                        textposition="top center",
+                        textfont=dict(size=34),
+                        name="Chikou Above Price",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
+                    ), row=1, col=1)
+
+                    mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
+
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[mask_chikou_below, "Time"],
+                        y=intraday.loc[mask_chikou_below, "F_numeric"] - 55,
+                        mode="text",
+                        text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
+                        textposition="bottom center",
+                        textfont=dict(size=34),
+                        name="Chikou Below Price",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                    ), row=1, col=1)
 
 
 
@@ -3401,7 +3401,7 @@ if st.sidebar.button("Run Analysis"):
                     # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
                     scatter_tk_sun = go.Scatter(
                         x=intraday.loc[mask_tk_sun, "Time"],
-                        y=intraday.loc[mask_tk_sun, "F_numeric"] + 377,  # Offset for visibility
+                        y=intraday.loc[mask_tk_sun, "F_numeric"] + 260,  # Offset for visibility
                         mode="text",
                         text="🌞",
                         textposition="top center",
@@ -3413,7 +3413,7 @@ if st.sidebar.button("Run Analysis"):
                     # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
                     scatter_tk_moon = go.Scatter(
                         x=intraday.loc[mask_tk_moon, "Time"],
-                        y=intraday.loc[mask_tk_moon, "F_numeric"] - 377,  # Offset for visibility
+                        y=intraday.loc[mask_tk_moon, "F_numeric"] - 260,  # Offset for visibility
                         mode="text",
                         text="🌙",
                         textposition="bottom center",
