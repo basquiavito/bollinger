@@ -3394,37 +3394,37 @@ if st.sidebar.button("Run Analysis"):
 # # ------------------------------------------------------------------------------------------------------------------------
 
 
-                    # Mask for Tenkan-Kijun Crosses
-                    mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-                    mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
+                    # # Mask for Tenkan-Kijun Crosses
+                    # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+                    # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-                    # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                    scatter_tk_sun = go.Scatter(
-                        x=intraday.loc[mask_tk_sun, "Time"],
-                        y=intraday.loc[mask_tk_sun, "F_numeric"] + 89,  # Offset for visibility
-                        mode="text",
-                        text="🌞",
-                        textposition="top center",
-                        textfont=dict(size=34),
-                        name="Tenkan-Kijun Bullish Cross",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                    )
+                    # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                    # scatter_tk_sun = go.Scatter(
+                    #     x=intraday.loc[mask_tk_sun, "Time"],
+                    #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 89,  # Offset for visibility
+                    #     mode="text",
+                    #     text="🌞",
+                    #     textposition="top center",
+                    #     textfont=dict(size=34),
+                    #     name="Tenkan-Kijun Bullish Cross",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                    # )
 
-                    # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                    scatter_tk_moon = go.Scatter(
-                        x=intraday.loc[mask_tk_moon, "Time"],
-                        y=intraday.loc[mask_tk_moon, "F_numeric"] - 89,  # Offset for visibility
-                        mode="text",
-                        text="🌙",
-                        textposition="bottom center",
-                        textfont=dict(size=34),
-                        name="Tenkan-Kijun Bearish Cross",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                    )
+                    # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                    # scatter_tk_moon = go.Scatter(
+                    #     x=intraday.loc[mask_tk_moon, "Time"],
+                    #     y=intraday.loc[mask_tk_moon, "F_numeric"] - 89,  # Offset for visibility
+                    #     mode="text",
+                    #     text="🌙",
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=34),
+                    #     name="Tenkan-Kijun Bearish Cross",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                    # )
 
-                    # Add to the F% Plot
-                    fig.add_trace(scatter_tk_sun, row=1, col=1)
-                    fig.add_trace(scatter_tk_moon, row=1, col=1)
+                    # # Add to the F% Plot
+                    # fig.add_trace(scatter_tk_sun, row=1, col=1)
+                    # fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                     # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
                     y_open_f_line = go.Scatter(
@@ -3709,57 +3709,57 @@ if st.sidebar.button("Run Analysis"):
 
  
 
-                    # --- Step 1: Calculate REI velocity ---
-                    intraday["TD_REI_Delta"] = intraday["TD REI"] - intraday["TD REI"].shift(1)
-                    intraday["TD_REI_Velocity"] = intraday["TD_REI_Delta"].rolling(window=3).mean()
+                    # # --- Step 1: Calculate REI velocity ---
+                    # intraday["TD_REI_Delta"] = intraday["TD REI"] - intraday["TD REI"].shift(1)
+                    # intraday["TD_REI_Velocity"] = intraday["TD_REI_Delta"].rolling(window=3).mean()
                     
-                    # --- Step 2: Expansion threshold (top 15% velocity) ---
-                    rei_expansion_threshold = intraday["TD_REI_Velocity"].abs().quantile(0.85)
+                    # # --- Step 2: Expansion threshold (top 15% velocity) ---
+                    # rei_expansion_threshold = intraday["TD_REI_Velocity"].abs().quantile(0.85)
                     
-                    # --- Step 3: Flip detection ---
-                    prev_td_rei = intraday["TD REI"].shift(1)
+                    # # --- Step 3: Flip detection ---
+                    # prev_td_rei = intraday["TD REI"].shift(1)
                     
-                    # Bullish REI flip: crosses up with velocity
-                    mask_rei_bullish = (
-                        (prev_td_rei < 0) &
-                        (intraday["TD REI"] >= 0) &
-                        (intraday["TD_REI_Velocity"] > rei_expansion_threshold)
-                    )
+                    # # Bullish REI flip: crosses up with velocity
+                    # mask_rei_bullish = (
+                    #     (prev_td_rei < 0) &
+                    #     (intraday["TD REI"] >= 0) &
+                    #     (intraday["TD_REI_Velocity"] > rei_expansion_threshold)
+                    # )
                     
-                    # Bearish REI flip: crosses down with velocity
-                    mask_rei_bearish = (
-                        (prev_td_rei > 0) &
-                        (intraday["TD REI"] <= 0) &
-                        (intraday["TD_REI_Velocity"] < -rei_expansion_threshold)
-                    )
+                    # # Bearish REI flip: crosses down with velocity
+                    # mask_rei_bearish = (
+                    #     (prev_td_rei > 0) &
+                    #     (intraday["TD REI"] <= 0) &
+                    #     (intraday["TD_REI_Velocity"] < -rei_expansion_threshold)
+                    # )
                     
                      
                     
-                    # --- Step 5: Add Flip Emojis to F% chart (row 1) ---
-                    scatter_rei_bullish = go.Scatter(
-                        x=intraday.loc[mask_rei_bullish, "Time"],
-                        y=intraday.loc[mask_rei_bullish, "F_numeric"] + 5,
-                        mode="text",
-                        text="🎈",
-                        textposition="top center",
-                        textfont=dict(size=18, color="green"),
-                        name="TD REI Bullish Flip",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD REI Flip: 🎈<extra></extra>"
-                    )
+                    # # --- Step 5: Add Flip Emojis to F% chart (row 1) ---
+                    # scatter_rei_bullish = go.Scatter(
+                    #     x=intraday.loc[mask_rei_bullish, "Time"],
+                    #     y=intraday.loc[mask_rei_bullish, "F_numeric"] + 5,
+                    #     mode="text",
+                    #     text="🎈",
+                    #     textposition="top center",
+                    #     textfont=dict(size=18, color="green"),
+                    #     name="TD REI Bullish Flip",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>TD REI Flip: 🎈<extra></extra>"
+                    # )
                     
-                    scatter_rei_bearish = go.Scatter(
-                        x=intraday.loc[mask_rei_bearish, "Time"],
-                        y=intraday.loc[mask_rei_bearish, "F_numeric"] - 5,
-                        mode="text",
-                        text="💧",
-                        textposition="bottom center",
-                        textfont=dict(size=18, color="blue"),
-                        name="TD REI Bearish Flip",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>TD REI Flip: 💧<extra></extra>"
-                    )
+                    # scatter_rei_bearish = go.Scatter(
+                    #     x=intraday.loc[mask_rei_bearish, "Time"],
+                    #     y=intraday.loc[mask_rei_bearish, "F_numeric"] - 5,
+                    #     mode="text",
+                    #     text="💧",
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=18, color="blue"),
+                    #     name="TD REI Bearish Flip",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>TD REI Flip: 💧<extra></extra>"
+                    # )
                     
-                    fig.add_trace(scatter_rei_bullish, row=1, col=1)
-                    fig.add_trace(scatter_rei_bearish, row=1, col=1)
+                    # fig.add_trace(scatter_rei_bullish, row=1, col=1)
+                    # fig.add_trace(scatter_rei_bearish, row=1, col=1)
                 
                     
           
@@ -4140,39 +4140,39 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_rook_up, row=1, col=1)
                 fig.add_trace(scatter_rook_down, row=1, col=1)
 
-                    # 1) build Boolean masks (you can tighten with a small buffer if you like)
-                upper_tag = intraday["F_numeric"] >= intraday["F% Upper"]
-                lower_tag = intraday["F_numeric"] <= intraday["F% Lower"]
+                #     # 1) build Boolean masks (you can tighten with a small buffer if you like)
+                # upper_tag = intraday["F_numeric"] >= intraday["F% Upper"]
+                # lower_tag = intraday["F_numeric"] <= intraday["F% Lower"]
 
-                # 2) scatter for upper‑band tags
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[upper_tag, "Time"],
-                        y=intraday.loc[upper_tag, "F_numeric"] +13,       # nudge up a bit
-                        mode="text",
-                        text=["🏷️"] * upper_tag.sum(),
-                        textposition="top center",
-                        textfont=dict(size=18),
-                        name="BB Upper Tag (🏷️)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Upper Band<extra></extra>"
-                    ),
-                    row=1, col=1
-                )
+                # # 2) scatter for upper‑band tags
+                # fig.add_trace(
+                #     go.Scatter(
+                #         x=intraday.loc[upper_tag, "Time"],
+                #         y=intraday.loc[upper_tag, "F_numeric"] +13,       # nudge up a bit
+                #         mode="text",
+                #         text=["🏷️"] * upper_tag.sum(),
+                #         textposition="top center",
+                #         textfont=dict(size=18),
+                #         name="BB Upper Tag (🏷️)",
+                #         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Upper Band<extra></extra>"
+                #     ),
+                #     row=1, col=1
+                # )
 
-                # 3) scatter for lower‑band tags
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[lower_tag, "Time"],
-                        y=intraday.loc[lower_tag, "F_numeric"] - 13,       # nudge down a bit
-                        mode="text",
-                        text=["🏷️"] * lower_tag.sum(),
-                        textposition="bottom center",
-                        textfont=dict(size=18),
-                        name="BB Lower Tag (🏷️)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Lower Band<extra></extra>"
-                    ),
-                    row=1, col=1
-                )
+                # # 3) scatter for lower‑band tags
+                # fig.add_trace(
+                #     go.Scatter(
+                #         x=intraday.loc[lower_tag, "Time"],
+                #         y=intraday.loc[lower_tag, "F_numeric"] - 13,       # nudge down a bit
+                #         mode="text",
+                #         text=["🏷️"] * lower_tag.sum(),
+                #         textposition="bottom center",
+                #         textfont=dict(size=18),
+                #         name="BB Lower Tag (🏷️)",
+                #         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tagged Lower Band<extra></extra>"
+                #     ),
+                #     row=1, col=1
+                # )
 
 
 
@@ -4306,44 +4306,44 @@ if st.sidebar.button("Run Analysis"):
 
 # # #*******************************************************************************************************************************************************************************
 
-#  Cotangent Spikes (Skull 💀) - Catches both >3 and <-3
-                mask_cotangent_spike = intraday["F% Cotangent"].abs() > 3
+# #  Cotangent Spikes (Skull 💀) - Catches both >3 and <-3
+#                 mask_cotangent_spike = intraday["F% Cotangent"].abs() > 3
 
 
-                scatter_cotangent_spike = go.Scatter(
-                    x=intraday.loc[mask_cotangent_spike, "Time"],
-                    y=intraday.loc[mask_cotangent_spike, "F_numeric"] - 89,  # Slightly offset for visibility
-                    mode="text",
-                    text="💀",
-                    textposition="top center",
-                    textfont=dict(size=18),  # Larger for emphasis
-                    name="Cotangent Spike",
-                    hovertext=intraday.loc[mask_cotangent_spike, "F% Cotangent"].round(2),  # Display rounded cotangent value
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Cotangent: %{hovertext}<extra></extra>"
-                )
+#                 scatter_cotangent_spike = go.Scatter(
+#                     x=intraday.loc[mask_cotangent_spike, "Time"],
+#                     y=intraday.loc[mask_cotangent_spike, "F_numeric"] - 89,  # Slightly offset for visibility
+#                     mode="text",
+#                     text="💀",
+#                     textposition="top center",
+#                     textfont=dict(size=18),  # Larger for emphasis
+#                     name="Cotangent Spike",
+#                     hovertext=intraday.loc[mask_cotangent_spike, "F% Cotangent"].round(2),  # Display rounded cotangent value
+#                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Cotangent: %{hovertext}<extra></extra>"
+#                 )
 
-    # Add to the F% plot (Row 1)
-                fig.add_trace(scatter_cotangent_spike, row=1, col=1)
+#     # Add to the F% plot (Row 1)
+#                 fig.add_trace(scatter_cotangent_spike, row=1, col=1)
 
 # # #-------------------------------------------------------------------------------------
 
-# #     #  Cosecant Spikes (Lightning ⚡) - Detects |F% Cosecant| > 20
-                mask_cosecant_spike = intraday["F% Cosecant"].abs() > 20
+# # #     #  Cosecant Spikes (Lightning ⚡) - Detects |F% Cosecant| > 20
+#                 mask_cosecant_spike = intraday["F% Cosecant"].abs() > 20
 
-                scatter_cosecant_spike = go.Scatter(
-                    x=intraday.loc[mask_cosecant_spike, "Time"],
-                    y=intraday.loc[mask_cosecant_spike, "F_numeric"] + 20,  # Offset for visibility
-                    mode="text",
-                    text="⚡",
-                    textposition="top center",
-                    textfont=dict(size=18, color="orange"),  # Larger and orange for emphasis
-                    name="Cosecant Spike",
-                    hovertext=intraday.loc[mask_cosecant_spike, "F% Cosecant"].round(2),  # Display rounded cosecant value
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Cosecant: %{hovertext}<extra></extra>"
-                )
+#                 scatter_cosecant_spike = go.Scatter(
+#                     x=intraday.loc[mask_cosecant_spike, "Time"],
+#                     y=intraday.loc[mask_cosecant_spike, "F_numeric"] + 20,  # Offset for visibility
+#                     mode="text",
+#                     text="⚡",
+#                     textposition="top center",
+#                     textfont=dict(size=18, color="orange"),  # Larger and orange for emphasis
+#                     name="Cosecant Spike",
+#                     hovertext=intraday.loc[mask_cosecant_spike, "F% Cosecant"].round(2),  # Display rounded cosecant value
+#                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Cosecant: %{hovertext}<extra></extra>"
+#                 )
 
-                # Add to the F% plot (Row 1)
-                fig.add_trace(scatter_cosecant_spike, row=1, col=1)
+#                 # Add to the F% plot (Row 1)
+#                 fig.add_trace(scatter_cosecant_spike, row=1, col=1)
 
 
 
@@ -4353,23 +4353,23 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                 # # 🔵 Secant Spikes (Tornado 🌪) - Detects |F% Secant| > 3
-                mask_secant_spike = intraday["F% Secant"].abs() > 5
+# #                 # # 🔵 Secant Spikes (Tornado 🌪) - Detects |F% Secant| > 3
+#                 mask_secant_spike = intraday["F% Secant"].abs() > 5
 
-                scatter_secant_spike = go.Scatter(
-                    x=intraday.loc[mask_secant_spike, "Time"],
-                    y=intraday.loc[mask_secant_spike, "F_numeric"] + 20,  # Offset for visibility
-                    mode="text",
-                    text="🌪",
-                    textposition="top center",
-                    textfont=dict(size=18, color="blue"),  # Large and blue for emphasis
-                    name="Secant Spike",
-                    hovertext=intraday.loc[mask_secant_spike, "F% Secant"].round(2),  # Display rounded secant value
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Secant: %{hovertext}<extra></extra>"
-                )
+#                 scatter_secant_spike = go.Scatter(
+#                     x=intraday.loc[mask_secant_spike, "Time"],
+#                     y=intraday.loc[mask_secant_spike, "F_numeric"] + 20,  # Offset for visibility
+#                     mode="text",
+#                     text="🌪",
+#                     textposition="top center",
+#                     textfont=dict(size=18, color="blue"),  # Large and blue for emphasis
+#                     name="Secant Spike",
+#                     hovertext=intraday.loc[mask_secant_spike, "F% Secant"].round(2),  # Display rounded secant value
+#                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Secant: %{hovertext}<extra></extra>"
+#                 )
 
-                # # Add to the F% plot (Row 1)
-                fig.add_trace(scatter_secant_spike, row=1, col=1)
+#                 # # Add to the F% plot (Row 1)
+#                 fig.add_trace(scatter_secant_spike, row=1, col=1)
 
 # #  TRIGONOMETRIC COTAGENT / SECANT / TENKAN
 # #**************************************************************************************************************************************************************************
