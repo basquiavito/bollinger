@@ -4303,35 +4303,35 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-#                 # Add to F% plot
-#                 mask_ops_bear = intraday["OPS Transition"] == "🐻"
-#                 mask_ops_panda = intraday["OPS Transition"] == "🐼"
+                # Add to F% plot
+                mask_ops_bear = intraday["OPS Transition"] == "🐻"
+                mask_ops_panda = intraday["OPS Transition"] == "🐂 "
 
-#                 scatter_ops_bear = go.Scatter(
-#                     x=intraday.loc[mask_ops_bear, "Time"],
-#                     y=intraday.loc[mask_ops_bear, "F_numeric"] - 7,  # Offset to avoid overlap
-#                     mode="text",
-#                     text="🐻",
-#                     textposition="bottom center",
-#                     textfont=dict(size=22, color="red"),
-#                     name="OPS Bearish Flip",
-#                     hovertemplate="Time: %{x}<br>F%: %{y}<br>OPS Turned Bearish<extra></extra>"
-#                 )
+                scatter_ops_bear = go.Scatter(
+                    x=intraday.loc[mask_ops_bear, "Time"],
+                    y=intraday.loc[mask_ops_bear, "F_numeric"] - 7,  # Offset to avoid overlap
+                    mode="text",
+                    text="🐻",
+                    textposition="bottom center",
+                    textfont=dict(size=22, color="red"),
+                    name="OPS Bearish Flip",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>OPS Turned Bearish<extra></extra>"
+                )
 
-#                 scatter_ops_panda = go.Scatter(
-#                     x=intraday.loc[mask_ops_panda, "Time"],
-#                     y=intraday.loc[mask_ops_panda, "F_numeric"] + 7,  # Offset to avoid overlap
-#                     mode="text",
-#                     text="🐼",
-#                     textposition="top center",
-#                     textfont=dict(size=22, color="green"),
-#                     name="OPS Bullish Flip",
-#                     hovertemplate="Time: %{x}<br>F%: %{y}<br>OPS Turned Bullish<extra></extra>"
-#                 )
+                scatter_ops_panda = go.Scatter(
+                    x=intraday.loc[mask_ops_panda, "Time"],
+                    y=intraday.loc[mask_ops_panda, "F_numeric"] + 7,  # Offset to avoid overlap
+                    mode="text",
+                    text="🐂",
+                    textposition="top center",
+                    textfont=dict(size=22, color="green"),
+                    name="OPS Bullish Flip",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>OPS Turned Bullish<extra></extra>"
+                )
 
-#                 # Add to the F% plot
-#                 fig.add_trace(scatter_ops_bear, row=1, col=1)
-#                 fig.add_trace(scatter_ops_panda, row=1, col=1)
+                # Add to the F% plot
+                fig.add_trace(scatter_ops_bear, row=1, col=1)
+                fig.add_trace(scatter_ops_panda, row=1, col=1)
 
 
 # # #*******************************************************************************************************************************************************************************
