@@ -3177,7 +3177,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_twist_bullish = go.Scatter(
                         x=intraday.loc[twist_bullish, "Time"],
-                        y=intraday.loc[twist_bullish, "SpanA_F"] + 89,
+                        y=intraday.loc[twist_bullish, "SpanA_F"] + 177,
                         mode="text",
                         text=["👼🏼"] * twist_bullish.sum(),
                         textposition="top center",
@@ -3191,7 +3191,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_twist_bearish = go.Scatter(
                         x=intraday.loc[twist_bearish, "Time"],
-                        y=intraday.loc[twist_bearish, "SpanA_F"] - 89,
+                        y=intraday.loc[twist_bearish, "SpanA_F"] - 177,
                         mode="text",
                         text=["👺"] * twist_bearish.sum(),
                         textposition="bottom center",
