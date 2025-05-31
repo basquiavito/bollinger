@@ -3891,7 +3891,7 @@ if st.sidebar.button("Run Analysis"):
                     down_high_mask = intraday["Y_High_Cross"] == "🪂"
                     down_high_trace = go.Scatter(
                         x=intraday.loc[down_high_mask, "Time"],
-                        y=intraday.loc[down_high_mask, "F_numeric"] - 144,
+                        y=intraday.loc[down_high_mask, "F_numeric"] - 377,
                         mode="text",
                         text=intraday.loc[down_high_mask, "Y_High_Cross"],
                         textposition="bottom center",
@@ -3913,7 +3913,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_astronaut = go.Scatter(
                         x=astronaut_points["Time"],
-                        y=astronaut_points["F_numeric"] + 188,  # Higher offset
+                        y=astronaut_points["F_numeric"] + 377,  # Higher offset
                         mode="text",
                         text=astronaut_points["Astronaut_Emoji"],
                         textposition="top center",
@@ -3931,7 +3931,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_astronaut = go.Scatter(
                         x=astronaut_points["Time"],
-                        y=astronaut_points["F_numeric"] + 188,  # Offset so it floats higher
+                        y=astronaut_points["F_numeric"] + 377,  # Offset so it floats higher
                         mode="text",
                         text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
                         textposition="top center",
