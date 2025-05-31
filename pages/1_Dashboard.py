@@ -4240,7 +4240,35 @@ if st.sidebar.button("Run Analysis"):
                 )
                 fig.add_trace(long_entry_trace, row=1, col=1)
 
-
+                
+                # Recovery and Breach of Yesterday’s Low
+                mask_reclaim = intraday["Y_Low_Cross"] == "🚣🏽"
+                mask_breach = intraday["Y_Low_Cross"] == "🛟"
+                
+                scatter_reclaim = go.Scatter(
+                    x=intraday.loc[mask_reclaim, "Time"],
+                    y=intraday.loc[mask_reclaim, "F_numeric"] + 18,
+                    mode="text",
+                    text=["🚣🏽"] * mask_reclaim.sum(),
+                    textposition="top center",
+                    textfont=dict(size=24, color="blue"),
+                    name="Recovery over Yesterday Low",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>🚣🏽 Reclaim of Yesterday's Low<extra></extra>"
+                )
+                
+                scatter_breach = go.Scatter(
+                    x=intraday.loc[mask_breach, "Time"],
+                    y=intraday.loc[mask_breach, "F_numeric"] - 18,
+                    mode="text",
+                    text=["🛟"] * mask_breach.sum(),
+                    textposition="bottom center",
+                    textfont=dict(size=24, color="darkred"),
+                    name="Breach of Yesterday Low",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>🛟 Breach Below Yesterday's Low<extra></extra>"
+                )
+                
+                fig.add_trace(scatter_reclaim, row=1, col=1)
+                fig.add_trace(scatter_breach, row=1, col=1)
 
 
 #                 # # Mask where Entry Type II (delayed volume confirmation) is True
