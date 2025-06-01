@@ -2982,20 +2982,20 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # # Plot an emoji for detected upper wicks
-                    # intraday['UpperWickEmoji'] = intraday['UpperWickFlag'].apply(lambda x: "♟️" if x else "")
+                    # Plot an emoji for detected upper wicks
+                    intraday['UpperWickEmoji'] = intraday['UpperWickFlag'].apply(lambda x: "♟️" if x else "")
 
-                    # mask_upperwick = intraday['UpperWickEmoji'] != ""
+                    mask_upperwick = intraday['UpperWickEmoji'] != ""
 
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday.loc[mask_upperwick, 'Time'],
-                    #     y=intraday.loc[mask_upperwick, 'High'],
-                    #     mode='text',
-                    #     text=intraday.loc[mask_upperwick, 'UpperWickEmoji'],
-                    #     textposition='top center',
-                    #     textfont=dict(size=21),
-                    #     showlegend=False
-                    # ), row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[mask_upperwick, 'Time'],
+                        y=intraday.loc[mask_upperwick, 'High'],
+                        mode='text',
+                        text=intraday.loc[mask_upperwick, 'UpperWickEmoji'],
+                        textposition='top center',
+                        textfont=dict(size=21),
+                        showlegend=False
+                    ), row=1, col=1)
 
 
                     st.plotly_chart(fig, use_container_width=True)
