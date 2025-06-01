@@ -2908,9 +2908,9 @@ if st.sidebar.button("Run Analysis"):
                         name='Candles'),
                         row=1, col=1)
 
-                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
-                    #                         line=dict(color='red'), name='Tenkan-sen'),
-                    #             row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
+                                            line=dict(color='red'), name='Tenkan-sen'),
+                                row=1, col=1)
                     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'],
                                             line=dict(color='green'), name='Kijun-sen'),
                                 row=1, col=1)
