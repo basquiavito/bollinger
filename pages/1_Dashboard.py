@@ -3921,8 +3921,7 @@ if st.sidebar.button("Run Analysis"):
                         textposition="top center",
                         name="New Highs 👨🏽‍🚀",
                         textfont=dict(size=34),
-                        showlegend=True
-                    )
+                     )
 
                     fig.add_trace(scatter_astronaut, row=1, col=1)
 
@@ -3939,7 +3938,7 @@ if st.sidebar.button("Run Analysis"):
                         textposition="top center",
                         name="New Highs 🌒",
                         textfont=dict(size=34),
-                        showlegend=True
+                       
                     )
 
                     fig.add_trace(scatter_astronaut, row=1, col=1)
