@@ -2910,30 +2910,30 @@ if st.sidebar.button("Run Analysis"):
 
                     # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'],
                     #                         line=dict(color='red'), name='Tenkan-sen'),
-                                row=1, col=1)
+                    #             row=1, col=1)
                     fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'],
                                             line=dict(color='green'), name='Kijun-sen'),
                                 row=1, col=1)
-                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
-                    #                         line=dict(color='yellow'), name='Span A'),
-                    #             row=1, col=1)
-                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
-                    #                         line=dict(color='blue'), name='Span B'),
-                    #             row=1, col=1)
-                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'],
-                    #                         line=dict(color='purple'), name='Chikou'),
-                                # row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
+                                            line=dict(color='yellow'), name='Span A'),
+                                row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
+                                            line=dict(color='blue'), name='Span B'),
+                                row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'],
+                                            line=dict(color='purple'), name='Chikou'),
+                                row=1, col=1)
 
-                    # cloud
-                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
-                    #                         line=dict(width=0), showlegend=False),
-                    #             row=1, col=1)
-                    # fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
-                    #                         fill='tonexty',
-                    #                         fillcolor='rgba(128,128,128,0.2)',
-                    #                         line=dict(width=0),
-                    #                         showlegend=False),
-                    #             row=1, col=1)
+                    cloud
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],
+                                            line=dict(width=0), showlegend=False),
+                                row=1, col=1)
+                    fig.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],
+                                            fill='tonexty',
+                                            fillcolor='rgba(128,128,128,0.2)',
+                                            line=dict(width=0),
+                                            showlegend=False),
+                                row=1, col=1)
 
                     # ❸ ── volume bars (row 2) ──────────────────────────────────────────
                     fig.add_trace(go.Bar(
