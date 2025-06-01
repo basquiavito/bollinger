@@ -3496,7 +3496,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[mask_bbw_tight, "Time"],
                         y=intraday.loc[mask_bbw_tight, "F_numeric"] + 28,  # Adjusted Y offset
                         mode="text",
-                        text=["♗"] * mask_bbw_tight.sum(),  # ♗ as symbol
+                        text=["🐝"] * mask_bbw_tight.sum(),  # ♗ as symbol
                         textposition="top center",
                         textfont=dict(size=30, color="mediumvioletred"),  # 🎯 Pink / Purple shade
                         name="BBW Tight Bishop (♗🐝)",
