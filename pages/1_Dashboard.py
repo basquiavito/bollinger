@@ -3871,7 +3871,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
                     mode="text",
                     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
-                    textposition="top right",
+                    textposition="top center",
                     textfont=dict(size=34, color="green"),
                     name="Kijun Cross Bishop (Buy ♗)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
@@ -3883,7 +3883,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
                     mode="text",
                     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
-                    textposition="bottom right",
+                    textposition="bottom center",
                     textfont=dict(size=34, color="red"),
                     name="Kijun Cross Bishop (Sell ♝)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
