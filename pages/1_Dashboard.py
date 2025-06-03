@@ -4056,6 +4056,21 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
+                    # Filter where Swimmer or Squid exist
+                    swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
+
+                    scatter_swimmer = go.Scatter(
+                        x=swimmer_points["Time"],
+                        y=swimmer_points["F_numeric"] - 140,  # Offset downward so it floats below price
+                        mode="text",
+                        text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
+                        textposition="bottom center",
+                        name="New Lows 🏊🏽‍♂️🦑",
+                        textfont=dict(size=21),
+                        showlegend=True
+                    )
+
+                    fig.add_trace(scatter_swimmer, row=1, col=1)
 # # #*******************************************************************************************************************************************************************************
 
 
