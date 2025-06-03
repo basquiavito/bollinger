@@ -3719,9 +3719,9 @@ if st.sidebar.button("Run Analysis"):
                             fig.add_trace(
                                 go.Scatter(
                                     x=[intraday.at[ghost_idx, "Time"]],
-                                    y=[intraday.at[ghost_idx, "F_numeric"] + 144],
+                                    y=[intraday.at[ghost_idx, "F_numeric"] + 8],
                                     mode="text",
-                                    text=["🪜"],
+                                    text=["🔑"],
                                     textposition="middle center",
                                     textfont=dict(size=40, color="purple"),
                                     name="Confirmed Buy TDST Breakout",
@@ -3755,7 +3755,7 @@ if st.sidebar.button("Run Analysis"):
                             fig.add_trace(
                                 go.Scatter(
                                     x=[intraday.at[ghost_idx, "Time"]],
-                                    y=[intraday.at[ghost_idx, "F_numeric"] - 144],
+                                    y=[intraday.at[ghost_idx, "F_numeric"] - 8],
                                     mode="text",
                                     text=["🕳️"],
                                     textposition="middle center",
