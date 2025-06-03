@@ -3394,37 +3394,37 @@ if st.sidebar.button("Run Analysis"):
 # # ------------------------------------------------------------------------------------------------------------------------
 
 
-                    # Mask for Tenkan-Kijun Crosses
-                    mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-                    mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
+                    # # Mask for Tenkan-Kijun Crosses
+                    # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+                    # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-                    # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                    scatter_tk_sun = go.Scatter(
-                        x=intraday.loc[mask_tk_sun, "Time"],
-                        y=intraday.loc[mask_tk_sun, "F_numeric"] + 260,  # Offset for visibility
-                        mode="text",
-                        text="🌞",
-                        textposition="top center",
-                        textfont=dict(size=34),
-                        name="Tenkan-Kijun Bullish Cross",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                    )
+                    # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                    # scatter_tk_sun = go.Scatter(
+                    #     x=intraday.loc[mask_tk_sun, "Time"],
+                    #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 260,  # Offset for visibility
+                    #     mode="text",
+                    #     text="🌞",
+                    #     textposition="top center",
+                    #     textfont=dict(size=34),
+                    #     name="Tenkan-Kijun Bullish Cross",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                    # )
 
-                    # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                    scatter_tk_moon = go.Scatter(
-                        x=intraday.loc[mask_tk_moon, "Time"],
-                        y=intraday.loc[mask_tk_moon, "F_numeric"] - 260,  # Offset for visibility
-                        mode="text",
-                        text="🌙",
-                        textposition="bottom center",
-                        textfont=dict(size=34),
-                        name="Tenkan-Kijun Bearish Cross",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                    )
+                    # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                    # scatter_tk_moon = go.Scatter(
+                    #     x=intraday.loc[mask_tk_moon, "Time"],
+                    #     y=intraday.loc[mask_tk_moon, "F_numeric"] - 260,  # Offset for visibility
+                    #     mode="text",
+                    #     text="🌙",
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=34),
+                    #     name="Tenkan-Kijun Bearish Cross",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                    # )
 
-                    # Add to the F% Plot
-                    fig.add_trace(scatter_tk_sun, row=1, col=1)
-                    fig.add_trace(scatter_tk_moon, row=1, col=1)
+                    # # Add to the F% Plot
+                    # fig.add_trace(scatter_tk_sun, row=1, col=1)
+                    # fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                     # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
                     y_open_f_line = go.Scatter(
@@ -3711,93 +3711,12 @@ if st.sidebar.button("Run Analysis"):
 
  
 
-                    # # --- Step 1: Calculate REI velocity ---
-                    # intraday["TD_REI_Delta"] = intraday["TD REI"] - intraday["TD REI"].shift(1)
-                    # intraday["TD_REI_Velocity"] = intraday["TD_REI_Delta"].rolling(window=3).mean()
-                    
-                    # # --- Step 2: Expansion threshold (top 15% velocity) ---
-                    # rei_expansion_threshold = intraday["TD_REI_Velocity"].abs().quantile(0.85)
-                    
-                    # # --- Step 3: Flip detection ---
-                    # prev_td_rei = intraday["TD REI"].shift(1)
-                    
-                    # # Bullish REI flip: crosses up with velocity
-                    # mask_rei_bullish = (
-                    #     (prev_td_rei < 0) &
-                    #     (intraday["TD REI"] >= 0) &
-                    #     (intraday["TD_REI_Velocity"] > rei_expansion_threshold)
-                    # )
-                    
-                    # # Bearish REI flip: crosses down with velocity
-                    # mask_rei_bearish = (
-                    #     (prev_td_rei > 0) &
-                    #     (intraday["TD REI"] <= 0) &
-                    #     (intraday["TD_REI_Velocity"] < -rei_expansion_threshold)
-                    # )
-                    
-                     
-                    
-                    # # --- Step 5: Add Flip Emojis to F% chart (row 1) ---
-                    # scatter_rei_bullish = go.Scatter(
-                    #     x=intraday.loc[mask_rei_bullish, "Time"],
-                    #     y=intraday.loc[mask_rei_bullish, "F_numeric"] + 5,
-                    #     mode="text",
-                    #     text="🎈",
-                    #     textposition="top center",
-                    #     textfont=dict(size=18, color="green"),
-                    #     name="TD REI Bullish Flip",
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>TD REI Flip: 🎈<extra></extra>"
-                    # )
-                    
-                    # scatter_rei_bearish = go.Scatter(
-                    #     x=intraday.loc[mask_rei_bearish, "Time"],
-                    #     y=intraday.loc[mask_rei_bearish, "F_numeric"] - 5,
-                    #     mode="text",
-                    #     text="💧",
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=18, color="blue"),
-                    #     name="TD REI Bearish Flip",
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>TD REI Flip: 💧<extra></extra>"
-                    # )
-                    
-                    # fig.add_trace(scatter_rei_bullish, row=1, col=1)
-                    # fig.add_trace(scatter_rei_bearish, row=1, col=1)
                 
-                    
+                 
           
                                                   
 
-                    # 🪫 Emoji at LOD (Low of Day)
-                    lod_index = intraday["Low"].idxmin()  # Find the index of the lowest low
-                    lod_time = intraday.loc[lod_index, "Time"]
-                    lod_value = intraday.loc[lod_index, "F_numeric"]
-
-                    fig.add_trace(go.Scatter(
-                        x=[lod_time],
-                        y=[lod_value - 55],  # offset below the actual low
-                        mode="text",
-                        text=["🪫"],
-                        textposition="bottom center",
-                        textfont=dict(size=21),
-                        name="Low of Day (🪫)",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-                    ))
-
-                    # 🔋 Emoji at HOD (High of Day)
-                    hod_index = intraday["High"].idxmax()  # Find the index of the highest high
-                    hod_time = intraday.loc[hod_index, "Time"]
-                    hod_value = intraday.loc[hod_index, "F_numeric"]
-
-                    fig.add_trace(go.Scatter(
-                        x=[hod_time],
-                        y=[hod_value + 55],  # offset above the actual high
-                        mode="text",
-                        text=["🔋"],
-                        textposition="top center",
-                        textfont=dict(size=21),
-                        name="High of Day (🔋)",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-                    ))
+                   
 
 
                     intraday["F_shift"] = intraday["F_numeric"].shift(1)
