@@ -3834,7 +3834,7 @@ if st.sidebar.button("Run Analysis"):
                 # Buy Horse (♘) → normal above
                 scatter_horse_buy = go.Scatter(
                     x=intraday.loc[mask_horse_buy, "Time"],
-                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 39,
+                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 34,
                     mode="text",
                     text=["♘"] * mask_horse_buy.sum(),
                     textposition="top right",
@@ -3846,7 +3846,7 @@ if st.sidebar.button("Run Analysis"):
                 # Sell Horse (♞) → below and red
                 scatter_horse_sell = go.Scatter(
                     x=intraday.loc[mask_horse_sell, "Time"],
-                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 39,
+                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 34,
                     mode="text",
                     text=["♞"] * mask_horse_sell.sum(),
                     textposition="bottom right",
@@ -3869,7 +3869,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday.loc[mask_bishop_up, "F_numeric"] + 39,
                     mode="text",
                     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
-                    textposition="top left",
+                    textposition="top right",
                     textfont=dict(size=34, color="green"),
                     name="Kijun Cross Bishop (Buy ♗)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
@@ -3881,7 +3881,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday.loc[mask_bishop_down, "F_numeric"] - 39,
                     mode="text",
                     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
-                    textposition="bottom left",
+                    textposition="bottom right",
                     textfont=dict(size=34, color="red"),
                     name="Kijun Cross Bishop (Sell ♝)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
