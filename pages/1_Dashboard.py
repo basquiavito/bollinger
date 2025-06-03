@@ -3966,7 +3966,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♙ Upward pawn
                 pawn_up = go.Scatter(
                     x=intraday.loc[mask_pawn_up, "Time"],
-                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 13,
+                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 26,
                     mode="text",
                     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
                     textposition="top center",
@@ -3978,7 +3978,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♟️ Downward pawn
                 pawn_down = go.Scatter(
                     x=intraday.loc[mask_pawn_down, "Time"],
-                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 13,
+                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 26,
                     mode="text",
                     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
                     textposition="bottom center",
