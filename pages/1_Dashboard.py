@@ -3467,7 +3467,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday.loc[mask_bbw_tight, "F_numeric"] + 89,  # Adjusted Y offset
                         mode="text",
                         text=["🐝"] * mask_bbw_tight.sum(),  # ♗ as symbol
-                        textposition="top Right",
+                        textposition="top right",
                         textfont=dict(size=21, color="mediumvioletred"),  # 🎯 Pink / Purple shade
                         name="BBW Tight Bishop (♗🐝)",
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression ♗🐝<extra></extra>"
