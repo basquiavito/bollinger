@@ -3510,7 +3510,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
                         textposition="bottom center",
-                        textfont=dict(size=13),
+                        textfont=dict(size=18),
                         name="ADX Expansion Alert",
                         hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
                         customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
@@ -3525,11 +3525,11 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_std_alert = go.Scatter(
                         x=intraday.loc[mask_std_alert, "Time"],
-                        y=intraday.loc[mask_std_alert, "F_numeric"] + 89,  # Offset above F%
+                        y=intraday.loc[mask_std_alert, "F_numeric"] + 8,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_std_alert, "STD_Alert"],
-                        textposition="bottom left",
-                        textfont=dict(size=21),
+                        textposition="bottom right",
+                        textfont=dict(size=18),
                         name="F% STD Expansion",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
                     )
