@@ -4045,56 +4045,13 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-                    astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
-
-                    scatter_astronaut = go.Scatter(
-                        x=astronaut_points["Time"],
-                        y=astronaut_points["F_numeric"] + 144,  # Higher offset
-                        mode="text",
-                        text=astronaut_points["Astronaut_Emoji"],
-                        textposition="top center",
-                        name="New Highs 👨🏽‍🚀",
-                        textfont=dict(size=21),
-                     )
-
-                    fig.add_trace(scatter_astronaut, row=1, col=1)
+ 
 
 
-
-                    # Filter where the Astronaut or Moon emoji exist
-                    astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
-
-                    scatter_astronaut = go.Scatter(
-                        x=astronaut_points["Time"],
-                        y=astronaut_points["F_numeric"] + 189,  # Offset so it floats higher
-                        mode="text",
-                        text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-                        textposition="top center",
-                        name="New Highs 🌒",
-                        textfont=dict(size=21),
-                       
-                    )
-
-                    fig.add_trace(scatter_astronaut, row=1, col=1)
+ 
 
 
-
-                    # Filter where Swimmer or Squid exist
-                    swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
-
-                    scatter_swimmer = go.Scatter(
-                        x=swimmer_points["Time"],
-                        y=swimmer_points["F_numeric"] - 188,  # Offset downward so it floats below price
-                        mode="text",
-                        text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
-                        textposition="bottom center",
-                        name="New Lows 🏊🏽‍♂️🦑",
-                        textfont=dict(size=55),
-                        showlegend=True
-                    )
-
-                    fig.add_trace(scatter_swimmer, row=1, col=1)
+  
 
 
                 # Update layout overall
