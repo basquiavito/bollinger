@@ -4023,37 +4023,37 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(down_high_trace, row=1, col=1)
 
 
-                 astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
-                    scatter_astronaut = go.Scatter(
-                        x=astronaut_points["Time"],
-                        y=astronaut_points["F_numeric"] + 100,  # Higher offset
-                        mode="text",
-                        text=astronaut_points["Astronaut_Emoji"],
-                        textposition="top center",
-                        name="New Highs 👨🏽‍🚀",
-                        textfont=dict(size=34),
-                     )
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 100,  # Higher offset
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],
+                    textposition="top center",
+                    name="New Highs 👨🏽‍🚀",
+                    textfont=dict(size=34),
+                 )
 
-                    fig.add_trace(scatter_astronaut, row=1, col=1)
+                fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
 
                     # Filter where the Astronaut or Moon emoji exist
-                    astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
 
-                    scatter_astronaut = go.Scatter(
-                        x=astronaut_points["Time"],
-                        y=astronaut_points["F_numeric"] + 100,  # Offset so it floats higher
-                        mode="text",
-                        text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-                        textposition="top center",
-                        name="New Highs 🌒",
-                        textfont=dict(size=34),
-                       
-                    )
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 100,  # Offset so it floats higher
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
+                    textposition="top center",
+                    name="New Highs 🌒",
+                    textfont=dict(size=34),
+                   
+                )
 
-                    fig.add_trace(scatter_astronaut, row=1, col=1)
+                fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
 # # #*******************************************************************************************************************************************************************************
