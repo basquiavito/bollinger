@@ -3638,7 +3638,7 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(go.Scatter(
                         x=intraday.loc[cloud_mask, "Time"],
-                        y=intraday.loc[cloud_mask, "F_numeric"] + 233,
+                        y=intraday.loc[cloud_mask, "F_numeric"] +144,
                         mode="text",
                         text=intraday.loc[cloud_mask, "Heaven_Cloud"],
                         textposition="top center",
@@ -3670,7 +3670,7 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(go.Scatter(
                         x=intraday.loc[drizzle_mask, "Time"],
-                        y=intraday.loc[drizzle_mask, "F_numeric"] + 233,  # Position below the bar
+                        y=intraday.loc[drizzle_mask, "F_numeric"] + 144,  # Position below the bar
                         mode="text",
                         text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
                         textposition="bottom center",
