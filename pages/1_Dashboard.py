@@ -3866,7 +3866,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Up (♗)
                 scatter_bishop_up = go.Scatter(
                     x=intraday.loc[mask_bishop_up, "Time"],
-                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 26,
+                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
                     mode="text",
                     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
                     textposition="top right",
@@ -3878,7 +3878,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Down (♝)
                 scatter_bishop_down = go.Scatter(
                     x=intraday.loc[mask_bishop_down, "Time"],
-                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 26,
+                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
                     mode="text",
                     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
                     textposition="bottom right",
