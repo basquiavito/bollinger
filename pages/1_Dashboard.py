@@ -3834,10 +3834,10 @@ if st.sidebar.button("Run Analysis"):
                 # Buy Horse (♘) → normal above
                 scatter_horse_buy = go.Scatter(
                     x=intraday.loc[mask_horse_buy, "Time"],
-                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 34,
+                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 39,
                     mode="text",
                     text=["♘"] * mask_horse_buy.sum(),
-                    textposition="top center",
+                    textposition="top right",
                     textfont=dict(size=34, color="green"),  # You can make it white if you want
                     name="Horse After Buy Kijun Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>♘ Horse after Buy<extra></extra>"
@@ -3846,10 +3846,10 @@ if st.sidebar.button("Run Analysis"):
                 # Sell Horse (♞) → below and red
                 scatter_horse_sell = go.Scatter(
                     x=intraday.loc[mask_horse_sell, "Time"],
-                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 34,
+                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 39,
                     mode="text",
                     text=["♞"] * mask_horse_sell.sum(),
-                    textposition="bottom center",
+                    textposition="bottom right",
                     textfont=dict(size=34, color="red"),
                     name="Horse After Sell Kijun Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>♞ Horse after Sell<extra></extra>"
