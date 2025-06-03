@@ -3467,7 +3467,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday.loc[mask_bbw_tight, "F_numeric"] + 89,  # Adjusted Y offset
                         mode="text",
                         text=["🐝"] * mask_bbw_tight.sum(),  # ♗ as symbol
-                        textposition="top center",
+                        textposition="top Right",
                         textfont=dict(size=21, color="mediumvioletred"),  # 🎯 Pink / Purple shade
                         name="BBW Tight Bishop (♗🐝)",
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression ♗🐝<extra></extra>"
@@ -3525,10 +3525,10 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_std_alert = go.Scatter(
                         x=intraday.loc[mask_std_alert, "Time"],
-                        y=intraday.loc[mask_std_alert, "F_numeric"] + 55,  # Offset above F%
+                        y=intraday.loc[mask_std_alert, "F_numeric"] + 89,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_std_alert, "STD_Alert"],
-                        textposition="top center",
+                        textposition="bottom left",
                         textfont=dict(size=21),
                         name="F% STD Expansion",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
