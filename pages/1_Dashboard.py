@@ -1151,7 +1151,7 @@ if st.sidebar.button("Run Analysis"):
                             f_start = intraday.loc[q_idx, "F_numeric"]
                             for i in range(q_idx + 1, len(intraday)):
                                 f_now = intraday.loc[i, "F_numeric"]
-                                if f_now - f_start >= 20:
+                                if f_now - f_start >= 33:
                                     intraday.loc[i, "King_Signal"] = "👑"
                                     break
 
@@ -1161,7 +1161,7 @@ if st.sidebar.button("Run Analysis"):
                             f_start = intraday.loc[q_idx, "F_numeric"]
                             for i in range(q_idx + 1, len(intraday)):
                                 f_now = intraday.loc[i, "F_numeric"]
-                                if f_now - f_start <= -20:
+                                if f_now - f_start <= -33:
                                     intraday.loc[i, "King_Signal"] = "🔻👑"
                                     break
 
@@ -4073,6 +4073,32 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_swimmer, row=1, col=1)
 # # #*******************************************************************************************************************************************************************************
 
+                mask_green_king = intraday["King_Signal"] == "👑"
+                scatter_green_king = go.Scatter(
+                    x=intraday.loc[mask_green_king, "Time"],
+                    y=intraday.loc[mask_green_king, "F_numeric"] + 89,
+                    mode="text",
+                    text=["♔"] * mask_green_king.sum(),
+                    textfont=dict(size=34, color="green"),
+                    name="Green King Signal (♔)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>👑 Green Kingdom Crowned ♔<extra></extra>"
+                )
+
+
+                mask_red_king = intraday["King_Signal"] == "🔻👑"
+                scatter_red_king = go.Scatter(
+                    x=intraday.loc[mask_red_king, "Time"],
+                    y=intraday.loc[mask_red_king, "F_numeric"] - 89,
+                    mode="text",
+                    text=["♔"] * mask_red_king.sum(),
+                    textfont=dict(size=34, color="red"),
+                    name="Red King Signal (♔)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🔻👑 Red Kingdom Crowned ♔<extra></extra>"
+                )
+
+
+                fig.add_trace(scatter_green_king, row=1, col=1)
+                fig.add_trace(scatter_red_king, row=1, col=1)
 
 
 
