@@ -3644,7 +3644,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=intraday.loc[cloud_mask, "Heaven_Cloud"],
                         textposition="top center",
-                        textfont=dict(size=34),
+                        textfont=dict(size=21),
                         name="Heaven ☁️",
                         hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
                     ), row=1, col=1)
@@ -3676,7 +3676,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
                         textposition="bottom center",
-                        textfont=dict(size=32),
+                        textfont=dict(size=21),
                         name="Price Dropped Below Demand 🌧️",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                     ), row=1, col=1)
@@ -3723,7 +3723,7 @@ if st.sidebar.button("Run Analysis"):
                                     mode="text",
                                     text=["🔑"],
                                     textposition="middle center",
-                                    textfont=dict(size=40, color="purple"),
+                                    textfont=dict(size=20, color="purple"),
                                     name="Confirmed Buy TDST Breakout",
                                     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                                 ),
@@ -3759,7 +3759,7 @@ if st.sidebar.button("Run Analysis"):
                                     mode="text",
                                     text=["🕳️"],
                                     textposition="middle center",
-                                    textfont=dict(size=40, color="purple"),
+                                    textfont=dict(size=20, color="purple"),
                                     name="Confirmed Sell TDST Breakdown",
                                     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                                 ),
