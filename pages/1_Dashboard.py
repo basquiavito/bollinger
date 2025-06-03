@@ -3433,29 +3433,29 @@ if st.sidebar.button("Run Analysis"):
                     )
 
 
-#                   # (D) TD Trap Arrows - Only First Sell TD Trap
-#                     # ----------------------------------------------
-#                     td_trap_mask = intraday["TD Trap"].str.contains("Sell", na=False)  # Only Sell TD Traps
+                  # (D) TD Trap Arrows - Only First Sell TD Trap
+                    # ----------------------------------------------
+                    td_trap_mask = intraday["TD Trap"].str.contains("Sell", na=False)  # Only Sell TD Traps
 
-#                     if not td_trap_mask.empty and td_trap_mask.any():
-#                         first_sell_trap_idx = td_trap_mask.idxmax()  # Get first occurrence index
-#                         first_sell_trap_time = intraday.loc[first_sell_trap_idx, "Time"]
-#                         first_sell_trap_value = intraday.loc[first_sell_trap_idx, "F_numeric"]
+                    if not td_trap_mask.empty and td_trap_mask.any():
+                        first_sell_trap_idx = td_trap_mask.idxmax()  # Get first occurrence index
+                        first_sell_trap_time = intraday.loc[first_sell_trap_idx, "Time"]
+                        first_sell_trap_value = intraday.loc[first_sell_trap_idx, "F_numeric"]
 
-#                         # Add annotation for first Sell TD Trap (Short = ST)
-#                         fig.add_annotation(
-#                             x=first_sell_trap_time,
-#                             y=first_sell_trap_value - 10,  # Offset to avoid overlap
-#                             text="ST",  # Short label instead of full text
-#                             showarrow=True,
-#                             arrowhead=2,
-#                             arrowsize=1.5,
-#                             arrowcolor="yellow",
-#                             font=dict(size=12, color="red", family="Arial Black"),
-#                         )
+                        # Add annotation for first Sell TD Trap (Short = ST)
+                        fig.add_annotation(
+                            x=first_sell_trap_time,
+                            y=first_sell_trap_value - 10,  # Offset to avoid overlap
+                            text="ST",  # Short label instead of full text
+                            showarrow=True,
+                            arrowhead=2,
+                            arrowsize=1.5,
+                            arrowcolor="yellow",
+                            font=dict(size=12, color="red", family="Arial Black"),
+                        )
 
-#                     fig.update_xaxes(title_text="Time", row=1, col=1)
-#                     fig.update_yaxes(title_text="F% Scale", row=1, col=1)
+                    fig.update_xaxes(title_text="Time", row=1, col=1)
+                    fig.update_yaxes(title_text="F% Scale", row=1, col=1)
 
 
 
@@ -3636,50 +3636,50 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # cloud_mask = intraday["Heaven_Cloud"] == "☁️"
+                    cloud_mask = intraday["Heaven_Cloud"] == "☁️"
 
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday.loc[cloud_mask, "Time"],
-                    #     y=intraday.loc[cloud_mask, "F_numeric"] +144,
-                    #     mode="text",
-                    #     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
-                    #     textposition="top center",
-                    #     textfont=dict(size=34),
-                    #     name="Heaven ☁️",
-                    #     hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
-                    # ), row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[cloud_mask, "Time"],
+                        y=intraday.loc[cloud_mask, "F_numeric"] +144,
+                        mode="text",
+                        text=intraday.loc[cloud_mask, "Heaven_Cloud"],
+                        textposition="top center",
+                        textfont=dict(size=34),
+                        name="Heaven ☁️",
+                        hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
+                    ), row=1, col=1)
 
-                    # # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
-                    # intraday["Drizzle_Emoji"] = None
-                    # below_demand = False
+                    # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
+                    intraday["Drizzle_Emoji"] = None
+                    below_demand = False
 
-                    # for i in range(1, len(intraday)):
-                    #     f = intraday["F_numeric"].iloc[i]
-                    #     demand = intraday["TD Demand Line F"].iloc[i]
+                    for i in range(1, len(intraday)):
+                        f = intraday["F_numeric"].iloc[i]
+                        demand = intraday["TD Demand Line F"].iloc[i]
 
-                    #     if pd.notna(demand) and f < demand:
-                    #         below_demand = True
-                    #     elif pd.notna(demand) and f >= demand:
-                    #         below_demand = False
+                        if pd.notna(demand) and f < demand:
+                            below_demand = True
+                        elif pd.notna(demand) and f >= demand:
+                            below_demand = False
 
-                    #     if below_demand:
-                    #         intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
+                        if below_demand:
+                            intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
 
 
 
-                    # # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
-                    # drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
+                    # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
+                    drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
 
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday.loc[drizzle_mask, "Time"],
-                    #     y=intraday.loc[drizzle_mask, "F_numeric"] + 144,  # Position below the bar
-                    #     mode="text",
-                    #     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=32),
-                    #     name="Price Dropped Below Demand 🌧️",
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
-                    # ), row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[drizzle_mask, "Time"],
+                        y=intraday.loc[drizzle_mask, "F_numeric"] + 144,  # Position below the bar
+                        mode="text",
+                        text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
+                        textposition="bottom center",
+                        textfont=dict(size=32),
+                        name="Price Dropped Below Demand 🌧️",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
+                    ), row=1, col=1)
 
  
 
@@ -3964,32 +3964,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # short_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
-                #     textposition="bottom left",
-                #     textfont=dict(size=13, color="lime"),
-                #     name="Short Entry (✅)"
-                # )
-                # fig.add_trace(short_entry_trace, row=1, col=1)
+                short_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
+                    textposition="bottom left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Short Entry (✅)"
+                )
+                fig.add_trace(short_entry_trace, row=1, col=1)
 
 
 
 
 
 
-                # long_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
-                #     textposition="top left",
-                #     textfont=dict(size=13, color="lime"),
-                #     name="Long Entry (✅)"
-                # )
-                # fig.add_trace(long_entry_trace, row=1, col=1)
+                long_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
+                    textposition="top left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Long Entry (✅)"
+                )
+                fig.add_trace(long_entry_trace, row=1, col=1)
 
                 
               
