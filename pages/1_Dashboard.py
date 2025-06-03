@@ -3899,10 +3899,10 @@ if st.sidebar.button("Run Analysis"):
                 # White rook (up cross)
                 scatter_rook_up = go.Scatter(
                     x=intraday.loc[mask_rook_up, "Time"],
-                    y=intraday.loc[mask_rook_up, "F_numeric"] + 39,  # Offset upward
+                    y=intraday.loc[mask_rook_up, "F_numeric"] + 21,  # Offset upward
                     mode="text",
                     text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
-                    textposition="top center",
+                    textposition="top left",
                     textfont=dict(size=21,  color="green"),
                     name="TD Supply Cross Up (♖)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Up ♖<extra></extra>"
@@ -3911,10 +3911,10 @@ if st.sidebar.button("Run Analysis"):
                 # Black rook (down cross)
                 scatter_rook_down = go.Scatter(
                     x=intraday.loc[mask_rook_down, "Time"],
-                    y=intraday.loc[mask_rook_down, "F_numeric"] - 39,  # Offset downward
+                    y=intraday.loc[mask_rook_down, "F_numeric"] - 21,  # Offset downward
                     mode="text",
                     text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
-                    textposition="bottom center",
+                    textposition="bottom left",
                     textfont=dict(size=21,  color="red"),
                     name="TD Supply Cross Down (♜)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
@@ -3936,7 +3936,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♙ Upward pawn
                 pawn_up = go.Scatter(
                     x=intraday.loc[mask_pawn_up, "Time"],
-                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 26,
+                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 13,
                     mode="text",
                     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
                     textposition="top center",
@@ -3948,7 +3948,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♟️ Downward pawn
                 pawn_down = go.Scatter(
                     x=intraday.loc[mask_pawn_down, "Time"],
-                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 26,
+                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 13,
                     mode="text",
                     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
                     textposition="bottom center",
@@ -3962,32 +3962,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                short_entry_trace = go.Scatter(
-                    x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
-                    mode="text",
-                    text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
-                    textposition="bottom left",
-                    textfont=dict(size=13, color="lime"),
-                    name="Short Entry (✅)"
-                )
-                fig.add_trace(short_entry_trace, row=1, col=1)
+                # short_entry_trace = go.Scatter(
+                #     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
+                #     y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
+                #     mode="text",
+                #     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
+                #     textposition="bottom left",
+                #     textfont=dict(size=13, color="lime"),
+                #     name="Short Entry (✅)"
+                # )
+                # fig.add_trace(short_entry_trace, row=1, col=1)
 
 
 
 
 
 
-                long_entry_trace = go.Scatter(
-                    x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
-                    mode="text",
-                    text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
-                    textposition="top left",
-                    textfont=dict(size=13, color="lime"),
-                    name="Long Entry (✅)"
-                )
-                fig.add_trace(long_entry_trace, row=1, col=1)
+                # long_entry_trace = go.Scatter(
+                #     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
+                #     y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
+                #     mode="text",
+                #     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
+                #     textposition="top left",
+                #     textfont=dict(size=13, color="lime"),
+                #     name="Long Entry (✅)"
+                # )
+                # fig.add_trace(long_entry_trace, row=1, col=1)
 
                 
               
