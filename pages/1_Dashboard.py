@@ -4027,12 +4027,12 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_astronaut = go.Scatter(
                     x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 100,  # Higher offset
+                    y=astronaut_points["F_numeric"] + 140,  # Higher offset
                     mode="text",
                     text=astronaut_points["Astronaut_Emoji"],
                     textposition="top center",
                     name="New Highs 👨🏽‍🚀",
-                    textfont=dict(size=34),
+                    textfont=dict(size=21),
                  )
 
                 fig.add_trace(scatter_astronaut, row=1, col=1)
@@ -4044,12 +4044,12 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_astronaut = go.Scatter(
                     x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 100,  # Offset so it floats higher
+                    y=astronaut_points["F_numeric"] + 140,  # Offset so it floats higher
                     mode="text",
                     text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
                     textposition="top center",
                     name="New Highs 🌒",
-                    textfont=dict(size=34),
+                    textfont=dict(size=21),
                    
                 )
 
