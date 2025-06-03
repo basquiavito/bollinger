@@ -3172,37 +3172,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # Kumo Twist Bullish (👼🏼): SpanA crosses above SpanB
-                    twist_bullish = (intraday["SpanA_F"] > intraday["SpanB_F"]) & (intraday["SpanA_F"].shift(1) <= intraday["SpanB_F"].shift(1))
-
-                    scatter_twist_bullish = go.Scatter(
-                        x=intraday.loc[twist_bullish, "Time"],
-                        y=intraday.loc[twist_bullish, "SpanA_F"] + 177,
-                        mode="text",
-                        text=["👼🏼"] * twist_bullish.sum(),
-                        textposition="top center",
-                        textfont=dict(size=34),
-                        name="Kumo Twist Bullish (👼🏼)",
-                        hovertemplate="Time: %{x}<br>👼🏼 SpanA crossed above SpanB<extra></extra>"
-                    )
-
-                    # Kumo Twist Bearish (👺): SpanA crosses below SpanB
-                    twist_bearish = (intraday["SpanA_F"] < intraday["SpanB_F"]) & (intraday["SpanA_F"].shift(1) >= intraday["SpanB_F"].shift(1))
-
-                    scatter_twist_bearish = go.Scatter(
-                        x=intraday.loc[twist_bearish, "Time"],
-                        y=intraday.loc[twist_bearish, "SpanA_F"] - 177,
-                        mode="text",
-                        text=["👺"] * twist_bearish.sum(),
-                        textposition="bottom center",
-                        textfont=dict(size=34),
-                        name="Kumo Twist Bearish (👺)",
-                        hovertemplate="Time: %{x}<br>👺 SpanA crossed below SpanB<extra></extra>"
-                    )
-
-                    # Add to the F% plot
-                    fig.add_trace(scatter_twist_bullish, row=1, col=1)
-                    fig.add_trace(scatter_twist_bearish, row=1, col=1)
+            
 
 
 
@@ -3223,29 +3193,29 @@ if st.sidebar.button("Run Analysis"):
 
                     mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
-                    fig.add_trace(go.Scatter(
-                        x=intraday.loc[mask_chikou_above, "Time"],
-                        y=intraday.loc[mask_chikou_above, "F_numeric"] + 55,
-                        mode="text",
-                        text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
-                        textposition="top center",
-                        textfont=dict(size=34),
-                        name="Chikou Above Price",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
-                    ), row=1, col=1)
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday.loc[mask_chikou_above, "Time"],
+                    #     y=intraday.loc[mask_chikou_above, "F_numeric"] + 55,
+                    #     mode="text",
+                    #     text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
+                    #     textposition="top center",
+                    #     textfont=dict(size=34),
+                    #     name="Chikou Above Price",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
+                    # ), row=1, col=1)
 
-                    mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
+                    # mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
 
-                    fig.add_trace(go.Scatter(
-                        x=intraday.loc[mask_chikou_below, "Time"],
-                        y=intraday.loc[mask_chikou_below, "F_numeric"] - 55,
-                        mode="text",
-                        text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
-                        textposition="bottom center",
-                        textfont=dict(size=34),
-                        name="Chikou Below Price",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
-                    ), row=1, col=1)
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday.loc[mask_chikou_below, "Time"],
+                    #     y=intraday.loc[mask_chikou_below, "F_numeric"] - 55,
+                    #     mode="text",
+                    #     text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=34),
+                    #     name="Chikou Below Price",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                    # ), row=1, col=1)
 
 
 
@@ -3261,34 +3231,34 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # (C) CTOD Buy/Sell Triggers (Red & Green Dots)
-                    # ----------------------------------------------
-                    mask_ctod_buy = intraday["CTOD Alert"] == "Buy"
-                    mask_ctod_sell = intraday["CTOD Alert"] == "Sell"
+                    # # (C) CTOD Buy/Sell Triggers (Red & Green Dots)
+                    # # ----------------------------------------------
+                    # mask_ctod_buy = intraday["CTOD Alert"] == "Buy"
+                    # mask_ctod_sell = intraday["CTOD Alert"] == "Sell"
 
-                    # Buy Alert (Green Dot)
-                    scatter_ctod_buy = go.Scatter(
-                        x=intraday.loc[mask_ctod_buy, "Time"],
-                        y=intraday.loc[mask_ctod_buy, "F_numeric"],
-                        mode="markers",
-                        marker=dict(symbol="circle", size=5, color="green"),
-                        name="CTOD Buy Signal",
-                        text="Buy Triggered",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    )
-                    fig.add_trace(scatter_ctod_buy, row=1, col=1)
+                    # # Buy Alert (Green Dot)
+                    # scatter_ctod_buy = go.Scatter(
+                    #     x=intraday.loc[mask_ctod_buy, "Time"],
+                    #     y=intraday.loc[mask_ctod_buy, "F_numeric"],
+                    #     mode="markers",
+                    #     marker=dict(symbol="circle", size=5, color="green"),
+                    #     name="CTOD Buy Signal",
+                    #     text="Buy Triggered",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    # )
+                    # fig.add_trace(scatter_ctod_buy, row=1, col=1)
 
-                    # Sell Alert (Red Dot)
-                    scatter_ctod_sell = go.Scatter(
-                        x=intraday.loc[mask_ctod_sell, "Time"],
-                        y=intraday.loc[mask_ctod_sell, "F_numeric"],
-                        mode="markers",
-                        marker=dict(symbol="circle", size=5, color="red"),
-                        name="CTOD Sell Signal",
-                        text="Sell Triggered",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    )
-                    fig.add_trace(scatter_ctod_sell, row=1, col=1)
+                    # # Sell Alert (Red Dot)
+                    # scatter_ctod_sell = go.Scatter(
+                    #     x=intraday.loc[mask_ctod_sell, "Time"],
+                    #     y=intraday.loc[mask_ctod_sell, "F_numeric"],
+                    #     mode="markers",
+                    #     marker=dict(symbol="circle", size=5, color="red"),
+                    #     name="CTOD Sell Signal",
+                    #     text="Sell Triggered",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    # )
+                    # fig.add_trace(scatter_ctod_sell, row=1, col=1)
 
 
 
@@ -3749,7 +3719,7 @@ if st.sidebar.button("Run Analysis"):
                                     x=[intraday.at[ghost_idx, "Time"]],
                                     y=[intraday.at[ghost_idx, "F_numeric"] + 144],
                                     mode="text",
-                                    text=["👻"],
+                                    text=["🪜"],
                                     textposition="middle center",
                                     textfont=dict(size=40, color="purple"),
                                     name="Confirmed Buy TDST Breakout",
@@ -3785,7 +3755,7 @@ if st.sidebar.button("Run Analysis"):
                                     x=[intraday.at[ghost_idx, "Time"]],
                                     y=[intraday.at[ghost_idx, "F_numeric"] - 144],
                                     mode="text",
-                                    text=["🫥"],
+                                    text=["🕳️"],
                                     textposition="middle center",
                                     textfont=dict(size=40, color="purple"),
                                     name="Confirmed Sell TDST Breakdown",
