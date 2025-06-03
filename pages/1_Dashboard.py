@@ -3994,7 +3994,7 @@ if st.sidebar.button("Run Analysis"):
 
                 short_entry_trace = go.Scatter(
                     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 8,
+                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 12,
                     mode="text",
                     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
                     textposition="bottom center",
@@ -4010,7 +4010,7 @@ if st.sidebar.button("Run Analysis"):
 
                 long_entry_trace = go.Scatter(
                     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 8,
+                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 12,
                     mode="text",
                     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
                     textposition="top center",
