@@ -4002,7 +4002,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[up_high_mask, "Y_High_Cross"],
                     textposition="top center",
-                    textfont=dict(size=55),
+                    textfont=dict(size=21),
                     name="Cross Above Y-High (✈️)"
                 )
 
@@ -4014,7 +4014,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[down_high_mask, "Y_High_Cross"],
                     textposition="bottom center",
-                    textfont=dict(size=55),
+                    textfont=dict(size=21),
                     name="Cross Below Y-High (🪂)"
                 )
 
