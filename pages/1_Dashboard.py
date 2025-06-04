@@ -3030,19 +3030,19 @@ if st.sidebar.button("Run Analysis"):
 
                     # (A) F% over time as lines+markers
                     # ---------------------------------
-                     max_abs_val = intraday["F_numeric"].abs().max()
-                    scatter_f = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["F_numeric"],
-                        mode="lines+markers",
-                        customdata=intraday["Close"],
-
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
-
-                        name="F% (scaled)",
-
-                    )
-                    fig.add_trace(scatter_f, row=1, col=1)
+                 max_abs_val = intraday["F_numeric"].abs().max()
+                 scatter_f = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["F_numeric"],
+                    mode="lines+markers",
+                    customdata=intraday["Close"],
+    
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
+    
+                    name="F% (scaled)",
+    
+                 )
+                 fig.add_trace(scatter_f, row=1, col=1)
 
 
 #**************************************************************************************************************************************************************************
