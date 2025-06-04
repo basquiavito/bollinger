@@ -3042,7 +3042,7 @@ if st.sidebar.button("Run Analysis"):
                         name="F% (scaled)",
 
                     )
-                    fig.add_trace(scatter_f, row=1
+                    fig.add_trace(scatter_f, row=1)
 
                     # (A.1) 40ish Reversal (star markers)
                     mask_40ish = intraday["40ish"] != ""
