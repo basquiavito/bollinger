@@ -3501,22 +3501,22 @@ if st.sidebar.button("Run Analysis"):
  #  🟢 ADX Expansion
 
 
-          # Mask for ADX Alerts (♨️, 🧨)
-                    mask_adx_alert = intraday["ADX_Alert"] != ""
+          # # Mask for ADX Alerts (♨️, 🧨)
+          #           mask_adx_alert = intraday["ADX_Alert"] != ""
 
-                    scatter_adx_alert = go.Scatter(
-                        x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 55,  # Offset for visibility
-                        mode="text",
-                        text=intraday.loc[mask_adx_alert, "ADX_Alert"],
-                        textposition="bottom center",
-                        textfont=dict(size=18),
-                        name="ADX Expansion Alert",
-                        hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
-                        customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
-                    )
+          #           scatter_adx_alert = go.Scatter(
+          #               x=intraday.loc[mask_adx_alert, "Time"],
+          #               y=intraday.loc[mask_adx_alert, "F_numeric"] + 55,  # Offset for visibility
+          #               mode="text",
+          #               text=intraday.loc[mask_adx_alert, "ADX_Alert"],
+          #               textposition="bottom center",
+          #               textfont=dict(size=18),
+          #               name="ADX Expansion Alert",
+          #               hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
+          #               customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
+          #           )
 
-                    fig.add_trace(scatter_adx_alert, row=1, col=1)
+          #           fig.add_trace(scatter_adx_alert, row=1, col=1)
 
 
 
