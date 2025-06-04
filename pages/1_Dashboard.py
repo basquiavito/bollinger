@@ -3036,14 +3036,13 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["F_numeric"],
                         mode="lines+markers",
                         customdata=intraday["Close"],
-                        line=dict(color="#004F5E", width=3),  # Adjust width here (e.g., 2, 3, 4, etc.)
-                        marker=dict(color="#004F5E"),        # For marker color
+                 
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
 
                         name="F% (scaled)",
 
                     )
-                    fig.add_trace(scatter_f, row=1, col=1)
+                    fig.add_trace(scatter_f, row=1
 
                     # (A.1) 40ish Reversal (star markers)
                     mask_40ish = intraday["40ish"] != ""
@@ -3053,7 +3052,8 @@ if st.sidebar.button("Run Analysis"):
                         mode="markers",
                         marker_symbol="star",
                         marker_size=18,
-                        marker_color="gold",
+                        line=dict( width=3),  # Adjust width here (e.g., 2, 3, 4, etc.)
+
                         name="40ish Reversal",
                         text=intraday.loc[mask_40ish, "40ish"],
 
