@@ -3396,41 +3396,41 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(scatter_tk_sun, row=1, col=1)
                     # fig.add_trace(scatter_tk_moon, row=1, col=1)
 
-                    # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
-                    y_open_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
-                        mode="lines",
-                        line=dict(color="grey", dash="dash"),
-                        name="Yesterday Open (F%)"
-                    )
+                    # # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
+                    # y_open_f_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
+                    #     mode="lines",
+                    #     line=dict(color="grey", dash="dash"),
+                    #     name="Yesterday Open (F%)"
+                    # )
 
-                    # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
-                    y_high_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
-                        mode="lines",
-                        line=dict(color="green", dash="dash"),
-                        name="Yesterday High (F%)"
-                    )
+                    # # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
+                    # y_high_f_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
+                    #     mode="lines",
+                    #     line=dict(color="green", dash="dash"),
+                    #     name="Yesterday High (F%)"
+                    # )
 
-                    # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
-                    y_low_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
-                        mode="lines",
-                        line=dict(color="red", dash="dash"),
-                        name="Yesterday Low (F%)"
-                    )
+                    # # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
+                    # y_low_f_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
+                    #     mode="lines",
+                    #     line=dict(color="red", dash="dash"),
+                    #     name="Yesterday Low (F%)"
+                    # )
 
-                    # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
-                    y_close_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[0] * len(intraday),
-                        mode="lines",
-                        line=dict(color="blue", dash="dash"),
-                        name="Yesterday Close (F%)"
-                    )
+                    # # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
+                    # y_close_f_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=[0] * len(intraday),
+                    #     mode="lines",
+                    #     line=dict(color="blue", dash="dash"),
+                    #     name="Yesterday Close (F%)"
+                    # )
 
 
                   # (D) TD Trap Arrows - Only First Sell TD Trap
@@ -4018,59 +4018,59 @@ if st.sidebar.button("Run Analysis"):
                     name="Cross Below Y-High (🪂)"
                 )
 
-                # Add to figure
-                fig.add_trace(up_high_trace, row=1, col=1)
-                fig.add_trace(down_high_trace, row=1, col=1)
+                # # Add to figure
+                # fig.add_trace(up_high_trace, row=1, col=1)
+                # fig.add_trace(down_high_trace, row=1, col=1)
 
 
-                astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
+                # astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
-                scatter_astronaut = go.Scatter(
-                    x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 140,  # Higher offset
-                    mode="text",
-                    text=astronaut_points["Astronaut_Emoji"],
-                    textposition="top center",
-                    name="New Highs 👨🏽‍🚀",
-                    textfont=dict(size=21),
-                 )
+                # scatter_astronaut = go.Scatter(
+                #     x=astronaut_points["Time"],
+                #     y=astronaut_points["F_numeric"] + 140,  # Higher offset
+                #     mode="text",
+                #     text=astronaut_points["Astronaut_Emoji"],
+                #     textposition="top center",
+                #     name="New Highs 👨🏽‍🚀",
+                #     textfont=dict(size=21),
+                #  )
 
-                fig.add_trace(scatter_astronaut, row=1, col=1)
+                # fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
 
-                    # Filter where the Astronaut or Moon emoji exist
-                astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
+                #     # Filter where the Astronaut or Moon emoji exist
+                # astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
 
-                scatter_astronaut = go.Scatter(
-                    x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 140,  # Offset so it floats higher
-                    mode="text",
-                    text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-                    textposition="top center",
-                    name="New Highs 🌒",
-                    textfont=dict(size=21),
+                # scatter_astronaut = go.Scatter(
+                #     x=astronaut_points["Time"],
+                #     y=astronaut_points["F_numeric"] + 140,  # Offset so it floats higher
+                #     mode="text",
+                #     text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
+                #     textposition="top center",
+                #     name="New Highs 🌒",
+                #     textfont=dict(size=21),
                    
-                )
+                # )
 
-                fig.add_trace(scatter_astronaut, row=1, col=1)
+                # fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
-                # Filter where Swimmer or Squid exist
-                swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
+                # # Filter where Swimmer or Squid exist
+                # swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
 
-                scatter_swimmer = go.Scatter(
-                    x=swimmer_points["Time"],
-                    y=swimmer_points["F_numeric"] - 140,  # Offset downward so it floats below price
-                    mode="text",
-                    text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
-                    textposition="bottom center",
-                    name="New Lows 🏊🏽‍♂️🦑",
-                    textfont=dict(size=21),
-                    showlegend=True
-                )
+                # scatter_swimmer = go.Scatter(
+                #     x=swimmer_points["Time"],
+                #     y=swimmer_points["F_numeric"] - 140,  # Offset downward so it floats below price
+                #     mode="text",
+                #     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
+                #     textposition="bottom center",
+                #     name="New Lows 🏊🏽‍♂️🦑",
+                #     textfont=dict(size=21),
+                #     showlegend=True
+                # )
 
-                fig.add_trace(scatter_swimmer, row=1, col=1)
+                # fig.add_trace(scatter_swimmer, row=1, col=1)
 # # #*******************************************************************************************************************************************************************************
 
                 mask_green_king = intraday["King_Signal"] == "👑"
