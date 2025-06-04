@@ -3537,22 +3537,22 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(scatter_std_alert, row=1, col=1)
 
 #  🟢   ATR Expansion
-                    mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
+                    # mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
 
-                    atr_alert_scatter = go.Scatter(
-                        x=intraday.loc[mask_atr_alert, "Time"],
-                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 55,  # place above F%
-                        mode="text",
-                        textposition="top right",
+                    # atr_alert_scatter = go.Scatter(
+                    #     x=intraday.loc[mask_atr_alert, "Time"],
+                    #     y=intraday.loc[mask_atr_alert, "F_numeric"]  + 55,  # place above F%
+                    #     mode="text",
+                    #     textposition="top right",
 
-                        text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
-                        textfont=dict(size=21),
-                        name="ATR Expansion",
-                        hoverinfo="text",
-                        hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
-                    )
+                    #     text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
+                    #     textfont=dict(size=21),
+                    #     name="ATR Expansion",
+                    #     hoverinfo="text",
+                    #     hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
+                    # )
 
-                    fig.add_trace(atr_alert_scatter, row=1, col=1)
+                    # fig.add_trace(atr_alert_scatter, row=1, col=1)
 
 # 🟢 TD SUPPLY
 
