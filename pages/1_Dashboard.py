@@ -3052,7 +3052,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="markers",
                         marker_symbol="star",
                         marker_size=18,
-                        line=dict( width=3),  # Adjust width here (e.g., 2, 3, 4, etc.)
+                  # Adjust width here (e.g., 2, 3, 4, etc.)
 
                         name="40ish Reversal",
                         text=intraday.loc[mask_40ish, "40ish"],
