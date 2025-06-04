@@ -4,6 +4,7 @@ pandas
 numpy
 matplotlib
 plotly
+kaleido
 streamlit_autorefresh
 ta
 scipy
