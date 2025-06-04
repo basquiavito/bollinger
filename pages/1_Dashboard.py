@@ -4154,7 +4154,7 @@ if st.sidebar.button("Run Analysis"):
         
                 # Export to high-res image in memory
                 buffer = io.BytesIO()
-                fig.write_image(buffer, format="png", width=3000, height=2000, scale=3)
+                fig.write_image(buffer, format="png", width=1080, height=1920, scale=2)
                 buffer.seek(0)
                 
                 # Add download button
