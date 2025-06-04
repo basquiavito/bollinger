@@ -5,7 +5,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import date
-
+import io
+                
 
 # =================
 # Page Config
@@ -4150,6 +4151,19 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 )
 
+        
+                # Export to high-res image in memory
+                buffer = io.BytesIO()
+                fig.write_image(buffer, format="png", width=3000, height=2000, scale=3)
+                buffer.seek(0)
+                
+                # Add download button
+                st.download_button(
+                    label="📥 Download High-Res Plot",
+                    data=buffer,
+                    file_name="meta-fpercent-June4.png",  # You can make this dynamic
+                    mime="image/png"
+                )
 
 
 
