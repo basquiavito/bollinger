@@ -4102,11 +4102,11 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # 🎯 Add all lines to the F% plot
-                fig.add_trace(y_open_f_line, row=1, col=1)
-                fig.add_trace(y_high_f_line, row=1, col=1)
-                fig.add_trace(y_low_f_line, row=1, col=1)
-                fig.add_trace(y_close_f_line, row=1, col=1)
+                # # 🎯 Add all lines to the F% plot
+                # fig.add_trace(y_open_f_line, row=1, col=1)
+                # fig.add_trace(y_high_f_line, row=1, col=1)
+                # fig.add_trace(y_low_f_line, row=1, col=1)
+                # fig.add_trace(y_close_f_line, row=1, col=1)
 
 
  
