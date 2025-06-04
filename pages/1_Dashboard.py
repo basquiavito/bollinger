@@ -3498,7 +3498,7 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(scatter_bbw_alert, row=1, col=1)
 
 
-  🟢 ADX Expansion
+  #🟢 ADX Expansion
 
 
           # Mask for ADX Alerts (♨️, 🧨)
