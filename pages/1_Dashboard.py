@@ -4151,21 +4151,6 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 )
 
-        
-                # Export to high-res image in memory
-                buffer = io.BytesIO()
-                fig.write_image(buffer, format="png", width=1080, height=1920, scale=2)
-                buffer.seek(0)
-                
-                # Add download button
-                st.download_button(
-                    label="📥 Download High-Res Plot",
-                    data=buffer,
-                    file_name="meta-fpercent-June4.png",  # You can make this dynamic
-                    mime="image/png"
-                )
-
-
 
 
                 st.plotly_chart(fig, use_container_width=True)
