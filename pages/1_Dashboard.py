@@ -3536,7 +3536,7 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(scatter_std_alert, row=1, col=1)
 
- 🟢   ATR Expansion
+ #🟢   ATR Expansion
                     mask_atr_alert = intraday["ATR_Exp_Alert"] != ""
 
                     atr_alert_scatter = go.Scatter(
