@@ -11,12 +11,12 @@ from datetime import date
 # Page Config
 # =================
 st.set_page_config(
-    page_title="Modern Day Trading Dashboard",
+    page_title="Volmike.com",
     layout="wide"
 )
 
 
-st.title("Options Wealth")
+st.title("VOLMIKE.COM")
 
 # ======================================
 # Sidebar - User Inputs & Advanced Options
@@ -3016,7 +3016,7 @@ if st.sidebar.button("Run Analysis"):
 
                     st.dataframe(intraday[cols_to_show])
 
-                ticker_tabs = st.tabs(["Interactive F% & Momentum", "Intraday Data Table"])
+                ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
@@ -4143,7 +4143,7 @@ if st.sidebar.button("Run Analysis"):
 
                 # Update layout overall
                 fig.update_layout(
-                    title=f"{t} – Pure Demark",
+                    title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
                     height=1000,  # Increase overall figure height (default ~450-600)
 
