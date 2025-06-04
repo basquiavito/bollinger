@@ -3868,7 +3868,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Up (♗)
                 scatter_bishop_up = go.Scatter(
                     x=intraday.loc[mask_bishop_up, "Time"],
-                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
+                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 18,
                     mode="text",
                     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
                     textposition="top center",
@@ -3880,7 +3880,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Down (♝)
                 scatter_bishop_down = go.Scatter(
                     x=intraday.loc[mask_bishop_down, "Time"],
-                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
+                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 18,
                     mode="text",
                     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
                     textposition="bottom center",
@@ -3901,7 +3901,7 @@ if st.sidebar.button("Run Analysis"):
                 # White rook (up cross)
                 scatter_rook_up = go.Scatter(
                     x=intraday.loc[mask_rook_up, "Time"],
-                    y=intraday.loc[mask_rook_up, "F_numeric"] + 26,  # Offset upward
+                    y=intraday.loc[mask_rook_up, "F_numeric"] + 13,  # Offset upward
                     mode="text",
                     text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
                     textposition="top left",
@@ -3913,7 +3913,7 @@ if st.sidebar.button("Run Analysis"):
                 # Black rook (down cross)
                 scatter_rook_down = go.Scatter(
                     x=intraday.loc[mask_rook_down, "Time"],
-                    y=intraday.loc[mask_rook_down, "F_numeric"] - 26,  # Offset downward
+                    y=intraday.loc[mask_rook_down, "F_numeric"] - 13,  # Offset downward
                     mode="text",
                     text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
                     textposition="bottom left",
@@ -3994,29 +3994,29 @@ if st.sidebar.button("Run Analysis"):
                 
               
 
-# ✈️ Upward Crosses ABOVE Yesterday High
-                up_high_mask = intraday["Y_High_Cross"] == "✈️"
-                up_high_trace = go.Scatter(
-                    x=intraday.loc[up_high_mask, "Time"],
-                    y=intraday.loc[up_high_mask, "F_numeric"] + 100,
-                    mode="text",
-                    text=intraday.loc[up_high_mask, "Y_High_Cross"],
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="Cross Above Y-High (✈️)"
-                )
+# # ✈️ Upward Crosses ABOVE Yesterday High
+#                 up_high_mask = intraday["Y_High_Cross"] == "✈️"
+#                 up_high_trace = go.Scatter(
+#                     x=intraday.loc[up_high_mask, "Time"],
+#                     y=intraday.loc[up_high_mask, "F_numeric"] + 100,
+#                     mode="text",
+#                     text=intraday.loc[up_high_mask, "Y_High_Cross"],
+#                     textposition="top center",
+#                     textfont=dict(size=34),
+#                     name="Cross Above Y-High (✈️)"
+#                 )
 
-                # 🪂 Downward Crosses BELOW Yesterday High
-                down_high_mask = intraday["Y_High_Cross"] == "🪂"
-                down_high_trace = go.Scatter(
-                    x=intraday.loc[down_high_mask, "Time"],
-                    y=intraday.loc[down_high_mask, "F_numeric"] - 100,
-                    mode="text",
-                    text=intraday.loc[down_high_mask, "Y_High_Cross"],
-                    textposition="bottom center",
-                    textfont=dict(size=34),
-                    name="Cross Below Y-High (🪂)"
-                )
+#                 # 🪂 Downward Crosses BELOW Yesterday High
+#                 down_high_mask = intraday["Y_High_Cross"] == "🪂"
+#                 down_high_trace = go.Scatter(
+#                     x=intraday.loc[down_high_mask, "Time"],
+#                     y=intraday.loc[down_high_mask, "F_numeric"] - 100,
+#                     mode="text",
+#                     text=intraday.loc[down_high_mask, "Y_High_Cross"],
+#                     textposition="bottom center",
+#                     textfont=dict(size=34),
+#                     name="Cross Below Y-High (🪂)"
+#                 )
 
                 # # Add to figure
                 # fig.add_trace(up_high_trace, row=1, col=1)
