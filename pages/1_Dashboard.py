@@ -3799,7 +3799,7 @@ if st.sidebar.button("Run Analysis"):
                     # Upward Cross Trace (♕)
                     up_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_up, "Time"],
-                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 55,  # Offset upward (adjust as needed)
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 34,  # Offset upward (adjust as needed)
                         mode="text",
                         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
                         textposition="top center",  # Positioned above the point
@@ -3811,7 +3811,7 @@ if st.sidebar.button("Run Analysis"):
                     # Downward Cross Trace (♛)
                     down_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_down, "Time"],
-                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 55,  # Offset downward
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 34,  # Offset downward
                         mode="text",
                         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
                         textposition="bottom center",  # Positioned below the point
