@@ -3028,24 +3028,32 @@ if st.sidebar.button("Run Analysis"):
                         row_heights=[30]  # Adjust row heights to your preference
                     )
 
-                    # (A) F% over time as lines+markers
-                    # ---------------------------------
-                 max_abs_val = intraday["F_numeric"].abs().max()
-                 scatter_f = go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["F_numeric"],
-                    mode="lines+markers",
-                    customdata=intraday["Close"],
     
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
-    
-                    name="F% (scaled)",
-    
-                 )
-                 fig.add_trace(scatter_f, row=1, col=1)
+#**************************************************************************************************************************************************************************
+
+
+  # (A) F% over time as lines+markers
+
+                    max_abs_val = intraday["F_numeric"].abs().max()
+                    scatter_f = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F_numeric"],
+                        mode="lines+markers",
+                        customdata=intraday["Close"],
+
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
+
+                        name="F% (scaled)",
+
+                    )
+                    fig.add_trace(scatter_f, row=1, col=1)
 
 
 #**************************************************************************************************************************************************************************
+
+
+                                                        # 🟢 40% RETRACEMENT
+
 
 
 
@@ -3053,18 +3061,22 @@ if st.sidebar.button("Run Analysis"):
                     mask_40ish = intraday["40ish"] != ""
                     scatter_40ish = go.Scatter(
                         x=intraday.loc[mask_40ish, "Time"],
-                        y=intraday.loc[mask_40ish, "F_numeric"] +22,
+                        y=intraday.loc[mask_40ish, "F_numeric"] + 233,
                         mode="markers",
                         marker_symbol="star",
                         marker_size=18,
-                  # Adjust width here (e.g., 2, 3, 4, etc.)
-
+                        marker_color="gold",
                         name="40ish Reversal",
                         text=intraday.loc[mask_40ish, "40ish"],
 
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                     )
                     fig.add_trace(scatter_40ish, row=1, col=1)
+
+
+
+
+#**************************************************************************************************************************************************************************
 
                     # (A.2) Dashed horizontal line at 0
                     fig.add_hline(
