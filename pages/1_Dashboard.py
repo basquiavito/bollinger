@@ -3036,7 +3036,8 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["F_numeric"],
                         mode="lines+markers",
                         customdata=intraday["Close"],
-
+                        line=dict(color="#004F5E", width=3),  # Adjust width here (e.g., 2, 3, 4, etc.)
+                        marker=dict(color="#004F5E"),        # For marker color
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
 
                         name="F% (scaled)",
