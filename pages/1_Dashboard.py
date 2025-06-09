@@ -3938,37 +3938,7 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_trace(scatter_bishop_up, row=1, col=1)
                 fig.add_trace(scatter_bishop_down, row=1, col=1)
-                
-                mask_north = intraday["Marengo"] == "🐎 North Marengo"
-                
-                scatter_marengo_north = go.Scatter(
-                    x=intraday.loc[mask_north, "Time"],
-                    y=intraday.loc[mask_north, "F_numeric"] + 22,  # place higher than Bishop
-                    mode="text",
-                    text=["🏇"] * mask_north.sum(),
-                    textposition="top center",
-                    textfont=dict(size=34, color="black"),
-                    name="North Marengo 🐎",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🏇 North Marengo (RVOL + Band Tag)<extra></extra>"
-                )
-
-
-                mask_south = intraday["Marengo"] == "🐎 South Marengo"
-
-                  scatter_marengo_south = go.Scatter(
-                  x=intraday.loc[mask_south, "Time"],
-                  y=intraday.loc[mask_south, "F_numeric"] - 22,
-                  mode="text",
-                  text=["🏇"] * mask_south.sum(),
-                  textposition="bottom center",
-                  textfont=dict(size=34, color="black"),
-                  name="South Marengo 🐎",
-                  hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🏇 South Marengo (RVOL + Band Tag)<extra></extra>"
-                )
-
-                fig.add_trace(scatter_marengo_north, row=1, col=1)
-                fig.add_trace(scatter_marengo_south, row=1, col=1)
-
+         
                 
                                 # Mask the rook crosses
                 mask_rook_up = intraday["TD_Supply_Rook"] == "♖"
@@ -4188,35 +4158,40 @@ if st.sidebar.button("Run Analysis"):
  
 
                 
-                # Filter Marengos
-                north = intraday[intraday["Marengo_North_Y"].notna()]
-                south = intraday[intraday["Marengo_South_Y"].notna()]
-                
-                # North Marengo 🏇 at +5
-                fig.add_trace(go.Scatter(
-                    x=north.index,
-                    y=north["Marengo_North_Y"],
-                    mode="text",
-                    text=["🏇"] * len(north),
-                    textposition="top center",
-                    name="North Marengo",
-                    showlegend=False
-                ))
-                
-                # South Marengo 🏇 at -45
-                fig.add_trace(go.Scatter(
-                    x=south.index,
-                    y=south["Marengo_South_Y"],
-                    mode="text",
-                    text=["🏇"] * len(south),
-                    textposition="bottom center",
-                    name="South Marengo",
-                    showlegend=False
-                ))
-                
+              
                 
                  
 
+       
+                mask_north = intraday["Marengo"] == "🐎 North Marengo"
+                
+                scatter_marengo_north = go.Scatter(
+                    x=intraday.loc[mask_north, "Time"],
+                    y=intraday.loc[mask_north, "F_numeric"] + 22,  # place higher than Bishop
+                    mode="text",
+                    text=["🏇"] * mask_north.sum(),
+                    textposition="top center",
+                    textfont=dict(size=34, color="black"),
+                    name="North Marengo 🐎",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🏇 North Marengo (RVOL + Band Tag)<extra></extra>"
+                )
+
+
+                mask_south = intraday["Marengo"] == "🐎 South Marengo"
+
+                scatter_marengo_south = go.Scatter(
+                x=intraday.loc[mask_south, "Time"],
+                y=intraday.loc[mask_south, "F_numeric"] - 22,
+                mode="text",
+                text=["🏇"] * mask_south.sum(),
+                textposition="bottom center",
+                textfont=dict(size=34, color="black"),
+                name="South Marengo 🐎",
+                hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🏇 South Marengo (RVOL + Band Tag)<extra></extra>"
+                )
+
+                fig.add_trace(scatter_marengo_north, row=1, col=1)
+                fig.add_trace(scatter_marengo_south, row=1, col=1)
 
  
 
