@@ -483,34 +483,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def detect_marengo(df):
-                """
-                Detects Marengo:
-                - North Marengo: F_numeric ≥ Upper Band AND RVOL > 1.2
-                - South Marengo: F_numeric ≤ Lower Band AND RVOL > 1.2
-                """
-                df["Marengo"] = ""
-                df["Marengo_Emoji"] = ""
-            
-                for i in range(len(df)):
-                    f_val = df.at[df.index[i], "F_numeric"]
-                    upper = df.at[df.index[i], "F% Upper"]
-                    lower = df.at[df.index[i], "F% Lower"]
-                    rvol = df.at[df.index[i], "RVOL_5"]
-            
-                    if pd.notna(f_val) and pd.notna(upper) and pd.notna(lower) and pd.notna(rvol):
-                        if f_val >= upper and rvol > 1.2:
-                            df.at[df.index[i], "Marengo"] = "🐎 North Marengo"
-                            df.at[df.index[i], "Marengo_Emoji"] = "🏇"
-                        elif f_val <= lower and rvol > 1.2:
-                            df.at[df.index[i], "Marengo"] = "🐎 South Marengo"
-                            df.at[df.index[i], "Marengo_Emoji"] = "🏇"
-            
-                return df
-
-                intraday = detect_marengo(intraday)
-
-
+              
  
 
                 # def calculate_bollinger_band_angles(df, band_col="F% Upper", angle_col="Upper Angle", window=1):
