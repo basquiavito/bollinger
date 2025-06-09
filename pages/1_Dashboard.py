@@ -4144,18 +4144,6 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_green_king, row=1, col=1)
                 fig.add_trace(scatter_red_king, row=1, col=1)
 
-                # Marengo
-                marengo_mask = intraday["Marengo_Emoji"] != ""
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[marengo_mask, "Time"],
-                    y=intraday.loc[marengo_mask, "F_numeric"],
-                    mode="text",
-                    text=intraday.loc[marengo_mask, "Marengo_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=24, color="black"),
-                    name="Marengo 🏇"
-                ))
-
 
                 # 🎯 Add all lines to the F% plot
                 fig.add_trace(y_open_f_line, row=1, col=1)
