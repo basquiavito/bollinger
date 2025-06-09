@@ -484,31 +484,29 @@ if st.sidebar.button("Run Analysis"):
 
 
                 def detect_marengo(df):
-                    cols = ["Marengo", "Marengo_Emoji", "Marengo_North_Y", "Marengo_South_Y"]
-                    for col in cols:
-                        if col not in df.columns:
-                            df[col] = None  # Add empty column
-
-                    if not {"F_numeric", "F% Upper", "F% Lower", "RVOL"}.issubset(df.columns):
-                        return df
-
-                    for i in range(len(df)):
-                        f_val = df.at[df.index[i], "F_numeric"]
-                        upper = df.at[df.index[i], "F% Upper"]
-                        lower = df.at[df.index[i], "F% Lower"]
-                        rvol = df.at[df.index[i], "RVOL"]
-
-                        if pd.notna(f_val) and pd.notna(upper) and pd.notna(lower) and pd.notna(rvol):
-                            if f_val >= upper and rvol > 1.2:
-                                df.at[df.index[i], "Marengo"] = "🐎 North Marengo"
-                                df.at[df.index[i], "Marengo_Emoji"] = "🏇"
-                                df.at[df.index[i], "Marengo_North_Y"] = 5
-                            elif f_val <= lower and rvol > 1.2:
-                                df.at[df.index[i], "Marengo"] = "🐎 South Marengo"
-                                df.at[df.index[i], "Marengo_Emoji"] = "🏇"
-                                df.at[df.index[i], "Marengo_South_Y"] = -45
-
-                    return df
+                """
+                Detects Marengo:
+                - North Marengo: F_numeric ≥ Upper Band AND RVOL > 1.2
+                - South Marengo: F_numeric ≤ Lower Band AND RVOL > 1.2
+                """
+                df["Marengo"] = ""
+                df["Marengo_Emoji"] = ""
+            
+                for i in range(len(df)):
+                    f_val = df.at[df.index[i], "F_numeric"]
+                    upper = df.at[df.index[i], "F% Upper"]
+                    lower = df.at[df.index[i], "F% Lower"]
+                    rvol = df.at[df.index[i], "RVOL_5"]
+            
+                    if pd.notna(f_val) and pd.notna(upper) and pd.notna(lower) and pd.notna(rvol):
+                        if f_val >= upper and rvol > 1.2:
+                            df.at[df.index[i], "Marengo"] = "🐎 North Marengo"
+                            df.at[df.index[i], "Marengo_Emoji"] = "🏇"
+                        elif f_val <= lower and rvol > 1.2:
+                            df.at[df.index[i], "Marengo"] = "🐎 South Marengo"
+                            df.at[df.index[i], "Marengo_Emoji"] = "🏇"
+            
+                return df
 
                 intraday = detect_marengo(intraday)
 
@@ -4146,6 +4144,17 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_green_king, row=1, col=1)
                 fig.add_trace(scatter_red_king, row=1, col=1)
 
+                # Marengo
+                marengo_mask = intraday["Marengo_Emoji"] != ""
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[marengo_mask, "Time"],
+                    y=intraday.loc[marengo_mask, "F_numeric"],
+                    mode="text",
+                    text=intraday.loc[marengo_mask, "Marengo_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=24, color="black"),
+                    name="Marengo 🏇"
+                ))
 
 
                 # 🎯 Add all lines to the F% plot
@@ -4162,36 +4171,7 @@ if st.sidebar.button("Run Analysis"):
                 
                  
 
-       
-                mask_north = intraday["Marengo"] == "🐎 North Marengo"
-                
-                scatter_marengo_north = go.Scatter(
-                    x=intraday.loc[mask_north, "Time"],
-                    y=intraday.loc[mask_north, "F_numeric"] + 22,  # place higher than Bishop
-                    mode="text",
-                    text=["🏇"] * mask_north.sum(),
-                    textposition="top center",
-                    textfont=dict(size=34, color="black"),
-                    name="North Marengo 🐎",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🏇 North Marengo (RVOL + Band Tag)<extra></extra>"
-                )
-
-
-                mask_south = intraday["Marengo"] == "🐎 South Marengo"
-
-                scatter_marengo_south = go.Scatter(
-                x=intraday.loc[mask_south, "Time"],
-                y=intraday.loc[mask_south, "F_numeric"] - 22,
-                mode="text",
-                text=["🏇"] * mask_south.sum(),
-                textposition="bottom center",
-                textfont=dict(size=34, color="black"),
-                name="South Marengo 🐎",
-                hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🏇 South Marengo (RVOL + Band Tag)<extra></extra>"
-                )
-
-                fig.add_trace(scatter_marengo_north, row=1, col=1)
-                fig.add_trace(scatter_marengo_south, row=1, col=1)
+        
 
  
 
