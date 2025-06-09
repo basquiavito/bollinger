@@ -485,7 +485,7 @@ if st.sidebar.button("Run Analysis"):
 
                 def detect_marengo(df):
                     if not {"F_numeric", "F% Upper", "F% Lower", "RVOL"}.issubset(df.columns):
-                    return df
+                        return df
             
                     df["Marengo"] = ""
                     df["Marengo_Emoji"] = ""
