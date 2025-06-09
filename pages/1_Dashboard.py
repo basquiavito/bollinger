@@ -483,6 +483,34 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                def detect_marengo(df):
+                if not {"F_numeric", "F% Upper", "F% Lower", "RVOL"}.issubset(df.columns):
+                    return df
+            
+                df["Marengo"] = ""
+                df["Marengo_Emoji"] = ""
+                df["Marengo_North_Y"] = None
+                df["Marengo_South_Y"] = None
+            
+                for i in range(len(df)):
+                    f_val = df.at[df.index[i], "F_numeric"]
+                    upper = df.at[df.index[i], "F% Upper"]
+                    lower = df.at[df.index[i], "F% Lower"]
+                    rvol = df.at[df.index[i], "RVOL"]
+            
+                    if pd.notna(f_val) and pd.notna(upper) and pd.notna(lower) and pd.notna(rvol):
+                        if f_val >= upper and rvol > 1.2:
+                            df.at[df.index[i], "Marengo"] = "🐎 North Marengo"
+                            df.at[df.index[i], "Marengo_Emoji"] = "🏇"
+                            df.at[df.index[i], "Marengo_North_Y"] = 5
+                        elif f_val <= lower and rvol > 1.2:
+                            df.at[df.index[i], "Marengo"] = "🐎 South Marengo"
+                            df.at[df.index[i], "Marengo_Emoji"] = "🏇"
+                            df.at[df.index[i], "Marengo_South_Y"] = -45
+            
+                return df
+
+                intraday = detect_marengo(intraday)
 
 
  
@@ -4130,10 +4158,35 @@ if st.sidebar.button("Run Analysis"):
 
  
 
-
-
-
- 
+                
+                # Filter Marengos
+                north = intraday[intraday["Marengo_North_Y"].notna()]
+                south = intraday[intraday["Marengo_South_Y"].notna()]
+                
+                # North Marengo 🏇 at +5
+                fig.add_trace(go.Scatter(
+                    x=north.index,
+                    y=north["Marengo_North_Y"],
+                    mode="text",
+                    text=["🏇"] * len(north),
+                    textposition="top center",
+                    name="North Marengo",
+                    showlegend=False
+                ))
+                
+                # South Marengo 🏇 at -45
+                fig.add_trace(go.Scatter(
+                    x=south.index,
+                    y=south["Marengo_South_Y"],
+                    mode="text",
+                    text=["🏇"] * len(south),
+                    textposition="bottom center",
+                    name="South Marengo",
+                    showlegend=False
+                ))
+                
+                
+                 
 
 
  
