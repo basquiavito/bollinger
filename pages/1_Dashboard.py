@@ -3391,6 +3391,25 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(upper_band, row=1, col=1)
                     fig.add_trace(lower_band, row=1, col=1)
                     fig.add_trace(middle_band, row=1, col=1)
+                    # Ensure 'Marengo' column has 🐎 or empty string
+                    marengo_mask = intraday["Marengo"] == "🐎"
+                    
+                    # Vertical offset to place 🐎 just below the Upper Band
+                    offset = 20  # adjust as needed for clarity
+                    
+                    # Marengo trace (plotted just below the upper band)
+                    marengo_trace = go.Scatter(
+                        x=intraday.loc[marengo_mask, "Time"],
+                        y=intraday.loc[marengo_mask, "F% Upper"] - offset,
+                        mode="text",
+                        text=["🐎"] * marengo_mask.sum(),
+                        textposition="middle center",
+                        name="Marengo",
+                        showlegend=False
+                    )
+                    
+                    # Add to your existing figure
+                    fig.add_trace(marengo_trace, row=1, col=1)
 
 
 
