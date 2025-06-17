@@ -3416,7 +3416,7 @@ if st.sidebar.button("Run Analysis"):
                         text=["🐎"] * marengo_mask.sum(),
                         textposition="middle center",
                         name="Marengo",
-                        showlegend=False
+                        showlegend=True
                     )
                     
                     # Add to your existing figure
@@ -3438,7 +3438,7 @@ if st.sidebar.button("Run Analysis"):
                         textfont=dict(size=34),
                         textposition="middle center",
                         name="South Marengo",
-                        showlegend=False
+                        showlegend=True
                     )
                     
                     fig.add_trace(south_marengo_trace, row=1, col=1)
