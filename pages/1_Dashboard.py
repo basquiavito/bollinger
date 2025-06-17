@@ -3435,6 +3435,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday.loc[south_mask, "F% Lower"] - offset_south,
                         mode="text",
                         text=["🐎"] * south_mask.sum(),
+                        textfont=dict(size=34),
                         textposition="middle center",
                         name="South Marengo",
                         showlegend=False
