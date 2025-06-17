@@ -3400,7 +3400,7 @@ if st.sidebar.button("Run Analysis"):
                     # Marengo trace (plotted just below the upper band)
                     marengo_trace = go.Scatter(
                         x=intraday.loc[marengo_mask, "Time"],
-                        y=intraday.loc[marengo_mask, "F% Upper"] - offset,
+                        y=intraday.loc[marengo_mask, "F% Upper"] + offset,
                         mode="text",
                         textfont=dict(size=34),
                         text=["🐎"] * marengo_mask.sum(),
