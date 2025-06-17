@@ -491,26 +491,36 @@ if st.sidebar.button("Run Analysis"):
                     """
                 
                     df["Marengo"] = ""
+                    df["South_Marengo"] = ""
+
                     for i in range(len(df)):
                         if (
                             "F_numeric" in df.columns
                             and "F% Upper" in df.columns
+                            and "F% Lower" in df.columns
+
                             and "RVOL_5" in df.columns
                         ):
                             mike = df.loc[i, "F_numeric"]
                             upper = df.loc[i, "F% Upper"]
+                            lower = df.loc[i, "F% Lower"]
+
                             rvol = df.loc[i, "RVOL_5"]
                 
-                            if pd.notna(mike) and pd.notna(upper) and pd.notna(rvol):
+                            if pd.notna(mike) and pd.notna(upper) and pd.notna(lower) and pd.notna(rvol):
                                 if mike >= upper and rvol > 1.2:
                                     df.at[i, "Marengo"] = "🐎"
-                
+                                elif mike <= lower and rvol > 1.2:
+                                    df.at[i, "South_Marengo"] = "🐎"  # South Marengo
                     return df
 
                 intraday = detect_marengo(intraday)
 
  
+            
 
+
+              
                 # def calculate_bollinger_band_angles(df, band_col="F% Upper", angle_col="Upper Angle", window=1):
                 #     """
                 #     Calculates the angle (in degrees) of the specified Bollinger Band using tan(θ) = Δy / Δx,
@@ -3036,7 +3046,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
+                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
@@ -3412,6 +3422,25 @@ if st.sidebar.button("Run Analysis"):
                     # Add to your existing figure
                     fig.add_trace(marengo_trace, row=1, col=1)
 
+
+
+                  # Mask for South Marengos
+                    south_mask = intraday["South_Marengo"] == "🐎"
+                    
+                    # Offset downward from lower band
+                    offset_south = 34
+                    
+                    south_marengo_trace = go.Scatter(
+                        x=intraday.loc[south_mask, "Time"],
+                        y=intraday.loc[south_mask, "F% Lower"] - offset_south,
+                        mode="text",
+                        text=["🐎"] * south_mask.sum(),
+                        textposition="middle center",
+                        name="South Marengo",
+                        showlegend=False
+                    )
+                    
+                    fig.add_trace(south_marengo_trace, row=1, col=1)
 
 
                     tenkan_line = go.Scatter(
