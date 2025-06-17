@@ -481,9 +481,34 @@ if st.sidebar.button("Run Analysis"):
                 intraday["BBW Alert"] = intraday.apply(bbw_alert, axis=1)
 
 
+                
+                def detect_marengo(df):
+                    """
+                    Detects North Marengo:
+                    - Mike (F_numeric) touches or exceeds F% Upper band
+                    - RVOL_5 > 1.2
+                    Places 🐎 in 'Marengo' column when both conditions are met.
+                    """
+                
+                    df["Marengo"] = ""
+                    for i in range(len(df)):
+                        if (
+                            "F_numeric" in df.columns
+                            and "F% Upper" in df.columns
+                            and "RVOL_5" in df.columns
+                        ):
+                            mike = df.loc[i, "F_numeric"]
+                            upper = df.loc[i, "F% Upper"]
+                            rvol = df.loc[i, "RVOL_5"]
+                
+                            if pd.notna(mike) and pd.notna(upper) and pd.notna(rvol):
+                                if mike >= upper and rvol > 1.2:
+                                    df.at[i, "Marengo"] = "🐎"
+                
+                    return df
 
+                intraday = detect_marengo(intraday)
 
-              
  
 
                 # def calculate_bollinger_band_angles(df, band_col="F% Upper", angle_col="Upper Angle", window=1):
@@ -3011,7 +3036,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
+                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
