@@ -3402,6 +3402,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[marengo_mask, "Time"],
                         y=intraday.loc[marengo_mask, "F% Upper"] - offset,
                         mode="text",
+                        textfont=dict(size=54),
                         text=["🐎"] * marengo_mask.sum(),
                         textposition="middle center",
                         name="Marengo",
