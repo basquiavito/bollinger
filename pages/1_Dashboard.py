@@ -3395,14 +3395,14 @@ if st.sidebar.button("Run Analysis"):
                     marengo_mask = intraday["Marengo"] == "🐎"
                     
                     # Vertical offset to place 🐎 just below the Upper Band
-                    offset = 20  # adjust as needed for clarity
+                    offset = 33  # adjust as needed for clarity
                     
                     # Marengo trace (plotted just below the upper band)
                     marengo_trace = go.Scatter(
                         x=intraday.loc[marengo_mask, "Time"],
                         y=intraday.loc[marengo_mask, "F% Upper"] - offset,
                         mode="text",
-                        textfont=dict(size=54),
+                        textfont=dict(size=34),
                         text=["🐎"] * marengo_mask.sum(),
                         textposition="middle center",
                         name="Marengo",
