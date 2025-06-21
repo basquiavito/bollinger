@@ -3089,6 +3089,16 @@ if st.sidebar.button("Run Analysis"):
                             return first + second
                     
                     intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
+
+
+                  # 🔽 NOW INSERT THIS BLOCK 🔽
+                    # Step 1: Filter Initial Balance (first 4 letters: A–D)
+                    initial_letters = ['A', 'B', 'C', 'D']
+                    ib_df = intraday[intraday['Letter'].isin(initial_letters)]
+                    
+                    # Step 2: Get IB high/low F% range
+                    ib_high = ib_df[mike_col].max()
+                    ib_low = ib_df[mike_col].min()
                     # Build Market Profile
                     profile = {}
                     for f_bin in f_bins[:-1]:
@@ -4251,9 +4261,19 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(y_close_f_line, row=1, col=1)
 
 
- 
+                fig.add_shape(
+                type="rect",
+                xref="x",  # This uses time axis
+                yref="y",
+                x0=intraday["Time"].iloc[0],
+                x1=intraday["Time"].iloc[-1],
+                y0=ib_low,
+                y1=ib_high,
+                fillcolor="rgba(255,255,0,0.1)",  # Light yellow shade
+                line=dict(width=0),
+                layer="below"
+            )
 
-                
               
                 
                  
