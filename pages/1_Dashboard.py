@@ -4329,10 +4329,11 @@ if st.sidebar.button("Run Analysis"):
                         })
                 
                 # Plot 💥 at those exact bars
+                              # Plot 💥 at those exact bars
                 if re_points:
                     fig.add_trace(go.Scatter(
                         x=[p["x"] for p in re_points],
-                        y=[p["y"] for p in re_points] + 20,
+                        y=[p["y"] + 20 for p in re_points],  # Corrected here
                         mode="text",
                         text=["💥"] * len(re_points),
                         textposition="top center",
@@ -4340,6 +4341,7 @@ if st.sidebar.button("Run Analysis"):
                         showlegend=False,
                         name="Range Extension"
                     ))
+
 
 
                 # Update layout overall
