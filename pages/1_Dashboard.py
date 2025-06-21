@@ -3074,10 +3074,20 @@ if st.sidebar.button("Run Analysis"):
                 
                     # Assign each row a letter based on its 30-min window
                     intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-                    intraday['HalfHour'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 30
-                    intraday['Letter'] = intraday['HalfHour'] - intraday['HalfHour'].min()
-                    intraday['Letter'] = intraday['Letter'].apply(lambda x: string.ascii_uppercase[x] if x < 26 else '?')
-                
+                   # Assign a unique letter to each 5-minute bar (A, B, ..., Z, AA, AB, ...)
+                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+                    intraday['BarNumber'] = range(len(intraday))
+                    
+                    def letter_code(n):
+                        letters = string.ascii_uppercase
+                        if n < 26:
+                            return letters[n]
+                        else:
+                            first = letters[(n // 26) - 1]
+                            second = letters[n % 26]
+                            return first + second
+                    
+                    intraday['Letter'] = intraday['BarNumber'].apply(letter_code)
                     # Build Market Profile
                     profile = {}
                     for f_bin in f_bins[:-1]:
