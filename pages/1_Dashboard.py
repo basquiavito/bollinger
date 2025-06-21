@@ -2629,7 +2629,7 @@ if st.sidebar.button("Run Analysis"):
 
 
   
-                def detect_td_supply_cross_rooks(df):
+                def detect_td_supply_cross_rooks(df, buffer=5):
                 
                     df["TD_Supply_Rook"] = ""
                 
