@@ -2630,27 +2630,28 @@ if st.sidebar.button("Run Analysis"):
 
 
                 def detect_td_supply_cross_rooks(df):
-                    """
-                    Detect confirmed crosses above/below TD Supply Line with 5 F% buffer.
-                    Assign Rook emojis:
-                    - ♖ for cross above with +5 F% close
-                    - ♜ for cross below with -5 F% close
+                  """
+                    Confirmed TD-Supply rook:
+                      • White ♖  – previous bar below the line, current bar closes >= +buffer F% above it
+                      • Black ♜ – previous bar above the line, current bar closes <= –buffer F% below it
+                    Uses the difference (F_numeric – TD Supply Line F) to avoid misses
+                    when the supply line jumps.
                     """
                     df["TD_Supply_Rook"] = ""
                 
                     for i in range(1, len(df)):
-                        prev_f = df.loc[i - 1, "F_numeric"]
-                        curr_f = df.loc[i, "F_numeric"]
-                        prev_supply = df.loc[i - 1, "TD Supply Line F"]
-                        curr_supply = df.loc[i, "TD Supply Line F"]
+                        # Difference to the line, previous & current
+                        prev_diff = df.loc[i - 1, "F_numeric"] - df.loc[i - 1, "TD Supply Line F"]
+                        curr_diff = df.loc[i,     "F_numeric"] - df.loc[i,     "TD Supply Line F"]
                 
-                        # Cross up + confirm
-                        if prev_f < prev_supply and curr_f >= curr_supply + 5:
+                        # Confirmed cross up
+                        if prev_diff < 0 and curr_diff >= buffer:
                             df.loc[i, "TD_Supply_Rook"] = "♖"
                 
-                        # Cross down + confirm
-                        elif prev_f > prev_supply and curr_f <= curr_supply - 5:
+                        # Confirmed cross down
+                        elif prev_diff > 0 and curr_diff <= -buffer:
                             df.loc[i, "TD_Supply_Rook"] = "♜"
+
                 
                     return df
 
