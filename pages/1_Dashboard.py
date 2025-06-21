@@ -3266,7 +3266,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["SpanA_F"],
                         mode="lines",
-                        line=dict(color="yellow", width=0.5),
+                        line=dict(color="yellow", width=0.9),
                         name="Span A (F%)"
                     )
                     fig.add_trace(span_a_line, row=1, col=1)
@@ -3276,7 +3276,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["SpanB_F"],
                         mode="lines",
-                        line=dict(color="blue", width=0.5),
+                        line=dict(color="blue", width=0.9),
                         name="Span B (F%)"
                     )
                     fig.add_trace(span_b_line, row=1, col=1)
@@ -3354,7 +3354,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Kijun_F"],
                     mode="lines",
-                    line=dict(color="green", width=2),
+                    line=dict(color="green", width=1),
                     name="Kijun (F% scale)"
                 )
                     fig.add_trace(kijun_line, row=1, col=1)
@@ -3452,7 +3452,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="solid", color="#E3DAC9"),
+                        line=dict(dash="solid", color="#E3DAC9",width=1),
                         name="Upper Band"
                     )
 
@@ -3461,7 +3461,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Lower"],
                         mode="lines",
-                        line=dict(dash="solid", color="#E3DAC9"),
+                        line=dict(dash="solid", color="#E3DAC9",width=1),
                         name="Lower Band"
                     )
 
@@ -3470,7 +3470,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% MA"],
                         mode="lines",
-                        line=dict(color="#E3DAC9", dash="dash"),  # Set dash style
+                        line=dict(color="#E3DAC9", dash="dash",width=1),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
 
@@ -3572,7 +3572,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
                         mode="lines",
-                        line=dict(color="grey", dash="dash"),
+                        line=dict(color="grey", dash="dash", width=0.5),
                         name="Yesterday Open (F%)"
                     )
 
@@ -3581,7 +3581,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
                         mode="lines",
-                        line=dict(color="green", dash="dash"),
+                        line=dict(color="green", dash="dash",width=0.5),
                         name="Yesterday High (F%)"
                     )
 
@@ -3590,7 +3590,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
                         mode="lines",
-                        line=dict(color="red", dash="dash"),
+                        line=dict(color="red", dash="dash", width=0.5),
                         name="Yesterday Low (F%)"
                     )
 
@@ -3599,7 +3599,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[0] * len(intraday),
                         mode="lines",
-                        line=dict(color="blue", dash="dash"),
+                        line=dict(color="blue", dash="dash", width=0.5),
                         name="Yesterday Close (F%)"
                     )
 
