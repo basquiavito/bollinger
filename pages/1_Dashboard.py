@@ -2628,37 +2628,39 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def detect_td_demand_cross_rooks(df, atr_col="ATR_5", min_buffer=5, volatility_factor=0.3):
+              def detect_td_supply_cross_rooks(df):
                   """
-                  Advanced TD Demand Rook:
-                   • Uses bar lows for breakdowns.
-                   • Buffer = max(min_buffer, volatility_factor * ATR).
-                   • Two-bar confirmation: first break, then close of next bar still below line.
-                   • Emits ♜ on the second confirming bar.
+                  Detect true breakout crosses and assign Rook emojis:
+                  - ♖ for confirmed cross above TD Supply Line (with +5 F% follow-through)
+                  - ♜ for confirmed cross below TD Demand Line (with -5 F% follow-through)
                   """
-                  df["TD_Demand_Rook"] = ""
-                  
-                  # Precompute dynamic buffer per bar
-                  df["_buffer"] = df[atr_col].apply(lambda a: max(min_buffer, volatility_factor * a))
-                  
-                  for i in range(2, len(df)):
-                      # Previous bar vs. supply line
-                      prev_diff = df.loc[i-2, "F_numeric"] - df.loc[i-2, "TD Demand Line F"]
-                      break_low = df.loc[i-1, "Low_F"] - df.loc[i-1, "TD Demand Line F"]
-                      buf = df.loc[i-1, "_buffer"]
-                      
-                      # First bar breaches below buffer
-                      first_break = prev_diff > 0 and break_low <= -buf
-                      
-                      if first_break:
-                          # Confirm that current bar also closes below the line
-                          curr_diff = df.loc[i, "F_numeric"] - df.loc[i, "TD Demand Line F"]
-                          if curr_diff <= 0:
-                              df.loc[i, "TD_Demand_Rook"] = "♜"
-                  
-                  # Clean up
-                  df.drop(columns=["_buffer"], inplace=True)
+                  df["TD_Supply_Rook"] = ""
+              
+                  for i in range(1, len(df) - 1):  # avoid out-of-bounds
+                      prev_f = df.loc[i - 1, "F_numeric"]
+                      curr_f = df.loc[i, "F_numeric"]
+                      next_f = df.loc[i + 1, "F_numeric"]
+              
+                      # TD Supply breakout (up) check
+                      prev_supply = df.loc[i - 1, "TD Supply Line F"]
+                      curr_supply = df.loc[i, "TD Supply Line F"]
+              
+                      if prev_f < prev_supply and curr_f >= curr_supply:
+                          # Confirmed if next candle is +5 F% higher
+                          if next_f - curr_f >= 7:
+                              df.loc[i, "TD_Supply_Rook"] = "♖"
+              
+                      # TD Demand breakdown (down) check
+                      prev_demand = df.loc[i - 1, "TD Demand Line F"]
+                      curr_demand = df.loc[i, "TD Demand Line F"]
+              
+                      if prev_f > prev_demand and curr_f <= curr_demand:
+                          # Confirmed if next candle is -5 F% lower
+                          if next_f - curr_f <= -7:
+                              df.loc[i, "TD_Supply_Rook"] = "♜"
+              
                   return df
+
 
 
                 intraday = detect_td_supply_cross_rooks(intraday)
