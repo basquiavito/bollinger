@@ -4362,7 +4362,16 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 )
 
+                tail_df = profile_df[profile_df["Tail"] == "🪶"]
 
+                for _, row in tail_df.iterrows():
+                    fig.add_hline(
+                        y=row["F% Level"],
+                        line=dict(color="white", width=1, dash="dot"),
+                        opacity=0.4,
+                        annotation_text="🪶 Tail",
+                        annotation_position="top left"
+                    )
 
                 st.plotly_chart(fig, use_container_width=True)
 
