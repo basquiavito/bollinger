@@ -4285,7 +4285,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="lines",
                     line=dict(color="gold", dash="dot", width=1),
                     name="IB High",
-                    showlegend=False
+                    showlegend=True
                 ), row=1, col=1)
                 
                 # 🟫 IB Low (subtle off-white line)
@@ -4295,7 +4295,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="lines",
                     line=dict(color="gold", dash="dot", width=1),
                     name="IB Low",
-                    showlegend=False
+                    showlegend=True
                 ), row=1, col=1)
                 
                               
@@ -4327,11 +4327,25 @@ if st.sidebar.button("Run Analysis"):
                         textposition="top center",
                         textfont=dict(size=14),
                         showlegend=False,
-                        name="Range Extension"
+                        name="Range Extension",
+                        showlegend=True
                     ))
                 
-
- 
+                
+                 # 💥 Plot range extension markers on F% chart
+                re_df = profile_df[profile_df["💥"] == "💥"]
+                
+                fig.add_trace(go.Scatter(
+                    x=[intraday['Time'].iloc[0]] * len(re_df),  # fixed x-position at left edge
+                    y=re_df["F% Level"],
+                    mode="text",
+                    text=["💥"] * len(re_df),
+                    textposition="middle left",
+                    textfont=dict(size=14),
+                    showlegend=False,
+                    showlegend=True,
+                    name="Range Extension"
+                ))
 
 
   
