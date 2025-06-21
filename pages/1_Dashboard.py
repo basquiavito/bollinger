@@ -2628,26 +2628,37 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-  
-                def detect_td_supply_cross_rooks(df, buffer=5):
-                
-                    df["TD_Supply_Rook"] = ""
-                
-                    for i in range(1, len(df)):
-                        # Difference to the line, previous & current
-                        prev_diff = df.loc[i - 1, "F_numeric"] - df.loc[i - 1, "TD Supply Line F"]
-                        curr_diff = df.loc[i,     "F_numeric"] - df.loc[i,     "TD Supply Line F"]
-                
-                        # Confirmed cross up
-                        if prev_diff < 0 and curr_diff >= buffer:
-                            df.loc[i, "TD_Supply_Rook"] = "♖"
-                
-                        # Confirmed cross down
-                        elif prev_diff > 0 and curr_diff <= -buffer:
-                            df.loc[i, "TD_Supply_Rook"] = "♜"
-
-                
-                    return df
+                def detect_td_demand_cross_rooks(df, atr_col="ATR_5", min_buffer=5, volatility_factor=0.3):
+                  """
+                  Advanced TD Demand Rook:
+                   • Uses bar lows for breakdowns.
+                   • Buffer = max(min_buffer, volatility_factor * ATR).
+                   • Two-bar confirmation: first break, then close of next bar still below line.
+                   • Emits ♜ on the second confirming bar.
+                  """
+                  df["TD_Demand_Rook"] = ""
+                  
+                  # Precompute dynamic buffer per bar
+                  df["_buffer"] = df[atr_col].apply(lambda a: max(min_buffer, volatility_factor * a))
+                  
+                  for i in range(2, len(df)):
+                      # Previous bar vs. supply line
+                      prev_diff = df.loc[i-2, "F_numeric"] - df.loc[i-2, "TD Demand Line F"]
+                      break_low = df.loc[i-1, "Low_F"] - df.loc[i-1, "TD Demand Line F"]
+                      buf = df.loc[i-1, "_buffer"]
+                      
+                      # First bar breaches below buffer
+                      first_break = prev_diff > 0 and break_low <= -buf
+                      
+                      if first_break:
+                          # Confirm that current bar also closes below the line
+                          curr_diff = df.loc[i, "F_numeric"] - df.loc[i, "TD Demand Line F"]
+                          if curr_diff <= 0:
+                              df.loc[i, "TD_Demand_Rook"] = "♜"
+                  
+                  # Clean up
+                  df.drop(columns=["_buffer"], inplace=True)
+                  return df
 
 
                 intraday = detect_td_supply_cross_rooks(intraday)
