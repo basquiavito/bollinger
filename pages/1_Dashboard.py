@@ -3058,38 +3058,38 @@ if st.sidebar.button("Run Analysis"):
 
                 with st.expander("Market Profile (F% Letters View)", expanded=False):
                
-                # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
-                mike_col = None
-                if "Mike" in intraday.columns:
-                    mike_col = "Mike"
-                elif "F_numeric" in intraday.columns:
-                    mike_col = "F_numeric"
-                else:
-                    st.warning("Mike or F_numeric column not found.")
-                    st.stop()
-            
-                # Bin F% values
-                f_bins = np.arange(-400, 401, 20)
-                intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=f_bins[:-1])
-            
-                # Assign each row a letter based on its 30-min window
-                intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-                intraday['HalfHour'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 30
-                intraday['Letter'] = intraday['HalfHour'] - intraday['HalfHour'].min()
-                intraday['Letter'] = intraday['Letter'].apply(lambda x: string.ascii_uppercase[x] if x < 26 else '?')
-            
-                # Build Market Profile
-                profile = {}
-                for f_bin in f_bins[:-1]:
-                    letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
-                    if len(letters) > 0:
-                        profile[int(f_bin)] = ''.join(sorted(letters))
-            
-                # Convert to DataFrame
-                profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-            
-                # Show
-                st.dataframe(profile_df)
+                    # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
+                    mike_col = None
+                    if "Mike" in intraday.columns:
+                        mike_col = "Mike"
+                    elif "F_numeric" in intraday.columns:
+                        mike_col = "F_numeric"
+                    else:
+                        st.warning("Mike or F_numeric column not found.")
+                        st.stop()
+                
+                    # Bin F% values
+                    f_bins = np.arange(-400, 401, 20)
+                    intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=f_bins[:-1])
+                
+                    # Assign each row a letter based on its 30-min window
+                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+                    intraday['HalfHour'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 30
+                    intraday['Letter'] = intraday['HalfHour'] - intraday['HalfHour'].min()
+                    intraday['Letter'] = intraday['Letter'].apply(lambda x: string.ascii_uppercase[x] if x < 26 else '?')
+                
+                    # Build Market Profile
+                    profile = {}
+                    for f_bin in f_bins[:-1]:
+                        letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
+                        if len(letters) > 0:
+                            profile[int(f_bin)] = ''.join(sorted(letters))
+                
+                    # Convert to DataFrame
+                    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+                
+                    # Show
+                    st.dataframe(profile_df)
 
 
 
