@@ -4299,11 +4299,12 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
                 
                               
-                                
-                                 # Step 1: Extract 💥 points
+                              # Prepare 💥 points with correct time from intraday
                 re_points = []
+                
                 for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
                     f_level = row["F% Level"]
+                    # Get rows at this F% level (binned) AND not in A–D (post-IB)
                     matching = intraday[
                         (intraday['F_Bin'] == f_level) &
                         (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
@@ -4314,82 +4315,19 @@ if st.sidebar.button("Run Analysis"):
                             "y": f_level
                         })
                 
-                # Step 2: Create base fig with background
-                fig = go.Figure()
-                
-                # Optional: Add IB High/Low or base chart here...
-                
-                # Step 3: Add animation frames (blink ON/OFF)
-                frames = [
-                    go.Frame(
-                        data=[
-                            go.Scatter(
-                                x=[p["x"] for p in re_points],
-                                y=[p["y"] for p in re_points],
-                                mode="text",
-                                text=["💥"] * len(re_points),
-                                textposition="top center",
-                                textfont=dict(size=16),
-                                showlegend=False
-                            )
-                        ],
-                        name="blink_on"
-                    ),
-                    go.Frame(
-                        data=[
-                            go.Scatter(  # same X/Y but empty text
-                                x=[p["x"] for p in re_points],
-                                y=[p["y"] for p in re_points],
-                                mode="text",
-                                text=[""] * len(re_points),
-                                textposition="top center",
-                                textfont=dict(size=16),
-                                showlegend=False
-                            )
-                        ],
-                        name="blink_off"
-                    )
-                ]
-                
-                fig.frames = frames
-                
-                # Step 4: Define animation settings
-                fig.update_layout(
-                    updatemenus=[{
-                        "type": "buttons",
-                        "showactive": False,
-                        "buttons": [{
-                            "label": "▶",
-                            "method": "animate",
-                            "args": [
-                                None,
-                                {
-                                    "frame": {"duration": 500, "redraw": True},
-                                    "fromcurrent": True,
-                                    "transition": {"duration": 0}
-                                }
-                            ]
-                        }]
-                    }],
-                    title="💥 Range Extension (Blinking)",
-                    xaxis_title="Time",
-                    yaxis_title="F%",
-                    height=500
-                )
-                
-                # Add one static trace so chart renders on load
-                fig.add_trace(go.Scatter(
-                    x=[p["x"] for p in re_points],
-                    y=[p["y"] for p in re_points],
-                    mode="text",
-                    text=["💥"] * len(re_points),
-                    textposition="top center",
-                    textfont=dict(size=16),
-                    showlegend=False
-                ))
-                
-                                
-                
+                # Plot 💥 at those exact bars
+                if re_points:
+                    fig.add_trace(go.Scatter(
+                        x=[p["x"] for p in re_points],
+                        y=[p["y"] for p in re_points] + 20,
+                        mode="text",
+                        text=["💥"] * len(re_points),
+                        textposition="top center",
+                        textfont=dict(size=14),
+                        showlegend=False,
+                        name="Range Extension"
+                    ))
+
 
                 # Update layout overall
                 fig.update_layout(
