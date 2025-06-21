@@ -4261,18 +4261,21 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(y_close_f_line, row=1, col=1)
 
 
-                fig.add_shape(
-                type="rect",
-                xref="x",  # This uses time axis
-                yref="y",
-                x0=intraday["Time"].iloc[0],
-                x1=intraday["Time"].iloc[-1],
-                y0=ib_low,
-                y1=ib_high,
-                fillcolor="rgba(255,255,0,0.1)",  # Light yellow shade
-                line=dict(width=0),
-                layer="below"
-            )
+                fig.add_trace(go.Scatter(
+                x=intraday["Time"],
+                y=[ib_high]*len(intraday),
+                mode='lines',
+                line=dict(color="yellow", dash="dot"),
+                name="IB High"
+                ))
+
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=[ib_low]*len(intraday),
+                    mode='lines',
+                    line=dict(color="yellow", dash="dot"),
+                    name="IB Low"
+                ))
 
               
                 
