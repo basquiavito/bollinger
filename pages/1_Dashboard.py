@@ -2628,15 +2628,15 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-                def detect_td_supply_cross_rooks(df):
-                  """
+  """
                     Confirmed TD-Supply rook:
                       • White ♖  – previous bar below the line, current bar closes >= +buffer F% above it
                       • Black ♜ – previous bar above the line, current bar closes <= –buffer F% below it
                     Uses the difference (F_numeric – TD Supply Line F) to avoid misses
                     when the supply line jumps.
                     """
+                def detect_td_supply_cross_rooks(df):
+                
                     df["TD_Supply_Rook"] = ""
                 
                     for i in range(1, len(df)):
