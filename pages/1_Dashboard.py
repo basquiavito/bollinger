@@ -2628,36 +2628,53 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def detect_td_supply_cross_rooks(df):
+              def detect_td_supply_cross_rooks(df, buffer=5):
                   """
-                  Detect true breakout crosses and assign Rook emojis:
-                  - ♖ for confirmed cross above TD Supply Line (with +5 F% follow-through)
-                  - ♜ for confirmed cross below TD Demand Line (with -5 F% follow-through)
+                  Tracks confirmed crosses of TD Supply/Demand with a ±5 F% buffer before assigning Rook emojis.
+                  - White Rook ♖ appears only after F_numeric closes >=5 F% above TD Supply post cross.
+                  - Black Rook ♜ appears only after F_numeric closes <=5 F% below TD Demand post cross.
                   """
                   df["TD_Supply_Rook"] = ""
               
-                  for i in range(1, len(df) - 1):  # avoid out-of-bounds
+                  supply_pending = False
+                  supply_cross_idx = None
+                  supply_cross_val = None
+              
+                  demand_pending = False
+                  demand_cross_idx = None
+                  demand_cross_val = None
+              
+                  for i in range(1, len(df)):
                       prev_f = df.loc[i - 1, "F_numeric"]
                       curr_f = df.loc[i, "F_numeric"]
-                      next_f = df.loc[i + 1, "F_numeric"]
-              
-                      # TD Supply breakout (up) check
                       prev_supply = df.loc[i - 1, "TD Supply Line F"]
                       curr_supply = df.loc[i, "TD Supply Line F"]
-              
-                      if prev_f < prev_supply and curr_f >= curr_supply:
-                          # Confirmed if next candle is +5 F% higher
-                          if next_f - curr_f >= 7:
-                              df.loc[i, "TD_Supply_Rook"] = "♖"
-              
-                      # TD Demand breakdown (down) check
                       prev_demand = df.loc[i - 1, "TD Demand Line F"]
                       curr_demand = df.loc[i, "TD Demand Line F"]
               
-                      if prev_f > prev_demand and curr_f <= curr_demand:
-                          # Confirmed if next candle is -5 F% lower
-                          if next_f - curr_f <= -7:
+                      # Detect cross above supply line
+                      if not supply_pending and prev_f < prev_supply and curr_f >= curr_supply:
+                          supply_pending = True
+                          supply_cross_idx = i
+                          supply_cross_val = curr_f
+              
+                      # Confirm supply rook
+                      if supply_pending:
+                          if curr_f - df.loc[supply_cross_idx, "TD Supply Line F"] >= buffer:
+                              df.loc[i, "TD_Supply_Rook"] = "♖"
+                              supply_pending = False  # Reset
+              
+                      # Detect cross below demand line
+                      if not demand_pending and prev_f > prev_demand and curr_f <= curr_demand:
+                          demand_pending = True
+                          demand_cross_idx = i
+                          demand_cross_val = curr_f
+              
+                      # Confirm demand rook
+                      if demand_pending:
+                          if df.loc[demand_cross_idx, "TD Demand Line F"] - curr_f >= buffer:
                               df.loc[i, "TD_Supply_Rook"] = "♜"
+                              demand_pending = False  # Reset
               
                   return df
 
