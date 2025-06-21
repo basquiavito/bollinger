@@ -4321,12 +4321,12 @@ if st.sidebar.button("Run Analysis"):
                 if re_points:
                     fig.add_trace(go.Scatter(
                         x=[p["x"] for p in re_points],
-                        y=[p["y"] for p in re_points],
+                        y=[p["y"] for p in re_points] + 20,
                         mode="text",
                         text=["💥"] * len(re_points),
                         textposition="top center",
                         textfont=dict(size=14),
-                        showlegend=False,
+                    
                         name="Range Extension",
                         showlegend=True
                     ))
@@ -4342,7 +4342,7 @@ if st.sidebar.button("Run Analysis"):
                     text=["💥"] * len(re_df),
                     textposition="middle left",
                     textfont=dict(size=14),
-                    showlegend=False,
+              
                     showlegend=True,
                     name="Range Extension"
                 ))
