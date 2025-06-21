@@ -4298,7 +4298,20 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=1, col=1)
                 
-                              
+                        # 💥 Plot range extension markers on F% chart
+                re_df = profile_df[profile_df["💥"] == "💥"]
+                
+                fig.add_trace(go.Scatter(
+                    x=[intraday['Time'].iloc[0]] * len(re_df),  # fixed x-position at left edge
+                    y=re_df["F% Level"],
+                    mode="text",
+                    text=["💥"] * len(re_df),
+                    textposition="middle left",
+                    textfont=dict(size=14),
+                    showlegend=False,
+                    name="Range Extension"
+                ))
+                    
                               # Prepare 💥 points with correct time from intraday
                 re_points = []
                 
