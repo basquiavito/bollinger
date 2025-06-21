@@ -4352,6 +4352,39 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
 
+                # Step 1: Detect Tail Levels in profile_df
+                profile_df["Tail"] = profile_df["Letters"].apply(
+                    lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
+                )
+                
+                # Step 2: Extract tail points
+                tail_points = []
+                
+                for _, row in profile_df[profile_df["Tail"] == "🪶"].iterrows():
+                    f_level = row["F% Level"]
+                    
+                    # Find matching intraday bar (any bar in that F% bin)
+                    match = intraday[
+                        (intraday["F_Bin"] == f_level)
+                    ]
+                    if not match.empty:
+                        tail_points.append({
+                            "x": match.iloc[0]["Time"],   # first occurrence in that bin
+                            "y": f_level
+                        })
+                
+                # Step 3: Plot 🪶 directly on the matching bar
+                if tail_points:
+                    fig.add_trace(go.Scatter(
+                        x=[p["x"] for p in tail_points],
+                        y=[p["y"] for p in tail_points],
+                        mode="text",
+                        text=["🪶"] * len(tail_points),
+                        textposition="middle center",
+                        textfont=dict(size=14),
+                        showlegend=False,
+                        name="Tail"
+                    ))
 
                 # Update layout overall
                 fig.update_layout(
@@ -4362,16 +4395,7 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 )
 
-                tail_df = profile_df[profile_df["Tail"] == "🪶"]
-
-                for _, row in tail_df.iterrows():
-                    fig.add_hline(
-                        y=row["F% Level"],
-                        line=dict(color="white", width=1, dash="dot"),
-                        opacity=0.4,
-                        annotation_text="🪶 Tail",
-                        annotation_position="top left"
-                    )
+            
 
                 st.plotly_chart(fig, use_container_width=True)
 
