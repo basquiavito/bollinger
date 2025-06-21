@@ -3054,9 +3054,9 @@ if st.sidebar.button("Run Analysis"):
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
-               with st.expander("Market Profile (F% Letters View)", expanded=False):
-               import numpy as np
-               import string
+                with st.expander("Market Profile (F% Letters View)", expanded=False):
+                import numpy as np
+                import string
             
                 # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
                 mike_col = None
