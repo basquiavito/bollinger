@@ -3354,11 +3354,19 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Kijun_F"],
                     mode="lines",
-                    line=dict(color="green", width=1.5),
+                    line=dict(color="green", width=2),
                     name="Kijun (F% scale)"
                 )
                     fig.add_trace(kijun_line, row=1, col=1)
 
+                    tenkan_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Tenkan_F"],
+                        mode="lines",
+                        line=dict(color="red", width=1.5, dash="dot"),
+                        name="Tenkan (F%)"
+                    )
+                    fig.add_trace(tenkan_line, row=1, col=1)
 
 
 
@@ -3522,15 +3530,7 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(south_marengo_trace, row=1, col=1)
 
 
-                    tenkan_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Tenkan_F"],
-                        mode="lines",
-                        line=dict(color="red", width=2, dash="dot"),
-                        name="Tenkan (F%)"
-                    )
-                    fig.add_trace(tenkan_line, row=1, col=1)
-
+        
 
 # # ------------------------------------------------------------------------------------------------------------------------
 
