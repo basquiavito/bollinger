@@ -2628,7 +2628,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-              def detect_td_supply_cross_rooks(df):
+                def detect_td_supply_cross_rooks(df):
                   """
                   Detect true breakout crosses and assign Rook emojis:
                   - ♖ for confirmed cross above TD Supply Line (with +5 F% follow-through)
