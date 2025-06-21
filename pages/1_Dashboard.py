@@ -4301,21 +4301,35 @@ if st.sidebar.button("Run Analysis"):
                               
                 
                  
-                # 💥 Plot range extension markers on F% chart
-                re_df = profile_df[profile_df["💥"] == "💥"]
+                              # Prepare 💥 points with correct time from intraday
+                re_points = []
                 
-                fig.add_trace(go.Scatter(
-                    x=[intraday['Time'].iloc[0]] * len(re_df),  # fixed x-position at left edge
-                    y=re_df["F% Level"],
-                    mode="text",
-                    text=["💥"] * len(re_df),
-                    textposition="middle left",
-                    textfont=dict(size=14),
-                    showlegend=False,
-                    name="Range Extension"
-                ))
-
-        
+                for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
+                    f_level = row["F% Level"]
+                    # Get rows at this F% level (binned) AND not in A–D (post-IB)
+                    matching = intraday[
+                        (intraday['F_Bin'] == f_level) &
+                        (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
+                    ]
+                    if not matching.empty:
+                        re_points.append({
+                            "x": matching.iloc[0]["Time"],
+                            "y": f_level
+                        })
+                
+                # Plot 💥 at those exact bars
+                if re_points:
+                    fig.add_trace(go.Scatter(
+                        x=[p["x"] for p in re_points],
+                        y=[p["y"] for p in re_points],
+                        mode="text",
+                        text=["💥"] * len(re_points),
+                        textposition="top center",
+                        textfont=dict(size=14),
+                        showlegend=False,
+                        name="Range Extension"
+                    ))
+                
 
  
 
