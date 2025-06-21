@@ -4375,16 +4375,16 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Step 3: Plot 🪶 directly on the matching bar
                 if tail_points:
-                    fig.add_trace(go.Scatter(
-                        x=[p["x"] for p in tail_points],
-                        y=[p["y"] for p in tail_points],
-                        mode="text",
-                        text=["🪶"] * len(tail_points),
-                        textposition="middle center",
-                        textfont=dict(size=14),
-                        showlegend=False,
-                        name="Tail"
-                    ))
+                fig.add_trace(go.Scatter(
+                    x=[p["x"] for p in tail_points],
+                    y=[p["y"] + 20 for p in tail_points],  # offset upward by 20
+                    mode="text",
+                    text=["🪶"] * len(tail_points),
+                    textposition="bottom center",  # stays visually close to bar
+                    textfont=dict(size=14),
+                    showlegend=False,
+                    name="Tail"
+                ))
 
                 # Update layout overall
                 fig.update_layout(
