@@ -3109,6 +3109,15 @@ if st.sidebar.button("Run Analysis"):
                     # Convert to DataFrame
                     profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
 
+
+
+
+
+                  # Add tail column: mark levels with only 1 unique letter
+                    profile_df["Tail"] = profile_df["Letters"].apply(
+                        lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
+                    )
+
               # Detect Range Extension: letters appearing outside IB range
                     def is_range_extension(row):
                         if pd.isna(row["Letters"]):
@@ -3126,7 +3135,7 @@ if st.sidebar.button("Run Analysis"):
 
                 
                     # Show
-                    st.dataframe(profile_df[["F% Level", "Letters", "💥"]])
+                    st.dataframe(profile_df[["F% Level", "Letters", "💥","Tail"]])
 
 
 
