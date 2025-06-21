@@ -3108,9 +3108,26 @@ if st.sidebar.button("Run Analysis"):
                 
                     # Convert to DataFrame
                     profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+
+              # Detect Range Extension: letters appearing outside IB range
+                    def is_range_extension(row):
+                        if pd.isna(row["Letters"]):
+                            return False
+                        post_ib_letters = [l for l in str(row["Letters"]) if l not in initial_letters]
+                        if row["F% Level"] > ib_high and post_ib_letters:
+                            return True
+                        if row["F% Level"] < ib_low and post_ib_letters:
+                            return True
+                        return False
+                    
+                    # Add 💥 emoji for range extension levels
+                    profile_df["Range_Extension"] = profile_df.apply(is_range_extension, axis=1)
+                    profile_df["💥"] = profile_df["Range_Extension"].apply(lambda x: "💥" if x else "")
+
                 
                     # Show
-                    st.dataframe(profile_df)
+                    st.dataframe(profile_df[["F% Level", "Letters", "💥"]])
+
 
 
 
@@ -4284,6 +4301,19 @@ if st.sidebar.button("Run Analysis"):
                               
                 
                  
+                # 💥 Plot range extension markers on F% chart
+                re_df = profile_df[profile_df["💥"] == "💥"]
+                
+                fig.add_trace(go.Scatter(
+                    x=[intraday['Time'].iloc[0]] * len(re_df),  # fixed x-position at left edge
+                    y=re_df["F% Level"],
+                    mode="text",
+                    text=["💥"] * len(re_df),
+                    textposition="middle left",
+                    textfont=dict(size=14),
+                    showlegend=False,
+                    name="Range Extension"
+                ))
 
         
 
