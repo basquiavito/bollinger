@@ -3354,7 +3354,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Kijun_F"],
                     mode="lines",
-                    line=dict(color="green", width=1),
+                    line=dict(color="green", width=1.5),
                     name="Kijun (F% scale)"
                 )
                     fig.add_trace(kijun_line, row=1, col=1)
@@ -3470,7 +3470,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% MA"],
                         mode="lines",
-                        line=dict(color="#E3DAC9", dash="dash",width=1),  # Set dash style
+                        line=dict(color="#E3DAC9", dash="dash",width=1.5),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
 
