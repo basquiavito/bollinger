@@ -2628,7 +2628,7 @@ if st.sidebar.button("Run Analysis"):
 
 
         
-               def detect_td_supply_cross_rooks(df, buffer=5):
+                def detect_td_supply_cross_rooks(df, buffer=5):
                   """
                   Tracks confirmed crosses of TD Supply/Demand with a ±5 F% buffer before assigning Rook emojis.
                   - White Rook ♖ appears only after F_numeric closes >=5 F% above TD Supply post cross.
@@ -2681,7 +2681,7 @@ if st.sidebar.button("Run Analysis"):
   
   
   
-                  intraday = detect_td_supply_cross_rooks(intraday)
+                intraday = detect_td_supply_cross_rooks(intraday)
 
 
                 intraday["Event"] = None  # Initialize with None
