@@ -3230,14 +3230,14 @@ if st.sidebar.button("Run Analysis"):
 
 #**************************************************************************************************************************************************************************
 
-                    # (A.2) Dashed horizontal line at 0
-                    fig.add_hline(
-                        y=0,
-                        line_dash="dash",
-                        row=1, col=1,
-                        annotation_text="0%",
-                        annotation_position="top left"
-                    )
+                    # # (A.2) Dashed horizontal line at 0
+                    # fig.add_hline(
+                    #     y=0,
+                    #     line_dash="dash",
+                    #     row=1, col=1,
+                    #     annotation_text="0%",
+                    #     annotation_position="top left"
+                    # )
 
 
 
