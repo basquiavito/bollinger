@@ -4260,28 +4260,28 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(y_low_f_line, row=1, col=1)
                 fig.add_trace(y_close_f_line, row=1, col=1)
 
-
+                
+                                # 🟫 IB High (subtle off-white line)
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=[ib_high]*len(intraday),
-                    mode='lines',
-                    showlegend=True
-    
+                    y=[ib_high] * len(intraday),
+                    mode="lines",
                     line=dict(color="rgba(240,240,240,0.7)", dash="dot", width=1),
-                    name="IB High"
-                    ))
-
+                    name="IB High",
+                    showlegend=False
+                ), row=1, col=1)
+                
+                # 🟫 IB Low (subtle off-white line)
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=[ib_low]*len(intraday),
-                    mode='lines',
-                    showlegend=True
-
+                    y=[ib_low] * len(intraday),
+                    mode="lines",
                     line=dict(color="rgba(240,240,240,0.7)", dash="dot", width=1),
-                    name="IB Low"
-                ))
-
-              
+                    name="IB Low",
+                    showlegend=False
+                ), row=1, col=1)
+                
+                              
                 
                  
 
