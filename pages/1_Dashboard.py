@@ -1,4 +1,6 @@
 import streamlit as st
+import numpy as np
+import string       
 import yfinance as yf
 import pandas as pd
 import plotly.express as px
@@ -3055,9 +3057,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                 with st.expander("Market Profile (F% Letters View)", expanded=False):
-                import numpy as np
-                import string
-            
+               
                 # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
                 mike_col = None
                 if "Mike" in intraday.columns:
