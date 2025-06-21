@@ -4351,40 +4351,21 @@ if st.sidebar.button("Run Analysis"):
                         name="Range Extension"
                     ))
 
-
-                # Step 1: Detect Tail Levels in profile_df
-                profile_df["Tail"] = profile_df["Letters"].apply(
-                    lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
-                )
                 
-                # Step 2: Extract tail points
-                tail_points = []
+                tail_mask = intraday.index.isin([p["index"] for p in tail_points])
                 
-                for _, row in profile_df[profile_df["Tail"] == "🪶"].iterrows():
-                    f_level = row["F% Level"]
-                    
-                    # Find matching intraday bar (any bar in that F% bin)
-                    match = intraday[
-                        (intraday["F_Bin"] == f_level)
-                    ]
-                    if not match.empty:
-                        tail_points.append({
-                            "x": match.iloc[0]["Time"],   # first occurrence in that bin
-                            "y": f_level
-                        })
-                
-                # Step 3: Plot 🪶 directly on the matching bar
-                if tail_points:
                 fig.add_trace(go.Scatter(
-                    x=[p["x"] for p in tail_points],
-                    y=[p["y"] + 20 for p in tail_points],  # offset upward by 20
+                    x=intraday.loc[tail_mask, "Time"],
+                    y=intraday.loc[tail_mask, mike_col] + 20,  # Offset the emoji upward
                     mode="text",
-                    text=["🪶"] * len(tail_points),
-                    textposition="bottom center",  # stays visually close to bar
-                    textfont=dict(size=14),
+                    text=["🪶"] * tail_mask.sum(),
+                    textposition="bottom center",
+                    textfont=dict(size=18),
                     showlegend=False,
-                    name="Tail"
-                ))
+                    name="Tail",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
+                ), row=1, col=1)
+                
 
                 # Update layout overall
                 fig.update_layout(
