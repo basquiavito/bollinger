@@ -2631,25 +2631,29 @@ if st.sidebar.button("Run Analysis"):
 
                 def detect_td_supply_cross_rooks(df):
                     """
-                    Detect crosses above/below TD Supply Line and assign Rook emojis:
-                    - ♖ for cross above
-                    - ♜ for cross below
+                    Detect confirmed crosses above/below TD Supply Line with 5 F% buffer.
+                    Assign Rook emojis:
+                    - ♖ for cross above with +5 F% close
+                    - ♜ for cross below with -5 F% close
                     """
                     df["TD_Supply_Rook"] = ""
-
+                
                     for i in range(1, len(df)):
                         prev_f = df.loc[i - 1, "F_numeric"]
                         curr_f = df.loc[i, "F_numeric"]
                         prev_supply = df.loc[i - 1, "TD Supply Line F"]
                         curr_supply = df.loc[i, "TD Supply Line F"]
-
-                        if prev_f < prev_supply and curr_f >= curr_supply:
-                            df.loc[i, "TD_Supply_Rook"] = "♖"  # Cross up → White rook
-
-                        elif prev_f > prev_supply and curr_f <= curr_supply:
-                            df.loc[i, "TD_Supply_Rook"] = "♜"  # Cross down → Black rook
-
+                
+                        # Cross up + confirm
+                        if prev_f < prev_supply and curr_f >= curr_supply + 5:
+                            df.loc[i, "TD_Supply_Rook"] = "♖"
+                
+                        # Cross down + confirm
+                        elif prev_f > prev_supply and curr_f <= curr_supply - 5:
+                            df.loc[i, "TD_Supply_Rook"] = "♜"
+                
                     return df
+
 
                 intraday = detect_td_supply_cross_rooks(intraday)
 
