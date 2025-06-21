@@ -3053,6 +3053,35 @@ if st.sidebar.button("Run Analysis"):
 
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
+
+                import numpy as np
+                import string
+                
+                # --- Step 1: Bin F% values (e.g., from -400 to +400 in steps of 20)
+                f_bins = np.arange(-400, 401, 20)
+                
+                # --- Step 2: Assign 30-min labels (A, B, C, ...)
+                intraday['TimeIndex'] = pd.to_datetime(intraday['Time'])
+                intraday['HalfHour'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 30
+                intraday['Letter'] = intraday['HalfHour'] - intraday['HalfHour'].min()
+                intraday['Letter'] = intraday['Letter'].apply(lambda x: string.ascii_uppercase[x] if x < 26 else '?')
+                
+                # --- Step 3: Bin F% and build the profile
+                intraday['F_Bin'] = pd.cut(intraday['Mike'], bins=f_bins, labels=f_bins[:-1])
+                
+                profile = {}
+                for f_bin in f_bins[:-1]:
+                    letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
+                    if len(letters) > 0:
+                        profile[int(f_bin)] = ''.join(sorted(letters))
+                
+                # --- Step 4: Convert to DataFrame and display it
+                profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+                
+                with st.expander("Market Profile (F% Letters View)", expanded=False):
+                    st.dataframe(profile_df)
+
+
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
