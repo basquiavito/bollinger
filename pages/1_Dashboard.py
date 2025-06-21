@@ -4352,22 +4352,7 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
                 
-                tail_mask = intraday.index.isin([p["index"] for p in tail_points])
-                
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[tail_mask, "Time"],
-                    y=intraday.loc[tail_mask, mike_col] + 20,  # Offset the emoji upward
-                    mode="text",
-                    text=["🪶"] * tail_mask.sum(),
-                    textposition="bottom center",
-                    textfont=dict(size=18),
-                    showlegend=False,
-                    name="Tail",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-                ), row=1, col=1)
-                
-
-                # Update layout overall
+ 
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
