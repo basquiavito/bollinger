@@ -3329,16 +3329,16 @@ if st.sidebar.button("Run Analysis"):
                     #     showlegend=False
                     # ), row=1, col=1)
 
-                    # # SpanB with fill → grey Kumo
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanB_F"],
-                    #     fill='tonexty',
-                    #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                    #     line=dict(width=0),
-                    #     mode='lines',
-                    #     name='Kumo Cloud'
-                    # ), row=1, col=1)
+                    # SpanB with fill → grey Kumo
+                    fig.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanB_F"],
+                        fill='tonexty',
+                        fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                        line=dict(width=0),
+                        mode='lines',
+                        name='Kumo Cloud'
+                    ), row=1, col=1)
 
 
 
