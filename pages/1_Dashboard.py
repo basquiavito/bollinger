@@ -3393,7 +3393,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Kijun_F"],
                     mode="lines",
-                    line=dict(color="green", width=2),
+                    line=dict(color="#2ECC71", width=2),
                     name="Kijun (F% scale)"
                 )
                     fig.add_trace(kijun_line, row=1, col=1)
@@ -3772,7 +3772,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Supply Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#9370DB", dash='dot'),
+                            line=dict(width=1, color="#8A2BE2", dash='dot'),
                             name='TD Supply F%',
                             hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
                         ),
@@ -3790,7 +3790,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Demand Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#1E90FF", dash='dot'),
+                            line=dict(width=1, color="#5DADE2", dash='dot'),
                             name='TD Demand F%',
                             hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
                         ),
