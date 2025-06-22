@@ -3209,21 +3209,21 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # # (A.1) 40ish Reversal (star markers)
-                    # mask_40ish = intraday["40ish"] != ""
-                    # scatter_40ish = go.Scatter(
-                    #     x=intraday.loc[mask_40ish, "Time"],
-                    #     y=intraday.loc[mask_40ish, "F_numeric"] + 89,
-                    #     mode="markers",
-                    #     marker_symbol="star",
-                    #     marker_size=18,
-                    #     marker_color="gold",
-                    #     name="40ish Reversal",
-                    #     text=intraday.loc[mask_40ish, "40ish"],
+                    # (A.1) 40ish Reversal (star markers)
+                    mask_40ish = intraday["40ish"] != ""
+                    scatter_40ish = go.Scatter(
+                        x=intraday.loc[mask_40ish, "Time"],
+                        y=intraday.loc[mask_40ish, "F_numeric"] +44
+                        mode="markers",
+                        marker_symbol="star",
+                        marker_size=18,
+                        marker_color="gold",
+                        name="40ish Reversal",
+                        text=intraday.loc[mask_40ish, "40ish"],
 
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    # )
-                    # fig.add_trace(scatter_40ish, row=1, col=1)
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    )
+                    fig.add_trace(scatter_40ish, row=1, col=1)
 
 
 
@@ -3330,15 +3330,15 @@ if st.sidebar.button("Run Analysis"):
                     # ), row=1, col=1)
 
                     # SpanB with fill → grey Kumo
-                    fig.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanB_F"],
-                        fill='tonexty',
-                        fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                        line=dict(width=0),
-                        mode='lines',
-                        name='Kumo Cloud'
-                    ), row=1, col=1)
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanB_F"],
+                    #     fill='tonexty',
+                    #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                    #     line=dict(width=0),
+                    #     mode='lines',
+                    #     name='Kumo Cloud'
+                    # ), row=1, col=1)
 
 
 
