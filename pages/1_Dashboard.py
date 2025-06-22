@@ -3192,7 +3192,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["F_numeric"],
                         mode="lines+markers",
                         customdata=intraday["Close"],
-
+                        line=dict(color="#1e90ff", width=2),  # Dodger Blue
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
 
                         name="F% (scaled)",
