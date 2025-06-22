@@ -3162,7 +3162,11 @@ if st.sidebar.button("Run Analysis"):
                     # Sort back to F% Level order
                     profile_df = profile_df.sort_values('F% Level').reset_index(drop=True)
 
-
+                    # Add earliest Time seen in each F% bin
+                    bin_times = intraday.groupby('F_Bin')['Time'].min().reset_index()
+                    bin_times['F% Level'] = bin_times['F_Bin'].astype(int)
+                    profile_df = profile_df.merge(bin_times[['F% Level', 'Time']], on='F% Level', how='left')
+                    
 
 
 
@@ -3188,7 +3192,7 @@ if st.sidebar.button("Run Analysis"):
 
                 
                     # Show
-                    st.dataframe(profile_df[["F% Level", "Letters", "%Vol", "💥","Range_Extension", "Tail", "ValueArea"]])
+                    st.dataframe(profile_df[["F% Level","Time", "Letters", "%Vol", "💥","Range_Extension", "Tail", "ValueArea"]])
 
 
 
