@@ -3499,7 +3499,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="solid", color="#E3DAC9",width=1),
+                        line=dict(dash="dash", color="#E3DAC9",width=1),
                         name="Upper Band"
                     )
 
@@ -3517,7 +3517,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% MA"],
                         mode="lines",
-                        line=dict(color="#E3DAC9", dash="solid",width=1.5),  # Set dash style
+                        line=dict(color="#E3DAC9", dash="dash",width=1.5),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
 
