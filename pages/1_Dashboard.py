@@ -3402,7 +3402,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["Tenkan_F"],
                         mode="lines",
-                        line=dict(color="red", width=1.5, dash="dot"),
+                        line=dict(color="#E63946", width=1.5, dash="dot"),
                         name="Tenkan (F%)"
                     )
                     fig.add_trace(tenkan_line, row=1, col=1)
@@ -3499,7 +3499,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="solid", color="#E3DAC9",width=1),
+                        line=dict(dash="dash", color="#E3DAC9",width=1),
                         name="Upper Band"
                     )
 
@@ -3508,7 +3508,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Lower"],
                         mode="lines",
-                        line=dict(dash="solid", color="#E3DAC9",width=1),
+                        line=dict(dash="dash", color="#E3DAC9",width=1),
                         name="Lower Band"
                     )
 
@@ -4322,7 +4322,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_high] * len(intraday),
                     mode="lines",
-                    line=dict(color="gold", dash="dot", width=1),
+                    line=dict(color="#FFD700", dash="dot", width=1),
                     name="IB High",
                     showlegend=True
                 ), row=1, col=1)
@@ -4332,7 +4332,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_low] * len(intraday),
                     mode="lines",
-                    line=dict(color="gold", dash="dot", width=1),
+                    line=dict(color="#FFD700", dash="dot", width=1),
                     name="IB Low",
                     showlegend=True
                 ), row=1, col=1)
