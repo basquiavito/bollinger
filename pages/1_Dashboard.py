@@ -3772,7 +3772,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Supply Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#FF1493", dash='dot'),
+                            line=dict(width=1, color="#9370DB", dash='dot'),
                             name='TD Supply F%',
                             hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
                         ),
