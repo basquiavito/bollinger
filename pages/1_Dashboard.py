@@ -3188,7 +3188,7 @@ if st.sidebar.button("Run Analysis"):
 
                 
                     # Show
-                    st.dataframe(profile_df[["F% Level", "Letters", "💥","Tail"]])
+                    st.dataframe(profile_df[["F% Level", "Letters", "%Vol", "💥","Range_Extension", "Tail", "ValueArea"]])
 
 
 
