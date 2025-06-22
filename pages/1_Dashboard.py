@@ -3402,7 +3402,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["Tenkan_F"],
                         mode="lines",
-                        line=dict(color="#E63946", width=1.5, dash="dot"),
+                        line=dict(color="#E63946", width=1.5, dash="solid"),
                         name="Tenkan (F%)"
                     )
                     fig.add_trace(tenkan_line, row=1, col=1)
