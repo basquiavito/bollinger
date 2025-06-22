@@ -3137,7 +3137,30 @@ if st.sidebar.button("Run Analysis"):
                             profile[int(f_bin)] = ''.join(sorted(letters))
                 
                     # Convert to DataFrame
+                    # Build Market Profile
+                    profile = {}
+                    for f_bin in f_bins[:-1]:
+                        letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
+                        if len(letters) > 0:
+                            profile[int(f_bin)] = ''.join(sorted(letters))
+                    
+                    # Count volume per bin for %Vol
+                    volume_counts = intraday['F_Bin'].value_counts().rename_axis('F% Level').reset_index(name='Count')
+                    volume_counts['F% Level'] = volume_counts['F% Level'].astype(int)
+                    total_volume = volume_counts['Count'].sum()
+                    volume_counts['%Vol'] = (volume_counts['Count'] / total_volume * 100).round(1)
+                    
+                    # Merge Letters + Volume
                     profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+                    profile_df = profile_df.merge(volume_counts, on='F% Level', how='left').fillna({'Count': 0, '%Vol': 0})
+                    
+                    # Calculate cumulative %Vol to find Value Area
+                    profile_df = profile_df.sort_values('%Vol', ascending=False).reset_index(drop=True)
+                    profile_df['CumVol'] = profile_df['%Vol'].cumsum()
+                    profile_df['ValueArea'] = profile_df['CumVol'] <= 70
+                    
+                    # Sort back to F% Level order
+                    profile_df = profile_df.sort_values('F% Level').reset_index(drop=True)
 
 
 
