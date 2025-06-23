@@ -3101,9 +3101,22 @@ if st.sidebar.button("Run Analysis"):
                   # Bin F% values — label as strings to prevent type issues
                   f_bins = np.arange(-400, 401, 20)
                   intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
-              
+              # Remove rows with missing or invalid Time
+                  intraday = intraday[intraday['Time'].notna()]
+                  st.write("Bad Time rows:", intraday[intraday['Time'].isna()])
+
                   # Assign each row a letter based on 15-minute intervals
-                  intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+                  # Drop NA first to avoid parsing issues
+                  intraday = intraday[intraday['Time'].notna()]
+                  
+                  # Optional: filter out malformed time strings if needed
+                  # intraday = intraday[intraday['Time'].str.match(r"\d{1,2}:\d{2} [APap][Mm]")]
+                  
+                  # Parse Time column safely
+                  intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p", errors='coerce')
+                  
+                  # Drop rows where conversion failed
+                  intraday = intraday[intraday['TimeIndex'].notna()]
                   intraday['LetterIndex'] = ((intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 15).astype(int)
                   intraday['LetterIndex'] -= intraday['LetterIndex'].min()  # Normalize to start at 0
               
