@@ -4570,17 +4570,17 @@ if st.sidebar.button("Run Analysis"):
                   x=intraday["Time"],
                   y=intraday["TB-F Top"],
                   name="TB-F Top",
-                  line=dict(color="yellow", 
+                  line=dict(color="orange", 
                             
-                  dash="dot")))
+                  dash="solid")))
               
                 fig.add_trace(go.Scatter(
                   x=intraday["Time"],
                   y=intraday["TB-F Bottom"],
                   
                   name="TB-F Bottom", 
-                  line=dict(color="pink",
-                            dash="dot")))
+                  line=dict(color="orange",
+                            dash="solid")))
 
 
               
