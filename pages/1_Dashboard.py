@@ -3582,37 +3582,37 @@ if st.sidebar.button("Run Analysis"):
 # # ------------------------------------------------------------------------------------------------------------------------
 
 
-                    # # Mask for Tenkan-Kijun Crosses
-                    # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-                    # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
+                    # Mask for Tenkan-Kijun Crosses
+                    mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+                    mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-                    # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                    # scatter_tk_sun = go.Scatter(
-                    #     x=intraday.loc[mask_tk_sun, "Time"],
-                    #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 120,  # Offset for visibility
-                    #     mode="text",
-                    #     text="🌞",
-                    #     textposition="top center",
-                    #     textfont=dict(size=34),
-                    #     name="Tenkan-Kijun Bullish Cross",
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                    # )
+                    # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                    scatter_tk_sun = go.Scatter(
+                        x=intraday.loc[mask_tk_sun, "Time"],
+                        y=intraday.loc[mask_tk_sun, "F_numeric"] + 120,  # Offset for visibility
+                        mode="text",
+                        text="🌞",
+                        textposition="top center",
+                        textfont=dict(size=34),
+                        name="Tenkan-Kijun Bullish Cross",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                    )
 
-                    # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                    # scatter_tk_moon = go.Scatter(
-                    #     x=intraday.loc[mask_tk_moon, "Time"],
-                    #     y=intraday.loc[mask_tk_moon, "F_numeric"] - 120,  # Offset for visibility
-                    #     mode="text",
-                    #     text="🌙",
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=34),
-                    #     name="Tenkan-Kijun Bearish Cross",
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                    # )
+                    # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                    scatter_tk_moon = go.Scatter(
+                        x=intraday.loc[mask_tk_moon, "Time"],
+                        y=intraday.loc[mask_tk_moon, "F_numeric"] - 120,  # Offset for visibility
+                        mode="text",
+                        text="🌙",
+                        textposition="bottom center",
+                        textfont=dict(size=34),
+                        name="Tenkan-Kijun Bearish Cross",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                    )
 
-                    # # Add to the F% Plot
-                    # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                    # fig.add_trace(scatter_tk_moon, row=1, col=1)
+                    # Add to the F% Plot
+                    fig.add_trace(scatter_tk_sun, row=1, col=1)
+                    fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                     # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
                     y_open_f_line = go.Scatter(
@@ -3854,50 +3854,50 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # cloud_mask = intraday["Heaven_Cloud"] == "☁️"
+                    cloud_mask = intraday["Heaven_Cloud"] == "☁️"
 
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday.loc[cloud_mask, "Time"],
-                    #     y=intraday.loc[cloud_mask, "F_numeric"] +100,
-                    #     mode="text",
-                    #     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
-                    #     textposition="top center",
-                    #     textfont=dict(size=21),
-                    #     name="Heaven ☁️",
-                    #     hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
-                    # ), row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[cloud_mask, "Time"],
+                        y=intraday.loc[cloud_mask, "F_numeric"] +100,
+                        mode="text",
+                        text=intraday.loc[cloud_mask, "Heaven_Cloud"],
+                        textposition="top center",
+                        textfont=dict(size=21),
+                        name="Heaven ☁️",
+                        hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
+                    ), row=1, col=1)
 
-                    # # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
-                    # intraday["Drizzle_Emoji"] = None
-                    # below_demand = False
+                    # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
+                    intraday["Drizzle_Emoji"] = None
+                    below_demand = False
 
-                    # for i in range(1, len(intraday)):
-                    #     f = intraday["F_numeric"].iloc[i]
-                    #     demand = intraday["TD Demand Line F"].iloc[i]
+                    for i in range(1, len(intraday)):
+                        f = intraday["F_numeric"].iloc[i]
+                        demand = intraday["TD Demand Line F"].iloc[i]
 
-                    #     if pd.notna(demand) and f < demand:
-                    #         below_demand = True
-                    #     elif pd.notna(demand) and f >= demand:
-                    #         below_demand = False
+                        if pd.notna(demand) and f < demand:
+                            below_demand = True
+                        elif pd.notna(demand) and f >= demand:
+                            below_demand = False
 
-                    #     if below_demand:
-                    #         intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
+                        if below_demand:
+                            intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
 
 
 
-                    # # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
-                    # drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
+                    # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
+                    drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
 
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday.loc[drizzle_mask, "Time"],
-                    #     y=intraday.loc[drizzle_mask, "F_numeric"] + 100,  # Position below the bar
-                    #     mode="text",
-                    #     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=21),
-                    #     name="Price Dropped Below Demand 🌧️",
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
-                    # ), row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday.loc[drizzle_mask, "Time"],
+                        y=intraday.loc[drizzle_mask, "F_numeric"] + 100,  # Position below the bar
+                        mode="text",
+                        text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
+                        textposition="bottom center",
+                        textfont=dict(size=21),
+                        name="Price Dropped Below Demand 🌧️",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
+                    ), row=1, col=1)
 
  
 
