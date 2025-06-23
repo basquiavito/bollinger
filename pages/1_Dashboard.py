@@ -4457,7 +4457,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["MIDAS_Bear"],
                     mode="lines",
-                    line=dict(color="red", dash="solid", width=1.2),
+                    line=dict(color="orange", dash="solid", width=1.2),
                     name="MIDAS Bear 🐻"
                 ))
                 
@@ -4465,7 +4465,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["MIDAS_Bull"],
                     mode="lines",
-                    line=dict(color="green", dash="solid", width=1.2),
+                    line=dict(color="orange", dash="solid", width=1.2),
                     name="MIDAS Bull 🐂"
                 ))
     
