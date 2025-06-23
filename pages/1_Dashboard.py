@@ -3105,18 +3105,23 @@ if st.sidebar.button("Run Analysis"):
                     # Assign each row a letter based on its 30-min window
                     intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
                    # Assign a unique letter to each 5-minute bar (A, B, ..., Z, AA, AB, ...)
-                    intraday['FifteenMin'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 15
-                    intraday['LetterIndex'] = intraday['FifteenMin'] - intraday['FifteenMin'].min()
+            # After you create FifteenMin…
+                    intraday['FifteenMin']  = intraday['FifteenMin'].astype(int)
                     
-                    # Convert index to letters (A–Z, AA–AZ...)
-                    def letter_code(n):
-                        letters = string.ascii_uppercase
-                        if n < 26:
-                            return letters[n]
-                        else:
-                            first = letters[(n // 26) - 1]
-                            second = letters[n % 26]
-                            return first + second
+                    # …or do it in one step:
+                    intraday['LetterIndex'] = ((intraday['TimeIndex'].dt.hour * 60
+                                                 + intraday['TimeIndex'].dt.minute) // 15).astype(int)
+
+                    
+                   def letter_code(n: int) -> str:
+                      n = int(n)             # <— guarantees an int
+                      letters = string.ascii_uppercase
+                      if n < 26:
+                          return letters[n]
+                      first  = letters[(n // 26) - 1]
+                      second = letters[n % 26]
+                      return first + second
+
                     
                     intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
 
