@@ -3086,95 +3086,81 @@ if st.sidebar.button("Run Analysis"):
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
-                with st.expander("Market Profile (F% Letters View)", expanded=False):
-               
-                    # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
-                    mike_col = None
-                    if "Mike" in intraday.columns:
-                        mike_col = "Mike"
-                    elif "F_numeric" in intraday.columns:
-                        mike_col = "F_numeric"
-                    else:
-                        st.warning("Mike or F_numeric column not found.")
-                        st.stop()
-                
-                    # Bin F% values
-                    f_bins = np.arange(-400, 401, 20)
-                    intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=f_bins[:-1])
-                
-                    # Assign each row a letter based on its 30-min window
-                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-                   # Assign a unique letter to each 5-minute bar (A, B, ..., Z, AA, AB, ...)
-            # After you create FifteenMin…
-                   intraday['FifteenMin'] = ((intraday['TimeIndex'].dt.hour * 60
-                           + intraday['TimeIndex'].dt.minute) // 15).astype(int)
-
-                    intraday['LetterIndex'] = intraday['FifteenMin'] - intraday['FifteenMin'].min()
-
-                    
-                    # …or do it in one step:
-                    intraday['LetterIndex'] = ((intraday['TimeIndex'].dt.hour * 60
-                                                 + intraday['TimeIndex'].dt.minute) // 15).astype(int)
-
-                    
-                    def letter_code(n: int) -> str:
-                        n = int(n)             # <— guarantees an int
-                        letters = string.ascii_uppercase
-                        if n < 26:
-                            return letters[n]
-                        first  = letters[(n // 26) - 1]
-                        second = letters[n % 26]
-                        return first + second
-
-                    
-                    intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
-
-
-                  # 🔽 NOW INSERT THIS BLOCK 🔽
-                    # Step 1: Filter Initial Balance (first 4 letters: A–D)
-                    initial_letters = ['A', 'B', 'C', 'D']
-                    ib_df = intraday[intraday['Letter'].isin(initial_letters)]
-                    
-                    # Step 2: Get IB high/low F% range
-                    ib_high = ib_df[mike_col].max()
-                    ib_low = ib_df[mike_col].min()
-                    # Build Market Profile
-                    profile = {}
-                    for f_bin in f_bins[:-1]:
-                        letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
-                        if len(letters) > 0:
-                            profile[int(f_bin)] = ''.join(sorted(letters))
-                
-                    # Convert to DataFrame
-                    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-
-
-
-
-
-                  # Add tail column: mark levels with only 1 unique letter
-                    profile_df["Tail"] = profile_df["Letters"].apply(
-                        lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
-                    )
-
-              # Detect Range Extension: letters appearing outside IB range
-                    def is_range_extension(row):
-                        if pd.isna(row["Letters"]):
-                            return False
-                        post_ib_letters = [l for l in str(row["Letters"]) if l not in initial_letters]
-                        if row["F% Level"] > ib_high and post_ib_letters:
-                            return True
-                        if row["F% Level"] < ib_low and post_ib_letters:
-                            return True
-                        return False
-                    
-                    # Add 💥 emoji for range extension levels
-                    profile_df["Range_Extension"] = profile_df.apply(is_range_extension, axis=1)
-                    profile_df["💥"] = profile_df["Range_Extension"].apply(lambda x: "💥" if x else "")
-
-                
-                    # Show
-                    st.dataframe(profile_df[["F% Level", "Letters", "💥","Tail"]])
+               with st.expander("Market Profile (F% Letters View)", expanded=False):
+    
+                  # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
+                  mike_col = None
+                  if "Mike" in intraday.columns:
+                      mike_col = "Mike"
+                  elif "F_numeric" in intraday.columns:
+                      mike_col = "F_numeric"
+                  else:
+                      st.warning("Mike or F_numeric column not found.")
+                      st.stop()
+              
+                  # Bin F% values — label as strings to prevent type issues
+                  f_bins = np.arange(-400, 401, 20)
+                  intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
+              
+                  # Assign each row a letter based on 15-minute intervals
+                  intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+                  intraday['LetterIndex'] = ((intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 15).astype(int)
+                  intraday['LetterIndex'] -= intraday['LetterIndex'].min()  # Normalize to start at 0
+              
+                  # Convert index to letters (A–Z, AA–AZ…)
+                  def letter_code(n: int) -> str:
+                      n = int(n)
+                      letters = string.ascii_uppercase
+                      if n < 26:
+                          return letters[n]
+                      else:
+                          first = letters[(n // 26) - 1]
+                          second = letters[n % 26]
+                          return first + second
+              
+                  intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
+              
+                  # Step 1: Filter Initial Balance (first 4 letters: A–D)
+                  initial_letters = ['A', 'B', 'C', 'D']
+                  ib_df = intraday[intraday['Letter'].isin(initial_letters)]
+              
+                  # Step 2: Get IB high/low F% range
+                  ib_high = ib_df[mike_col].max()
+                  ib_low = ib_df[mike_col].min()
+              
+                  # Build Market Profile dictionary
+                  profile = {}
+                  for f_bin in f_bins[:-1]:
+                      f_bin_str = str(f_bin)
+                      letters = intraday.loc[intraday['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
+                      if len(letters) > 0:
+                          profile[f_bin_str] = ''.join(sorted(letters))
+              
+                  # Convert to DataFrame
+                  profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+                  profile_df['F% Level'] = profile_df['F% Level'].astype(int)  # Convert back for display
+              
+                  # Add Tail column: 🪶 if only one unique letter
+                  profile_df["Tail"] = profile_df["Letters"].apply(
+                      lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
+                  )
+              
+                  # Detect Range Extension: 💥 for activity beyond IB range
+                  def is_range_extension(row):
+                      if pd.isna(row["Letters"]):
+                          return False
+                      post_ib_letters = [l for l in str(row["Letters"]) if l not in initial_letters]
+                      if row["F% Level"] > ib_high and post_ib_letters:
+                          return True
+                      if row["F% Level"] < ib_low and post_ib_letters:
+                          return True
+                      return False
+              
+                  profile_df["Range_Extension"] = profile_df.apply(is_range_extension, axis=1)
+                  profile_df["💥"] = profile_df["Range_Extension"].apply(lambda x: "💥" if x else "")
+              
+                  # Show DataFrame
+                  st.dataframe(profile_df[["F% Level", "Letters", "💥", "Tail"]])
 
 
 
