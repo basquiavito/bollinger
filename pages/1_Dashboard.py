@@ -3086,113 +3086,113 @@ if st.sidebar.button("Run Analysis"):
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
-                with st.expander("Market Profile (F% Letters View)", expanded=False):
+              #   with st.expander("Market Profile (F% Letters View)", expanded=False):
                
-                    # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
-                    mike_col = None
-                    if "Mike" in intraday.columns:
-                        mike_col = "Mike"
-                    elif "F_numeric" in intraday.columns:
-                        mike_col = "F_numeric"
-                    else:
-                        st.warning("Mike or F_numeric column not found.")
-                        st.stop()
+              #       # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
+              #       mike_col = None
+              #       if "Mike" in intraday.columns:
+              #           mike_col = "Mike"
+              #       elif "F_numeric" in intraday.columns:
+              #           mike_col = "F_numeric"
+              #       else:
+              #           st.warning("Mike or F_numeric column not found.")
+              #           st.stop()
                 
-                    # Bin F% values
-                    f_bins = np.arange(-400, 401, 20)
-                    intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=f_bins[:-1])
+              #       # Bin F% values
+              #       f_bins = np.arange(-400, 401, 20)
+              #       intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=f_bins[:-1])
                 
-                    # Assign each row a letter based on its 30-min window
-                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-                   # Assign a unique letter to each 5-minute bar (A, B, ..., Z, AA, AB, ...)
-                    intraday['FifteenMin'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 15
-                    intraday['LetterIndex'] = intraday['FifteenMin'] - intraday['FifteenMin'].min()
+              #       # Assign each row a letter based on its 30-min window
+              #       intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+              #      # Assign a unique letter to each 5-minute bar (A, B, ..., Z, AA, AB, ...)
+              #       intraday['FifteenMin'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 15
+              #       intraday['LetterIndex'] = intraday['FifteenMin'] - intraday['FifteenMin'].min()
                     
-                    # Convert index to letters (A–Z, AA–AZ...)
-                    def letter_code(n):
-                        letters = string.ascii_uppercase
-                        if n < 26:
-                            return letters[n]
-                        else:
-                            first = letters[(n // 26) - 1]
-                            second = letters[n % 26]
-                            return first + second
+              #       # Convert index to letters (A–Z, AA–AZ...)
+              #       def letter_code(n):
+              #           letters = string.ascii_uppercase
+              #           if n < 26:
+              #               return letters[n]
+              #           else:
+              #               first = letters[(n // 26) - 1]
+              #               second = letters[n % 26]
+              #               return first + second
                     
-                    intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
+              #       intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
 
 
-                  # 🔽 NOW INSERT THIS BLOCK 🔽
-                    # Step 1: Filter Initial Balance (first 4 letters: A–D)
-                    initial_letters = ['A', 'B', 'C', 'D']
-                    ib_df = intraday[intraday['Letter'].isin(initial_letters)]
+              #     # 🔽 NOW INSERT THIS BLOCK 🔽
+              #       # Step 1: Filter Initial Balance (first 4 letters: A–D)
+              #       initial_letters = ['A', 'B', 'C', 'D']
+              #       ib_df = intraday[intraday['Letter'].isin(initial_letters)]
                     
-                    # Step 2: Get IB high/low F% range
-                    ib_high = ib_df[mike_col].max()
-                    ib_low = ib_df[mike_col].min()
-                    # Build Market Profile
-                    profile = {}
-                    for f_bin in f_bins[:-1]:
-                        letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
-                        if len(letters) > 0:
-                            profile[int(f_bin)] = ''.join(sorted(letters))
+              #       # Step 2: Get IB high/low F% range
+              #       ib_high = ib_df[mike_col].max()
+              #       ib_low = ib_df[mike_col].min()
+              #       # Build Market Profile
+              #       profile = {}
+              #       for f_bin in f_bins[:-1]:
+              #           letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
+              #           if len(letters) > 0:
+              #               profile[int(f_bin)] = ''.join(sorted(letters))
                 
-                    # Convert to DataFrame
-                    # Build Market Profile
-                    profile = {}
-                    for f_bin in f_bins[:-1]:
-                        letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
-                        if len(letters) > 0:
-                            profile[int(f_bin)] = ''.join(sorted(letters))
+              #       # Convert to DataFrame
+              #       # Build Market Profile
+              #       profile = {}
+              #       for f_bin in f_bins[:-1]:
+              #           letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
+              #           if len(letters) > 0:
+              #               profile[int(f_bin)] = ''.join(sorted(letters))
                     
-                    # Count volume per bin for %Vol
-                    volume_counts = intraday['F_Bin'].value_counts().rename_axis('F% Level').reset_index(name='Count')
-                    volume_counts['F% Level'] = volume_counts['F% Level'].astype(int)
-                    total_volume = volume_counts['Count'].sum()
-                    volume_counts['%Vol'] = (volume_counts['Count'] / total_volume * 100).round(1)
+              #       # Count volume per bin for %Vol
+              #       volume_counts = intraday['F_Bin'].value_counts().rename_axis('F% Level').reset_index(name='Count')
+              #       volume_counts['F% Level'] = volume_counts['F% Level'].astype(int)
+              #       total_volume = volume_counts['Count'].sum()
+              #       volume_counts['%Vol'] = (volume_counts['Count'] / total_volume * 100).round(1)
                     
-                    # Merge Letters + Volume
-                    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-                    profile_df = profile_df.merge(volume_counts, on='F% Level', how='left').fillna({'Count': 0, '%Vol': 0})
+              #       # Merge Letters + Volume
+              #       profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+              #       profile_df = profile_df.merge(volume_counts, on='F% Level', how='left').fillna({'Count': 0, '%Vol': 0})
                     
-                    # Calculate cumulative %Vol to find Value Area
-                    profile_df = profile_df.sort_values('%Vol', ascending=False).reset_index(drop=True)
-                    profile_df['CumVol'] = profile_df['%Vol'].cumsum()
-                    profile_df['ValueArea'] = profile_df['CumVol'] <= 70
+              #       # Calculate cumulative %Vol to find Value Area
+              #       profile_df = profile_df.sort_values('%Vol', ascending=False).reset_index(drop=True)
+              #       profile_df['CumVol'] = profile_df['%Vol'].cumsum()
+              #       profile_df['ValueArea'] = profile_df['CumVol'] <= 70
                     
-                    # Sort back to F% Level order
-                    profile_df = profile_df.sort_values('F% Level').reset_index(drop=True)
+              #       # Sort back to F% Level order
+              #       profile_df = profile_df.sort_values('F% Level').reset_index(drop=True)
 
-                    # Add earliest Time seen in each F% bin
-                    bin_times = intraday.groupby('F_Bin')['Time'].min().reset_index()
-                    bin_times['F% Level'] = bin_times['F_Bin'].astype(int)
-                    profile_df = profile_df.merge(bin_times[['F% Level', 'Time']], on='F% Level', how='left')
+              #       # Add earliest Time seen in each F% bin
+              #       bin_times = intraday.groupby('F_Bin')['Time'].min().reset_index()
+              #       bin_times['F% Level'] = bin_times['F_Bin'].astype(int)
+              #       profile_df = profile_df.merge(bin_times[['F% Level', 'Time']], on='F% Level', how='left')
                     
 
 
 
-                  # Add tail column: mark levels with only 1 unique letter
-                    profile_df["Tail"] = profile_df["Letters"].apply(
-                        lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
-                    )
+              #     # Add tail column: mark levels with only 1 unique letter
+              #       profile_df["Tail"] = profile_df["Letters"].apply(
+              #           lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
+              #       )
 
-              # Detect Range Extension: letters appearing outside IB range
-                    def is_range_extension(row):
-                        if pd.isna(row["Letters"]):
-                            return False
-                        post_ib_letters = [l for l in str(row["Letters"]) if l not in initial_letters]
-                        if row["F% Level"] > ib_high and post_ib_letters:
-                            return True
-                        if row["F% Level"] < ib_low and post_ib_letters:
-                            return True
-                        return False
+              # # Detect Range Extension: letters appearing outside IB range
+              #       def is_range_extension(row):
+              #           if pd.isna(row["Letters"]):
+              #               return False
+              #           post_ib_letters = [l for l in str(row["Letters"]) if l not in initial_letters]
+              #           if row["F% Level"] > ib_high and post_ib_letters:
+              #               return True
+              #           if row["F% Level"] < ib_low and post_ib_letters:
+              #               return True
+              #           return False
                     
-                    # Add 💥 emoji for range extension levels
-                    profile_df["Range_Extension"] = profile_df.apply(is_range_extension, axis=1)
-                    profile_df["💥"] = profile_df["Range_Extension"].apply(lambda x: "💥" if x else "")
+              #       # Add 💥 emoji for range extension levels
+              #       profile_df["Range_Extension"] = profile_df.apply(is_range_extension, axis=1)
+              #       profile_df["💥"] = profile_df["Range_Extension"].apply(lambda x: "💥" if x else "")
 
                 
-                    # Show
-                    st.dataframe(profile_df[["F% Level","Time", "Letters", "%Vol", "💥","Range_Extension", "Tail", "ValueArea"]])
+              #       # Show
+              #       st.dataframe(profile_df[["F% Level","Time", "Letters", "%Vol", "💥","Range_Extension", "Tail", "ValueArea"]])
 
 
                 # with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
@@ -4423,24 +4423,24 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=1, col=1)
                 
-                        # 💥 Plot range extension markers on F% chart
+                #         # 💥 Plot range extension markers on F% chart
            
                     
-                              # Prepare 💥 points with correct time from intraday
-                re_points = []
+                #               # Prepare 💥 points with correct time from intraday
+                # re_points = []
                 
-                for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
-                    f_level = row["F% Level"]
-                    # Get rows at this F% level (binned) AND not in A–D (post-IB)
-                    matching = intraday[
-                        (intraday['F_Bin'] == f_level) &
-                        (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
-                    ]
-                    if not matching.empty:
-                        re_points.append({
-                            "x": matching.iloc[0]["Time"],
-                            "y": f_level
-                        })
+                # for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
+                #     f_level = row["F% Level"]
+                #     # Get rows at this F% level (binned) AND not in A–D (post-IB)
+                #     matching = intraday[
+                #         (intraday['F_Bin'] == f_level) &
+                #         (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
+                #     ]
+                #     if not matching.empty:
+                #         re_points.append({
+                #             "x": matching.iloc[0]["Time"],
+                #             "y": f_level
+                #         })
                 
                 # Plot 💥 at those exact bars
                               # Plot 💥 at those exact bars
