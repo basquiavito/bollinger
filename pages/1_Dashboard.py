@@ -1,3 +1,4 @@
+intraday["MIDAS"] = calculate_midas(intraday, price_col="Price", volume_col="Volume", anchor_time="09:30 AM")
 import streamlit as st
 import numpy as np
 import string       
@@ -4440,7 +4441,15 @@ if st.sidebar.button("Run Analysis"):
                         name="Range Extension"
                     ))
 
-                
+                intraday["MIDAS"] = calculate_midas(intraday, price_col="Price", volume_col="Volume", anchor_time="09:30 AM")
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["MIDAS"],
+                    mode="lines",
+                    name="MIDAS",
+                    line=dict(dash="dash", width=2)
+                ))
+
  
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
