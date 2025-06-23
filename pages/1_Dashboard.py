@@ -4444,9 +4444,10 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["MIDAS"],
                     mode="lines",
+                    line=dict(color="orange", dash="solid", width=1),
+
                     name="MIDAS",
-                    line=dict(dash="solid", width=5)
-                ))
+                 ))
 
  
                 fig.update_layout(
