@@ -4455,14 +4455,21 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["MIDAS"],
+                    y=intraday["MIDAS_Bear"],
                     mode="lines",
-                    line=dict(color="orange", dash="solid", width=1.2),
-
-                    name="MIDAS",
-                 ))
-
- 
+                    line=dict(color="red", dash="solid", width=1.2),
+                    name="MIDAS Bear 🐻"
+                ))
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["MIDAS_Bull"],
+                    mode="lines",
+                    line=dict(color="green", dash="solid", width=1.2),
+                    name="MIDAS Bull 🐂"
+                ))
+    
+     
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
