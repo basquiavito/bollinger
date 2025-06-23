@@ -3217,21 +3217,21 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # # (A.1) 40ish Reversal (star markers)
-                    # mask_40ish = intraday["40ish"] != ""
-                    # scatter_40ish = go.Scatter(
-                    #     x=intraday.loc[mask_40ish, "Time"],
-                    #     y=intraday.loc[mask_40ish, "F_numeric"] + 89,
-                    #     mode="markers",
-                    #     marker_symbol="star",
-                    #     marker_size=18,
-                    #     marker_color="gold",
-                    #     name="40ish Reversal",
-                    #     text=intraday.loc[mask_40ish, "40ish"],
+                    # (A.1) 40ish Reversal (star markers)
+                    mask_40ish = intraday["40ish"] != ""
+                    scatter_40ish = go.Scatter(
+                        x=intraday.loc[mask_40ish, "Time"],
+                        y=intraday.loc[mask_40ish, "F_numeric"] + 89,
+                        mode="markers",
+                        marker_symbol="star",
+                        marker_size=18,
+                        marker_color="gold",
+                        name="40ish Reversal",
+                        text=intraday.loc[mask_40ish, "40ish"],
 
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    # )
-                    # fig.add_trace(scatter_40ish, row=1, col=1)
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    )
+                    fig.add_trace(scatter_40ish, row=1, col=1)
 
 
 
@@ -4211,83 +4211,83 @@ if st.sidebar.button("Run Analysis"):
                 
               
 
-# # ✈️ Upward Crosses ABOVE Yesterday High
-#                 up_high_mask = intraday["Y_High_Cross"] == "✈️"
-#                 up_high_trace = go.Scatter(
-#                     x=intraday.loc[up_high_mask, "Time"],
-#                     y=intraday.loc[up_high_mask, "F_numeric"] + 100,
-#                     mode="text",
-#                     text=intraday.loc[up_high_mask, "Y_High_Cross"],
-#                     textposition="top center",
-#                     textfont=dict(size=34),
-#                     name="Cross Above Y-High (✈️)"
-#                 )
+# ✈️ Upward Crosses ABOVE Yesterday High
+                up_high_mask = intraday["Y_High_Cross"] == "✈️"
+                up_high_trace = go.Scatter(
+                    x=intraday.loc[up_high_mask, "Time"],
+                    y=intraday.loc[up_high_mask, "F_numeric"] + 100,
+                    mode="text",
+                    text=intraday.loc[up_high_mask, "Y_High_Cross"],
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Cross Above Y-High (✈️)"
+                )
 
-#                 # 🪂 Downward Crosses BELOW Yesterday High
-#                 down_high_mask = intraday["Y_High_Cross"] == "🪂"
-#                 down_high_trace = go.Scatter(
-#                     x=intraday.loc[down_high_mask, "Time"],
-#                     y=intraday.loc[down_high_mask, "F_numeric"] - 100,
-#                     mode="text",
-#                     text=intraday.loc[down_high_mask, "Y_High_Cross"],
-#                     textposition="bottom center",
-#                     textfont=dict(size=34),
-#                     name="Cross Below Y-High (🪂)"
-#                 )
+                # 🪂 Downward Crosses BELOW Yesterday High
+                down_high_mask = intraday["Y_High_Cross"] == "🪂"
+                down_high_trace = go.Scatter(
+                    x=intraday.loc[down_high_mask, "Time"],
+                    y=intraday.loc[down_high_mask, "F_numeric"] - 100,
+                    mode="text",
+                    text=intraday.loc[down_high_mask, "Y_High_Cross"],
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="Cross Below Y-High (🪂)"
+                )
 
-#                 # Add to figure
-#                 fig.add_trace(up_high_trace, row=1, col=1)
-#                 fig.add_trace(down_high_trace, row=1, col=1)
-
-
-                # astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
-
-                # scatter_astronaut = go.Scatter(
-                #     x=astronaut_points["Time"],
-                #     y=astronaut_points["F_numeric"] + 140,  # Higher offset
-                #     mode="text",
-                #     text=astronaut_points["Astronaut_Emoji"],
-                #     textposition="top center",
-                #     name="New Highs 👨🏽‍🚀",
-                #     textfont=dict(size=21),
-                #  )
-
-                # fig.add_trace(scatter_astronaut, row=1, col=1)
+                # Add to figure
+                fig.add_trace(up_high_trace, row=1, col=1)
+                fig.add_trace(down_high_trace, row=1, col=1)
 
 
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
-                #     # Filter where the Astronaut or Moon emoji exist
-                # astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 140,  # Higher offset
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],
+                    textposition="top center",
+                    name="New Highs 👨🏽‍🚀",
+                    textfont=dict(size=21),
+                 )
 
-                # scatter_astronaut = go.Scatter(
-                #     x=astronaut_points["Time"],
-                #     y=astronaut_points["F_numeric"] + 140,  # Offset so it floats higher
-                #     mode="text",
-                #     text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-                #     textposition="top center",
-                #     name="New Highs 🌒",
-                #     textfont=dict(size=21),
+                fig.add_trace(scatter_astronaut, row=1, col=1)
+
+
+
+                    # Filter where the Astronaut or Moon emoji exist
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
+
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 140,  # Offset so it floats higher
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
+                    textposition="top center",
+                    name="New Highs 🌒",
+                    textfont=dict(size=21),
                    
-                # )
+                )
 
-                # fig.add_trace(scatter_astronaut, row=1, col=1)
+                fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
-                # # Filter where Swimmer or Squid exist
-                # swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
+                # Filter where Swimmer or Squid exist
+                swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
 
-                # scatter_swimmer = go.Scatter(
-                #     x=swimmer_points["Time"],
-                #     y=swimmer_points["F_numeric"] - 140,  # Offset downward so it floats below price
-                #     mode="text",
-                #     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
-                #     textposition="bottom center",
-                #     name="New Lows 🏊🏽‍♂️🦑",
-                #     textfont=dict(size=21),
-                #     showlegend=True
-                # )
+                scatter_swimmer = go.Scatter(
+                    x=swimmer_points["Time"],
+                    y=swimmer_points["F_numeric"] - 140,  # Offset downward so it floats below price
+                    mode="text",
+                    text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
+                    textposition="bottom center",
+                    name="New Lows 🏊🏽‍♂️🦑",
+                    textfont=dict(size=21),
+                    showlegend=True
+                )
 
-                # fig.add_trace(scatter_swimmer, row=1, col=1)
+                fig.add_trace(scatter_swimmer, row=1, col=1)
 # # #*******************************************************************************************************************************************************************************
 
                 mask_green_king = intraday["King_Signal"] == "👑"
