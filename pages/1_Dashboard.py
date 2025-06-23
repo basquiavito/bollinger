@@ -3192,7 +3192,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["F_numeric"],
                         mode="lines+markers",
                         customdata=intraday["Close"],
-
+                        line=dict(color="#57c7ff", width=2),  # Dodger Blue
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
 
                         name="F% (scaled)",
@@ -3393,7 +3393,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Kijun_F"],
                     mode="lines",
-                    line=dict(color="green", width=2),
+                    line=dict(color="#2ECC71", width=2),
                     name="Kijun (F% scale)"
                 )
                     fig.add_trace(kijun_line, row=1, col=1)
@@ -3402,7 +3402,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["Tenkan_F"],
                         mode="lines",
-                        line=dict(color="red", width=1.5, dash="dot"),
+                        line=dict(color="#E63946", width=1.5, dash="solid"),
                         name="Tenkan (F%)"
                     )
                     fig.add_trace(tenkan_line, row=1, col=1)
@@ -3499,7 +3499,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="solid", color="#E3DAC9",width=1),
+                        line=dict(dash="dash", color="#E3DAC9",width=1),
                         name="Upper Band"
                     )
 
@@ -3508,7 +3508,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Lower"],
                         mode="lines",
-                        line=dict(dash="solid", color="#E3DAC9",width=1),
+                        line=dict(dash="dash", color="#E3DAC9",width=1),
                         name="Lower Band"
                     )
 
@@ -3772,7 +3772,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Supply Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#9370DB", dash='dot'),
+                            line=dict(width=1, color="#8A2BE2", dash='dot'),
                             name='TD Supply F%',
                             hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
                         ),
@@ -3790,7 +3790,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Demand Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#1E90FF", dash='dot'),
+                            line=dict(width=1, color="#5DADE2", dash='dot'),
                             name='TD Demand F%',
                             hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
                         ),
@@ -4322,7 +4322,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_high] * len(intraday),
                     mode="lines",
-                    line=dict(color="gold", dash="dot", width=1),
+                    line=dict(color="#FFD700", dash="dot", width=1),
                     name="IB High",
                     showlegend=True
                 ), row=1, col=1)
@@ -4332,7 +4332,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_low] * len(intraday),
                     mode="lines",
-                    line=dict(color="gold", dash="dot", width=1),
+                    line=dict(color="#FFD700", dash="dot", width=1),
                     name="IB Low",
                     showlegend=True
                 ), row=1, col=1)
