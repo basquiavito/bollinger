@@ -3195,6 +3195,49 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(profile_df[["F% Level","Time", "Letters", "%Vol", "💥","Range_Extension", "Tail", "ValueArea"]])
 
 
+                    with st.expander("MIDAS Curve (Anchored F%)", expanded=False):
+      
+                    # Ensure necessary columns are present
+                    if "Mike" in intraday.columns:
+                        price_col = "Mike"
+                    elif "F_numeric" in intraday.columns:
+                        price_col = "F_numeric"
+                    else:
+                        st.warning("Mike or F_numeric column not found.")
+                        st.stop()
+                
+                    if "Volume" not in intraday.columns:
+                        st.warning("Volume column not found.")
+                        st.stop()
+                
+                    # Convert Time to datetime if not already
+                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+                
+                    # Anchor: get index of first strong move (can be customized)
+                    anchor_idx = intraday[price_col].idxmax()  # You can change to idxmin or custom rule
+                
+                    anchor_time = intraday.loc[anchor_idx, 'TimeIndex']
+                    anchor_price = intraday.loc[anchor_idx, price_col]
+                
+                    # Create MIDAS curve from anchor point
+                    midas_curve = []
+                    for i in range(anchor_idx, len(intraday)):
+                        vol_window = intraday.loc[anchor_idx:i, 'Volume']
+                        price_window = intraday.loc[anchor_idx:i, price_col]
+                        weights = vol_window / vol_window.sum()
+                        midas_price = (price_window * weights).sum()
+                        midas_curve.append(midas_price)
+                
+                    # Pad the curve to match full intraday length
+                    midas_full = [np.nan] * anchor_idx + midas_curve
+                    intraday["MIDAS"] = midas_full
+                
+                    # Preview
+                    st.write(f"**Anchor Time:** {anchor_time.strftime('%I:%M %p')} — **Price:** {round(anchor_price, 2)}")
+                    st.dataframe(
+                        intraday[['Time', price_col, 'Volume', 'MIDAS']].dropna(subset=['MIDAS']).reset_index(drop=True)
+                    )
+
 
 
                 with ticker_tabs[0]:
