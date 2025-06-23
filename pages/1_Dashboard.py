@@ -3195,7 +3195,7 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(profile_df[["F% Level","Time", "Letters", "%Vol", "💥","Range_Extension", "Tail", "ValueArea"]])
 
 
-                    with st.expander("MIDAS Curve (Anchored F%)", expanded=False):
+                with st.expander("MIDAS Curve (Anchored F%)", expanded=False):
       
                     # Ensure necessary columns are present
                     if "Mike" in intraday.columns:
