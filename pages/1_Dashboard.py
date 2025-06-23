@@ -3195,8 +3195,21 @@ if st.sidebar.button("Run Analysis"):
                   # Add Value Area marker
                   profile_df["✅ ValueArea"] = profile_df["F% Level"].apply(lambda x: "✅" if x in value_area_levels else "")
 
+
+                  # Sum volume per F% bin
+                  vol_per_bin = intraday.groupby("F_Bin")["Volume"].sum()
+                  
+                  # Total volume across all bins
+                  total_vol = vol_per_bin.sum()
+                  
+                  # Calculate % volume per bin
+                  vol_percent = (vol_per_bin / total_vol * 100).round(2)
+                  
+                  # Merge into profile_df (align on string F% Level)
+                  profile_df["%Vol"] = profile_df["F% Level"].astype(str).map(vol_percent).fillna(0)
+
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level", "Letters", "💥", "Tail","✅ ValueArea"]])
+                  st.dataframe(profile_df[["F% Level", "Letters",  "%Vol","💥", "Tail","✅ ValueArea"]])
 
 
 
