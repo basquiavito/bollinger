@@ -4441,7 +4441,6 @@ if st.sidebar.button("Run Analysis"):
                         name="Range Extension"
                     ))
 
-                intraday["MIDAS"] = calculate_midas(intraday, price_col="Price", volume_col="Volume", anchor_time="09:30 AM")
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
                     y=intraday["MIDAS"],
