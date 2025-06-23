@@ -3113,14 +3113,14 @@ if st.sidebar.button("Run Analysis"):
                                                  + intraday['TimeIndex'].dt.minute) // 15).astype(int)
 
                     
-                   def letter_code(n: int) -> str:
-                      n = int(n)             # <— guarantees an int
-                      letters = string.ascii_uppercase
-                      if n < 26:
-                          return letters[n]
-                      first  = letters[(n // 26) - 1]
-                      second = letters[n % 26]
-                      return first + second
+                    def letter_code(n: int) -> str:
+                        n = int(n)             # <— guarantees an int
+                        letters = string.ascii_uppercase
+                        if n < 26:
+                            return letters[n]
+                        first  = letters[(n // 26) - 1]
+                        second = letters[n % 26]
+                        return first + second
 
                     
                     intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
