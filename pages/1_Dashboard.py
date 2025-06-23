@@ -26,7 +26,7 @@ st.title("VOLMIKE.COM")
 # ======================================
 st.sidebar.header("Input Options")
 
-default_tickers = ["SPY","QQQ","NVDA","SMCI","MU","INTC","TSM","SOXX", "AVGO","AMD","PLTR","MRVL","uber","AMZN","AAPL","googl","META","MSFT","MARA","nke","GM","c","wfc","hood","coin","bac","jpm","HIMS","TXM","QCOM","MU","INTC","CRDO","RMBS","ON","ORCL", "CRWD","PANW","APP","MSTR","IBM","AMAT","DELL","WDC","CRM","CHWY","ETSY","CART","W"]
+default_tickers = ["SPY","QQQ","NVDA","SMCI","MU", "AVGO","AMD","PLTR","MRVL","uber","AMZN","AAPL","googl","META","MSFT","MARA","nke","GM","c","wfc","hood","coin","bac","jpm","HIMS","TXM","QCOM","MU","INTC","CRDO","RMBS","ON","ORCL", "CRWD","PANW","APP","MSTR","IBM","AMAT","DELL","WDC","CRM","CHWY","ETSY","CART","W"]
 tickers = st.sidebar.multiselect(
     "Select Tickers",
     options=default_tickers,
@@ -2627,60 +2627,40 @@ if st.sidebar.button("Run Analysis"):
                 intraday = detect_new_lows_below_yesterday_low(intraday)
 
 
-        
-                def detect_td_supply_cross_rooks(df, buffer=5):
+
+                def detect_td_demand_cross_rooks(df, atr_col="ATR_5", min_buffer=5, volatility_factor=0.3):
                   """
-                  Tracks confirmed crosses of TD Supply/Demand with a ±5 F% buffer before assigning Rook emojis.
-                  - White Rook ♖ appears only after F_numeric closes >=5 F% above TD Supply post cross.
-                  - Black Rook ♜ appears only after F_numeric closes <=5 F% below TD Demand post cross.
+                  Advanced TD Demand Rook:
+                   • Uses bar lows for breakdowns.
+                   • Buffer = max(min_buffer, volatility_factor * ATR).
+                   • Two-bar confirmation: first break, then close of next bar still below line.
+                   • Emits ♜ on the second confirming bar.
                   """
-                  df["TD_Supply_Rook"] = ""
-              
-                  supply_pending = False
-                  supply_cross_idx = None
-                  supply_cross_val = None
-              
-                  demand_pending = False
-                  demand_cross_idx = None
-                  demand_cross_val = None
-              
-                  for i in range(1, len(df)):
-                      prev_f = df.loc[i - 1, "F_numeric"]
-                      curr_f = df.loc[i, "F_numeric"]
-                      prev_supply = df.loc[i - 1, "TD Supply Line F"]
-                      curr_supply = df.loc[i, "TD Supply Line F"]
-                      prev_demand = df.loc[i - 1, "TD Demand Line F"]
-                      curr_demand = df.loc[i, "TD Demand Line F"]
-              
-                      # Detect cross above supply line
-                      if not supply_pending and prev_f < prev_supply and curr_f >= curr_supply:
-                          supply_pending = True
-                          supply_cross_idx = i
-                          supply_cross_val = curr_f
-              
-                      # Confirm supply rook
-                      if supply_pending:
-                          if curr_f - df.loc[supply_cross_idx, "TD Supply Line F"] >= buffer:
-                              df.loc[i, "TD_Supply_Rook"] = "♖"
-                              supply_pending = False  # Reset
-              
-                      # Detect cross below demand line
-                      if not demand_pending and prev_f > prev_demand and curr_f <= curr_demand:
-                          demand_pending = True
-                          demand_cross_idx = i
-                          demand_cross_val = curr_f
-              
-                      # Confirm demand rook
-                      if demand_pending:
-                          if df.loc[demand_cross_idx, "TD Demand Line F"] - curr_f >= buffer:
-                              df.loc[i, "TD_Supply_Rook"] = "♜"
-                              demand_pending = False  # Reset
-              
+                  df["TD_Demand_Rook"] = ""
+                  
+                  # Precompute dynamic buffer per bar
+                  df["_buffer"] = df[atr_col].apply(lambda a: max(min_buffer, volatility_factor * a))
+                  
+                  for i in range(2, len(df)):
+                      # Previous bar vs. supply line
+                      prev_diff = df.loc[i-2, "F_numeric"] - df.loc[i-2, "TD Demand Line F"]
+                      break_low = df.loc[i-1, "Low_F"] - df.loc[i-1, "TD Demand Line F"]
+                      buf = df.loc[i-1, "_buffer"]
+                      
+                      # First bar breaches below buffer
+                      first_break = prev_diff > 0 and break_low <= -buf
+                      
+                      if first_break:
+                          # Confirm that current bar also closes below the line
+                          curr_diff = df.loc[i, "F_numeric"] - df.loc[i, "TD Demand Line F"]
+                          if curr_diff <= 0:
+                              df.loc[i, "TD_Demand_Rook"] = "♜"
+                  
+                  # Clean up
+                  df.drop(columns=["_buffer"], inplace=True)
                   return df
 
-  
-  
-  
+
                 intraday = detect_td_supply_cross_rooks(intraday)
 
 
@@ -3086,172 +3066,86 @@ if st.sidebar.button("Run Analysis"):
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
-              #   with st.expander("Market Profile (F% Letters View)", expanded=False):
+                with st.expander("Market Profile (F% Letters View)", expanded=False):
                
-              #       # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
-              #       mike_col = None
-              #       if "Mike" in intraday.columns:
-              #           mike_col = "Mike"
-              #       elif "F_numeric" in intraday.columns:
-              #           mike_col = "F_numeric"
-              #       else:
-              #           st.warning("Mike or F_numeric column not found.")
-              #           st.stop()
+                    # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
+                    mike_col = None
+                    if "Mike" in intraday.columns:
+                        mike_col = "Mike"
+                    elif "F_numeric" in intraday.columns:
+                        mike_col = "F_numeric"
+                    else:
+                        st.warning("Mike or F_numeric column not found.")
+                        st.stop()
                 
-              #       # Bin F% values
-              #       f_bins = np.arange(-400, 401, 20)
-              #       intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=f_bins[:-1])
+                    # Bin F% values
+                    f_bins = np.arange(-400, 401, 20)
+                    intraday['F_Bin'] = pd.cut(intraday[mike_col], bins=f_bins, labels=f_bins[:-1])
                 
-              #       # Assign each row a letter based on its 30-min window
-              #       intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-              #      # Assign a unique letter to each 5-minute bar (A, B, ..., Z, AA, AB, ...)
-              #       intraday['FifteenMin'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 15
-              #       intraday['LetterIndex'] = intraday['FifteenMin'] - intraday['FifteenMin'].min()
+                    # Assign each row a letter based on its 30-min window
+                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+                   # Assign a unique letter to each 5-minute bar (A, B, ..., Z, AA, AB, ...)
+                    intraday['FifteenMin'] = (intraday['TimeIndex'].dt.hour * 60 + intraday['TimeIndex'].dt.minute) // 15
+                    intraday['LetterIndex'] = intraday['FifteenMin'] - intraday['FifteenMin'].min()
                     
-              #       # Convert index to letters (A–Z, AA–AZ...)
-              #       def letter_code(n):
-              #           letters = string.ascii_uppercase
-              #           if n < 26:
-              #               return letters[n]
-              #           else:
-              #               first = letters[(n // 26) - 1]
-              #               second = letters[n % 26]
-              #               return first + second
+                    # Convert index to letters (A–Z, AA–AZ...)
+                    def letter_code(n):
+                        letters = string.ascii_uppercase
+                        if n < 26:
+                            return letters[n]
+                        else:
+                            first = letters[(n // 26) - 1]
+                            second = letters[n % 26]
+                            return first + second
                     
-              #       intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
+                    intraday['Letter'] = intraday['LetterIndex'].apply(letter_code)
 
 
-              #     # 🔽 NOW INSERT THIS BLOCK 🔽
-              #       # Step 1: Filter Initial Balance (first 4 letters: A–D)
-              #       initial_letters = ['A', 'B', 'C', 'D']
-              #       ib_df = intraday[intraday['Letter'].isin(initial_letters)]
+                  # 🔽 NOW INSERT THIS BLOCK 🔽
+                    # Step 1: Filter Initial Balance (first 4 letters: A–D)
+                    initial_letters = ['A', 'B', 'C', 'D']
+                    ib_df = intraday[intraday['Letter'].isin(initial_letters)]
                     
-              #       # Step 2: Get IB high/low F% range
-              #       ib_high = ib_df[mike_col].max()
-              #       ib_low = ib_df[mike_col].min()
-              #       # Build Market Profile
-              #       profile = {}
-              #       for f_bin in f_bins[:-1]:
-              #           letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
-              #           if len(letters) > 0:
-              #               profile[int(f_bin)] = ''.join(sorted(letters))
+                    # Step 2: Get IB high/low F% range
+                    ib_high = ib_df[mike_col].max()
+                    ib_low = ib_df[mike_col].min()
+                    # Build Market Profile
+                    profile = {}
+                    for f_bin in f_bins[:-1]:
+                        letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
+                        if len(letters) > 0:
+                            profile[int(f_bin)] = ''.join(sorted(letters))
                 
-              #       # Convert to DataFrame
-              #       # Build Market Profile
-              #       profile = {}
-              #       for f_bin in f_bins[:-1]:
-              #           letters = intraday.loc[intraday['F_Bin'] == f_bin, 'Letter'].dropna().unique()
-              #           if len(letters) > 0:
-              #               profile[int(f_bin)] = ''.join(sorted(letters))
-                    
-              #       # Count volume per bin for %Vol
-              #       volume_counts = intraday['F_Bin'].value_counts().rename_axis('F% Level').reset_index(name='Count')
-              #       volume_counts['F% Level'] = volume_counts['F% Level'].astype(int)
-              #       total_volume = volume_counts['Count'].sum()
-              #       volume_counts['%Vol'] = (volume_counts['Count'] / total_volume * 100).round(1)
-                    
-              #       # Merge Letters + Volume
-              #       profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-              #       profile_df = profile_df.merge(volume_counts, on='F% Level', how='left').fillna({'Count': 0, '%Vol': 0})
-                    
-              #       # Calculate cumulative %Vol to find Value Area
-              #       profile_df = profile_df.sort_values('%Vol', ascending=False).reset_index(drop=True)
-              #       profile_df['CumVol'] = profile_df['%Vol'].cumsum()
-              #       profile_df['ValueArea'] = profile_df['CumVol'] <= 70
-                    
-              #       # Sort back to F% Level order
-              #       profile_df = profile_df.sort_values('F% Level').reset_index(drop=True)
-
-              #       # Add earliest Time seen in each F% bin
-              #       bin_times = intraday.groupby('F_Bin')['Time'].min().reset_index()
-              #       bin_times['F% Level'] = bin_times['F_Bin'].astype(int)
-              #       profile_df = profile_df.merge(bin_times[['F% Level', 'Time']], on='F% Level', how='left')
-                    
+                    # Convert to DataFrame
+                    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
 
 
 
-              #     # Add tail column: mark levels with only 1 unique letter
-              #       profile_df["Tail"] = profile_df["Letters"].apply(
-              #           lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
-              #       )
 
-              # # Detect Range Extension: letters appearing outside IB range
-              #       def is_range_extension(row):
-              #           if pd.isna(row["Letters"]):
-              #               return False
-              #           post_ib_letters = [l for l in str(row["Letters"]) if l not in initial_letters]
-              #           if row["F% Level"] > ib_high and post_ib_letters:
-              #               return True
-              #           if row["F% Level"] < ib_low and post_ib_letters:
-              #               return True
-              #           return False
+
+                  # Add tail column: mark levels with only 1 unique letter
+                    profile_df["Tail"] = profile_df["Letters"].apply(
+                        lambda x: "🪶" if isinstance(x, str) and len(set(x)) == 1 else ""
+                    )
+
+              # Detect Range Extension: letters appearing outside IB range
+                    def is_range_extension(row):
+                        if pd.isna(row["Letters"]):
+                            return False
+                        post_ib_letters = [l for l in str(row["Letters"]) if l not in initial_letters]
+                        if row["F% Level"] > ib_high and post_ib_letters:
+                            return True
+                        if row["F% Level"] < ib_low and post_ib_letters:
+                            return True
+                        return False
                     
-              #       # Add 💥 emoji for range extension levels
-              #       profile_df["Range_Extension"] = profile_df.apply(is_range_extension, axis=1)
-              #       profile_df["💥"] = profile_df["Range_Extension"].apply(lambda x: "💥" if x else "")
+                    # Add 💥 emoji for range extension levels
+                    profile_df["Range_Extension"] = profile_df.apply(is_range_extension, axis=1)
+                    profile_df["💥"] = profile_df["Range_Extension"].apply(lambda x: "💥" if x else "")
 
                 
-              #       # Show
-              #       st.dataframe(profile_df[["F% Level","Time", "Letters", "%Vol", "💥","Range_Extension", "Tail", "ValueArea"]])
-
-
-                # with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
-        
-                #   # Detect price column
-                #   if "Mike" in intraday.columns:
-                #       price_col = "Mike"
-                #   elif "F_numeric" in intraday.columns:
-                #       price_col = "F_numeric"
-                #   else:
-                #       st.warning("Mike or F_numeric column not found.")
-                #       st.stop()
-              
-                #   if "Volume" not in intraday.columns:
-                #       st.warning("Volume column not found.")
-                #       st.stop()
-              
-                #   # Convert time
-                #   intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-              
-                #   ### 🐻 BEARISH MIDAS (anchor at max)
-                #   anchor_idx_bear = intraday[price_col].idxmax()
-                #   anchor_time_bear = intraday.loc[anchor_idx_bear, 'TimeIndex']
-                #   anchor_price_bear = intraday.loc[anchor_idx_bear, price_col]
-              
-                #   midas_curve_bear = []
-                #   for i in range(anchor_idx_bear, len(intraday)):
-                #       vol_window = intraday.loc[anchor_idx_bear:i, 'Volume']
-                #       price_window = intraday.loc[anchor_idx_bear:i, price_col]
-                #       weights = vol_window / vol_window.sum()
-                #       midas_price = (price_window * weights).sum()
-                #       midas_curve_bear.append(midas_price)
-              
-                #   intraday["MIDAS_Bear"] = [np.nan] * anchor_idx_bear + midas_curve_bear
-              
-                #   ### 🐂 BULLISH MIDAS (anchor at min)
-                #   anchor_idx_bull = intraday[price_col].idxmin()
-                #   anchor_time_bull = intraday.loc[anchor_idx_bull, 'TimeIndex']
-                #   anchor_price_bull = intraday.loc[anchor_idx_bull, price_col]
-              
-                #   midas_curve_bull = []
-                #   for i in range(anchor_idx_bull, len(intraday)):
-                #       vol_window = intraday.loc[anchor_idx_bull:i, 'Volume']
-                #       price_window = intraday.loc[anchor_idx_bull:i, price_col]
-                #       weights = vol_window / vol_window.sum()
-                #       midas_price = (price_window * weights).sum()
-                #       midas_curve_bull.append(midas_price)
-              
-                #   intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
-              
-                #   # Display anchor info
-                #   st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
-                #   st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
-              
-                #   # Display data table
-                #   st.dataframe(
-                #       intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull']].dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all').reset_index(drop=True)
-                #   )
-
+                    # Show
+                    st.dataframe(profile_df[["F% Level", "Letters", "💥","Tail"]])
 
 
 
@@ -3278,7 +3172,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["F_numeric"],
                         mode="lines+markers",
                         customdata=intraday["Close"],
-                        line=dict(color="#57c7ff", width=2),  # Dodger Blue
+
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
 
                         name="F% (scaled)",
@@ -3295,35 +3189,35 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # # (A.1) 40ish Reversal (star markers)
-                    # mask_40ish = intraday["40ish"] != ""
-                    # scatter_40ish = go.Scatter(
-                    #     x=intraday.loc[mask_40ish, "Time"],
-                    #     y=intraday.loc[mask_40ish, "F_numeric"] +44
-                    #     mode="markers",
-                    #     marker_symbol="star",
-                    #     marker_size=18,
-                    #     marker_color="gold",
-                    #     name="40ish Reversal",
-                    #     text=intraday.loc[mask_40ish, "40ish"],
+                    # (A.1) 40ish Reversal (star markers)
+                    mask_40ish = intraday["40ish"] != ""
+                    scatter_40ish = go.Scatter(
+                        x=intraday.loc[mask_40ish, "Time"],
+                        y=intraday.loc[mask_40ish, "F_numeric"] + 89,
+                        mode="markers",
+                        marker_symbol="star",
+                        marker_size=18,
+                        marker_color="gold",
+                        name="40ish Reversal",
+                        text=intraday.loc[mask_40ish, "40ish"],
 
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    # )
-                    # fig.add_trace(scatter_40ish, row=1, col=1)
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    )
+                    fig.add_trace(scatter_40ish, row=1, col=1)
 
 
 
 
 #**************************************************************************************************************************************************************************
 
-                    # # (A.2) Dashed horizontal line at 0
-                    # fig.add_hline(
-                    #     y=0,
-                    #     line_dash="dash",
-                    #     row=1, col=1,
-                    #     annotation_text="0%",
-                    #     annotation_position="top left"
-                    # )
+                    # (A.2) Dashed horizontal line at 0
+                    fig.add_hline(
+                        y=0,
+                        line_dash="dash",
+                        row=1, col=1,
+                        annotation_text="0%",
+                        annotation_position="top left"
+                    )
 
 
 
@@ -3365,15 +3259,15 @@ if st.sidebar.button("Run Analysis"):
                     # Drop rows where Chikou_F is NaN (due to shifting)
                     chikou_plot = intraday.dropna(subset=["Chikou_F"])
 
-                    # # Plot without shifting time
-                    # chikou_line = go.Scatter(
-                    #     x=chikou_plot["Time"],
-                    #     y=chikou_plot["Chikou_F"],
-                    #     mode="lines",
-                    #     name="Chikou (F%)",
-                    #     line=dict(color="purple", dash="dash")
-                    # )
-                    # fig.add_trace(chikou_line, row=1, col=1)
+                    # Plot without shifting time
+                    chikou_line = go.Scatter(
+                        x=chikou_plot["Time"],
+                        y=chikou_plot["Chikou_F"],
+                        mode="lines",
+                        name="Chikou (F%)",
+                        line=dict(color="purple", dash="dash")
+                    )
+                    fig.add_trace(chikou_line, row=1, col=1)
 
 
  # 🟢   SPAN A & SPAN B
@@ -3386,45 +3280,45 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    #                     # Span A – Yellow Line
-                    # span_a_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanA_F"],
-                    #     mode="lines",
-                    #     line=dict(color="yellow", width=0.9),
-                    #     name="Span A (F%)"
-                    # )
-                    # fig.add_trace(span_a_line, row=1, col=1)
+                                        # Span A – Yellow Line
+                    span_a_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanA_F"],
+                        mode="lines",
+                        line=dict(color="yellow", width=0.9),
+                        name="Span A (F%)"
+                    )
+                    fig.add_trace(span_a_line, row=1, col=1)
 
-                    # # Span B – Blue Line
-                    # span_b_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanB_F"],
-                    #     mode="lines",
-                    #     line=dict(color="blue", width=0.9),
-                    #     name="Span B (F%)"
-                    # )
-                    # fig.add_trace(span_b_line, row=1, col=1)
+                    # Span B – Blue Line
+                    span_b_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanB_F"],
+                        mode="lines",
+                        line=dict(color="blue", width=0.9),
+                        name="Span B (F%)"
+                    )
+                    fig.add_trace(span_b_line, row=1, col=1)
 
-                    # # Invisible SpanA for cloud base
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanA_F"],
-                    #     line=dict(width=0),
-                    #     mode='lines',
-                    #     showlegend=False
-                    # ), row=1, col=1)
+                    # Invisible SpanA for cloud base
+                    fig.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanA_F"],
+                        line=dict(width=0),
+                        mode='lines',
+                        showlegend=False
+                    ), row=1, col=1)
 
                     # SpanB with fill → grey Kumo
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanB_F"],
-                    #     fill='tonexty',
-                    #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                    #     line=dict(width=0),
-                    #     mode='lines',
-                    #     name='Kumo Cloud'
-                    # ), row=1, col=1)
+                    fig.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanB_F"],
+                        fill='tonexty',
+                        fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                        line=dict(width=0),
+                        mode='lines',
+                        name='Kumo Cloud'
+                    ), row=1, col=1)
 
 
 
@@ -3479,7 +3373,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Kijun_F"],
                     mode="lines",
-                    line=dict(color="#2ECC71", width=2),
+                    line=dict(color="green", width=2),
                     name="Kijun (F% scale)"
                 )
                     fig.add_trace(kijun_line, row=1, col=1)
@@ -3488,7 +3382,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["Tenkan_F"],
                         mode="lines",
-                        line=dict(color="#E63946", width=1.5, dash="solid"),
+                        line=dict(color="red", width=1.5, dash="dot"),
                         name="Tenkan (F%)"
                     )
                     fig.add_trace(tenkan_line, row=1, col=1)
@@ -3585,7 +3479,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="dash", color="#E3DAC9",width=1),
+                        line=dict(dash="solid", color="#E3DAC9",width=1),
                         name="Upper Band"
                     )
 
@@ -3594,7 +3488,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Lower"],
                         mode="lines",
-                        line=dict(dash="dash", color="#E3DAC9",width=1),
+                        line=dict(dash="solid", color="#E3DAC9",width=1),
                         name="Lower Band"
                     )
 
@@ -3660,37 +3554,37 @@ if st.sidebar.button("Run Analysis"):
 # # ------------------------------------------------------------------------------------------------------------------------
 
 
-                    # # Mask for Tenkan-Kijun Crosses
-                    # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-                    # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
+                    # Mask for Tenkan-Kijun Crosses
+                    mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+                    mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-                    # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                    # scatter_tk_sun = go.Scatter(
-                    #     x=intraday.loc[mask_tk_sun, "Time"],
-                    #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 120,  # Offset for visibility
-                    #     mode="text",
-                    #     text="🌞",
-                    #     textposition="top center",
-                    #     textfont=dict(size=34),
-                    #     name="Tenkan-Kijun Bullish Cross",
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                    # )
+                    # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                    scatter_tk_sun = go.Scatter(
+                        x=intraday.loc[mask_tk_sun, "Time"],
+                        y=intraday.loc[mask_tk_sun, "F_numeric"] + 120,  # Offset for visibility
+                        mode="text",
+                        text="🌞",
+                        textposition="top center",
+                        textfont=dict(size=34),
+                        name="Tenkan-Kijun Bullish Cross",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                    )
 
-                    # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                    # scatter_tk_moon = go.Scatter(
-                    #     x=intraday.loc[mask_tk_moon, "Time"],
-                    #     y=intraday.loc[mask_tk_moon, "F_numeric"] - 120,  # Offset for visibility
-                    #     mode="text",
-                    #     text="🌙",
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=34),
-                    #     name="Tenkan-Kijun Bearish Cross",
-                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                    # )
+                    # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                    scatter_tk_moon = go.Scatter(
+                        x=intraday.loc[mask_tk_moon, "Time"],
+                        y=intraday.loc[mask_tk_moon, "F_numeric"] - 120,  # Offset for visibility
+                        mode="text",
+                        text="🌙",
+                        textposition="bottom center",
+                        textfont=dict(size=34),
+                        name="Tenkan-Kijun Bearish Cross",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                    )
 
-                    # # Add to the F% Plot
-                    # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                    # fig.add_trace(scatter_tk_moon, row=1, col=1)
+                    # Add to the F% Plot
+                    fig.add_trace(scatter_tk_sun, row=1, col=1)
+                    fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                     # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
                     y_open_f_line = go.Scatter(
@@ -3730,28 +3624,28 @@ if st.sidebar.button("Run Analysis"):
 
 
                   # (D) TD Trap Arrows - Only First Sell TD Trap
-                    # # ----------------------------------------------
-                    # td_trap_mask = intraday["TD Trap"].str.contains("Sell", na=False)  # Only Sell TD Traps
+                    # ----------------------------------------------
+                    td_trap_mask = intraday["TD Trap"].str.contains("Sell", na=False)  # Only Sell TD Traps
 
-                    # if not td_trap_mask.empty and td_trap_mask.any():
-                    #     first_sell_trap_idx = td_trap_mask.idxmax()  # Get first occurrence index
-                    #     first_sell_trap_time = intraday.loc[first_sell_trap_idx, "Time"]
-                    #     first_sell_trap_value = intraday.loc[first_sell_trap_idx, "F_numeric"]
+                    if not td_trap_mask.empty and td_trap_mask.any():
+                        first_sell_trap_idx = td_trap_mask.idxmax()  # Get first occurrence index
+                        first_sell_trap_time = intraday.loc[first_sell_trap_idx, "Time"]
+                        first_sell_trap_value = intraday.loc[first_sell_trap_idx, "F_numeric"]
 
-                    #     # Add annotation for first Sell TD Trap (Short = ST)
-                    #     fig.add_annotation(
-                    #         x=first_sell_trap_time,
-                    #         y=first_sell_trap_value - 10,  # Offset to avoid overlap
-                    #         text="ST",  # Short label instead of full text
-                    #         showarrow=True,
-                    #         arrowhead=2,
-                    #         arrowsize=1.5,
-                    #         arrowcolor="yellow",
-                    #         font=dict(size=12, color="red", family="Arial Black"),
-                    #     )
+                        # Add annotation for first Sell TD Trap (Short = ST)
+                        fig.add_annotation(
+                            x=first_sell_trap_time,
+                            y=first_sell_trap_value - 10,  # Offset to avoid overlap
+                            text="ST",  # Short label instead of full text
+                            showarrow=True,
+                            arrowhead=2,
+                            arrowsize=1.5,
+                            arrowcolor="yellow",
+                            font=dict(size=12, color="red", family="Arial Black"),
+                        )
 
-                    # fig.update_xaxes(title_text="Time", row=1, col=1)
-                    # fig.update_yaxes(title_text="F% Scale", row=1, col=1)
+                    fig.update_xaxes(title_text="Time", row=1, col=1)
+                    fig.update_yaxes(title_text="F% Scale", row=1, col=1)
 
 
 
@@ -3781,7 +3675,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_bbw_alert = go.Scatter(
                         x=intraday.loc[mask_bbw_alert, "Time"],
-                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 48,  # Offset above F%
+                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 8,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
                         textposition="top center",
@@ -3802,7 +3696,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_adx_alert = go.Scatter(
                         x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 48,  # Offset for visibility
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 34,  # Offset for visibility
                         mode="text",
                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
                         textposition="bottom center",
@@ -3821,7 +3715,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_std_alert = go.Scatter(
                         x=intraday.loc[mask_std_alert, "Time"],
-                        y=intraday.loc[mask_std_alert, "F_numeric"] + 48,  # Offset above F%
+                        y=intraday.loc[mask_std_alert, "F_numeric"] + 8,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_std_alert, "STD_Alert"],
                         textposition="bottom right",
@@ -3837,7 +3731,7 @@ if st.sidebar.button("Run Analysis"):
 
                     atr_alert_scatter = go.Scatter(
                         x=intraday.loc[mask_atr_alert, "Time"],
-                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 48,  # place above F%
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 34,  # place above F%
                         mode="text",
                         textposition="top right",
 
@@ -3858,7 +3752,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Supply Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#8A2BE2", dash='dot'),
+                            line=dict(width=1, color="#a9a9a9", dash='dot'),
                             name='TD Supply F%',
                             hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
                         ),
@@ -3876,7 +3770,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Demand Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#5DADE2", dash='dot'),
+                            line=dict(width=1, color="DarkSeaGreen", dash='dot'),
                             name='TD Demand F%',
                             hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
                         ),
@@ -4088,203 +3982,203 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                 # # # Create separate masks for upward and downward crosses:
-                 #    mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
-                 #    mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
+                 # # Create separate masks for upward and downward crosses:
+                    mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
+                    mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
 
-                 #    # Upward Cross Trace (♕)
-                 #    up_cross_trace = go.Scatter(
-                 #        x=intraday.loc[mask_kijun_up, "Time"],
-                 #        y=intraday.loc[mask_kijun_up, "F_numeric"] + 40,  # Offset upward (adjust as needed)
-                 #        mode="text",
-                 #        text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
-                 #        textposition="top center",  # Positioned above the point
-                 #        textfont=dict(size=34, color="green"),
-                 #        name="Kijun Cross Up (♕)",
-                 #        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
-                 #    )
+                    # Upward Cross Trace (♕)
+                    up_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_up, "Time"],
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 34,  # Offset upward (adjust as needed)
+                        mode="text",
+                        text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
+                        textposition="top center",  # Positioned above the point
+                        textfont=dict(size=34, color="green"),
+                        name="Kijun Cross Up (♕)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
+                    )
 
-                 #    # Downward Cross Trace (♛)
-                 #    down_cross_trace = go.Scatter(
-                 #        x=intraday.loc[mask_kijun_down, "Time"],
-                 #        y=intraday.loc[mask_kijun_down, "F_numeric"] - 40,  # Offset downward
-                 #        mode="text",
-                 #        text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
-                 #        textposition="bottom center",  # Positioned below the point
-                 #        textfont=dict(size=34, color="red"),
-                 #        name="Kijun Cross Down (♛)",
-                 #        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
-                 #    )
-
-
-                 #    fig.add_trace(up_cross_trace,   row=1, col=1)
-                 #    fig.add_trace(down_cross_trace, row=1, col=1)
+                    # Downward Cross Trace (♛)
+                    down_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_down, "Time"],
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 34,  # Offset downward
+                        mode="text",
+                        text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
+                        textposition="bottom center",  # Positioned below the point
+                        textfont=dict(size=34, color="red"),
+                        name="Kijun Cross Down (♛)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
+                    )
 
 
+                    fig.add_trace(up_cross_trace,   row=1, col=1)
+                    fig.add_trace(down_cross_trace, row=1, col=1)
 
 
 
 
-                # # Mask for each horse
-                # mask_horse_buy = intraday["Kijun_Cross_Horse"] == "♘"
-                # mask_horse_sell = intraday["Kijun_Cross_Horse"] == "♞"
-
-                # # Buy Horse (♘) → normal above
-                # scatter_horse_buy = go.Scatter(
-                #     x=intraday.loc[mask_horse_buy, "Time"],
-                #     y=intraday.loc[mask_horse_buy, "F_numeric"] + 32,
-                #     mode="text",
-                #     text=["♘"] * mask_horse_buy.sum(),
-                #     textposition="top left",
-                #     textfont=dict(size=34, color="green"),  # You can make it white if you want
-                #     name="Horse After Buy Kijun Cross",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>♘ Horse after Buy<extra></extra>"
-                # )
-
-                # # Sell Horse (♞) → below and red
-                # scatter_horse_sell = go.Scatter(
-                #     x=intraday.loc[mask_horse_sell, "Time"],
-                #     y=intraday.loc[mask_horse_sell, "F_numeric"] - 32,
-                #     mode="text",
-                #     text=["♞"] * mask_horse_sell.sum(),
-                #     textposition="bottom left",
-                #     textfont=dict(size=34, color="red"),
-                #     name="Horse After Sell Kijun Cross",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>♞ Horse after Sell<extra></extra>"
-                # )
-
-                # fig.add_trace(scatter_horse_buy, row=1, col=1)
-                # fig.add_trace(scatter_horse_sell, row=1, col=1)
 
 
+                # Mask for each horse
+                mask_horse_buy = intraday["Kijun_Cross_Horse"] == "♘"
+                mask_horse_sell = intraday["Kijun_Cross_Horse"] == "♞"
 
-                # mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
-                # mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
+                # Buy Horse (♘) → normal above
+                scatter_horse_buy = go.Scatter(
+                    x=intraday.loc[mask_horse_buy, "Time"],
+                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 45,
+                    mode="text",
+                    text=["♘"] * mask_horse_buy.sum(),
+                    textposition="top left",
+                    textfont=dict(size=34, color="green"),  # You can make it white if you want
+                    name="Horse After Buy Kijun Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>♘ Horse after Buy<extra></extra>"
+                )
 
-                # # Bishop Up (♗)
-                # scatter_bishop_up = go.Scatter(
-                #     x=intraday.loc[mask_bishop_up, "Time"],
-                #     y=intraday.loc[mask_bishop_up, "F_numeric"] + 24,
-                #     mode="text",
-                #     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
-                #     textposition="top center",
-                #     textfont=dict(size=34, color="green"),
-                #     name="Kijun Cross Bishop (Buy ♗)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
-                # )
+                # Sell Horse (♞) → below and red
+                scatter_horse_sell = go.Scatter(
+                    x=intraday.loc[mask_horse_sell, "Time"],
+                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 45,
+                    mode="text",
+                    text=["♞"] * mask_horse_sell.sum(),
+                    textposition="bottom left",
+                    textfont=dict(size=34, color="red"),
+                    name="Horse After Sell Kijun Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>♞ Horse after Sell<extra></extra>"
+                )
 
-                # # Bishop Down (♝)
-                # scatter_bishop_down = go.Scatter(
-                #     x=intraday.loc[mask_bishop_down, "Time"],
-                #     y=intraday.loc[mask_bishop_down, "F_numeric"] - 24,
-                #     mode="text",
-                #     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
-                #     textposition="bottom center",
-                #     textfont=dict(size=34, color="red"),
-                #     name="Kijun Cross Bishop (Sell ♝)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
-                # )
+                fig.add_trace(scatter_horse_buy, row=1, col=1)
+                fig.add_trace(scatter_horse_sell, row=1, col=1)
 
-                # fig.add_trace(scatter_bishop_up, row=1, col=1)
-                # fig.add_trace(scatter_bishop_down, row=1, col=1)
+
+
+                mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
+                mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
+
+                # Bishop Up (♗)
+                scatter_bishop_up = go.Scatter(
+                    x=intraday.loc[mask_bishop_up, "Time"],
+                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 18,
+                    mode="text",
+                    text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
+                    textposition="top center",
+                    textfont=dict(size=34, color="green"),
+                    name="Kijun Cross Bishop (Buy ♗)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
+                )
+
+                # Bishop Down (♝)
+                scatter_bishop_down = go.Scatter(
+                    x=intraday.loc[mask_bishop_down, "Time"],
+                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 18,
+                    mode="text",
+                    text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
+                    textposition="bottom center",
+                    textfont=dict(size=34, color="red"),
+                    name="Kijun Cross Bishop (Sell ♝)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
+                )
+
+                fig.add_trace(scatter_bishop_up, row=1, col=1)
+                fig.add_trace(scatter_bishop_down, row=1, col=1)
          
                 
-                #                 # Mask the rook crosses
-                # mask_rook_up = intraday["TD_Supply_Rook"] == "♖"
-                # mask_rook_down = intraday["TD_Supply_Rook"] == "♜"
+                                # Mask the rook crosses
+                mask_rook_up = intraday["TD_Supply_Rook"] == "♖"
+                mask_rook_down = intraday["TD_Supply_Rook"] == "♜"
 
-                # # White rook (up cross)
-                # scatter_rook_up = go.Scatter(
-                #     x=intraday.loc[mask_rook_up, "Time"],
-                #     y=intraday.loc[mask_rook_up, "F_numeric"] + 16,  # Offset upward
-                #     mode="text",
-                #     text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
-                #     textposition="top left",
-                #     textfont=dict(size=21,  color="green"),
-                #     name="TD Supply Cross Up (♖)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Up ♖<extra></extra>"
-                # )
+                # White rook (up cross)
+                scatter_rook_up = go.Scatter(
+                    x=intraday.loc[mask_rook_up, "Time"],
+                    y=intraday.loc[mask_rook_up, "F_numeric"] + 13,  # Offset upward
+                    mode="text",
+                    text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
+                    textposition="top left",
+                    textfont=dict(size=21,  color="green"),
+                    name="TD Supply Cross Up (♖)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Up ♖<extra></extra>"
+                )
 
-                # # Black rook (down cross)
-                # scatter_rook_down = go.Scatter(
-                #     x=intraday.loc[mask_rook_down, "Time"],
-                #     y=intraday.loc[mask_rook_down, "F_numeric"] - 16,  # Offset downward
-                #     mode="text",
-                #     text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
-                #     textposition="bottom left",
-                #     textfont=dict(size=21,  color="red"),
-                #     name="TD Supply Cross Down (♜)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
-                # )
+                # Black rook (down cross)
+                scatter_rook_down = go.Scatter(
+                    x=intraday.loc[mask_rook_down, "Time"],
+                    y=intraday.loc[mask_rook_down, "F_numeric"] - 13,  # Offset downward
+                    mode="text",
+                    text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
+                    textposition="bottom left",
+                    textfont=dict(size=21,  color="red"),
+                    name="TD Supply Cross Down (♜)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
+                )
 
-                # # Add both to figure
-                # fig.add_trace(scatter_rook_up, row=1, col=1)
-                # fig.add_trace(scatter_rook_down, row=1, col=1)
-
-
-
-
-
-
-                # # correct masks
-                # mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
-                # mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
-
-                # # ♙ Upward pawn
-                # pawn_up = go.Scatter(
-                #     x=intraday.loc[mask_pawn_up, "Time"],
-                #     y=intraday.loc[mask_pawn_up, "F_numeric"] + 8,
-                #     mode="text",
-                #     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
-                #     textposition="top center",
-                #     textfont=dict(size=21, color="green"),            # green for up
-                #     name="Pawn Up (Tenkan Cross)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♙ Upward Tenkan Cross<extra></extra>"
-                # )
-
-                # # ♟️ Downward pawn
-                # pawn_down = go.Scatter(
-                #     x=intraday.loc[mask_pawn_down, "Time"],
-                #     y=intraday.loc[mask_pawn_down, "F_numeric"] - 8,
-                #     mode="text",
-                #     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
-                #     textposition="bottom center",
-                #     textfont=dict(size=21, color="red"),             # red for down
-                #     name="Pawn Down (Tenkan Cross)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♟️ Downward Tenkan Cross<extra></extra>"
-                # )
-
-                # fig.add_trace(pawn_up,   row=1, col=1)
-                # fig.add_trace(pawn_down, row=1, col=1)
-
-
-
-                # short_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
-                #     textposition="bottom left",
-                #     textfont=dict(size=13, color="lime"),
-                #     name="Short Entry (✅)"
-                # )
-                # fig.add_trace(short_entry_trace, row=1, col=1)
+                # Add both to figure
+                fig.add_trace(scatter_rook_up, row=1, col=1)
+                fig.add_trace(scatter_rook_down, row=1, col=1)
 
 
 
 
 
 
-                # long_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
-                #     textposition="top left",
-                #     textfont=dict(size=13, color="lime"),
-                #     name="Long Entry (✅)"
-                # )
-                # fig.add_trace(long_entry_trace, row=1, col=1)
+                # correct masks
+                mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
+                mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
+
+                # ♙ Upward pawn
+                pawn_up = go.Scatter(
+                    x=intraday.loc[mask_pawn_up, "Time"],
+                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 13,
+                    mode="text",
+                    text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
+                    textposition="top center",
+                    textfont=dict(size=21, color="green"),            # green for up
+                    name="Pawn Up (Tenkan Cross)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♙ Upward Tenkan Cross<extra></extra>"
+                )
+
+                # ♟️ Downward pawn
+                pawn_down = go.Scatter(
+                    x=intraday.loc[mask_pawn_down, "Time"],
+                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 13,
+                    mode="text",
+                    text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
+                    textposition="bottom center",
+                    textfont=dict(size=21, color="red"),             # red for down
+                    name="Pawn Down (Tenkan Cross)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♟️ Downward Tenkan Cross<extra></extra>"
+                )
+
+                fig.add_trace(pawn_up,   row=1, col=1)
+                fig.add_trace(pawn_down, row=1, col=1)
+
+
+
+                short_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
+                    textposition="bottom left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Short Entry (✅)"
+                )
+                fig.add_trace(short_entry_trace, row=1, col=1)
+
+
+
+
+
+
+                long_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
+                    textposition="top left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Long Entry (✅)"
+                )
+                fig.add_trace(long_entry_trace, row=1, col=1)
 
                 
               
@@ -4368,32 +4262,32 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_swimmer, row=1, col=1)
 # # #*******************************************************************************************************************************************************************************
 
-                # mask_green_king = intraday["King_Signal"] == "👑"
-                # scatter_green_king = go.Scatter(
-                #     x=intraday.loc[mask_green_king, "Time"],
-                #     y=intraday.loc[mask_green_king, "F_numeric"] + 89,
-                #     mode="text",
-                #     text=["♔"] * mask_green_king.sum(),
-                #     textfont=dict(size=34, color="green"),
-                #     name="Green King Signal (♔)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>👑 Green Kingdom Crowned ♔<extra></extra>"
-                # )
+                mask_green_king = intraday["King_Signal"] == "👑"
+                scatter_green_king = go.Scatter(
+                    x=intraday.loc[mask_green_king, "Time"],
+                    y=intraday.loc[mask_green_king, "F_numeric"] + 89,
+                    mode="text",
+                    text=["♔"] * mask_green_king.sum(),
+                    textfont=dict(size=34, color="green"),
+                    name="Green King Signal (♔)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>👑 Green Kingdom Crowned ♔<extra></extra>"
+                )
 
 
-                # mask_red_king = intraday["King_Signal"] == "🔻👑"
-                # scatter_red_king = go.Scatter(
-                #     x=intraday.loc[mask_red_king, "Time"],
-                #     y=intraday.loc[mask_red_king, "F_numeric"] - 89,
-                #     mode="text",
-                #     text=["♔"] * mask_red_king.sum(),
-                #     textfont=dict(size=34, color="red"),
-                #     name="Red King Signal (♔)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🔻👑 Red Kingdom Crowned ♔<extra></extra>"
-                # )
+                mask_red_king = intraday["King_Signal"] == "🔻👑"
+                scatter_red_king = go.Scatter(
+                    x=intraday.loc[mask_red_king, "Time"],
+                    y=intraday.loc[mask_red_king, "F_numeric"] - 89,
+                    mode="text",
+                    text=["♔"] * mask_red_king.sum(),
+                    textfont=dict(size=34, color="red"),
+                    name="Red King Signal (♔)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🔻👑 Red Kingdom Crowned ♔<extra></extra>"
+                )
 
 
-                # fig.add_trace(scatter_green_king, row=1, col=1)
-                # fig.add_trace(scatter_red_king, row=1, col=1)
+                fig.add_trace(scatter_green_king, row=1, col=1)
+                fig.add_trace(scatter_red_king, row=1, col=1)
 
 
                 # 🎯 Add all lines to the F% plot
@@ -4408,7 +4302,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_high] * len(intraday),
                     mode="lines",
-                    line=dict(color="#FFD700", dash="dot", width=1),
+                    line=dict(color="gold", dash="dot", width=1),
                     name="IB High",
                     showlegend=True
                 ), row=1, col=1)
@@ -4418,66 +4312,46 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_low] * len(intraday),
                     mode="lines",
-                    line=dict(color="#FFD700", dash="dot", width=1),
+                    line=dict(color="gold", dash="dot", width=1),
                     name="IB Low",
                     showlegend=True
                 ), row=1, col=1)
                 
-                #         # 💥 Plot range extension markers on F% chart
+                        # 💥 Plot range extension markers on F% chart
            
                     
-                #               # Prepare 💥 points with correct time from intraday
-                # re_points = []
+                              # Prepare 💥 points with correct time from intraday
+                re_points = []
                 
-                # for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
-                #     f_level = row["F% Level"]
-                #     # Get rows at this F% level (binned) AND not in A–D (post-IB)
-                #     matching = intraday[
-                #         (intraday['F_Bin'] == f_level) &
-                #         (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
-                #     ]
-                #     if not matching.empty:
-                #         re_points.append({
-                #             "x": matching.iloc[0]["Time"],
-                #             "y": f_level
-                #         })
+                for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
+                    f_level = row["F% Level"]
+                    # Get rows at this F% level (binned) AND not in A–D (post-IB)
+                    matching = intraday[
+                        (intraday['F_Bin'] == f_level) &
+                        (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
+                    ]
+                    if not matching.empty:
+                        re_points.append({
+                            "x": matching.iloc[0]["Time"],
+                            "y": f_level
+                        })
                 
                 # Plot 💥 at those exact bars
                               # Plot 💥 at those exact bars
-                # if re_points:
-                #     fig.add_trace(go.Scatter(
-                #         x=[p["x"] for p in re_points],
-                #         y=[p["y"] + 20 for p in re_points],  # Corrected here
-                #         mode="text",
-                #         text=["💥"] * len(re_points),
-                #         textposition="top center",
-                #         textfont=dict(size=14),
-                #         showlegend=False,
-                #         name="Range Extension"
-                #     ))
+                if re_points:
+                    fig.add_trace(go.Scatter(
+                        x=[p["x"] for p in re_points],
+                        y=[p["y"] + 20 for p in re_points],  # Corrected here
+                        mode="text",
+                        text=["💥"] * len(re_points),
+                        textposition="top center",
+                        textfont=dict(size=14),
+                        showlegend=False,
+                        name="Range Extension"
+                    ))
 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["MIDAS_Bear"],
-                #     mode="lines",
-                #     line=dict(color="orange", dash="solid", width=1.2),
-                #     name="MIDAS Bear 🐻"
-                # ))
                 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["MIDAS_Bull"],
-                #     mode="lines",
-                #     line=dict(color="orange", dash="solid", width=1.2),
-                #     name="MIDAS Bull 🐂"
-                # ))
-
-
-
-       
-
-              
-     
+ 
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
@@ -4615,5 +4489,4 @@ if st.sidebar.button("Run Analysis"):
 
         #         st.plotly_chart(fig_ichimoku, use_container_width=True)
         # st.write("✅ Ichimoku Expander Rendered")
-
 
