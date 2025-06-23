@@ -4445,7 +4445,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday["MIDAS"],
                     mode="lines",
                     name="MIDAS",
-                    line=dict(dash="dash", width=2)
+                    line=dict(dash="solid", width=5)
                 ))
 
  
