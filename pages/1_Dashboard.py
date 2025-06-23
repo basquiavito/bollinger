@@ -4563,7 +4563,27 @@ if st.sidebar.button("Run Analysis"):
                     line=dict(color="orange", dash="solid", width=1.2),
                     name="MIDAS Bull 🐂"
                 ))
-    
+
+
+
+                fig.add_trace(go.Scatter(
+                  x=intraday["Time"],
+                  y=intraday["TB-F Top"],
+                  name="TB-F Top",
+                  line=dict(color="yellow", 
+                            
+                  dash="dot")))
+              
+                fig.add_trace(go.Scatter(
+                  x=intraday["Time"],
+                  y=intraday["TB-F Bottom"],
+                  
+                  name="TB-F Bottom", 
+                  line=dict(color="pink",
+                            dash="dot")))
+
+
+              
      
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
