@@ -3106,7 +3106,11 @@ if st.sidebar.button("Run Analysis"):
                     intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
                    # Assign a unique letter to each 5-minute bar (A, B, ..., Z, AA, AB, ...)
             # After you create FifteenMin…
-                    intraday['FifteenMin']  = intraday['FifteenMin'].astype(int)
+                   intraday['FifteenMin'] = ((intraday['TimeIndex'].dt.hour * 60
+                           + intraday['TimeIndex'].dt.minute) // 15).astype(int)
+
+                    intraday['LetterIndex'] = intraday['FifteenMin'] - intraday['FifteenMin'].min()
+
                     
                     # …or do it in one step:
                     intraday['LetterIndex'] = ((intraday['TimeIndex'].dt.hour * 60
