@@ -3171,9 +3171,32 @@ if st.sidebar.button("Run Analysis"):
               
                   profile_df["Range_Extension"] = profile_df.apply(is_range_extension, axis=1)
                   profile_df["💥"] = profile_df["Range_Extension"].apply(lambda x: "💥" if x else "")
-              
+
+
+                  # Count letters per F% level
+                  profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
+                  
+                  # Total letters (to calculate 70% cutoff)
+                  total_letters = profile_df["Letter_Count"].sum()
+                  target_count = total_letters * 0.7
+                  
+                  # Sort by most active rows (letter count), center at Point of Control
+                  profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
+                  
+                  # Build Value Area by accumulating from POC outward
+                  value_area_levels = []
+                  cumulative = 0
+                  for i, row in profile_sorted.iterrows():
+                      cumulative += row["Letter_Count"]
+                      value_area_levels.append(row["F% Level"])
+                      if cumulative >= target_count:
+                          break
+                  
+                  # Add Value Area marker
+                  profile_df["✅ ValueArea"] = profile_df["F% Level"].apply(lambda x: "✅" if x in value_area_levels else "")
+
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level", "Letters", "💥", "Tail"]])
+                  st.dataframe(profile_df[["F% Level", "Letters", "💥", "Tail","✅ ValueArea"]])
 
 
 
