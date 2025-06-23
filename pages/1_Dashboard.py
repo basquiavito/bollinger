@@ -1,4 +1,3 @@
-intraday["MIDAS"] = calculate_midas(intraday, price_col="Price", volume_col="Volume", anchor_time="09:30 AM")
 import streamlit as st
 import numpy as np
 import string       
