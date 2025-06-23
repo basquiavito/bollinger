@@ -3212,10 +3212,14 @@ if st.sidebar.button("Run Analysis"):
                   st.dataframe(profile_df[["F% Level", "Letters",  "%Vol","💥", "Tail","✅ ValueArea"]])
 
 
-                # ---- TB-F Top / Bottom Finder --------------------------------------------
-                with st.expander("TB-F Projection (Levine Top / Bottom Finder)", expanded=False):
+
+
+
+
                 
-                    # ── 1. Column checks ───────────────────────────────────────────────────
+                with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
+                
+                    # Detect price column
                     if "Mike" in intraday.columns:
                         price_col = "Mike"
                     elif "F_numeric" in intraday.columns:
@@ -3228,79 +3232,49 @@ if st.sidebar.button("Run Analysis"):
                         st.warning("Volume column not found.")
                         st.stop()
                 
-                    # ── 2. Time handling ───────────────────────────────────────────────────
-                    intraday["TimeIndex"] = pd.to_datetime(intraday["Time"], format="%I:%M %p")
+                    # Convert time
+                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
                 
-                    # ── 3. Helper: base MIDAS curve from an anchor idx ─────────────────────
-                    def midas_from(anchor_idx):
-                        curve = []
-                        for i in range(anchor_idx, len(intraday)):
-                            v = intraday.loc[anchor_idx:i, "Volume"]
-                            p = intraday.loc[anchor_idx:i, price_col]
-                            weights = v / v.sum()
-                            curve.append((p * weights).sum())
-                        return [np.nan] * anchor_idx + curve
+                    ### 🐻 BEARISH MIDAS (anchor at max)
+                    anchor_idx_bear = intraday[price_col].idxmax()
+                    anchor_time_bear = intraday.loc[anchor_idx_bear, 'TimeIndex']
+                    anchor_price_bear = intraday.loc[anchor_idx_bear, price_col]
                 
-                    # ── 4. Anchor extremes ─────────────────────────────────────────────────
-                    top_idx = intraday[price_col].idxmax()
-                    bot_idx = intraday[price_col].idxmin()
+                    midas_curve_bear = []
+                    for i in range(anchor_idx_bear, len(intraday)):
+                        vol_window = intraday.loc[anchor_idx_bear:i, 'Volume']
+                        price_window = intraday.loc[anchor_idx_bear:i, price_col]
+                        weights = vol_window / vol_window.sum()
+                        midas_price = (price_window * weights).sum()
+                        midas_curve_bear.append(midas_price)
                 
-                    # Build base MIDAS curves (one from each extreme)
-                    intraday["MIDAS_TopStart"] = midas_from(top_idx)
-                    intraday["MIDAS_BotStart"] = midas_from(bot_idx)
+                    intraday["MIDAS_Bear"] = [np.nan] * anchor_idx_bear + midas_curve_bear
                 
-                    # ── 5. Find first pull-back that fails to touch base MIDAS  ────────────
-                    def first_pullback_after(anchor_idx, col_name):
-                        for i in range(anchor_idx + 1, len(intraday)):
-                            price = intraday.loc[i, price_col]
-                            midas = intraday.loc[i, col_name]
-                            if (anchor_idx == top_idx and price < midas) or (anchor_idx == bot_idx and price > midas):
-                                return i  # touched base curve -> not accelerated
-                            # pull-back that does NOT reach MIDAS = accelerated
-                            dist = abs(price - midas)
-                            if dist < 0.01:  # tolerance for "reached"
-                                continue
-                            return i
-                        return anchor_idx + 1  # fallback
+                    ### 🐂 BULLISH MIDAS (anchor at min)
+                    anchor_idx_bull = intraday[price_col].idxmin()
+                    anchor_time_bull = intraday.loc[anchor_idx_bull, 'TimeIndex']
+                    anchor_price_bull = intraday.loc[anchor_idx_bull, price_col]
                 
-                    pull_top_idx = first_pullback_after(top_idx, "MIDAS_TopStart")
-                    pull_bot_idx = first_pullback_after(bot_idx, "MIDAS_BotStart")
+                    midas_curve_bull = []
+                    for i in range(anchor_idx_bull, len(intraday)):
+                        vol_window = intraday.loc[anchor_idx_bull:i, 'Volume']
+                        price_window = intraday.loc[anchor_idx_bull:i, price_col]
+                        weights = vol_window / vol_window.sum()
+                        midas_price = (price_window * weights).sum()
+                        midas_curve_bull.append(midas_price)
                 
-                    # ── 6. Fit TB-F curves using displacement e = d(1-d/D)  ───────────────
-                    def build_tbf(anchor_idx, pull_idx, direction="top"):
-                        # cumulative volume since anchor
-                        vols = intraday.loc[anchor_idx:, "Volume"].cumsum().values
-                        D = vols[pull_idx - anchor_idx] * 3.0  # crude “fuel” = 3× pull-back vol; tweak
-                        tbf_vals = []
-                        for j, d in enumerate(vols):
-                            if d >= D:
-                                tbf_vals.append(tbf_vals[-1])  # flatten after burnout
-                            else:
-                                e = d * (1 - d / D)
-                                window_idx = anchor_idx + j
-                                window = intraday.loc[anchor_idx:window_idx, price_col]
-                                weights = intraday.loc[anchor_idx:window_idx, "Volume"] / d
-                                tbf_vals.append((window * weights).sum())
-                        return [np.nan] * anchor_idx + tbf_vals
+                    intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
                 
-                    intraday["TB-F Top"] = build_tbf(top_idx, pull_top_idx, "top")
-                    intraday["TB-F Bottom"] = build_tbf(bot_idx, pull_bot_idx, "bot")
+                    # Display anchor info
+                    st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
+                    st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
                 
-                    # ── 7. Display summary table ───────────────────────────────────────────
-                    st.write(
-                        f"🐻 Top anchor {intraday.loc[top_idx,'Time']} → pull-back at {intraday.loc[pull_top_idx,'Time']}"
-                    )
-                    st.write(
-                        f"🐂 Bottom anchor {intraday.loc[bot_idx,'Time']} → pull-back at {intraday.loc[pull_bot_idx,'Time']}"
-                    )
-                
+                    # Display data table
                     st.dataframe(
-                        intraday[
-                            ["Time", price_col, "Volume", "TB-F Top", "TB-F Bottom", "MIDAS_TopStart", "MIDAS_BotStart"]
-                        ].dropna(subset=["TB-F Top", "TB-F Bottom"], how="all")
+                        intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull']].dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all').reset_index(drop=True)
                     )
 
-
+              
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
@@ -4502,7 +4476,8 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
                 
- 
+                fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="red")))
+                fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull", line=dict(color="green")))
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
