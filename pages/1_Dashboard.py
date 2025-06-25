@@ -3208,8 +3208,16 @@ if st.sidebar.button("Run Analysis"):
                   # Merge into profile_df (align on string F% Level)
                   profile_df["%Vol"] = profile_df["F% Level"].astype(str).map(vol_percent).fillna(0)
 
+
+
+                  
+                                    # Add earliest Time seen in each F% bin
+                  bin_times = intraday.groupby('F_Bin')['Time'].min().reset_index()
+                  bin_times['F% Level'] = bin_times['F_Bin'].astype(int)
+                  profile_df = profile_df.merge(bin_times[['F% Level', 'Time']], on='F% Level', how='left')
+
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level", "Letters",  "%Vol","💥", "Tail","✅ ValueArea"]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥", "Tail","✅ ValueArea"]])
 
 
 
