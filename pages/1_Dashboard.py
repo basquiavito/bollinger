@@ -3814,7 +3814,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_bbw_alert = go.Scatter(
                         x=intraday.loc[mask_bbw_alert, "Time"],
-                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 8,  # Offset above F%
+                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 16,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
                         textposition="top center",
@@ -3835,7 +3835,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_adx_alert = go.Scatter(
                         x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 34,  # Offset for visibility
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 16,  # Offset for visibility
                         mode="text",
                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
                         textposition="bottom center",
@@ -3854,7 +3854,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_std_alert = go.Scatter(
                         x=intraday.loc[mask_std_alert, "Time"],
-                        y=intraday.loc[mask_std_alert, "F_numeric"] + 8,  # Offset above F%
+                        y=intraday.loc[mask_std_alert, "F_numeric"] + 16,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_std_alert, "STD_Alert"],
                         textposition="bottom right",
@@ -3870,7 +3870,7 @@ if st.sidebar.button("Run Analysis"):
 
                     atr_alert_scatter = go.Scatter(
                         x=intraday.loc[mask_atr_alert, "Time"],
-                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 34,  # place above F%
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 16,  # place above F%
                         mode="text",
                         textposition="top right",
 
