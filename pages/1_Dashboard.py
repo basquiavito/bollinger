@@ -3755,6 +3755,11 @@ if st.sidebar.button("Run Analysis"):
                         name="Yesterday Close (F%)"
                     )
 
+                     # 🎯 Add all lines to the F% plot
+                    fig.add_trace(y_open_f_line, row=1, col=1)
+                    fig.add_trace(y_high_f_line, row=1, col=1)
+                    fig.add_trace(y_low_f_line, row=1, col=1)
+                    fig.add_trace(y_close_f_line, row=1, col=1)
 
                   # (D) TD Trap Arrows - Only First Sell TD Trap
                     # # ----------------------------------------------
@@ -3781,11 +3786,6 @@ if st.sidebar.button("Run Analysis"):
                     # fig.update_yaxes(title_text="F% Scale", row=1, col=1)
 
 
-                    #  # 🎯 Add all lines to the F% plot
-                    # fig.add_trace(y_open_f_line, row=1, col=1)
-                    # fig.add_trace(y_high_f_line, row=1, col=1)
-                    # fig.add_trace(y_low_f_line, row=1, col=1)
-                    # fig.add_trace(y_close_f_line, row=1, col=1)
 
 
                              # BBW Tight → Pink Bishops ♗
@@ -3969,7 +3969,7 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(go.Scatter(
                         x=intraday.loc[cloud_mask, "Time"],
-                        y=intraday.loc[cloud_mask, "F_numeric"] +40,
+                        y=intraday.loc[cloud_mask, "F_numeric"] +28,
                         mode="text",
                         text=intraday.loc[cloud_mask, "Heaven_Cloud"],
                         textposition="top center",
@@ -4001,7 +4001,7 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(go.Scatter(
                         x=intraday.loc[drizzle_mask, "Time"],
-                        y=intraday.loc[drizzle_mask, "F_numeric"] + 40,  # Position below the bar
+                        y=intraday.loc[drizzle_mask, "F_numeric"] + 28,  # Position below the bar
                         mode="text",
                         text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
                         textposition="bottom center",
