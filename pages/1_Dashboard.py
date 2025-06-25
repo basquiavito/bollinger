@@ -3781,6 +3781,12 @@ if st.sidebar.button("Run Analysis"):
                     # fig.update_yaxes(title_text="F% Scale", row=1, col=1)
 
 
+                    #  # 🎯 Add all lines to the F% plot
+                    # fig.add_trace(y_open_f_line, row=1, col=1)
+                    # fig.add_trace(y_high_f_line, row=1, col=1)
+                    # fig.add_trace(y_low_f_line, row=1, col=1)
+                    # fig.add_trace(y_close_f_line, row=1, col=1)
+
 
                              # BBW Tight → Pink Bishops ♗
                     mask_bbw_tight = intraday["BBW_Tight_Emoji"] == "🐝"
@@ -4423,11 +4429,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_red_king, row=1, col=1)
 
 
-                # 🎯 Add all lines to the F% plot
-                fig.add_trace(y_open_f_line, row=1, col=1)
-                fig.add_trace(y_high_f_line, row=1, col=1)
-                fig.add_trace(y_low_f_line, row=1, col=1)
-                fig.add_trace(y_close_f_line, row=1, col=1)
+             
 
                 
                                 # 🟫 IB High (subtle off-white line)
