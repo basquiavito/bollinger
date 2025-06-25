@@ -3650,7 +3650,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[marengo_mask, "Time"],
                         y=intraday.loc[marengo_mask, "F% Upper"] + offset,
                         mode="text",
-                        textfont=dict(size=34),
+                        textfont=dict(size=10),
                         text=["🐎"] * marengo_mask.sum(),
                         textposition="middle center",
                         name="Marengo",
@@ -3666,7 +3666,7 @@ if st.sidebar.button("Run Analysis"):
                     south_mask = intraday["South_Marengo"] == "🐎"
                     
                     # Offset downward from lower band
-                    offset_south = 34
+                    offset_south = 10
                     
                     south_marengo_trace = go.Scatter(
                         x=intraday.loc[south_mask, "Time"],
