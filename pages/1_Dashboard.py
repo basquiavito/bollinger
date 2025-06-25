@@ -4128,7 +4128,7 @@ if st.sidebar.button("Run Analysis"):
                     # Upward Cross Trace (♕)
                     up_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_up, "Time"],
-                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 34,  # Offset upward (adjust as needed)
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 16,  # Offset upward (adjust as needed)
                         mode="text",
                         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
                         textposition="top center",  # Positioned above the point
@@ -4140,7 +4140,7 @@ if st.sidebar.button("Run Analysis"):
                     # Downward Cross Trace (♛)
                     down_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_down, "Time"],
-                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 34,  # Offset downward
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 16,  # Offset downward
                         mode="text",
                         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
                         textposition="bottom center",  # Positioned below the point
@@ -4165,7 +4165,7 @@ if st.sidebar.button("Run Analysis"):
                 # Buy Horse (♘) → normal above
                 scatter_horse_buy = go.Scatter(
                     x=intraday.loc[mask_horse_buy, "Time"],
-                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 45,
+                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 16,
                     mode="text",
                     text=["♘"] * mask_horse_buy.sum(),
                     textposition="top left",
@@ -4177,7 +4177,7 @@ if st.sidebar.button("Run Analysis"):
                 # Sell Horse (♞) → below and red
                 scatter_horse_sell = go.Scatter(
                     x=intraday.loc[mask_horse_sell, "Time"],
-                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 45,
+                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 16,
                     mode="text",
                     text=["♞"] * mask_horse_sell.sum(),
                     textposition="bottom left",
