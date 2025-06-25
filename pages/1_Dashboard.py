@@ -3478,7 +3478,7 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(go.Scatter(
                         x=intraday.loc[mask_chikou_above, "Time"],
-                        y=intraday.loc[mask_chikou_above, "F_numeric"] + 55,
+                        y=intraday.loc[mask_chikou_above, "F_numeric"] + 39,
                         mode="text",
                         text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
                         textposition="top center",
@@ -3491,7 +3491,7 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(go.Scatter(
                         x=intraday.loc[mask_chikou_below, "Time"],
-                        y=intraday.loc[mask_chikou_below, "F_numeric"] - 55,
+                        y=intraday.loc[mask_chikou_below, "F_numeric"] - 39,
                         mode="text",
                         text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
                         textposition="bottom center",
