@@ -3209,7 +3209,7 @@ if st.sidebar.button("Run Analysis"):
                   profile_df["%Vol"] = profile_df["F% Level"].astype(str).map(vol_percent).fillna(0)
 
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level", "Time", "Letters",  "%Vol","💥", "Tail","✅ ValueArea"]])
+                  st.dataframe(profile_df[["F% Level", "Letters",  "%Vol","💥", "Tail","✅ ValueArea"]])
 
 
 
