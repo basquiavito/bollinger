@@ -3719,41 +3719,41 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(scatter_tk_sun, row=1, col=1)
                     fig.add_trace(scatter_tk_moon, row=1, col=1)
 
-                    # # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
-                    # y_open_f_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
-                    #     mode="lines",
-                    #     line=dict(color="grey", dash="dash", width=0.5),
-                    #     name="Yesterday Open (F%)"
-                    # )
+                    # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
+                    y_open_f_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
+                        mode="lines",
+                        line=dict(color="grey", dash="dash", width=0.5),
+                        name="Yesterday Open (F%)"
+                    )
 
-                    # # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
-                    # y_high_f_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
-                    #     mode="lines",
-                    #     line=dict(color="green", dash="dash",width=0.5),
-                    #     name="Yesterday High (F%)"
-                    # )
+                    # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
+                    y_high_f_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
+                        mode="lines",
+                        line=dict(color="green", dash="dash",width=0.5),
+                        name="Yesterday High (F%)"
+                    )
 
-                    # # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
-                    # y_low_f_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
-                    #     mode="lines",
-                    #     line=dict(color="red", dash="dash", width=0.5),
-                    #     name="Yesterday Low (F%)"
-                    # )
+                    # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
+                    y_low_f_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
+                        mode="lines",
+                        line=dict(color="red", dash="dash", width=0.5),
+                        name="Yesterday Low (F%)"
+                    )
 
-                    # # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
-                    # y_close_f_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=[0] * len(intraday),
-                    #     mode="lines",
-                    #     line=dict(color="blue", dash="dash", width=0.5),
-                    #     name="Yesterday Close (F%)"
-                    # )
+                    # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
+                    y_close_f_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=[0] * len(intraday),
+                        mode="lines",
+                        line=dict(color="blue", dash="dash", width=0.5),
+                        name="Yesterday Close (F%)"
+                    )
 
 
                   # (D) TD Trap Arrows - Only First Sell TD Trap
