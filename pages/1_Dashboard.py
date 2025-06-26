@@ -3245,9 +3245,7 @@ if st.sidebar.button("Run Analysis"):
                           return "📦 Mike still inside core value"
 
                   
-                  # Add as single-row breakout flag to display somewhere
-                  st.markdown(f"### 🧭 Value Area Breakout Status: **{check_value_breakout(current_mike)}**")
-
+              
                   
 
                   # Show DataFrame
