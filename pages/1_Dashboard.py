@@ -3227,20 +3227,7 @@ if st.sidebar.button("Run Analysis"):
 
 
        
-                  # Find the core level (most letters in the ✅ Value Area)
-                  core_row = profile_df[profile_df["✅ ValueArea"] == "✅"].sort_values("Letter_Count", ascending=False).head(1)
-                  core_level = core_row["F% Level"].values[0] if not core_row.empty else None
 
-                  # Track breakouts from core level
-                  emoji_breaks = []
-                  for i in range(1, len(intraday)):
-                      prev = intraday[mike_col].iloc[i - 1]
-                      curr = intraday[mike_col].iloc[i]
-                      if core_level is not None:
-                          if prev < core_level and curr > core_level:
-                              emoji_breaks.append(("🚀", intraday["TimeIndex"].iloc[i], curr))
-                          elif prev > core_level and curr < core_level:
-                              emoji_breaks.append(("🌊", intraday["TimeIndex"].iloc[i], curr))
 
                   
               
