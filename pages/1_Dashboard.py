@@ -4565,17 +4565,19 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=1, col=1)
                 
-                        # 💥 Plot range extension markers on F% chart
-           
-                    
-                              # Prepare 💥 points with correct time from intraday
+                                        # 💥 Plot range extension markers on F% chart
+                     # 💥 Plot range extension markers on F% chart
                 re_points = []
+                
+                # Make sure F_Bin is cast to int for comparison
+                intraday['F_Bin_Int'] = intraday['F_Bin'].astype(float).astype('Int64')
                 
                 for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
                     f_level = row["F% Level"]
-                    # Get rows at this F% level (binned) AND not in A–D (post-IB)
+                    
+                    # Match intraday rows with same F% bin level (int)
                     matching = intraday[
-                        (intraday['F_Bin'] == f_level) &
+                        (intraday['F_Bin_Int'] == f_level) &
                         (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
                     ]
                     if not matching.empty:
@@ -4584,21 +4586,19 @@ if st.sidebar.button("Run Analysis"):
                             "y": f_level
                         })
                 
-                # Plot 💥 at those exact bars
-                              # Plot 💥 at those exact bars
                 if re_points:
                     fig.add_trace(go.Scatter(
                         x=[p["x"] for p in re_points],
-                        y=[p["y"] + 20 for p in re_points],  # Corrected here
+                        y=[p["y"] + 20 for p in re_points],  # Optional vertical offset
                         mode="text",
                         text=["💥"] * len(re_points),
                         textposition="top center",
                         textfont=dict(size=14),
                         showlegend=False,
-                        name="Range Extension"
+                        name="💥 Range Extension"
                     ))
-
                 
+                                
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=1.2)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=1.2)))
 
