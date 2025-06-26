@@ -3226,23 +3226,21 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                  def detect_mike_break_from_core(profile_df, current_mike):
-                  # 1. Focus on ✅ Value Area rows
-                      va_df = profile_df[profile_df["✅ ValueArea"] == "✅"]
-                      if va_df.empty:
-                          return "⚠️ No Value Area rows"
-                  
-                      # 2. Pick the one with the most letters (core balance bin)
-                      core_row = va_df.loc[va_df["Letter_Count"].idxmax()]
-                      core_level = core_row["F% Level"]
-                  
-                      # 3. Compare current Mike to core level
-                      if current_mike > core_level:
-                          return "🚪↑ Mike broke ABOVE core value"
-                      elif current_mike < core_level:
-                          return "🚪↓ Mike broke BELOW core value"
-                      else:
-                          return "📦 Mike still inside core value"
+       
+                  # Find the core level (most letters in the ✅ Value Area)
+                  core_row = profile_df[profile_df["✅ ValueArea"] == "✅"].sort_values("Letter_Count", ascending=False).head(1)
+                  core_level = core_row["F% Level"].values[0] if not core_row.empty else None
+
+                  # Track breakouts from core level
+                  emoji_breaks = []
+                  for i in range(1, len(intraday)):
+                      prev = intraday[mike_col].iloc[i - 1]
+                      curr = intraday[mike_col].iloc[i]
+                      if core_level is not None:
+                          if prev < core_level and curr > core_level:
+                              emoji_breaks.append(("🚀", intraday["TimeIndex"].iloc[i], curr))
+                          elif prev > core_level and curr < core_level:
+                              emoji_breaks.append(("🌊", intraday["TimeIndex"].iloc[i], curr))
 
                   
               
