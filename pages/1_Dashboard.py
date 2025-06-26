@@ -3216,10 +3216,23 @@ if st.sidebar.button("Run Analysis"):
                   bin_times['F% Level'] = bin_times['F_Bin'].astype(int)
                   profile_df = profile_df.merge(bin_times[['F% Level', 'Time']], on='F% Level', how='left')
 
+
+                           # Add emoji if current Mike breaks outside the value area
+                  def flag_value_breakout(row):
+                      if row["F% Level"] > ib_high and row["F% Level"] not in value_area_levels:
+                          return "🚪↑"
+                      elif row["F% Level"] < ib_low and row["F% Level"] not in value_area_levels:
+                          return "🚪↓"
+                      return ""
+                  
+                  profile_df["🚪"] = profile_df.apply(flag_value_breakout, axis=1)
+                  
+
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥", "Tail","✅ ValueArea"]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥", "🚪","Tail","✅ ValueArea",]])
 
 
+         
 
 
 
