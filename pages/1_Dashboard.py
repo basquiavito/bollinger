@@ -4609,6 +4609,21 @@ if st.sidebar.button("Run Analysis"):
                                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
 
+                # Add breakout door emoji as annotations
+                for _, row in profile_df.iterrows():
+                    if row["🚪"] in ["🚪↑", "🚪↓"]:
+                        fig.add_annotation(
+                            x=row["Time"],  # x-axis: Time
+                            y=row["F% Level"],  # y-axis: F% Level
+                            text=row["🚪"],  # 🚪 emoji
+                            showarrow=False,
+                            font=dict(size=14),
+                            yshift=0  # adjust if overlapping
+                        )
+                
+
+
+
       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
