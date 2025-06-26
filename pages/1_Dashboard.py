@@ -3228,21 +3228,21 @@ if st.sidebar.button("Run Analysis"):
 
                   def detect_mike_break_from_core(profile_df, current_mike):
                   # 1. Focus on ✅ Value Area rows
-                  va_df = profile_df[profile_df["✅ ValueArea"] == "✅"]
-                  if va_df.empty:
-                      return "⚠️ No Value Area rows"
-              
-                  # 2. Pick the one with the most letters (core balance bin)
-                  core_row = va_df.loc[va_df["Letter_Count"].idxmax()]
-                  core_level = core_row["F% Level"]
-              
-                  # 3. Compare current Mike to core level
-                  if current_mike > core_level:
-                      return "🚪↑ Mike broke ABOVE core value"
-                  elif current_mike < core_level:
-                      return "🚪↓ Mike broke BELOW core value"
-                  else:
-                      return "📦 Mike still inside core value"
+                      va_df = profile_df[profile_df["✅ ValueArea"] == "✅"]
+                      if va_df.empty:
+                          return "⚠️ No Value Area rows"
+                  
+                      # 2. Pick the one with the most letters (core balance bin)
+                      core_row = va_df.loc[va_df["Letter_Count"].idxmax()]
+                      core_level = core_row["F% Level"]
+                  
+                      # 3. Compare current Mike to core level
+                      if current_mike > core_level:
+                          return "🚪↑ Mike broke ABOVE core value"
+                      elif current_mike < core_level:
+                          return "🚪↓ Mike broke BELOW core value"
+                      else:
+                          return "📦 Mike still inside core value"
 
                   
                   # Add as single-row breakout flag to display somewhere
