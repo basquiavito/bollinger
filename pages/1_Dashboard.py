@@ -3223,13 +3223,27 @@ if st.sidebar.button("Run Analysis"):
                   va_min = min(value_area_levels)
                   va_max = max(value_area_levels)
                   
-                  # Mark breakout based on actual current Mike value
-                  def check_value_breakout(mike_val):
-                      if mike_val > va_max and mike_val > ib_high:
-                          return "🚪↑"
-                      elif mike_val < va_min and mike_val < ib_low:
-                          return "🚪↓"
-                      return ""
+
+
+
+                  def detect_mike_break_from_core(profile_df, current_mike):
+                  # 1. Focus on ✅ Value Area rows
+                  va_df = profile_df[profile_df["✅ ValueArea"] == "✅"]
+                  if va_df.empty:
+                      return "⚠️ No Value Area rows"
+              
+                  # 2. Pick the one with the most letters (core balance bin)
+                  core_row = va_df.loc[va_df["Letter_Count"].idxmax()]
+                  core_level = core_row["F% Level"]
+              
+                  # 3. Compare current Mike to core level
+                  if current_mike > core_level:
+                      return "🚪↑ Mike broke ABOVE core value"
+                  elif current_mike < core_level:
+                      return "🚪↓ Mike broke BELOW core value"
+                  else:
+                      return "📦 Mike still inside core value"
+
                   
                   # Add as single-row breakout flag to display somewhere
                   st.markdown(f"### 🧭 Value Area Breakout Status: **{check_value_breakout(current_mike)}**")
@@ -3237,7 +3251,7 @@ if st.sidebar.button("Run Analysis"):
                   
 
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥", "🚪","Tail","✅ ValueArea",]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea",]])
 
 
          
