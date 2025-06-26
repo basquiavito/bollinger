@@ -3216,16 +3216,24 @@ if st.sidebar.button("Run Analysis"):
                   bin_times['F% Level'] = bin_times['F_Bin'].astype(int)
                   profile_df = profile_df.merge(bin_times[['F% Level', 'Time']], on='F% Level', how='left')
 
-
-                           # Add emoji if current Mike breaks outside the value area
-                  def flag_value_breakout(row):
-                      if row["F% Level"] > ib_high and row["F% Level"] not in value_area_levels:
+                  # Current Mike value (latest row)
+                  current_mike = intraday[mike_col].iloc[-1]
+                  
+                  # Compute min/max of value area for better boundary
+                  va_min = min(value_area_levels)
+                  va_max = max(value_area_levels)
+                  
+                  # Mark breakout based on actual current Mike value
+                  def check_value_breakout(mike_val):
+                      if mike_val > va_max and mike_val > ib_high:
                           return "🚪↑"
-                      elif row["F% Level"] < ib_low and row["F% Level"] not in value_area_levels:
+                      elif mike_val < va_min and mike_val < ib_low:
                           return "🚪↓"
                       return ""
                   
-                  profile_df["🚪"] = profile_df.apply(flag_value_breakout, axis=1)
+                  # Add as single-row breakout flag to display somewhere
+                  st.markdown(f"### 🧭 Value Area Breakout Status: **{check_value_breakout(current_mike)}**")
+
                   
 
                   # Show DataFrame
@@ -4608,19 +4616,17 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
                                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
-
-                # Add breakout door emoji as annotations
-                for _, row in profile_df.iterrows():
-                    if row["🚪"] in ["🚪↑", "🚪↓"]:
-                        fig.add_annotation(
-                            x=row["Time"],  # x-axis: Time
-                            y=row["F% Level"],  # y-axis: F% Level
-                            text=row["🚪"],  # 🚪 emoji
-                            showarrow=False,
-                            font=dict(size=14),
-                            yshift=0  # adjust if overlapping
-                        )
-                
+                if check_value_breakout(current_mike) in ["🚪↑", "🚪↓"]:
+                    fig.add_trace(go.Scatter(
+                        x=[intraday["TimeIndex"].iloc[-1]],
+                        y=[current_mike],
+                        mode="text",
+                        text=[check_value_breakout(current_mike)],
+                        textposition="top center",
+                        textfont=dict(size=16),
+                        showlegend=False,
+                        name="Value Break"
+                    ))
 
 
 
