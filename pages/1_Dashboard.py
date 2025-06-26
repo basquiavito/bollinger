@@ -4628,19 +4628,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                 
-                
-                
-                
-                for symbol, x, y in emoji_breaks:
-                    fig.add_trace(go.Scatter(
-                        x=[x],
-                        y=[y],
-                        mode="text",
-                        text=[symbol],
-                        textposition="top center",
-                        showlegend=False
-                    ))
-
+        
       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
