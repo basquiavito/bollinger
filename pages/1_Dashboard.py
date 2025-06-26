@@ -4616,20 +4616,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
                                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
-                if check_value_breakout(current_mike) in ["🚪↑", "🚪↓"]:
-                    fig.add_trace(go.Scatter(
-                        x=[intraday["TimeIndex"].iloc[-1]],
-                        y=[current_mike],
-                        mode="text",
-                        text=[check_value_breakout(current_mike)],
-                        textposition="top center",
-                        textfont=dict(size=16),
-                        showlegend=False,
-                        name="Value Break"
-                    ))
-
-
-
+             
       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
