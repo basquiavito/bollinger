@@ -4579,10 +4579,10 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday['theta_alert_emoji'] = intraday['theta_post_kijun_alert'].apply(lambda x: '🏇🏻' if x else '')
                 fig.add_trace(go.Scatter(
-                    x=df.index,
-                    y=df['F_numeric'],
+                    x=intraday.index,
+                    y=intraday['F_numeric'],
                     mode='text',
-                    text=df['theta_alert_emoji'],
+                    text=intraday['theta_alert_emoji'],
                     textposition='top center',
                     textfont=dict(size=14),
                     name='Theta > 80° Post-Kijun'
