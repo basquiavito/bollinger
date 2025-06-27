@@ -4441,7 +4441,7 @@ if st.sidebar.button("Run Analysis"):
                     y=astronaut_points["F_numeric"] + 38,  # Higher offset
                     mode="text",
                     text=astronaut_points["Astronaut_Emoji"],
-                    textposition="top center",
+                    textposition="top right",
                     name="New Highs 👨🏽‍🚀",
                     textfont=dict(size=21),
                  )
@@ -4475,7 +4475,7 @@ if st.sidebar.button("Run Analysis"):
                     y=swimmer_points["F_numeric"] - 48,  # Offset downward so it floats below price
                     mode="text",
                     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
-                    textposition="bottom center",
+                    textposition="bottom left",
                     name="New Lows 🏊🏽‍♂️🦑",
                     textfont=dict(size=21),
                     showlegend=True
