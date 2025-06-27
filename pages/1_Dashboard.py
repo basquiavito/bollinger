@@ -4455,7 +4455,7 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_astronaut = go.Scatter(
                     x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 38,  # Offset so it floats higher
+                    y=astronaut_points["F_numeric"] + 48,  # Offset so it floats higher
                     mode="text",
                     text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
                     textposition="top center",
@@ -4472,7 +4472,7 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_swimmer = go.Scatter(
                     x=swimmer_points["Time"],
-                    y=swimmer_points["F_numeric"] - -38,  # Offset downward so it floats below price
+                    y=swimmer_points["F_numeric"] - 48,  # Offset downward so it floats below price
                     mode="text",
                     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
                     textposition="bottom center",
