@@ -520,6 +520,57 @@ if st.sidebar.button("Run Analysis"):
 
  
             
+
+
+              
+                # def calculate_bollinger_band_angles(df, band_col="F% Upper", angle_col="Upper Angle", window=1):
+                #     """
+                #     Calculates the angle (in degrees) of the specified Bollinger Band using tan(θ) = Δy / Δx,
+                #     where Δx = 1 bar (time), so angle = atan(Δy). This gives a sense of slope/steepness.
+                    
+                #     Parameters:
+                #         df: DataFrame with Bollinger Band columns.
+                #         band_col: Column name to calculate angle from.
+                #         angle_col: Output column to store angle in degrees.
+                #         window: How many bars back to compare against (1 = adjacent bar).
+                #     """
+                #     if band_col in df.columns:
+                #         delta_y = df[band_col].diff(periods=window)
+                #         angle_rad = np.arctan(delta_y)  # since delta_x = 1
+                #         df[angle_col] = np.degrees(angle_rad)
+                #     else:
+                #         df[angle_col] = np.nan
+                
+                #     return df
+                #     # Calculate angles for both bands
+                # intraday = calculate_bollinger_band_angles(intraday, band_col="F% Upper", angle_col="Upper Angle")
+                # intraday = calculate_bollinger_band_angles(intraday, band_col="F% Lower", angle_col="Lower Angle")
+                            
+
+
+
+                def calculate_smoothed_band_angle(df, band_col="F% Upper", angle_col="Upper Angle", window=5):
+                    """
+                    Calculates the angle (in degrees) of a Bollinger Band over a smoothed n-bar window.
+                    This reduces noise by measuring trend over time instead of bar-to-bar jitter.
+                
+                    Args:
+                        df (DataFrame): Must include the band_col
+                        band_col (str): Column to calculate angle on (e.g., 'F% Upper')
+                        angle_col (str): Name of the new output angle column
+                        window (int): Number of bars for smoothing
+                    """
+                    if band_col in df.columns:
+                        slope = (df[band_col] - df[band_col].shift(window)) / window
+                        angle_rad = np.arctan(slope)
+                        df[angle_col] = np.degrees(angle_rad)
+                    else:
+                        df[angle_col] = np.nan
+                    return df
+                intraday = calculate_smoothed_band_angle(intraday, band_col="F% Upper", angle_col="Upper Angle", window=5)
+                intraday = calculate_smoothed_band_angle(intraday, band_col="F% Lower", angle_col="Lower Angle", window=5)
+
+
 #**********************************************************************************************************************#**********************************************************************************************************************
 
 
@@ -935,7 +986,82 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_obv(intraday)
                                 intraday = detect_obv_crossovers(intraday)
         
-              
+                # ──────────────────────────────────────────────────────────────────────────────
+                # 1️⃣  Core kinematics block – run once, right after F_numeric is created
+                # ──────────────────────────────────────────────────────────────────────────────
+                def compute_f_kinematics(df: pd.DataFrame, window: int = 1,
+                                         vertical_deg: float = 80.0) -> pd.DataFrame:
+                    """
+                    Adds velocity, speed, angle (rad & deg), tanθ, cotθ and vertical flags.
+                
+                    Parameters
+                    ----------
+                    window : int
+                        Bars to look back for derivative (1 = previous bar).
+                    vertical_deg : float
+                        |θ| at which we call the move 'vertical' (default 80°).
+                
+                    Columns created
+                    ---------------
+                    F_vel            signed ΔF (slope)
+                    F_speed          |ΔF|
+                    F_theta_rad      arctan(F_vel)
+                    F_theta_deg      np.degrees(F_theta_rad)
+                    F_tan            tanθ   (== F_vel again, here for completeness)
+                    F_cot            cotθ   (1 / tanθ, 0 if tanθ == 0)
+                    F_vertical       True when |θ| ≥ vertical_deg
+                    """
+                    if "F_numeric" not in df.columns:
+                        return df  # nothing to do
+                
+                    vel = df["F_numeric"].diff(window)
+                    theta_rad = np.arctan(vel)
+                    theta_deg = np.degrees(theta_rad)
+                
+                    df = df.assign(
+                        F_vel=vel,
+                        F_speed=np.abs(vel),
+                        F_theta_rad=theta_rad,
+                        F_theta_deg=theta_deg,
+                        F_tan=np.tan(theta_rad),               # == vel
+                        F_cot=np.where(vel != 0, 1 / vel, 0.0),
+                        F_vertical=np.abs(theta_deg) >= vertical_deg,
+                    )
+                    return df
+                
+                
+                # ──────────────────────────────────────────────────────────────────────────────
+                # 2️⃣  Spike detector – plug in any metric you want to watch
+                # ──────────────────────────────────────────────────────────────────────────────
+                def tag_theta_spikes(df: pd.DataFrame,
+                                     col: str = "F_theta_deg",
+                                     z: float = 2.5,
+                                     vertical_deg: float = 80.0) -> pd.DataFrame:
+                    """
+                    Flags bars where |Δ(col)| > z·σ   AND   (optionally) the angle is near-vertical.
+                
+                    Adds two Boolean columns:
+                        {col}_spike            – large change in the metric
+                        {col}_vert_spike       – large change *and* |θ| ≥ vertical_deg
+                    """
+                    if col not in df.columns:
+                        return df
+                
+                    delta = df[col].diff()
+                    thresh = z * delta.std(skipna=True)
+                
+                    spike_col = f"{col}_spike"
+                    vert_col  = f"{col}_vert_spike"
+                
+                    df[spike_col] = delta.abs() > thresh
+                    df[vert_col]  = df[spike_col] & (df["F_theta_deg"].abs() >= vertical_deg)
+                    return df
+                
+                
+                
+                
+
+
 
                 def detect_f_tenkan_cross(df):
                     """
@@ -4633,4 +4759,3 @@ if st.sidebar.button("Run Analysis"):
 
         #         st.plotly_chart(fig_ichimoku, use_container_width=True)
         # st.write("✅ Ichimoku Expander Rendered")
-
