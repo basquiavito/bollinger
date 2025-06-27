@@ -4577,8 +4577,18 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
                 #                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
-
+                df['theta_alert_emoji'] = df['theta_post_kijun_alert'].apply(lambda x: '🏇🏻' if x else '')
+                fig.add_trace(go.Scatter(
+                    x=df.index,
+                    y=df['F_numeric'],
+                    mode='text',
+                    text=df['theta_alert_emoji'],
+                    textposition='top center',
+                    textfont=dict(size=14),
+                    name='Theta > 80° Post-Kijun'
+                ))
                 
+                                
         
       
                 fig.update_layout(
