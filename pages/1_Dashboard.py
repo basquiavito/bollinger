@@ -2807,7 +2807,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-               def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
+                 def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
                     """
                     Entry Alert System (Corrected):
                     - Step 1: Detect clean cross of F% through Kijun_F with buffer threshold.
