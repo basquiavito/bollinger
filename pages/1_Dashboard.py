@@ -2494,34 +2494,26 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-      
-                def detect_tenkan_pawns(df, threshold=0.0):
+                def detect_tenkan_pawns(df):
                     """
-                    Vectorized Tenkan-Pawn detector.
-                    
-                    Parameters
-                    ----------
-                    df : DataFrame  – must contain 'F_numeric' and 'Tenkan_F'
-                    threshold : float
-                        Minimum absolute gap (in F-points) that F_numeric must clear
-                        beyond Tenkan_F to count as a cross. 0.0 = no buffer.
-                    
-                    Returns
-                    -------
-                    DataFrame  – original df with a new 'Tenkan_Pawn' column
+                    Detects any cross of F_numeric through Tenkan_F and assigns Pawn emoji.
+                    ♙ for up-cross (bullish), ♟️ for down-cross (bearish).
                     """
-                    f_prev   = df["F_numeric"].shift(1)
-                    t_prev   = df["Tenkan_F"].shift(1)
-                    f_curr   = df["F_numeric"]
-                    t_curr   = df["Tenkan_F"]
+                    f_prev = df["F_numeric"].shift(1)
+                    t_prev = df["Tenkan_F"].shift(1)
+                    f_curr = df["F_numeric"]
+                    t_curr = df["Tenkan_F"]
                 
-                    # Boolean masks for the two cross types
-                    up_cross   = (f_prev <  t_prev - threshold) & (f_curr >= t_curr + threshold)
-                    down_cross = (f_prev >  t_prev + threshold) & (f_curr <= t_curr - threshold)
+                    # Cross up = below Tenkan → above
+                    up_cross = (f_prev < t_prev) & (f_curr >= t_curr)
                 
-                    df["Tenkan_Pawn"] = ""                       # init column
-                    df.loc[up_cross,   "Tenkan_Pawn"] = "♙"
+                    # Cross down = above Tenkan → below
+                    down_cross = (f_prev > t_prev) & (f_curr <= t_curr)
+                
+                    df["Tenkan_Pawn"] = ""
+                    df.loc[up_cross, "Tenkan_Pawn"] = "♙"
                     df.loc[down_cross, "Tenkan_Pawn"] = "♟️"
+                    
                     return df
 
 
