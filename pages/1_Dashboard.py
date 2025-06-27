@@ -2495,32 +2495,33 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def detect_tenkan_pawns(df):
+               def detect_tenkan_pawns(df, threshold=0.0):
                     """
-                    Detect when F% crosses Tenkan.
-                    Assign a pawn emoji:
-                    - ♙ for upward cross (F% crosses above Tenkan)
-                    - ♟️ for downward cross (F% crosses below Tenkan)
+                    Detect Tenkan Pawn crosses:
+                    - ♙ only if F% crosses up through Tenkan AND next bar closes higher
+                    - ♟️ only if F% crosses down through Tenkan AND next bar closes lower
                     """
                     df["Tenkan_Pawn"] = ""
-
-                    for i in range(1, len(df)):
-                        prev_f = df.loc[i - 1, "F_numeric"]
-                        prev_tenkan = df.loc[i - 1, "Tenkan_F"]
-                        curr_f = df.loc[i, "F_numeric"]
-                        curr_tenkan = df.loc[i, "Tenkan_F"]
-
-                        # Upward Cross (♙)
-                        if prev_f < prev_tenkan and curr_f >= curr_tenkan:
-                            df.at[df.index[i], "Tenkan_Pawn"] = "♙"
-
-                        # Downward Cross (♟️)
-                        elif prev_f > prev_tenkan and curr_f <= curr_tenkan:
-                            df.at[df.index[i], "Tenkan_Pawn"] = "♟️"
-
+                
+                    f_prev = df["F_numeric"].shift(1)
+                    t_prev = df["Tenkan_F"].shift(1)
+                    f_curr = df["F_numeric"]
+                    t_curr = df["Tenkan_F"]
+                    f_next = df["F_numeric"].shift(-1)
+                
+                    # Upward Pawn ♙: clean cross + next bar confirmation
+                    up_cross = (f_prev < t_prev - threshold) & (f_curr >= t_curr + threshold) & (f_next > f_curr)
+                
+                    # Downward Pawn ♟️: clean cross + next bar confirmation
+                    down_cross = (f_prev > t_prev + threshold) & (f_curr <= t_curr - threshold) & (f_next < f_curr)
+                
+                    df.loc[up_cross, "Tenkan_Pawn"] = "♙"
+                    df.loc[down_cross, "Tenkan_Pawn"] = "♟️"
+                
                     return df
 
-                intraday = detect_tenkan_pawns(intraday)
+
+                intraday = detect_tenkan_pawns(intraday, threshold=5.0)
 
 
 
