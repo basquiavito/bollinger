@@ -2493,25 +2493,17 @@ if st.sidebar.button("Run Analysis"):
                 intraday =  detect_kijun_cross_horses(intraday)
 
                 def detect_tenkan_pawns(df):
-                    """
-                    Detects any cross of F_numeric through Tenkan_F and assigns Pawn emoji.
-                    ♙ for up-cross (bullish), ♟️ for down-cross (bearish).
-                    """
-                    f_prev = df["F_numeric"].shift(1)
-                    t_prev = df["Tenkan_F"].shift(1)
-                    f_curr = df["F_numeric"]
-                    t_curr = df["Tenkan_F"]
+                    # Difference series
+                    diff_prev = df["F_numeric"].shift(1) - df["Tenkan_F"].shift(1)
+                    diff_curr = df["F_numeric"] - df["Tenkan_F"]
                 
-                    # Cross up = below Tenkan → above
-                    up_cross = (f_prev < t_prev) & (f_curr >= t_curr)
-                
-                    # Cross down = above Tenkan → below
-                    down_cross = (f_prev > t_prev) & (f_curr <= t_curr)
+                    # Cross = sign change between previous and current
+                    up_cross = (diff_prev < 0) & (diff_curr >= 0)
+                    down_cross = (diff_prev > 0) & (diff_curr <= 0)
                 
                     df["Tenkan_Pawn"] = ""
                     df.loc[up_cross, "Tenkan_Pawn"] = "♙"
                     df.loc[down_cross, "Tenkan_Pawn"] = "♟️"
-                    
                     return df
 
                 
