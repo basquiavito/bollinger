@@ -552,6 +552,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                def detect_cross(series, reference):
+                    """
+                    Returns a Series with:
+                    - "up" if the series crosses above the reference (i.e. previous value below and current value at/above)
+                    - "down" if it crosses below (previous value above and current value at/below)
+                    - "" otherwise.
+                    """
+                    cross = []
+                    for i in range(len(series)):
+                        if i == 0:
+                            cross.append("")
+                        else:
+                            if series.iloc[i-1] < reference.iloc[i-1] and series.iloc[i] >= reference.iloc[i]:
+                                cross.append("up")
+                            elif series.iloc[i-1] > reference.iloc[i-1] and series.iloc[i] <= reference.iloc[i]:
+                                cross.append("down")
+                            else:
+                                cross.append("")
+                    return pd.Series(cross, index=series.index)
+
+                # Detect crosses of F_numeric over its middle band:
+                intraday["Cross_Mid"] = detect_cross(intraday["F_numeric"], intraday["F% MA"])
+
+                # Detect crosses of F_numeric over the Kijun_F line:
+                intraday["Cross_Kijun"] = detect_cross(intraday["F_numeric"], intraday["Kijun_F"])
+
 
 
  
