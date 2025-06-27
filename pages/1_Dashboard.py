@@ -4411,54 +4411,54 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(down_high_trace, row=1, col=1)
 
 
-                # astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
-                # scatter_astronaut = go.Scatter(
-                #     x=astronaut_points["Time"],
-                #     y=astronaut_points["F_numeric"] + 38,  # Higher offset
-                #     mode="text",
-                #     text=astronaut_points["Astronaut_Emoji"],
-                #     textposition="top right",
-                #     name="New Highs 👨🏽‍🚀",
-                #     textfont=dict(size=21),
-                #  )
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 244,  # Higher offset
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],
+                    textposition="top right",
+                    name="New Highs 👨🏽‍🚀",
+                    textfont=dict(size=21),
+                 )
 
-                # fig.add_trace(scatter_astronaut, row=1, col=1)
+                fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
 
-                #     # Filter where the Astronaut or Moon emoji exist
-                # astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
+                    # Filter where the Astronaut or Moon emoji exist
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
 
-                # scatter_astronaut = go.Scatter(
-                #     x=astronaut_points["Time"],
-                #     y=astronaut_points["F_numeric"] + 48,  # Offset so it floats higher
-                #     mode="text",
-                #     text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-                #     textposition="top right",
-                #     name="New Highs 🌒",
-                #     textfont=dict(size=21),
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 244,  # Offset so it floats higher
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
+                    textposition="top right",
+                    name="New Highs 🌒",
+                    textfont=dict(size=21),
                    
-                # )
+                )
 
-                # fig.add_trace(scatter_astronaut, row=1, col=1)
+                fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
-                # # Filter where Swimmer or Squid exist
-                # swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
+                # Filter where Swimmer or Squid exist
+                swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
 
-                # scatter_swimmer = go.Scatter(
-                #     x=swimmer_points["Time"],
-                #     y=swimmer_points["F_numeric"] - 48,  # Offset downward so it floats below price
-                #     mode="text",
-                #     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
-                #     textposition="bottom left",
-                #     name="New Lows 🏊🏽‍♂️🦑",
-                #     textfont=dict(size=21),
-                #     showlegend=True
-                # )
+                scatter_swimmer = go.Scatter(
+                    x=swimmer_points["Time"],
+                    y=swimmer_points["F_numeric"] - 144,  # Offset downward so it floats below price
+                    mode="text",
+                    text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
+                    textposition="bottom left",
+                    name="New Lows 🏊🏽‍♂️🦑",
+                    textfont=dict(size=21),
+                    showlegend=True
+                )
 
-                # fig.add_trace(scatter_swimmer, row=1, col=1)
+                fig.add_trace(scatter_swimmer, row=1, col=1)
 # # #*******************************************************************************************************************************************************************************
 
                 # mask_green_king = intraday["King_Signal"] == "👑"
