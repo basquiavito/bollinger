@@ -2800,7 +2800,7 @@ if st.sidebar.button("Run Analysis"):
                                 intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
                                 intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
             
-                return intraday
+                    return intraday
 
 
                 intraday = entryAlert(intraday, threshold=0.1)
