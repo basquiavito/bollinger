@@ -2495,9 +2495,9 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-               def detect_tenkan_pawns(df, threshold=0.0):
+                def detect_tenkan_pawns(df, threshold=5.0):
                     """
-                    Detect Tenkan Pawn crosses:
+                   Detect Tenkan Pawn crosses:
                     - ♙ only if F% crosses up through Tenkan AND next bar closes higher
                     - ♟️ only if F% crosses down through Tenkan AND next bar closes lower
                     """
