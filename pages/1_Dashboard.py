@@ -2851,6 +2851,39 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_theta(intraday, column='F_numeric', window=1)
 
 
+ 
+                
+                def calculate_theta_with_alerts(df, column='F_numeric', window=1):
+                    """
+                    Calculate theta angle and flag post-Kijun high-angle bars (>80°).
+                    
+                    Adds:
+                    - 'theta_deg': tangent angle of Mike (F_numeric)
+                    - 'post_kijun': boolean, True if F_numeric > Kijun_F and hasn't gone back below
+                    - 'theta_post_kijun_alert': True if post-Kijun and theta > 80°
+                    """
+                    # Theta calculation
+                    slope = df[column].diff(window)
+                    df['theta_deg'] = np.degrees(np.arctan(slope))
+                    
+                    # Track post-Kijun cross
+                    df['post_kijun'] = False
+                    crossed = False
+                
+                    for i in range(1, len(df)):
+                        if not crossed and df.loc[i, column] > df.loc[i, 'Kijun_F']:
+                            crossed = True
+                        elif crossed and df.loc[i, column] < df.loc[i, 'Kijun_F']:
+                            crossed = False  # reset if back below Kijun
+                
+                        df.loc[i, 'post_kijun'] = crossed
+                
+                    # Final alert column
+                    df['theta_post_kijun_alert'] = (df['post_kijun']) & (df['theta_deg'] > 80)
+                
+                    return df
+                intraday = calculate_theta_with_alerts(intraday, column='F_numeric', window=1)
+
 
 
                 # def get_kijun_streak_log_with_dollar(df):
@@ -3095,7 +3128,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","theta_deg",'theta_mean_3',"BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
+                                    "Time","RVOL_5","RVOL_Alert","theta_deg",'theta_mean_3','theta_post_kijun_alert',"BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
