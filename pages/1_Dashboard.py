@@ -2846,59 +2846,59 @@ if st.sidebar.button("Run Analysis"):
                 intraday['theta_alert_emoji'] = intraday['theta_post_kijun_alert'].apply(lambda x: '🏇🏻' if x else '')
 
 
-                # def get_kijun_streak_log_with_dollar(df):
-                #     """
-                #     Returns list of Kijun streaks with their dollar change.
-                #     Format: 'K+5 : $2.45', 'K-3 : $-1.20'
-                #     """
-                #     if "F_numeric" not in df.columns or "Kijun_F" not in df.columns or "Close" not in df.columns:
-                #         return []
+                def get_kijun_streak_log_with_dollar(df):
+                    """
+                    Returns list of Kijun streaks with their dollar change.
+                    Format: 'K+5 : $2.45', 'K-3 : $-1.20'
+                    """
+                    if "F_numeric" not in df.columns or "Kijun_F" not in df.columns or "Close" not in df.columns:
+                        return []
 
-                #     streaks = []
-                #     current_streak = 0
-                #     current_state = None
-                #     start_price = None
+                    streaks = []
+                    current_streak = 0
+                    current_state = None
+                    start_price = None
 
-                #     for i in range(len(df)):
-                #         f_val = df["F_numeric"].iloc[i]
-                #         k_val = df["Kijun_F"].iloc[i]
-                #         close_price = df["Close"].iloc[i]
+                    for i in range(len(df)):
+                        f_val = df["F_numeric"].iloc[i]
+                        k_val = df["Kijun_F"].iloc[i]
+                        close_price = df["Close"].iloc[i]
 
-                #         if pd.isna(f_val) or pd.isna(k_val) or pd.isna(close_price):
-                #             continue
+                        if pd.isna(f_val) or pd.isna(k_val) or pd.isna(close_price):
+                            continue
 
-                #         is_above = f_val > k_val
+                        is_above = f_val > k_val
 
-                #         if current_state is None:
-                #             current_state = is_above
-                #             current_streak = 1
-                #             start_price = close_price
-                #         elif is_above == current_state:
-                #             current_streak += 1
-                #         else:
-                #             end_price = df["Close"].iloc[i - 1]
-                #             dollar_return = end_price - start_price
-                #             label = f"K+{current_streak}" if current_state else f"K-{current_streak}"
-                #             streaks.append(f"{label} : ${dollar_return:.2f}")
-                #             current_state = is_above
-                #             current_streak = 1
-                #             start_price = close_price
+                        if current_state is None:
+                            current_state = is_above
+                            current_streak = 1
+                            start_price = close_price
+                        elif is_above == current_state:
+                            current_streak += 1
+                        else:
+                            end_price = df["Close"].iloc[i - 1]
+                            dollar_return = end_price - start_price
+                            label = f"K+{current_streak}" if current_state else f"K-{current_streak}"
+                            streaks.append(f"{label} : ${dollar_return:.2f}")
+                            current_state = is_above
+                            current_streak = 1
+                            start_price = close_price
 
-                #     if current_streak > 0 and start_price is not None:
-                #         end_price = df["Close"].iloc[-1]
-                #         dollar_return = end_price - start_price
-                #         label = f"K+{current_streak}" if current_state else f"K-{current_streak}"
-                #         streaks.append(f"{label} : ${dollar_return:.2f}")
+                    if current_streak > 0 and start_price is not None:
+                        end_price = df["Close"].iloc[-1]
+                        dollar_return = end_price - start_price
+                        label = f"K+{current_streak}" if current_state else f"K-{current_streak}"
+                        streaks.append(f"{label} : ${dollar_return:.2f}")
 
-                #     return streaks
+                    return streaks
 
 
 
-                # log_with_returns = get_kijun_streak_log_with_dollar(intraday)
+                log_with_returns = get_kijun_streak_log_with_dollar(intraday)
 
-                # st.markdown("### 📘 Full Kijun Streak Log with $ Returns:")
-                # for line in log_with_returns:
-                #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
+                st.markdown("### 📘 Full Kijun Streak Log with $ Returns:")
+                for line in log_with_returns:
+                    st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
 
 
                 # 1️⃣   compute θ on a lightly-smoothed F%
