@@ -988,24 +988,24 @@ if st.sidebar.button("Run Analysis"):
 
                 def calculate_f_theta(df, scale_factor=1):
                     """
-                    Computes the angle in degrees of F% movement (Theta) to detect sharp slopes.
-                    - Uses arctangent of F_numeric.diff() for slope angle.
-                    - Converts to degrees (not tan).
-                    - Adds scaled Theta and flags for verticality.
+                    Computes the directional angle (Theta) of F% movement, in degrees.
+                    - Returns angle between -90° and +90°.
+                    - Flags 'vertical' spikes if angle is steep enough.
                 
                     Adds:
-                    - "F% Theta": angle in degrees, scaled
-                    - "F% Vertical": True if |Theta| ≥ 80° (very steep move)
+                    - "F% Theta": angle in degrees (with sign)
+                    - "F% Vertical": True if |Theta| ≥ 80°
                     """
                     if "F_numeric" in df.columns:
                         delta = df["F_numeric"].diff()
-                        theta_deg = np.degrees(np.arctan(delta)) * scale_factor
+                        theta_deg = np.degrees(np.arctan(delta)) * scale_factor  # scale_factor=1 keeps it real
                         df["F% Theta"] = theta_deg
-                        df["F% Vertical"] = theta_deg.abs() >= 80  # flag vertical-like spikes
+                        df["F% Vertical"] = theta_deg.abs() >= 80
                     else:
                         df["F% Theta"] = 0
                         df["F% Vertical"] = False
                     return df
+
 
                 intraday = calculate_f_theta(intraday)
 
