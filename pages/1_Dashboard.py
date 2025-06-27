@@ -2492,32 +2492,26 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday =  detect_kijun_cross_horses(intraday)
  
-
-                def detect_tenkan_pawns(df, threshold=0):
+          
+                def detect_tenkan_pawns(df):
                     """
-                    Detects any cross of F_numeric through F% Tenkan.
-                    ♙ for up-cross (bullish), ♟️ for down-cross (bearish).
-                    
-                    Parameters:
-                        df : DataFrame – must contain 'F_numeric' and 'F% Tenkan'
-                        threshold : float – optional buffer to filter tiny fakeouts
-                
-                    Returns:
-                        DataFrame with new column 'Tenkan_Pawn'
+                    Mark a Pawn Down (♟️) or Pawn Up (♙) at any instance of Tenkan cross.
+                    No buffer logic, no threshold—just clean cross detection.
                     """
                     f_prev = df["F_numeric"].shift(1)
-                    t_prev = df["F% Tenkan"].shift(1)
+                    t_prev = df["Tenkan_F"].shift(1)
                     f_curr = df["F_numeric"]
-                    t_curr = df["F% Tenkan"]
+                    t_curr = df["Tenkan_F"]
                 
-                    up_cross = (f_prev < t_prev - threshold) & (f_curr >= t_curr + threshold)
-                    down_cross = (f_prev > t_prev + threshold) & (f_curr <= t_curr - threshold)
+                    cross_up   = (f_prev < t_prev) & (f_curr >= t_curr)
+                    cross_down = (f_prev > t_prev) & (f_curr <= t_curr)
                 
                     df["Tenkan_Pawn"] = ""
-                    df.loc[up_cross, "Tenkan_Pawn"] = "♙"
-                    df.loc[down_cross, "Tenkan_Pawn"] = "♟️"
+                    df.loc[cross_up,   "Tenkan_Pawn"] = "♙"
+                    df.loc[cross_down, "Tenkan_Pawn"] = "♟️"
                 
                     return df
+
 
                 intraday = detect_tenkan_pawns(intraday)
 
