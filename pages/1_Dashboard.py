@@ -4330,7 +4330,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
                     textposition="top center",
-                    textfont=dict(size=21, color="green"),            # green for up
+                    textfont=dict(size=34, color="green"),            # green for up
                     name="Pawn Up (Tenkan Cross)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♙ Upward Tenkan Cross<extra></extra>"
                 )
@@ -4342,7 +4342,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
                     textposition="bottom center",
-                    textfont=dict(size=21, color="red"),             # red for down
+                    textfont=dict(size=34, color="red"),             # red for down
                     name="Pawn Down (Tenkan Cross)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♟️ Downward Tenkan Cross<extra></extra>"
                 )
@@ -4514,38 +4514,38 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=1, col=1)
                 
-                                        # 💥 Plot range extension markers on F% chart
-                     # 💥 Plot range extension markers on F% chart
-                re_points = []
+                #                         # 💥 Plot range extension markers on F% chart
+                #      # 💥 Plot range extension markers on F% chart
+                # re_points = []
                 
-                # Make sure F_Bin is cast to int for comparison
-                intraday['F_Bin_Int'] = intraday['F_Bin'].astype(float).astype('Int64')
+                # # Make sure F_Bin is cast to int for comparison
+                # intraday['F_Bin_Int'] = intraday['F_Bin'].astype(float).astype('Int64')
                 
-                for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
-                    f_level = row["F% Level"]
+                # for _, row in profile_df[profile_df["💥"] == "💥"].iterrows():
+                #     f_level = row["F% Level"]
                     
-                    # Match intraday rows with same F% bin level (int)
-                    matching = intraday[
-                        (intraday['F_Bin_Int'] == f_level) &
-                        (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
-                    ]
-                    if not matching.empty:
-                        re_points.append({
-                            "x": matching.iloc[0]["Time"],
-                            "y": f_level
-                        })
+                #     # Match intraday rows with same F% bin level (int)
+                #     matching = intraday[
+                #         (intraday['F_Bin_Int'] == f_level) &
+                #         (~intraday['Letter'].isin(['A', 'B', 'C', 'D']))
+                #     ]
+                #     if not matching.empty:
+                #         re_points.append({
+                #             "x": matching.iloc[0]["Time"],
+                #             "y": f_level
+                #         })
                 
-                if re_points:
-                    fig.add_trace(go.Scatter(
-                        x=[p["x"] for p in re_points],
-                        y=[p["y"] + 30 for p in re_points],  # Optional vertical offset
-                        mode="text",
-                        text=["💥"] * len(re_points),
-                        textposition="top center",
-                        textfont=dict(size=24),
-                        showlegend=False,
-                        name="💥 Range Extension"
-                    ))
+                # if re_points:
+                #     fig.add_trace(go.Scatter(
+                #         x=[p["x"] for p in re_points],
+                #         y=[p["y"] + 30 for p in re_points],  # Optional vertical offset
+                #         mode="text",
+                #         text=["💥"] * len(re_points),
+                #         textposition="top center",
+                #         textfont=dict(size=24),
+                #         showlegend=False,
+                #         name="💥 Range Extension"
+                #     ))
                 
                                 
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=1.2)))
