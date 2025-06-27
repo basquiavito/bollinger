@@ -2785,48 +2785,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def entryAlertType2(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookforward=9):
-                    """
-                    Entry Type II (✅) - Delayed Volume Confirmation:
-                    - Step 1: Detect Kijun crosses without immediate RVOL confirmation.
-                    - Step 2: Look FORWARD up to rvol_lookforward bars to find RVOL > threshold.
-                    - Step 3: If found, mark the first bar with volume as the alert bar.
-                    """
-                    intraday["Entry_Alert_Short_Delayed"] = False
-                    intraday["Entry_Alert_Long_Delayed"] = False
-
-                    for i in range(1, len(intraday) - 1):
-                        prev_f = intraday.iloc[i-1]["F_numeric"]
-                        prev_k = intraday.iloc[i-1]["Kijun_F"]
-                        curr_f = intraday.iloc[i]["F_numeric"]
-                        curr_k = intraday.iloc[i]["Kijun_F"]
-                        curr_rvol = intraday.iloc[i]["RVOL_5"]
-
-                        # --- Only proceed if no strong RVOL at the moment of cross
-                        if curr_rvol > rvol_threshold:
-                            continue
-
-                        # --- LONG CROSS Candidate
-                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
-                            # Look forward for volume
-                            forward_window = intraday.iloc[i+1 : i+1+rvol_lookforward]
-                            rvol_found = forward_window[forward_window["RVOL_5"] > rvol_threshold]
-                            if not rvol_found.empty:
-                                first_idx = rvol_found.index[0]
-                                intraday.at[first_idx, "Entry_Alert_Long_Delayed"] = True
-
-                        # --- SHORT CROSS Candidate
-                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
-                            forward_window = intraday.iloc[i+1 : i+1+rvol_lookforward]
-                            rvol_found = forward_window[forward_window["RVOL_5"] > rvol_threshold]
-                            if not rvol_found.empty:
-                                first_idx = rvol_found.index[0]
-                                intraday.at[first_idx, "Entry_Alert_Short_Delayed"] = True
-
-                    return intraday
-
-                intraday = entryAlertType2(intraday, threshold=0.1)
-
+                
 
                 
                 
