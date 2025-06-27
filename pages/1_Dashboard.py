@@ -82,6 +82,17 @@ def detect_40ish_reversal(intraday_df):
 
     return intraday_df
 
+# Momentum helper (for 2 and 7 periods)
+def add_momentum(df, price_col="Close"):
+    """
+    Adds Momentum_2 and Momentum_7 columns:
+      Momentum_2 = Close[t] - Close[t-2]
+      Momentum_7 = Close[t] - Close[t-7]
+    """
+    df["Momentum_2"] = df[price_col].diff(periods=7)
+    df["Momentum_7"] = df[price_col].diff(periods=14)
+    return df
+
 
 # ======================================
 # Main Button to Run
@@ -509,11 +520,36 @@ if st.sidebar.button("Run Analysis"):
 
  
             
-#**********************************************************************************************************************#**********************************************************************************************************************
 
 
               
-               def calculate_smoothed_band_angle(df, band_col="F% Upper", angle_col="Upper Angle", window=5):
+                # def calculate_bollinger_band_angles(df, band_col="F% Upper", angle_col="Upper Angle", window=1):
+                #     """
+                #     Calculates the angle (in degrees) of the specified Bollinger Band using tan(θ) = Δy / Δx,
+                #     where Δx = 1 bar (time), so angle = atan(Δy). This gives a sense of slope/steepness.
+                    
+                #     Parameters:
+                #         df: DataFrame with Bollinger Band columns.
+                #         band_col: Column name to calculate angle from.
+                #         angle_col: Output column to store angle in degrees.
+                #         window: How many bars back to compare against (1 = adjacent bar).
+                #     """
+                #     if band_col in df.columns:
+                #         delta_y = df[band_col].diff(periods=window)
+                #         angle_rad = np.arctan(delta_y)  # since delta_x = 1
+                #         df[angle_col] = np.degrees(angle_rad)
+                #     else:
+                #         df[angle_col] = np.nan
+                
+                #     return df
+                #     # Calculate angles for both bands
+                # intraday = calculate_bollinger_band_angles(intraday, band_col="F% Upper", angle_col="Upper Angle")
+                # intraday = calculate_bollinger_band_angles(intraday, band_col="F% Lower", angle_col="Lower Angle")
+                            
+
+
+
+                def calculate_smoothed_band_angle(df, band_col="F% Upper", angle_col="Upper Angle", window=5):
                     """
                     Calculates the angle (in degrees) of a Bollinger Band over a smoothed n-bar window.
                     This reduces noise by measuring trend over time instead of bar-to-bar jitter.
@@ -533,6 +569,10 @@ if st.sidebar.button("Run Analysis"):
                     return df
                 intraday = calculate_smoothed_band_angle(intraday, band_col="F% Upper", angle_col="Upper Angle", window=5)
                 intraday = calculate_smoothed_band_angle(intraday, band_col="F% Lower", angle_col="Lower Angle", window=5)
+
+
+#**********************************************************************************************************************#**********************************************************************************************************************
+
 
 
 
@@ -572,6 +612,9 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+
+
+
                 def detect_cross(series, reference):
                     """
                     Returns a Series with:
@@ -597,10 +640,6 @@ if st.sidebar.button("Run Analysis"):
 
                 # Detect crosses of F_numeric over the Kijun_F line:
                 intraday["Cross_Kijun"] = detect_cross(intraday["F_numeric"], intraday["Kijun_F"])
-
-
-
- 
 
 
                 def map_alert_mid(cross):
@@ -640,6 +679,9 @@ if st.sidebar.button("Run Analysis"):
                     rsi = 100 - (100 / (1 + rs))
 
                     return rsi
+
+
+
 
 
 
