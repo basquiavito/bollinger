@@ -986,7 +986,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_obv(intraday)
                 intraday = detect_obv_crossovers(intraday)
 
-                 def calculate_f_theta(df, scale_factor=1):
+                def calculate_f_theta(df, scale_factor=1):
                     """
                     Computes the angle in degrees of F% movement (Theta) to detect sharp slopes.
                     - Uses arctangent of F_numeric.diff() for slope angle.
