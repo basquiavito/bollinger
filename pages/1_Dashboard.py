@@ -2884,6 +2884,7 @@ if st.sidebar.button("Run Analysis"):
                     return df
                 intraday = calculate_theta_with_alerts(intraday, column='F_numeric', window=1)
 
+                intraday['theta_alert_emoji'] = intraday['theta_post_kijun_alert'].apply(lambda x: '🏇🏻' if x else '')
 
 
                 # def get_kijun_streak_log_with_dollar(df):
@@ -4577,7 +4578,6 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
                 #                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
-                intraday['theta_alert_emoji'] = intraday['theta_post_kijun_alert'].apply(lambda x: '🏇🏻' if x else '')
                 fig.add_trace(go.Scatter(
                     x=intraday.index,
                     y=intraday['F_numeric'],
