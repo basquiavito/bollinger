@@ -2739,73 +2739,118 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it
                 intraday = detect_fortress_bee_clusters(intraday)
                
-                def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
-                    """
-                    Enhanced Entry Alert System:
-                    - ✅: Structure + volume confirmation at entry bar.
-                    - ☑️: Structure confirmed, but volume came later.
-                    """
+                # def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
+                #     """
+                #     Enhanced Entry Alert System:
+                #     - ✅: Structure + volume confirmation at entry bar.
+                #     - ☑️: Structure confirmed, but volume came later.
+                #     """
                 
-                    # Initialize columns
-                    intraday["Entry_Alert_Long"] = False
+                #     # Initialize columns
+                #     intraday["Entry_Alert_Long"] = False
+                #     intraday["Entry_Alert_Short"] = False
+                #     intraday["Entry_Emoji_Long"] = ""
+                #     intraday["Entry_Emoji_Short"] = ""
+                
+                #     pending_long = []   # store indices awaiting volume
+                #     pending_short = []
+                
+                #     for i in range(1, len(intraday) - 1):
+                #         prev_f = intraday.iloc[i-1]["F_numeric"]
+                #         prev_k = intraday.iloc[i-1]["Kijun_F"]
+                #         curr_f = intraday.iloc[i]["F_numeric"]
+                #         curr_k = intraday.iloc[i]["Kijun_F"]
+                #         next_f = intraday.iloc[i+1]["F_numeric"]
+                
+                #         # ➡️ LONG CROSS
+                #         if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
+                #             if next_f >= curr_f:
+                #                 # Check for recent RVOL
+                #                 start_idx = max(0, i - rvol_lookback + 1)
+                #                 rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                #                 if (rvol_window > rvol_threshold).any():
+                #                     intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+                #                     intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
+                #                 else:
+                #                     pending_long.append(i)  # store for later ☑️ tagging
+                
+                #         # ⬅️ SHORT CROSS
+                #         if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
+                #             if next_f <= curr_f:
+                #                 start_idx = max(0, i - rvol_lookback + 1)
+                #                 rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                #                 if (rvol_window > rvol_threshold).any():
+                #                     intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+                #                     intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
+                #                 else:
+                #                     pending_short.append(i)
+                
+                #     # 🔁 Second pass: look for volume spikes to validate pending entries
+                #     for i in range(len(intraday)):
+                #         rvol = intraday.iloc[i]["RVOL_5"]
+                
+                #         if rvol > rvol_threshold:
+                #             if pending_long:
+                #                 idx = pending_long.pop(0)
+                #                 intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
+                #                 intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
+                
+                #             if pending_short:
+                #                 idx = pending_short.pop(0)
+                #                 intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
+                #                 intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
+            
+                #     return intraday
+
+
+                # intraday = entryAlert(intraday, threshold=0.1)
+
+
+
+               def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
+                    """
+                    Entry Alert System (Corrected):
+                    - Step 1: Detect clean cross of F% through Kijun_F with buffer threshold.
+                    - Step 2: Confirm with next bar continuation.
+                    - Step 3: Require at least one RVOL_5 > threshold in the last rvol_lookback bars.
+                    """
+
                     intraday["Entry_Alert_Short"] = False
-                    intraday["Entry_Emoji_Long"] = ""
-                    intraday["Entry_Emoji_Short"] = ""
-                
-                    pending_long = []   # store indices awaiting volume
-                    pending_short = []
-                
+                    intraday["Entry_Alert_Long"]  = False
+
                     for i in range(1, len(intraday) - 1):
                         prev_f = intraday.iloc[i-1]["F_numeric"]
                         prev_k = intraday.iloc[i-1]["Kijun_F"]
                         curr_f = intraday.iloc[i]["F_numeric"]
                         curr_k = intraday.iloc[i]["Kijun_F"]
                         next_f = intraday.iloc[i+1]["F_numeric"]
-                
+
                         # ➡️ LONG CROSS
                         if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
                             if next_f >= curr_f:
-                                # Check for recent RVOL
-                                start_idx = max(0, i - rvol_lookback + 1)
-                                rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-                                if (rvol_window > rvol_threshold).any():
-                                    intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
-                                    intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
-                                else:
-                                    pending_long.append(i)  # store for later ☑️ tagging
-                
+                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+
                         # ⬅️ SHORT CROSS
                         if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
                             if next_f <= curr_f:
-                                start_idx = max(0, i - rvol_lookback + 1)
-                                rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-                                if (rvol_window > rvol_threshold).any():
-                                    intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
-                                    intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
-                                else:
-                                    pending_short.append(i)
-                
-                    # 🔁 Second pass: look for volume spikes to validate pending entries
-                    for i in range(len(intraday)):
-                        rvol = intraday.iloc[i]["RVOL_5"]
-                
-                        if rvol > rvol_threshold:
-                            if pending_long:
-                                idx = pending_long.pop(0)
-                                intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
-                                intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
-                
-                            if pending_short:
-                                idx = pending_short.pop(0)
-                                intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
-                                intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
-            
+                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+
+                    # 🔍 Second pass: check if at least one high RVOL_5
+                    for i in range(1, len(intraday) - 1):
+                        if intraday.iloc[i]["Entry_Alert_Long"] or intraday.iloc[i]["Entry_Alert_Short"]:
+                            start_idx = max(0, i - rvol_lookback + 1)
+                            rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+
+                            if (rvol_window > rvol_threshold).sum() == 0:
+                                # 🛑 No bars with RVOL > threshold → kill alert
+                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = False
+                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = False
+
                     return intraday
 
 
+
                 intraday = entryAlert(intraday, threshold=0.1)
-
-
                 
 
                 
