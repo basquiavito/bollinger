@@ -2739,7 +2739,50 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it
                 intraday = detect_fortress_bee_clusters(intraday)
                
+                def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
+                    """
+                    Entry Alert System (Corrected):
+                    - Step 1: Detect clean cross of F% through Kijun_F with buffer threshold.
+                    - Step 2: Confirm with next bar continuation.
+                    - Step 3: Require at least one RVOL_5 > threshold in the last rvol_lookback bars.
+                    """
 
+                    intraday["Entry_Alert_Short"] = False
+                    intraday["Entry_Alert_Long"]  = False
+
+                    for i in range(1, len(intraday) - 1):
+                        prev_f = intraday.iloc[i-1]["F_numeric"]
+                        prev_k = intraday.iloc[i-1]["Kijun_F"]
+                        curr_f = intraday.iloc[i]["F_numeric"]
+                        curr_k = intraday.iloc[i]["Kijun_F"]
+                        next_f = intraday.iloc[i+1]["F_numeric"]
+
+                        # ➡️ LONG CROSS
+                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
+                            if next_f >= curr_f:
+                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+
+                        # ⬅️ SHORT CROSS
+                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
+                            if next_f <= curr_f:
+                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+
+                    # 🔍 Second pass: check if at least one high RVOL_5
+                    for i in range(1, len(intraday) - 1):
+                        if intraday.iloc[i]["Entry_Alert_Long"] or intraday.iloc[i]["Entry_Alert_Short"]:
+                            start_idx = max(0, i - rvol_lookback + 1)
+                            rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+
+                            if (rvol_window > rvol_threshold).sum() == 0:
+                                # 🛑 No bars with RVOL > threshold → kill alert
+                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = False
+                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = False
+
+                    return intraday
+
+
+
+                intraday = entryAlert(intraday, threshold=0.1)
 
 
                 
