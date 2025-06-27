@@ -4381,7 +4381,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
                     textposition="bottom left",
-                    textfont=dict(size=13, color="lime"),
+                    textfont=dict(size=33, color="lime"),
                     name="Short Entry (✅)"
                 )
                 fig.add_trace(short_entry_trace, row=1, col=1)
@@ -4397,7 +4397,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
                     textposition="top left",
-                    textfont=dict(size=13, color="lime"),
+                    textfont=dict(size=33, color="lime"),
                     name="Long Entry (✅)"
                 )
                 fig.add_trace(long_entry_trace, row=1, col=1)
