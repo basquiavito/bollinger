@@ -4580,24 +4580,7 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
                 #                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
-             # Theta 🏇🏻 detection (already calculated earlier)
-                mask_theta_ignite = intraday["theta_post_kijun_alert"] == True
-                
-                # Theta trace (use same style as Horse)
-                scatter_theta_ignite = go.Scatter(
-                    x=intraday.loc[mask_theta_ignite, "Time"],
-                    y=intraday.loc[mask_theta_ignite, "F_numeric"] + 24,  # Offset above F%
-                    mode="text",
-                    text=["🏇🏻"] * mask_theta_ignite.sum(),
-                    textposition="top center",
-                    textfont=dict(size=34, color="white"),
-                    name="Theta > 80° After Kijun Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>🏇🏻 Theta Post-Kijun<extra></extra>"
-                )
-                
-                fig.add_trace(scatter_theta_ignite, row=1, col=1)
-                
-                        
+       
                       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
