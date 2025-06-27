@@ -3382,11 +3382,11 @@ if st.sidebar.button("Run Analysis"):
                 #         f"🐂 Bottom anchor {intraday.loc[bot_idx,'Time']} → pull-back at {intraday.loc[pull_bot_idx,'Time']}"
                 #     )
                 
-                    st.dataframe(
-                        intraday[
-                            ["Time", price_col, "Volume", "TB-F Top", "TB-F Bottom", "MIDAS_TopStart", "MIDAS_BotStart"]
-                        ].dropna(subset=["TB-F Top", "TB-F Bottom"], how="all")
-                    )
+                    # st.dataframe(
+                    #     intraday[
+                    #         ["Time", price_col, "Volume", "TB-F Top", "TB-F Bottom", "MIDAS_TopStart", "MIDAS_BotStart"]
+                    #     ].dropna(subset=["TB-F Top", "TB-F Bottom"], how="all")
+                    # )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
