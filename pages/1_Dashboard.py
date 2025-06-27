@@ -935,10 +935,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_obv(intraday)
                                 intraday = detect_obv_crossovers(intraday)
         
-                # ──────────────────────────────────────────────────────────────────────────────
-                # 1️⃣  Core kinematics block – run once, right after F_numeric is created
-                # ──────────────────────────────────────────────────────────────────────────────
-               
+              
 
                 def detect_f_tenkan_cross(df):
                     """
