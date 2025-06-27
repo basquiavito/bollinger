@@ -1007,7 +1007,7 @@ if st.sidebar.button("Run Analysis"):
                         df["F% Vertical"] = False
                     return df
 
-                intraday = detect_obv_crossovers(intraday)
+                intraday = calculate_f_theta(intraday)
 
                 def detect_theta_spikes(df):
                     """
