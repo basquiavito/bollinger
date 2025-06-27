@@ -4561,11 +4561,11 @@ if st.sidebar.button("Run Analysis"):
                 if re_points:
                     fig.add_trace(go.Scatter(
                         x=[p["x"] for p in re_points],
-                        y=[p["y"] + 20 for p in re_points],  # Optional vertical offset
+                        y=[p["y"] + 30 for p in re_points],  # Optional vertical offset
                         mode="text",
                         text=["💥"] * len(re_points),
                         textposition="top center",
-                        textfont=dict(size=14),
+                        textfont=dict(size=24),
                         showlegend=False,
                         name="💥 Range Extension"
                     ))
