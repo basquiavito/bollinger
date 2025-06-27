@@ -2525,6 +2525,7 @@ if st.sidebar.button("Run Analysis"):
                     return df
 
 
+                intraday =  detect_tenkan_pawns(intraday)
 
 
 
