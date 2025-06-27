@@ -2493,7 +2493,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday =  detect_kijun_cross_horses(intraday)
  
 
-                def detect_f_tenkan_pawns(df, threshold=0):
+                def detect_tenkan_pawns(df, threshold=0):
                     """
                     Detects any cross of F_numeric through F% Tenkan.
                     ♙ for up-cross (bullish), ♟️ for down-cross (bearish).
