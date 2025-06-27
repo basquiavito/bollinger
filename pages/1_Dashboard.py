@@ -2491,26 +2491,40 @@ if st.sidebar.button("Run Analysis"):
 
 
                 intraday =  detect_kijun_cross_horses(intraday)
-
                 def detect_tenkan_pawns(df):
                     """
-                    Mark a Pawn Down (♟️) or Pawn Up (♙) at any instance of Tenkan cross.
-                    No buffer logic, no threshold—just clean cross detection.
+                    Enhanced version to detect Tenkan crosses more reliably.
+                    Marks Pawn Down (♟️) or Pawn Up (♙) at Tenkan crosses.
+                    Includes buffer zone handling and close price confirmation.
                     """
+                    # Calculate previous values
                     f_prev = df["F_numeric"].shift(1)
                     t_prev = df["Tenkan_F"].shift(1)
                     f_curr = df["F_numeric"]
                     t_curr = df["Tenkan_F"]
-                
-                    cross_up   = (f_prev < t_prev) & (f_curr >= t_curr)
-                    cross_down = (f_prev > t_prev) & (f_curr <= t_curr)
-                
+                    
+                    # Calculate price closes for confirmation
+                    close_prev = df["Close"].shift(1)
+                    close_curr = df["Close"]
+                    
+                    # Detect crosses with small buffer zone (0.1% of price to handle floating point imprecision)
+                    buffer = df["Close"].mean() * 0.001
+                    
+                    # Bullish cross: F was below Tenkan, now at or above (with close confirmation)
+                    cross_up = (f_prev < t_prev - buffer) & (f_curr > t_curr + buffer) & (close_curr > t_curr)
+                    
+                    # Bearish cross: F was above Tenkan, now at or below (with close confirmation)
+                    cross_down = (f_prev > t_prev + buffer) & (f_curr < t_curr - buffer) & (close_curr < t_curr)
+                    
+                    # Initialize column
                     df["Tenkan_Pawn"] = ""
-                    df.loc[cross_up,   "Tenkan_Pawn"] = "♙"
+                    
+                    # Mark crosses
+                    df.loc[cross_up, "Tenkan_Pawn"] = "♙"
                     df.loc[cross_down, "Tenkan_Pawn"] = "♟️"
-                
+                    
                     return df
-
+                
 
                 
                 # apply
