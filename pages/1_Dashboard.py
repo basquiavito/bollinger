@@ -2739,47 +2739,68 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it
                 intraday = detect_fortress_bee_clusters(intraday)
                
-                def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
-                    """
-                    Entry Alert System (Corrected):
-                    - Step 1: Detect clean cross of F% through Kijun_F with buffer threshold.
-                    - Step 2: Confirm with next bar continuation.
-                    - Step 3: Require at least one RVOL_5 > threshold in the last rvol_lookback bars.
-                    """
-
-                    intraday["Entry_Alert_Short"] = False
-                    intraday["Entry_Alert_Long"]  = False
-
-                    for i in range(1, len(intraday) - 1):
-                        prev_f = intraday.iloc[i-1]["F_numeric"]
-                        prev_k = intraday.iloc[i-1]["Kijun_F"]
-                        curr_f = intraday.iloc[i]["F_numeric"]
-                        curr_k = intraday.iloc[i]["Kijun_F"]
-                        next_f = intraday.iloc[i+1]["F_numeric"]
-
-                        # ➡️ LONG CROSS
-                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
-                            if next_f >= curr_f:
-                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
-
-                        # ⬅️ SHORT CROSS
-                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
-                            if next_f <= curr_f:
-                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
-
-                    # 🔍 Second pass: check if at least one high RVOL_5
-                    for i in range(1, len(intraday) - 1):
-                        if intraday.iloc[i]["Entry_Alert_Long"] or intraday.iloc[i]["Entry_Alert_Short"]:
+                def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
+                """
+                Enhanced Entry Alert System:
+                - ✅: Structure + volume confirmation at entry bar.
+                - ☑️: Structure confirmed, but volume came later.
+                """
+            
+                # Initialize columns
+                intraday["Entry_Alert_Long"] = False
+                intraday["Entry_Alert_Short"] = False
+                intraday["Entry_Emoji_Long"] = ""
+                intraday["Entry_Emoji_Short"] = ""
+            
+                pending_long = []   # store indices awaiting volume
+                pending_short = []
+            
+                for i in range(1, len(intraday) - 1):
+                    prev_f = intraday.iloc[i-1]["F_numeric"]
+                    prev_k = intraday.iloc[i-1]["Kijun_F"]
+                    curr_f = intraday.iloc[i]["F_numeric"]
+                    curr_k = intraday.iloc[i]["Kijun_F"]
+                    next_f = intraday.iloc[i+1]["F_numeric"]
+            
+                    # ➡️ LONG CROSS
+                    if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
+                        if next_f >= curr_f:
+                            # Check for recent RVOL
                             start_idx = max(0, i - rvol_lookback + 1)
                             rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-
-                            if (rvol_window > rvol_threshold).sum() == 0:
-                                # 🛑 No bars with RVOL > threshold → kill alert
-                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = False
-                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = False
-
-                    return intraday
-
+                            if (rvol_window > rvol_threshold).any():
+                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+                                intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
+                            else:
+                                pending_long.append(i)  # store for later ☑️ tagging
+            
+                    # ⬅️ SHORT CROSS
+                    if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
+                        if next_f <= curr_f:
+                            start_idx = max(0, i - rvol_lookback + 1)
+                            rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                            if (rvol_window > rvol_threshold).any():
+                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+                                intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
+                            else:
+                                pending_short.append(i)
+            
+                # 🔁 Second pass: look for volume spikes to validate pending entries
+                for i in range(len(intraday)):
+                    rvol = intraday.iloc[i]["RVOL_5"]
+            
+                    if rvol > rvol_threshold:
+                        if pending_long:
+                            idx = pending_long.pop(0)
+                            intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
+                            intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
+            
+                        if pending_short:
+                            idx = pending_short.pop(0)
+                            intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
+                            intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
+            
+                return intraday
 
 
                 intraday = entryAlert(intraday, threshold=0.1)
@@ -2788,63 +2809,9 @@ if st.sidebar.button("Run Analysis"):
                 
 
                 
-                
-                def calculate_theta(df, column='F_numeric', window=1):
-                    """
-                    Calculate tangent angle (theta) in degrees for the given column.
-                    Adds 'theta_deg' column to DataFrame. Values range from -90° to +90°.
-                
-                    Args:
-                        df (pd.DataFrame): Intraday DataFrame with F_numeric column.
-                        column (str): Column to compute angle on.
-                        window (int): Window size for slope (default is 1-bar difference).
-                
-                    Returns:
-                        pd.DataFrame: DataFrame with added 'theta_deg' column.
-                    """
-                    slope = df[column].diff(window)  # ΔF/Δt, assume Δt = 1 bar
-                    df['theta_deg'] = np.degrees(np.arctan(slope))  # Output in degrees
-                    df['theta_mean_3'] = df['theta_deg'].rolling(3).mean()
-
-                    return df
-                intraday = calculate_theta(intraday, column='F_numeric', window=1)
 
 
  
-                
-                def calculate_theta_with_alerts(df, column='F_numeric', window=1):
-                    """
-                    Calculate theta angle and flag post-Kijun high-angle bars (>80°).
-                    
-                    Adds:
-                    - 'theta_deg': tangent angle of Mike (F_numeric)
-                    - 'post_kijun': boolean, True if F_numeric > Kijun_F and hasn't gone back below
-                    - 'theta_post_kijun_alert': True if post-Kijun and theta > 80°
-                    """
-                    # Theta calculation
-                    slope = df[column].diff(window)
-                    df['theta_deg'] = np.degrees(np.arctan(slope))
-                    
-                    # Track post-Kijun cross
-                    df['post_kijun'] = False
-                    crossed = False
-                
-                    for i in range(1, len(df)):
-                        if not crossed and df.loc[i, column] > df.loc[i, 'Kijun_F']:
-                            crossed = True
-                        elif crossed and df.loc[i, column] < df.loc[i, 'Kijun_F']:
-                            crossed = False  # reset if back below Kijun
-                
-                        df.loc[i, 'post_kijun'] = crossed
-                
-                    # Final alert column
-                    df['theta_post_kijun_alert'] = (df['post_kijun']) & (df['theta_deg'] > 80)
-                
-                    return df
-                intraday = calculate_theta_with_alerts(intraday, column='F_numeric', window=1)
-
-                intraday['theta_alert_emoji'] = intraday['theta_post_kijun_alert'].apply(lambda x: '🏇🏻' if x else '')
-
 
                 def get_kijun_streak_log_with_dollar(df):
                     """
