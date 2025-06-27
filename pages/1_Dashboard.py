@@ -513,7 +513,27 @@ if st.sidebar.button("Run Analysis"):
 
 
               
- 
+               def calculate_smoothed_band_angle(df, band_col="F% Upper", angle_col="Upper Angle", window=5):
+                    """
+                    Calculates the angle (in degrees) of a Bollinger Band over a smoothed n-bar window.
+                    This reduces noise by measuring trend over time instead of bar-to-bar jitter.
+                
+                    Args:
+                        df (DataFrame): Must include the band_col
+                        band_col (str): Column to calculate angle on (e.g., 'F% Upper')
+                        angle_col (str): Name of the new output angle column
+                        window (int): Number of bars for smoothing
+                    """
+                    if band_col in df.columns:
+                        slope = (df[band_col] - df[band_col].shift(window)) / window
+                        angle_rad = np.arctan(slope)
+                        df[angle_col] = np.degrees(angle_rad)
+                    else:
+                        df[angle_col] = np.nan
+                    return df
+                intraday = calculate_smoothed_band_angle(intraday, band_col="F% Upper", angle_col="Upper Angle", window=5)
+                intraday = calculate_smoothed_band_angle(intraday, band_col="F% Lower", angle_col="Lower Angle", window=5)
+
 
 
 
