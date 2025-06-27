@@ -2614,7 +2614,7 @@ if st.sidebar.button("Run Analysis"):
 
 
         
-                def detect_td_rooks_with_confirmation(df):
+                def  detect_td_supply_cross_rooks(df):
                     """
                     Detects a cross of F_numeric through TD Supply/Demand,
                     and confirms it with the next candle's direction.
