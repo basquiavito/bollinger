@@ -4458,7 +4458,7 @@ if st.sidebar.button("Run Analysis"):
                     y=astronaut_points["F_numeric"] + 48,  # Offset so it floats higher
                     mode="text",
                     text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-                    textposition="top center",
+                    textposition="top right",
                     name="New Highs 🌒",
                     textfont=dict(size=21),
                    
