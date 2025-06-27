@@ -2493,31 +2493,32 @@ if st.sidebar.button("Run Analysis"):
                 intraday =  detect_kijun_cross_horses(intraday)
  
 
-                def detect_tenkan_pawns(df):
-                    # Calculate differences for the current and previous bars
-                    delta_prev = df["F_numeric"].shift(1) - df["Tenkan_F"].shift(1)
-                    delta_curr = df["F_numeric"] - df["Tenkan_F"]
-                
-                    # --- FIXED LOGIC ---
-                    # Up-cross: Mike was AT OR BELOW Tenkan, and is now STRICTLY ABOVE Tenkan.
-                    up_cross = (delta_prev <= 0) & (delta_curr > 0)
+                def detect_f_tenkan_pawns(df, threshold=0):
+                    """
+                    Detects any cross of F_numeric through F% Tenkan.
+                    ♙ for up-cross (bullish), ♟️ for down-cross (bearish).
                     
-                    # Down-cross: Mike was AT OR ABOVE Tenkan, and is now STRICTLY BELOW Tenkan.
-                    down_cross = (delta_prev >= 0) & (delta_curr < 0)
+                    Parameters:
+                        df : DataFrame – must contain 'F_numeric' and 'F% Tenkan'
+                        threshold : float – optional buffer to filter tiny fakeouts
                 
-                    # Initialize the column
+                    Returns:
+                        DataFrame with new column 'Tenkan_Pawn'
+                    """
+                    f_prev = df["F_numeric"].shift(1)
+                    t_prev = df["F% Tenkan"].shift(1)
+                    f_curr = df["F_numeric"]
+                    t_curr = df["F% Tenkan"]
+                
+                    up_cross = (f_prev < t_prev - threshold) & (f_curr >= t_curr + threshold)
+                    down_cross = (f_prev > t_prev + threshold) & (f_curr <= t_curr - threshold)
+                
                     df["Tenkan_Pawn"] = ""
-                    
-                    # Assign emojis based on crosses
-                    df.loc[up_cross, "Tenkan_Pawn"] = "♙"  # White Pawn for Bullish
-                    df.loc[down_cross, "Tenkan_Pawn"] = "♟️" # Black Pawn for Bearish
-                
-                    # Handle NaNs that result from .shift(1)
-                    df["Tenkan_Pawn"] = df["Tenkan_Pawn"].fillna("")
+                    df.loc[up_cross, "Tenkan_Pawn"] = "♙"
+                    df.loc[down_cross, "Tenkan_Pawn"] = "♟️"
                 
                     return df
-                
-                # apply
+
                 intraday = detect_tenkan_pawns(intraday)
 
 
