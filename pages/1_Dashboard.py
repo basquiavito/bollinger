@@ -4285,7 +4285,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
                     textposition="top left",
-                    textfont=dict(size=21,  color="green"),
+                    textfont=dict(size=24,  color="green"),
                     name="TD Supply Cross Up (♖)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Up ♖<extra></extra>"
                 )
@@ -4293,11 +4293,11 @@ if st.sidebar.button("Run Analysis"):
                 # Black rook (down cross)
                 scatter_rook_down = go.Scatter(
                     x=intraday.loc[mask_rook_down, "Time"],
-                    y=intraday.loc[mask_rook_down, "F_numeric"] - 24,  # Offset downward
+                    y=intraday.loc[mask_rook_down, "F_numeric"] - 9,  # Offset downward
                     mode="text",
                     text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
                     textposition="bottom left",
-                    textfont=dict(size=21,  color="red"),
+                    textfont=dict(size=24,  color="red"),
                     name="TD Supply Cross Down (♜)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
                 )
@@ -4318,7 +4318,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♙ Upward pawn
                 pawn_up = go.Scatter(
                     x=intraday.loc[mask_pawn_up, "Time"],
-                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 5,
+                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 9,
                     mode="text",
                     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
                     textposition="top center",
@@ -4330,7 +4330,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♟️ Downward pawn
                 pawn_down = go.Scatter(
                     x=intraday.loc[mask_pawn_down, "Time"],
-                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 5,
+                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 3,
                     mode="text",
                     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
                     textposition="bottom center",
