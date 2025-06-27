@@ -986,20 +986,28 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_obv(intraday)
                 intraday = detect_obv_crossovers(intraday)
 
-                def calculate_f_theta(df, scale_factor=100):
+                 def calculate_f_theta(df, scale_factor=1):
                     """
-                    Computes tan(theta) of F% to detect sharp movements.
-                    Formula: tan(theta) = F% change (approximate slope)
-                    Scales result by scale_factor (default 100).
+                    Computes the angle in degrees of F% movement (Theta) to detect sharp slopes.
+                    - Uses arctangent of F_numeric.diff() for slope angle.
+                    - Converts to degrees (not tan).
+                    - Adds scaled Theta and flags for verticality.
+                
+                    Adds:
+                    - "F% Theta": angle in degrees, scaled
+                    - "F% Vertical": True if |Theta| ≥ 80° (very steep move)
                     """
                     if "F_numeric" in df.columns:
-                        df["F% Theta"] = np.degrees(np.arctan(df["F_numeric"].diff())) * scale_factor
+                        delta = df["F_numeric"].diff()
+                        theta_deg = np.degrees(np.arctan(delta)) * scale_factor
+                        df["F% Theta"] = theta_deg
+                        df["F% Vertical"] = theta_deg.abs() >= 80  # flag vertical-like spikes
                     else:
-                        df["F% Theta"] = 0  # Fallback if column is missing
+                        df["F% Theta"] = 0
+                        df["F% Vertical"] = False
                     return df
 
-                # Apply function after calculating F_numeric
-                intraday = calculate_f_theta(intraday, scale_factor=100)  # Adjust scale_factor if needed
+                intraday = detect_obv_crossovers(intraday)
 
                 def detect_theta_spikes(df):
                     """
