@@ -2845,6 +2845,8 @@ if st.sidebar.button("Run Analysis"):
                     """
                     slope = df[column].diff(window)  # ΔF/Δt, assume Δt = 1 bar
                     df['theta_deg'] = np.degrees(np.arctan(slope))  # Output in degrees
+                    df['theta_mean_3'] = df['theta_deg'].rolling(3).mean()
+
                     return df
                 intraday = calculate_theta(intraday, column='F_numeric', window=1)
 
@@ -3093,7 +3095,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","theta_deg","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
+                                    "Time","RVOL_5","RVOL_Alert","theta_deg",'theta_mean_3',"BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
