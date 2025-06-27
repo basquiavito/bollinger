@@ -4321,7 +4321,7 @@ if st.sidebar.button("Run Analysis"):
 
                 # correct masks
                 mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
-                mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
+                mask_pawn_down = intraday["Tenkan_Pawn"] == "♙"     # <-- changed ♙ → ♟️
 
                 # ♙ Upward pawn
                 pawn_up = go.Scatter(
