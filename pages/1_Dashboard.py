@@ -2492,22 +2492,32 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday =  detect_kijun_cross_horses(intraday)
 
-                def detect_tenkan_pawns(df, threshold=0.0):
+                def detect_tenkan_pawns(df, gap_threshold=0.0):
                     """
-                    Flags every cross of F_numeric through Tenkan_F
-                      • ♙  when F moves from ≤ Tenkan  →  > Tenkan   (bullish)
-                      • ♟️ when F moves from ≥ Tenkan  →  < Tenkan   (bearish)
-                    """
-                    f_prev, t_prev = df["F_numeric"].shift(1), df["Tenkan_F"].shift(1)
-                    f_curr, t_curr = df["F_numeric"],            df["Tenkan_F"]
+                    Flags a pawn whenever the *signed gap* (F_numeric − Tenkan_F) changes sign.
+                    • ♙ when gap flips from ≤0  ➜  >0   (bullish up-cross)
+                    • ♟️ when gap flips from ≥0  ➜  <0   (bearish down-cross)
                 
-                    up_cross   = (f_prev <= t_prev - threshold) & (f_curr >  t_curr + threshold)
-                    down_cross = (f_prev >= t_prev + threshold) & (f_curr <  t_curr - threshold)
+                    gap_threshold lets you ignore tiny noise (set to 0.0 for absolute sensitivity).
+                    """
+                    # Signed distance bar-to-bar
+                    gap_prev  = (df["F_numeric"].shift(1) - df["Tenkan_F"].shift(1))
+                    gap_curr  = (df["F_numeric"]          - df["Tenkan_F"])
+                
+                    # Optional noise filter
+                    if gap_threshold:
+                        gap_prev  = gap_prev.where(gap_prev.abs()  > gap_threshold, 0)
+                        gap_curr  = gap_curr.where(gap_curr.abs()  > gap_threshold, 0)
+                
+                    up_cross   = (gap_prev <= 0) & (gap_curr >  0)
+                    down_cross = (gap_prev >= 0) & (gap_curr <  0)
                 
                     df["Tenkan_Pawn"] = ""
                     df.loc[up_cross,   "Tenkan_Pawn"] = "♙"
                     df.loc[down_cross, "Tenkan_Pawn"] = "♟️"
+                
                     return df
+
                 
                 # apply
                 intraday = detect_tenkan_pawns(intraday)
