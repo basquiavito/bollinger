@@ -2614,30 +2614,36 @@ if st.sidebar.button("Run Analysis"):
 
 
         
-                def detect_td_supply_cross_rooks(df):
+                def detect_td_rooks_with_confirmation(df):
                     """
-                    Instantly detects cross of F_numeric through TD Supply/Demand Line F.
-                    - ♖ White Rook when F_numeric crosses above TD Supply Line F
-                    - ♜ Black Rook when F_numeric crosses below TD Demand Line F
+                    Detects a cross of F_numeric through TD Supply/Demand,
+                    and confirms it with the next candle's direction.
+                
+                    - ♖ (White Rook): Cross above Supply, then next close > current close
+                    - ♜ (Black Rook): Cross below Demand, then next close < current close
                     """
                     df["TD_Supply_Rook"] = ""
                 
-                    f_prev = df["F_numeric"].shift(1)
-                    supply_prev = df["TD Supply Line F"].shift(1)
-                    demand_prev = df["TD Demand Line F"].shift(1)
+                    for i in range(1, len(df) - 1):  # Avoid index error on last row
+                        prev_f = df.loc[i - 1, "F_numeric"]
+                        curr_f = df.loc[i, "F_numeric"]
+                        next_f = df.loc[i + 1, "F_numeric"]
                 
-                    f_curr = df["F_numeric"]
-                    supply_curr = df["TD Supply Line F"]
-                    demand_curr = df["TD Demand Line F"]
+                        prev_supply = df.loc[i - 1, "TD Supply Line F"]
+                        curr_supply = df.loc[i, "TD Supply Line F"]
                 
-                    # Instant cross above supply
-                    supply_cross = (f_prev < supply_prev) & (f_curr >= supply_curr)
+                        prev_demand = df.loc[i - 1, "TD Demand Line F"]
+                        curr_demand = df.loc[i, "TD Demand Line F"]
                 
-                    # Instant cross below demand
-                    demand_cross = (f_prev > demand_prev) & (f_curr <= demand_curr)
+                        # 🏰 Cross above supply + next bar closes higher
+                        if prev_f < prev_supply and curr_f >= curr_supply:
+                            if next_f > curr_f:
+                                df.loc[i + 1, "TD_Supply_Rook"] = "♖"
                 
-                    df.loc[supply_cross, "TD_Supply_Rook"] = "♖"
-                    df.loc[demand_cross, "TD_Supply_Rook"] = "♜"
+                        # 🏰 Cross below demand + next bar closes lower
+                        if prev_f > prev_demand and curr_f <= curr_demand:
+                            if next_f < curr_f:
+                                df.loc[i + 1, "TD_Supply_Rook"] = "♜"
                 
                     return df
 
