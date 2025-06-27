@@ -4188,7 +4188,7 @@ if st.sidebar.button("Run Analysis"):
                     # Upward Cross Trace (♕)
                     up_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_up, "Time"],
-                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 16,  # Offset upward (adjust as needed)
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 40,  # Offset upward (adjust as needed)
                         mode="text",
                         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
                         textposition="top center",  # Positioned above the point
@@ -4200,7 +4200,7 @@ if st.sidebar.button("Run Analysis"):
                     # Downward Cross Trace (♛)
                     down_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_down, "Time"],
-                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 16,  # Offset downward
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 40,  # Offset downward
                         mode="text",
                         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
                         textposition="bottom center",  # Positioned below the point
@@ -4257,7 +4257,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Up (♗)
                 scatter_bishop_up = go.Scatter(
                     x=intraday.loc[mask_bishop_up, "Time"],
-                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 18,
+                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 32,
                     mode="text",
                     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
                     textposition="top center",
@@ -4269,7 +4269,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Down (♝)
                 scatter_bishop_down = go.Scatter(
                     x=intraday.loc[mask_bishop_down, "Time"],
-                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 18,
+                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 32,
                     mode="text",
                     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
                     textposition="bottom center",
@@ -4289,7 +4289,7 @@ if st.sidebar.button("Run Analysis"):
                 # White rook (up cross)
                 scatter_rook_up = go.Scatter(
                     x=intraday.loc[mask_rook_up, "Time"],
-                    y=intraday.loc[mask_rook_up, "F_numeric"] + 13,  # Offset upward
+                    y=intraday.loc[mask_rook_up, "F_numeric"] + 24,  # Offset upward
                     mode="text",
                     text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
                     textposition="top left",
@@ -4301,7 +4301,7 @@ if st.sidebar.button("Run Analysis"):
                 # Black rook (down cross)
                 scatter_rook_down = go.Scatter(
                     x=intraday.loc[mask_rook_down, "Time"],
-                    y=intraday.loc[mask_rook_down, "F_numeric"] - 13,  # Offset downward
+                    y=intraday.loc[mask_rook_down, "F_numeric"] - 24,  # Offset downward
                     mode="text",
                     text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
                     textposition="bottom left",
