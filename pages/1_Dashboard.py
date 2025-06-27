@@ -985,90 +985,81 @@ if st.sidebar.button("Run Analysis"):
                 # Apply OBV & Crossover Detection
                 intraday = calculate_obv(intraday)
                 intraday = detect_obv_crossovers(intraday)
-import numpy as np
-import pandas as pd
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 1️⃣  Core kinematics block – run once, right after F_numeric is created
-# ──────────────────────────────────────────────────────────────────────────────
-def compute_f_kinematics(df: pd.DataFrame, window: int = 1,
-                         vertical_deg: float = 80.0) -> pd.DataFrame:
-    """
-    Adds velocity, speed, angle (rad & deg), tanθ, cotθ and vertical flags.
+                def calculate_f_theta(df, scale_factor=100):
+                    """
+                    Computes tan(theta) of F% to detect sharp movements.
+                    Formula: tan(theta) = F% change (approximate slope)
+                    Scales result by scale_factor (default 100).
+                    """
+                    if "F_numeric" in df.columns:
+                        df["F% Theta"] = np.degrees(np.arctan(df["F_numeric"].diff())) * scale_factor
+                    else:
+                        df["F% Theta"] = 0  # Fallback if column is missing
+                    return df
 
-    Parameters
-    ----------
-    window : int
-        Bars to look back for derivative (1 = previous bar).
-    vertical_deg : float
-        |θ| at which we call the move 'vertical' (default 80°).
+                # Apply function after calculating F_numeric
+                intraday = calculate_f_theta(intraday, scale_factor=100)  # Adjust scale_factor if needed
 
-    Columns created
-    ---------------
-    F_vel            signed ΔF (slope)
-    F_speed          |ΔF|
-    F_theta_rad      arctan(F_vel)
-    F_theta_deg      np.degrees(F_theta_rad)
-    F_tan            tanθ   (== F_vel again, here for completeness)
-    F_cot            cotθ   (1 / tanθ, 0 if tanθ == 0)
-    F_vertical       True when |θ| ≥ vertical_deg
-    """
-    if "F_numeric" not in df.columns:
-        return df  # nothing to do
+                def detect_theta_spikes(df):
+                    """
+                    Identifies large spikes in F% Theta automatically using standard deviation.
+                    - Uses 2.5x standard deviation as a dynamic threshold.
+                    - Detects both positive and negative spikes.
+                    """
+                    if "F% Theta" not in df.columns:
+                        return df  # Avoid crash if missing column
 
-    vel = df["F_numeric"].diff(window)
-    theta_rad = np.arctan(vel)
-    theta_deg = np.degrees(theta_rad)
+                    theta_std = df["F% Theta"].std()  # Compute stock-specific volatility
+                    threshold = 2 * theta_std  # Set dynamic threshold
 
-    df = df.assign(
-        F_vel=vel,
-        F_speed=np.abs(vel),
-        F_theta_rad=theta_rad,
-        F_theta_deg=theta_deg,
-        F_tan=np.tan(theta_rad),               # == vel
-        F_cot=np.where(vel != 0, 1 / vel, 0.0),
-        F_vertical=np.abs(theta_deg) >= vertical_deg,
-    )
-    return df
+                    df["Theta_Change"] = df["F% Theta"].diff()  # Compute directional change
+                    df["Theta_Spike"] = df["Theta_Change"].abs() > threshold  # Detect both up/down spikes
+
+                    return df
+                intraday = detect_theta_spikes(intraday)
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 2️⃣  Spike detector – plug in any metric you want to watch
-# ──────────────────────────────────────────────────────────────────────────────
-def tag_theta_spikes(df: pd.DataFrame,
-                     col: str = "F_theta_deg",
-                     z: float = 2.5,
-                     vertical_deg: float = 80.0) -> pd.DataFrame:
-    """
-    Flags bars where |Δ(col)| > z·σ   AND   (optionally) the angle is near-vertical.
-
-    Adds two Boolean columns:
-        {col}_spike            – large change in the metric
-        {col}_vert_spike       – large change *and* |θ| ≥ vertical_deg
-    """
-    if col not in df.columns:
-        return df
-
-    delta = df[col].diff()
-    thresh = z * delta.std(skipna=True)
-
-    spike_col = f"{col}_spike"
-    vert_col  = f"{col}_vert_spike"
-
-    df[spike_col] = delta.abs() > thresh
-    df[vert_col]  = df[spike_col] & (df["F_theta_deg"].abs() >= vertical_deg)
-    return df
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 3️⃣  Example usage
-# ──────────────────────────────────────────────────────────────────────────────
-# intraday = compute_f_kinematics(intraday)        # call once
-# intraday = tag_theta_spikes(intraday, z=2.5)     # call once
 
-# Now `intraday["F_theta_deg_vert_spike"]` turns True the moment you get a
-# near-90° jolt.  Hook that into your emoji stream or ATM-add logic.
+                def calculate_f_velocity_and_speed(df):
+                    """
+                    Computes:
+                    - **F% Velocity** = directional rate of F% change per bar.
+                    - **F% Speed** = absolute rate of F% change per bar (ignores direction).
+                    """
+                    if "F_numeric" in df.columns:
+                        df["F% Velocity"] = df["F_numeric"].diff()  # Includes direction (+/-)
+                        df["F% Speed"] = df["F% Velocity"].abs()    # Only magnitude, no direction
+                    else:
+                        df["F% Velocity"] = 0  # Fallback
+                        df["F% Speed"] = 0      # Fallback
+                    return df
 
+                # Apply function after calculating F_numeric
+                intraday = calculate_f_velocity_and_speed(intraday)
+
+
+                def calculate_f_theta_cot(df, scale_factor=100):
+                    """
+                    Computes tan(theta) and cot(theta) of F% to detect sharp movements.
+                    - tan(theta) = slope of F% movement
+                    - cot(theta) = inverse of tan(theta) (sensitive to small changes)
+                    - Results are scaled by `scale_factor` for readability.
+                    """
+                    if "F_numeric" in df.columns:
+                        df["F% Theta"] = np.tan(np.radians(df["F_numeric"].diff())) * scale_factor
+
+                        # Avoid division by zero
+                        df["F% Cotangent"] = np.where(df["F% Theta"] != 0, 1 / df["F% Theta"], 0)
+                    else:
+                        df["F% Theta"] = 0  # Fallback
+                        df["F% Cotangent"] = 0  # Fallback
+                    return df
+
+                # Apply function after calculating F_numeric
+                intraday = calculate_f_theta_cot(intraday, scale_factor=100)
 
 
 
@@ -3391,11 +3382,11 @@ def tag_theta_spikes(df: pd.DataFrame,
                 #         f"🐂 Bottom anchor {intraday.loc[bot_idx,'Time']} → pull-back at {intraday.loc[pull_bot_idx,'Time']}"
                 #     )
                 
-                    # st.dataframe(
-                    #     intraday[
-                    #         ["Time", price_col, "Volume", "TB-F Top", "TB-F Bottom", "MIDAS_TopStart", "MIDAS_BotStart"]
-                    #     ].dropna(subset=["TB-F Top", "TB-F Bottom"], how="all")
-                    # )
+                    st.dataframe(
+                        intraday[
+                            ["Time", price_col, "Volume", "TB-F Top", "TB-F Bottom", "MIDAS_TopStart", "MIDAS_BotStart"]
+                        ].dropna(subset=["TB-F Top", "TB-F Bottom"], how="all")
+                    )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
