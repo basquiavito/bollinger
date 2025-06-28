@@ -4117,9 +4117,10 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["Magic_Y"],
+                    y=intraday["Magic_Y"] + 20,
                     mode="text",
                     text=intraday["Magic_Emoji"],
+                    textfont=dict(size=20, color="lime"),
                     textposition="middle center",
                     showlegend=False
                 ), row=1, col=1)
