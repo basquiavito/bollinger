@@ -411,7 +411,6 @@ if st.sidebar.button("Run Analysis"):
                 
                     return intraday
 
-                intraday["Option_PnL"] = intraday["Option_Value"] 
 
             
                 intraday = compute_option_value(intraday)
