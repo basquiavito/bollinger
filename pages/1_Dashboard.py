@@ -387,40 +387,38 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-
-                # ──────────────────────────────────────────────────────────────────────────────
-                # ▶︎  ATM OPTION SIM (Δ + Γ , fixed greeks)  ◀︎
-                # ──────────────────────────────────────────────────────────────────────────────
-                try:
-                    # Fixed greeks & premium
-                    delta   = 0.50     # ATM Δ
-                    gamma   = 0.05     # fixed Γ
-                    premium = 64.0     # cost you paid
-                
-                    # 1️⃣ Anchors from first bar
-                    spot_price = intraday.iloc[0]["Close"]
-                    f_open     = intraday.iloc[0]["F_numeric"]
-                
-                    # 2️⃣ Translate F-move → $-move
-                    intraday["F%_Move"]            = intraday["F_numeric"] - f_open
-                    intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10_000) * spot_price
-                
-                    # 3️⃣ Option value   (Δ·move + ½·Γ·move²)
-                    move$ = intraday["Dollar_Move_From_F"]
-                    intraday["Option_Value"] = (
-                        delta * move$ +
-                        0.5 * gamma * (move$ ** 2)
-                    )
-                
-                    # 4️⃣ Net P/L after paying premium
-                    intraday["Option_PnL"] = intraday["Option_Value"] - premium
-                
-                except KeyError as e:
-                    st.warning(f"Option sim skipped – missing column: {e}")
-                
-                
-
+  
+  
+                  # ──────────────────────────────────────────────────────────────────────────────
+                  # ▶︎  ATM OPTION SIM (Δ + Γ , fixed greeks)  ◀︎
+                  # ──────────────────────────────────────────────────────────────────────────────
+          
+                      # Fixed greeks & premium
+                delta   = 0.50     # ATM Δ
+                gamma   = 0.05     # fixed Γ
+                premium = 64.0     # cost you paid
+            
+                # 1️⃣ Anchors from first bar
+                spot_price = intraday.iloc[0]["Close"]
+                f_open     = intraday.iloc[0]["F_numeric"]
+            
+                # 2️⃣ Translate F-move → $-move
+                intraday["F%_Move"]            = intraday["F_numeric"] - f_open
+                intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10_000) * spot_price
+            
+                # 3️⃣ Option value   (Δ·move + ½·Γ·move²)
+                move$ = intraday["Dollar_Move_From_F"]
+                intraday["Option_Value"] = (
+                    delta * move$ +
+                    0.5 * gamma * (move$ ** 2)
+                )
+            
+                # 4️⃣ Net P/L after paying premium
+                intraday["Option_PnL"] = intraday["Option_Value"] - premium
+          
+            
+                  
+  
 
 #**********************************************************************************************************************#**********************************************************************************************************************
 
