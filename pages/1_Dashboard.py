@@ -3890,7 +3890,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_std_alert = go.Scatter(
                         x=intraday.loc[mask_std_alert, "Time"],
-                        y=intraday.loc[mask_std_alert, "F_numeric"] - 80,  # Offset above F%
+                        y=intraday.loc[mask_std_alert, "F_numeric"] + 110,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_std_alert, "STD_Alert"],
                         textposition="bottom right",
