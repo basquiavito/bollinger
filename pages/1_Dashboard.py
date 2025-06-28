@@ -3838,24 +3838,7 @@ if st.sidebar.button("Run Analysis"):
 
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
-                # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
-        # 🎯 Simulated Option PnL Trace (Delta + Gamma - No Premium)
-             # Add Option Value Line (Delta + Gamma PnL) to subplot row 2
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Option_Value"],
-                        mode="lines",
-                        name="Option PnL (Δ+Γ)",
-                        line=dict(width=1, color="white", dash="dot"),
-                        hovertemplate="Time: %{x}<br>Option Value: %{y:.2f}<extra></extra>"
-                    ),
-                    row=2, col=1
-                )
-
-                                
-                fig.update_yaxes(title_text="F% / Indicators", row=1, col=1)
-                fig.update_yaxes(title_text="Option PnL", row=2, col=1)
+ 
                 
                              
                       
