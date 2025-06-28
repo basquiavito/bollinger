@@ -3007,9 +3007,21 @@ if st.sidebar.button("Run Analysis"):
                 
 
                 
+                # 🔢 Normalize Call Option Value to match F% scale
+                base_premium = intraday["Call_Option_Value"].iloc[0]
+                f_base = intraday["F_numeric"].iloc[0]
                 
-                base_premium = df["Call_Option_Value"].iloc[0]
-                df["Call_Option_Scaled"] = (df["Call_Option_Value"] / base_premium) * df["F_numeric"].iloc[0]
+                intraday["Call_Option_Scaled"] = (intraday["Call_Option_Value"] / base_premium) * f_base
+                
+                # 🌀 Optional: Smooth it
+                intraday["Call_Option_Scaled_Smooth"] = intraday["Call_Option_Scaled"].rolling(3).mean()
+
+                # Normalize and smooth Put Option Value
+                base_premium_put = intraday["Put_Option_Value"].iloc[0]
+                intraday["Put_Option_Scaled"] = (intraday["Put_Option_Value"] / base_premium_put) * f_base
+                intraday["Put_Option_Scaled_Smooth"] = intraday["Put_Option_Scaled"].rolling(3).mean()
+                
+                 
                 
 
 
@@ -4005,9 +4017,26 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(long_entry_trace, row=1, col=1)
 
                 
-              
-                
-                                
+              # 📈 Call Option Scaled Line (dotted light purple)
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Scaled_Smooth"],
+                    mode="lines",
+                    line=dict(color="#B57EDC", dash="dot", width=1),  # light purple
+                    name="Call Option Scaled",
+                    showlegend=True
+                ), row=1, col=1)
+
+                                # Plot Put
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Scaled_Smooth"],
+                    mode="lines",
+                    line=dict(color="#00CED1", dash="dot", width=1),
+                    name="Put Option Scaled",
+                    showlegend=True
+                ), row=1, col=1)
+                                                
 
                 
                                 # 🟫 IB High (subtle off-white line)
@@ -4040,15 +4069,7 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
-            # 🔢 Normalize Call Option Value to match F% scale
-                base_premium = intraday["Call_Option_Value"].iloc[0]
-                f_base = intraday["F_numeric"].iloc[0]
-                
-                intraday["Call_Option_Scaled"] = (intraday["Call_Option_Value"] / base_premium) * f_base
-                
-                # 🌀 Optional: Smooth it
-                intraday["Call_Option_Scaled_Smooth"] = intraday["Call_Option_Scaled"].rolling(3).mean()
-s
+        
                 # 📈 Call Option Scaled Line (dotted light purple)
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
