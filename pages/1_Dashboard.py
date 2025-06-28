@@ -4412,18 +4412,7 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
-                #                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
-
-                  fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Option_PnL"],  # or Option_Value if no premium subtraction
-                    mode="lines",
-                    name="Simulated Option (Δ+Γ)",
-                    line=dict(width=2, color="white", dash="dot"),
-                    hovertemplate="Time: %{x}<br>Option PnL: %{y:.2f}<extra></extra>"
-                )
-                
-                fig.add_trace(option_trace, row=2, col=1)
+ 
                          
                       
                 fig.update_layout(
