@@ -3265,11 +3265,25 @@ if st.sidebar.button("Run Analysis"):
                   # Step 1: Filter Initial Balance (first 4 letters: A–D)
                   initial_letters = ['A', 'B', 'C', 'D']
                   ib_df = intraday[intraday['Letter'].isin(initial_letters)]
-              
+
+
+
+                  
                   # Step 2: Get IB high/low F% range
                   ib_high = ib_df[mike_col].max()
                   ib_low = ib_df[mike_col].min()
-              
+
+
+                  # Call Option IB High/Low
+                  call_ib_high = ib_option_df["Call_Option_Smooth"].max()
+                  call_ib_low  = ib_option_df["Call_Option_Smooth"].min()
+                  
+                  # Put Option IB High/Low
+                  put_ib_high = ib_option_df["Put_Option_Smooth"].max()
+                  put_ib_low  = ib_option_df["Put_Option_Smooth"].min()
+
+
+                  
                   # Build Market Profile dictionary
                   profile = {}
                   for f_bin in f_bins[:-1]:
@@ -4179,7 +4193,14 @@ if st.sidebar.button("Run Analysis"):
                     name="IB Low",
                     showlegend=True
                 ), row=1, col=1)
+
+
+                fig.add_hline(y=call_ib_high, line=dict(color="purple", dash="dot"), row=2, col=1)
+                fig.add_hline(y=call_ib_low,  line=dict(color="purple", dash="dot"), row=2, col=1)
                 
+                fig.add_hline(y=put_ib_high, line=dict(color="teal", dash="dot"), row=2, col=1)
+                fig.add_hline(y=put_ib_low,  line=dict(color="teal", dash="dot"), row=2, col=1)
+
                                 
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
