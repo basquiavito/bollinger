@@ -414,7 +414,13 @@ if st.sidebar.button("Run Analysis"):
                     ) * contracts
                 
                     df["Put_Return_%"] = ((df["Put_Option_Value"] - premium) / premium) * 100
-                
+                # Force initial value = premium at open
+                    df.at[df.index[0], "Call_Option_Value"] = premium
+                    df.at[df.index[0], "Call_Return_%"] = 0
+                    
+                    df.at[df.index[0], "Put_Option_Value"] = premium
+                    df.at[df.index[0], "Put_Return_%"] = 0
+
                     return df
 
 
