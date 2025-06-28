@@ -408,6 +408,18 @@ if st.sidebar.button("Run Analysis"):
                 # Step 5: Subtract fixed premium to get net P&L
                 intraday["ATM_Call_PnL"] = intraday["ATM_Call_Value"] - 64
 
+                # Step 5: Add Gamma P&L (convexity)
+                delta = 0.50
+                gamma = 0.05
+                
+                intraday["ATM_Call_Value_Gamma"] = (
+                    delta * intraday["Dollar_Move_From_F"] +
+                    0.5 * gamma * intraday["Dollar_Move_From_F"]**2
+                )
+                
+                # Step 6: Subtract premium
+                premium = 64
+                intraday["ATM_Call_PnL_Gamma"] = intraday["ATM_Call_Value_Gamma"] - premium
 
 
 #**********************************************************************************************************************#**********************************************************************************************************************
@@ -3100,7 +3112,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","ATM_Call_Value","ATM_Call_PnL"
+                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","ATM_Call_Value","ATM_Call_PnL","ATM_Call_PnL_Gamma","ATM_Call_Value_Gamma"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
