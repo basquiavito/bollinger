@@ -4038,40 +4038,7 @@ if st.sidebar.button("Run Analysis"):
  
            
                               # Mask where Call Vol Explosion (💥) occurs
-                mask_call_vol = intraday["Call_Vol_Explosion_Emoji"] != ""
-                
-                scatter_call_vol = go.Scatter(
-                    x=intraday.loc[mask_call_vol, "Time"],
-                    y=intraday.loc[mask_call_vol, "F_numeric"] + 45,  # Offset below F%
-                    mode="text",
-                    text=intraday.loc[mask_call_vol, "Call_Vol_Explosion_Emoji"],
-                    textposition="bottom center",
-                    textfont=dict(size=10),
-                    name="Call Vol Explosion",
-                    hovertemplate="Time: %{x}<br>Call Vol Explosion<br>%{text}<extra></extra>"
-                )
-                
-                fig.add_trace(scatter_call_vol, row=1, col=1)
-
-
-
-                # Mask where Put Vol Explosion (💥) occurs
-                mask_put_vol = intraday["Put_Vol_Explosion_Emoji"] != ""
-                
-                scatter_put_vol = go.Scatter(
-                    x=intraday.loc[mask_put_vol, "Time"],
-                    y=intraday.loc[mask_put_vol, "F_numeric"] - 45,  # Slightly lower than call
-                    mode="text",
-                    text=intraday.loc[mask_put_vol, "Put_Vol_Explosion_Emoji"],
-                    textposition="bottom center",
-                    textfont=dict(size=10),
-                    name="Put Vol Explosion",
-                    hovertemplate="Time: %{x}<br>Put Vol Explosion<br>%{text}<extra></extra>"
-                )
-                
-                fig.add_trace(scatter_put_vol, row=1, col=1)
-
-                      
+           
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
