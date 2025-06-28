@@ -504,6 +504,9 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Tiger"] = np.where(intraday["COV_Change"] > 30, "🐅", "")
 
 
+
+
+                  
                     intraday["CallPut_Cross"] = (
                         (intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"]) &
                         (intraday["Call_Option_Smooth"].shift(1) <= intraday["Put_Option_Smooth"].shift(1))
@@ -513,7 +516,12 @@ if st.sidebar.button("Run Analysis"):
                     )
                     
 
-                 
+                   intraday["Magic_Emoji"] = np.where(intraday["CallPut_Cross"], "🪄", "")
+                   intraday["Magic_Y"] = np.where(
+                   intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"],
+                   intraday["Call_Option_Smooth"] + 10,
+                   intraday["Put_Option_Smooth"] - 10
+                )
 
 
                   
