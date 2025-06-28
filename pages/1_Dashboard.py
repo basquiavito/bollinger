@@ -4414,7 +4414,7 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
                 #                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
-                option_trace = go.Scatter(
+                  fig.add_trace(go.Scatter(
                     x=intraday["Time"],
                     y=intraday["Option_PnL"],  # or Option_Value if no premium subtraction
                     mode="lines",
