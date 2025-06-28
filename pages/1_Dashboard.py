@@ -4083,22 +4083,18 @@ if st.sidebar.button("Run Analysis"):
                 ), row=2, col=1)
                 
 
-                for i, row in intraday.iterrows():
-                    if row["Tiger"] == "🐅":
-                        fig.add_trace(
-                            go.Scatter(
-                                x=[row["Datetime"]],
-                                y=[row["F_numeric"]],
-                                mode="text",
-                                text=["🐅"],
-                                textposition="top center",
-                                showlegend=False,
-                                name="Tiger",
-                            ),
-                            row=1, col=1  # Adjust if your F% plot is not in (1,1)
-                        )
+                      # 🐅 Tiger markers on top of Call Option Value
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Smooth"],
+                    mode="text",
+                    text=intraday["Tiger"],
+                    textposition="top center",
+                    showlegend=False,
+                    name="Tiger"
+                ), row=2, col=1)
                 
-
+                
 
 
 
