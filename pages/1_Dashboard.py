@@ -458,7 +458,8 @@ if st.sidebar.button("Run Analysis"):
                     df["Call_Vol_Surge_Signal"] = df["Call_Vol_Explosion_%"] > 10
                     df["Put_Vol_Surge_Signal"]  = df["Put_Vol_Explosion_%"]  > 10
 
-
+                    df["Call_Vol_Explosion_Emoji"] = np.where(df["Call_Vol_Surge_Signal"], "💥", "")
+                    df["Put_Vol_Explosion_Emoji"]  = np.where(df["Put_Vol_Surge_Signal"],  "💥", "")
                   
                     # 🔁 Force starting values
                     df.at[df.index[0], "Call_Option_Value"] = premium
@@ -3118,7 +3119,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value","Call_Option_Speed","Put_Option_Speed","Call_Speed_Explosion","Put_Speed_Explosion","Call_Vol_Explosion","Put_Vol_Explosion","Call_Vol_Explosion_%","Put_Vol_Explosion_%","Call_Vol_Surge_Signal","Put_Vol_Surge_Signal"
+                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value","Call_Option_Speed","Put_Option_Speed","Call_Speed_Explosion","Put_Speed_Explosion","Call_Vol_Explosion","Put_Vol_Explosion","Call_Vol_Explosion_%","Put_Vol_Explosion_%","Call_Vol_Surge_Signal","Put_Vol_Surge_Signal","Call_Vol_Explosion_Emoji","Put_Vol_Explosion_Emoji"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
