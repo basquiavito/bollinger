@@ -516,13 +516,13 @@ if st.sidebar.button("Run Analysis"):
                     )
                     
 
-                   intraday["Magic_Emoji"] = np.where(intraday["CallPut_Cross"], "🪄", "")
-                   intraday["Magic_Y"] = np.where(
-                   intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"],
-                   intraday["Call_Option_Smooth"] + 10,
-                   intraday["Put_Option_Smooth"] - 10
-                )
-
+                     intraday["Magic_Emoji"] = np.where(intraday["CallPut_Cross"], "🪄", "")
+                     intraday["Magic_Y"] = np.where(
+                     intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"],
+                     intraday["Call_Option_Smooth"] + 10,
+                     intraday["Put_Option_Smooth"] - 10
+                  )
+  
 
                   
                     # 🔁 Force starting values
@@ -4119,14 +4119,12 @@ if st.sidebar.button("Run Analysis"):
              
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["Magic_Y"] + 30,
+                    y=intraday["Magic_Y"],
                     mode="text",
                     text=intraday["Magic_Emoji"],
-                    textfont=dict(size=20, color="lime"),
                     textposition="middle center",
                     showlegend=False
                 ), row=1, col=1)
-                
 
 
                                                 # 🟫 IB High (subtle off-white line)
