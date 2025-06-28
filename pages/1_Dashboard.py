@@ -3850,7 +3850,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_bbw_alert = go.Scatter(
                         x=intraday.loc[mask_bbw_alert, "Time"],
-                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 16,  # Offset above F%
+                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 60,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
                         textposition="top center",
