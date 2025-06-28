@@ -458,60 +458,38 @@ if st.sidebar.button("Run Analysis"):
 
 
                 intraday = compute_option_value(intraday)      
-
-
-
-
-                def detect_option_speed_explosion(
-                      df,
-                      lookback: int = 5,
-                      strong_mult: float = 1.5,
-                      mild_mult: float = 1.2,
-                      pct_threshold: float = 0.90
-                  ):
-                  """
-                  Flags call / put option-speed explosions with 🏎️ / 🚗.
-                  Combines a multiplier test and a percentile safeguard.
-                  """
-              
-                  # ─── 1) rolling mean as baseline ─────────────────────────────
-                  df["Call_Speed_Base"] = df["Call_Option_Speed"].rolling(lookback).mean()
-                  df["Put_Speed_Base"]  = df["Put_Option_Speed"].rolling(lookback).mean()
-              
-                  # avoid divide-by-zero if early bars are NaN
-                  df["Call_Speed_Base"].replace(0, np.nan, inplace=True)
-                  df["Put_Speed_Base"] .replace(0, np.nan, inplace=True)
-              
-                  # ─── 2) dynamic percentile (top x %) for extra filter ────────
-                  call_thresh = df["Call_Option_Speed"].rolling(lookback*4).quantile(pct_threshold)
-                  put_thresh  = df["Put_Option_Speed"] .rolling(lookback*4).quantile(pct_threshold)
-              
-                  # ─── 3) boolean tests  ───────────────────────────────────────
-                  call_strong = (df["Call_Option_Speed"] >= strong_mult * df["Call_Speed_Base"]) & \
-                                (df["Call_Option_Speed"] >= call_thresh)
-              
-                  call_mild   = (df["Call_Option_Speed"] >= mild_mult  * df["Call_Speed_Base"]) & \
-                                (df["Call_Option_Speed"] >= call_thresh * 0.8)
-              
-                  put_strong  = (df["Put_Option_Speed"]  >= strong_mult * df["Put_Speed_Base"])  & \
-                                (df["Put_Option_Speed"]  >= put_thresh)
-              
-                  put_mild    = (df["Put_Option_Speed"]  >= mild_mult  * df["Put_Speed_Base"])  & \
-                                (df["Put_Option_Speed"]  >= put_thresh * 0.8)
-              
-                  # ─── 4) emoji tags ───────────────────────────────────────────
-                  df["Call_Speed_Explosion"] = np.where(call_strong, "🏎️",
-                                                 np.where(call_mild,  "🚗", ""))
-              
-                  df["Put_Speed_Explosion"]  = np.where(put_strong,  "🏎️",
-                                                 np.where(put_mild,   "🚗", ""))
-              
-                  # optional: drop helper cols if you don’t want them
-                  # df.drop(columns=["Call_Speed_Base","Put_Speed_Base"], inplace=True)
-              
-                  return df
-                  intraday = detect_option_speed_explosion(intraday)
-
+                
+                def detect_option_speed_explosion(df, lookback=3):
+                    df["Call_Speed_Lag"] = df["Call_Option_Speed"].shift(lookback)
+                    df["Put_Speed_Lag"]  = df["Put_Option_Speed"].shift(lookback)
+                
+                    df["Call_Speed_Explosion"] = np.select(
+                        [
+                            df["Call_Option_Speed"] >= 2 * df["Call_Speed_Lag"],
+                            df["Call_Option_Speed"] >= 1.5 * df["Call_Speed_Lag"]
+                        ],
+                        [
+                            "🏎️",  # big speed burst
+                            "🚗"   # moderate burst
+                        ],
+                        default=""
+                    )
+                
+                    df["Put_Speed_Explosion"] = np.select(
+                        [
+                            df["Put_Option_Speed"] >= 2 * df["Put_Speed_Lag"],
+                            df["Put_Option_Speed"] >= 1.5 * df["Put_Speed_Lag"]
+                        ],
+                        [
+                            "🏎️",
+                            "🚗"
+                        ],
+                        default=""
+                    )
+                
+                    return df
+                intraday = detect_option_speed_explosion(intraday)      
+                
                 # def compute_option_value(
                 #         df, *,               # keyword-only for clarity
                 #         delta: float   = 0.50,
