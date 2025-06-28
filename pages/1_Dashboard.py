@@ -465,8 +465,8 @@ if st.sidebar.button("Run Analysis"):
                 
                     df["Call_Speed_Explosion"] = np.select(
                         [
-                            df["Call_Option_Speed"] >= 2 * df["Call_Speed_Lag"],
-                            df["Call_Option_Speed"] >= 1.5 * df["Call_Speed_Lag"]
+                            df["Call_Option_Speed"] >= 5 * df["Call_Speed_Lag"],
+                            df["Call_Option_Speed"] >= 3 * df["Call_Speed_Lag"]
                         ],
                         [
                             "🏎️",  # big speed burst
@@ -477,8 +477,8 @@ if st.sidebar.button("Run Analysis"):
                 
                     df["Put_Speed_Explosion"] = np.select(
                         [
-                            df["Put_Option_Speed"] >= 2 * df["Put_Speed_Lag"],
-                            df["Put_Option_Speed"] >= 1.5 * df["Put_Speed_Lag"]
+                            df["Put_Option_Speed"] >= 5 * df["Put_Speed_Lag"],
+                            df["Put_Option_Speed"] >= 3 * df["Put_Speed_Lag"]
                         ],
                         [
                             "🏎️",
