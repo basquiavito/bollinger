@@ -3007,6 +3007,10 @@ if st.sidebar.button("Run Analysis"):
                 
 
                 
+                
+                base_premium = df["Call_Option_Value"].iloc[0]
+                df["Call_Option_Scaled"] = (df["Call_Option_Value"] / base_premium) * df["F_numeric"].iloc[0]
+                
 
 
  
@@ -4036,9 +4040,27 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
-           
-                              # Mask where Call Vol Explosion (💥) occurs
-           
+            # 🔢 Normalize Call Option Value to match F% scale
+                base_premium = intraday["Call_Option_Value"].iloc[0]
+                f_base = intraday["F_numeric"].iloc[0]
+                
+                intraday["Call_Option_Scaled"] = (intraday["Call_Option_Value"] / base_premium) * f_base
+                
+                # 🌀 Optional: Smooth it
+                intraday["Call_Option_Scaled_Smooth"] = intraday["Call_Option_Scaled"].rolling(3).mean()
+s
+                # 📈 Call Option Scaled Line (dotted light purple)
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Scaled_Smooth"],
+                    mode="lines",
+                    line=dict(color="#B57EDC", dash="dot", width=1),  # light purple
+                    name="Call Option Scaled",
+                    showlegend=True
+                ), row=1, col=1)
+
+                
+
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
