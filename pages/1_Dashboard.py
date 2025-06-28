@@ -4161,24 +4161,24 @@ if st.sidebar.button("Run Analysis"):
 
                                        # Add IB High to MIDAS Option Plot
                                # Loop over the subplot rows: 1 = F%, 2 = Call/Put, 3 = Midas+Option
-                          # Add IB High to Row 3
-                fig.add_hline(
-                    y=session_stats["IB_High"],
-                    line=dict(color="orange", dash="dash"),
-                    row=1, col=1,
-                    annotation_text="IB High",
-                    annotation_position="top right"
-                )
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=[ib_high] * len(intraday),
+                    mode="lines",
+                    line=dict(color="#FFD700", dash="dot", width=1),
+                    name="IB High",
+                    showlegend=True
+                ), row=1, col=1)
                 
-                # Add IB Low to Row 3
-                fig.add_hline(
-                    y=session_stats["IB_Low"],
-                    line=dict(color="orange", dash="dash"),
-                    row=1, col=1,
-                    annotation_text="IB Low",
-                    annotation_position="bottom right"
-                )
-                                    # 🟫 IB High (subtle off-white line)
+                # 🟫 IB Low (subtle off-white line)
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=[ib_low] * len(intraday),
+                    mode="lines",
+                    line=dict(color="#FFD700", dash="dot", width=1),
+                    name="IB Low",
+                    showlegend=True
+                ), row=1, col=1)
                 
                                 
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
