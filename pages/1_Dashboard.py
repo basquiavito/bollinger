@@ -3743,6 +3743,45 @@ if st.sidebar.button("Run Analysis"):
 
                     fig.add_trace(atr_alert_scatter, row=1, col=1)
 
+
+                    # 🟥 1. Masks
+                    mask_call_speed = intraday["Call_Speed_Explosion"] != ""
+                    mask_put_speed  = intraday["Put_Speed_Explosion"]  != ""
+                    
+                    # 🟧 2. Call Speed Explosion 🏎️🚗 (above F%)
+                    scatter_call_speed = go.Scatter(
+                        x=intraday.loc[mask_call_speed, "Time"],
+                        y=intraday.loc[mask_call_speed, "F_numeric"] + 12,  # Offset above
+                        mode="text",
+                        text=intraday.loc[mask_call_speed, "Call_Speed_Explosion"],
+                        textposition="top left",
+                        textfont=dict(size=8),
+                        name="Call Speed Explosion",
+                        hovertemplate="Time: %{x}<br>Call Speed: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_call_speed, ["Call_Option_Speed"]]
+                    )
+                    
+                    # 🟨 3. Put Speed Explosion 🏎️🚗 (below F%)
+                    scatter_put_speed = go.Scatter(
+                        x=intraday.loc[mask_put_speed, "Time"],
+                        y=intraday.loc[mask_put_speed, "F_numeric"] - 12,  # Offset below
+                        mode="text",
+                        text=intraday.loc[mask_put_speed, "Put_Speed_Explosion"],
+                        textposition="bottom left",
+                        textfont=dict(size=8),
+                        name="Put Speed Explosion",
+                        hovertemplate="Time: %{x}<br>Put Speed: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_put_speed, ["Put_Option_Speed"]]
+                    )
+                    
+                    # 🟩 4. Add both to plot
+                    fig.add_trace(scatter_call_speed, row=1, col=1)
+                    fig.add_trace(scatter_put_speed,  row=1, col=1)
+
+
+
+                  
+
 # 🟢 TD SUPPLY
 
           # 🟤 TD Supply Line (F%)
