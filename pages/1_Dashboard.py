@@ -408,7 +408,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     # Step 4: PnL relative to fixed premium (optional)
                     intraday["Option_PnL"] = intraday["Option_Value"] - premium
-                    intraday["Option_ROI_%"] = (intraday["Option_Value"] / premium) * 100
+                    intraday["ROI%"] = ((intraday["Option_Value"] - premium) / premium) * 100
 
                     return intraday
 
@@ -2968,7 +2968,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Option_PnL","Option_Value"
+                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","ROI%","Option_Value"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
