@@ -3911,7 +3911,7 @@ if st.sidebar.button("Run Analysis"):
                         textposition="bottom center",
 
                         text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
-                        textfont=dict(size=11),
+                        textfont=dict(size=8),
                         name="ATR Expansion",
                         hoverinfo="text",
                         hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
