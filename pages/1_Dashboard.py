@@ -3742,18 +3742,18 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(scatter_tk_sun, row=1, col=1)
                     # fig.add_trace(scatter_tk_moon, row=1, col=1)
 
-                    # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
-                    y_open_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
-                        mode="lines",
-                        line=dict(color="grey", dash="dash", width=0.5),
-                        name="Yesterday Open (F%)",
-                        yaxis="y2",              # << ✅ this is key
-                        showlegend=False,
-                        hoverinfo='skip'
+                    # # ✅ Yesterday's Open - Grey Dashed Line (F% Scale)
+                    # y_open_f_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
+                    #     mode="lines",
+                    #     line=dict(color="grey", dash="dash", width=0.5),
+                    #     name="Yesterday Open (F%)",
+                    #     yaxis="y2",              # << ✅ this is key
+                    #     showlegend=False,
+                    #     hoverinfo='skip'
                   
-                    )
+                    # )
 
                     # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
                     y_high_f_line = go.Scatter(
@@ -3792,7 +3792,7 @@ if st.sidebar.button("Run Analysis"):
                     )
 
                      # 🎯 Add all lines to the F% plot
-                    fig.add_trace(y_open_f_line, row=1, col=1)
+                    # fig.add_trace(y_open_f_line, row=1, col=1)
                     fig.add_trace(y_high_f_line, row=1, col=1)
                     fig.add_trace(y_low_f_line, row=1, col=1)
                     fig.add_trace(y_close_f_line, row=1, col=1)
