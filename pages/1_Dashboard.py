@@ -404,7 +404,8 @@ if st.sidebar.button("Run Analysis"):
                         delta * df["Dollar_Move_From_F"]
                         + 0.5 * gamma * df["Dollar_Move_From_F"]**2
                     ) * contracts
-                
+                    df.at[df.index[0], "Call_Option_Value"] = premium
+                    df.at[df.index[0], "Call_Return_%"] = 0
                     df["Call_Return_%"] = ((df["Call_Option_Value"] - premium) / premium) * 100
                 
                     # Put Option (delta < 0)
@@ -412,14 +413,17 @@ if st.sidebar.button("Run Analysis"):
                         -delta * df["Dollar_Move_From_F"]
                         + 0.5 * gamma * df["Dollar_Move_From_F"]**2
                     ) * contracts
-                
-                    df["Put_Return_%"] = ((df["Put_Option_Value"] - premium) / premium) * 100
-                # Force initial value = premium at open
-                    df.at[df.index[0], "Call_Option_Value"] = premium
-                    df.at[df.index[0], "Call_Return_%"] = 0
+
+
+
+
                     
                     df.at[df.index[0], "Put_Option_Value"] = premium
                     df.at[df.index[0], "Put_Return_%"] = 0
+                    df["Put_Return_%"] = ((df["Put_Option_Value"] - premium) / premium) * 100
+                # Force initial value = premium at open
+                 
+        
 
                     return df
 
