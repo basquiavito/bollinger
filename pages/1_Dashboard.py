@@ -517,22 +517,22 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                  intraday["CallPut_Cross"] = (
-                      # 🟣 Call crosses ABOVE Put
-                      (intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"]) &
-                      (intraday["Call_Option_Smooth"].shift(1) <= intraday["Put_Option_Smooth"].shift(1))
-                  ) | (
-                      # 🔵 Put crosses ABOVE Call
-                      (intraday["Call_Option_Smooth"] < intraday["Put_Option_Smooth"]) &
-                      (intraday["Call_Option_Smooth"].shift(1) >= intraday["Put_Option_Smooth"].shift(1))
-                  )
+                    intraday["CallPut_Cross"] = (
+                        # 🟣 Call crosses ABOVE Put
+                        (intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"]) &
+                        (intraday["Call_Option_Smooth"].shift(1) <= intraday["Put_Option_Smooth"].shift(1))
+                    ) | (
+                        # 🔵 Put crosses ABOVE Call
+                        (intraday["Call_Option_Smooth"] < intraday["Put_Option_Smooth"]) &
+                        (intraday["Call_Option_Smooth"].shift(1) >= intraday["Put_Option_Smooth"].shift(1))
+                    )
 
-                   intraday["Magic_Emoji"] = np.where(intraday["CallPut_Cross"], "🪄", "")
-                   intraday["Magic_Y"] = np.where(
-                   intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"],
-                   intraday["Call_Option_Smooth"] + 10,
-                   intraday["Put_Option_Smooth"] - 10
-                      )
+                     intraday["Magic_Emoji"] = np.where(intraday["CallPut_Cross"], "🪄", "")
+                     intraday["Magic_Y"] = np.where(
+                     intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"],
+                     intraday["Call_Option_Smooth"] + 10,
+                     intraday["Put_Option_Smooth"] - 10
+                        )
 
                   
                     # 🔁 Force starting values
