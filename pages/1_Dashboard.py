@@ -408,7 +408,8 @@ if st.sidebar.button("Run Analysis"):
                 
                     # Step 4: PnL relative to fixed premium (optional)
                     intraday["Option_PnL"] = intraday["Option_Value"] - premium
-                
+                    intraday["Option_ROI_%"] = (intraday["Option_Value"] / premium) * 100
+
                     return intraday
 
 
@@ -3849,7 +3850,7 @@ if st.sidebar.button("Run Analysis"):
                 # Plot Option PnL on Row 2
                 option_pnl_trace = go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["Option_Value"],
+                    y=intraday["Option_ROI_%"],
                     mode="lines",
                     line=dict(width=1.5, color="gold"),
                     name="Simulated ATM Option Value",
