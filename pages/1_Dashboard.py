@@ -392,20 +392,20 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-              # Simulate ATM Option P&L (Delta-only version)
+                              # STEP 1: Simulated Black-Scholes ATM Option Tracker
                 
-                # Step 1: Get spot price at open (first close value)
-                spot_price = intraday.iloc[0]["Close"]
+                # --- Set constants ---
+                starting_option_value = 64
+                atm_delta = 0.50
                 
-                # Step 2: Get F% at open
-                f_open = intraday.iloc[0]["F_numeric"]
+                # Spot price is the stock price at market open
+                spot_price = intraday.loc[intraday.index[0], "Price"]  # or replace "Price" with your true spot source
+                f_open = intraday.loc[intraday.index[0], "F_numeric"]
                 
-                # Step 3: Compute F%-based dollar move from open
-                intraday["F%_Move"] = intraday["F_numeric"] - f_open
-                intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10000) * spot_price
-                
-                # Step 4: Simulate ATM call option value with delta = 0.50
-                intraday["ATM_Call_Value"] = intraday["Dollar_Move_From_F"] * 0.50
+                # --- Compute synthetic option value and return ---
+                intraday["Option_Value"] = starting_option_value + ((intraday["F_numeric"] - f_open) / 10000) * spot_price * atm_delta
+                intraday["Option_Return_%"] = ((intraday["Option_Value"] - starting_option_value) / starting_option_value) * 100
+
                 
 
 #**********************************************************************************************************************#**********************************************************************************************************************
