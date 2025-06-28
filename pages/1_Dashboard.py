@@ -459,26 +459,29 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = compute_option_value(intraday)      
                 
-                def detect_option_speed_explosion(df, lookback=3):
-                    df["Call_Speed_Lag"] = df["Call_Option_Speed"].shift(lookback)
-                    df["Put_Speed_Lag"]  = df["Put_Option_Speed"].shift(lookback)
+                def detect_option_speed_explosion(df, lookback=4, pct=0.85):
+                    df["Call_Speed_Base"] = df["Call_Option_Speed"].rolling(lookback).mean()
+                    df["Put_Speed_Base"]  = df["Put_Option_Speed"].rolling(lookback).mean()
+                
+                    call_thresh = df["Call_Option_Speed"].rolling(lookback * 3).quantile(pct)
+                    put_thresh  = df["Put_Option_Speed"].rolling(lookback * 3).quantile(pct)
                 
                     df["Call_Speed_Explosion"] = np.select(
                         [
-                            df["Call_Option_Speed"] >= 8 * df["Call_Speed_Lag"],
-                            df["Call_Option_Speed"] >= 6 * df["Call_Speed_Lag"]
+                            df["Call_Option_Speed"] >= 1.5 * df["Call_Speed_Base"],
+                            df["Call_Option_Speed"] >= call_thresh
                         ],
                         [
-                            "🏎️",  # big speed burst
-                            "🚗"   # moderate burst
+                            "🏎️",
+                            "🚗"
                         ],
                         default=""
                     )
                 
                     df["Put_Speed_Explosion"] = np.select(
                         [
-                            df["Put_Option_Speed"] >= 8 * df["Put_Speed_Lag"],
-                            df["Put_Option_Speed"] >= 6 * df["Put_Speed_Lag"]
+                            df["Put_Option_Speed"] >= 1.5 * df["Put_Speed_Base"],
+                            df["Put_Option_Speed"] >= put_thresh
                         ],
                         [
                             "🏎️",
@@ -488,6 +491,7 @@ if st.sidebar.button("Run Analysis"):
                     )
                 
                     return df
+
                 intraday = detect_option_speed_explosion(intraday)      
                 
                 # def compute_option_value(
