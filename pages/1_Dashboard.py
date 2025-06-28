@@ -442,8 +442,8 @@ if st.sidebar.button("Run Analysis"):
                     # 2️⃣ Smoothed 3-bar trend of that speed
                     df["Vol_Explosion"] = df["Option_Speed"].rolling(3).mean()
                     
-                    premium = df["Call_Option_Value"].iloc[0]
-                    df["Vol_Explosion_%"] = (df["Vol_Explosion"] / premium) * 100
+                    initial_premium = premium        # 64 by default
+                    df["Vol_Explosion_%"] = (df["Vol_Explosion"] / initial_premium) * 100
 
                     
                     # 4️⃣ Optional: Create a binary signal (e.g. breakout)
@@ -451,8 +451,9 @@ if st.sidebar.button("Run Analysis"):
 
 
                     # 🔁 Force starting values
-                    df.at[df.index[0], "Call_Option_Value"] = premium
-                    df.at[df.index[0], "Put_Option_Value"]  = premium
+               # 🔁 Force starting values – use the same fixed premium here
+                    df.at[df.index[0], "Call_Option_Value"] = initial_premium
+                    df.at[df.index[0], "Put_Option_Value"]  = initial_premium
                     df.at[df.index[0], "Call_Return_%"]     = 0
                     df.at[df.index[0], "Put_Return_%"]      = 0
                 
