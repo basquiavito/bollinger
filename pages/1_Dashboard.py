@@ -3906,7 +3906,7 @@ if st.sidebar.button("Run Analysis"):
 
                     atr_alert_scatter = go.Scatter(
                         x=intraday.loc[mask_atr_alert, "Time"],
-                        y=intraday.loc[mask_atr_alert, "F_numeric"]  + 3,  # place above F%
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  - 3,  # place above F%
                         mode="text",
                         textposition="bottom center",
 
