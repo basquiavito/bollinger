@@ -3199,10 +3199,7 @@ if st.sidebar.button("Run Analysis"):
                         shared_xaxes=True,
                         vertical_spacing=0.03,
                         row_heights=[0.7, 0.3],
-                        specs=[
-                            [{"colspan": 2}, None],  # First row spans both columns
-                            [{"colspan": 2}, None]   # Second row spans both columns
-                        ]# main chart taller, option chart smaller
+                         option chart smaller
                     )
 
     
@@ -3859,13 +3856,13 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>Option Value: %{y:.2f}<extra></extra>"
                 )
                 
-                fig.add_trace(option_pnl_trace, row=2, col=1)
+                fig.add_trace(option_pnl_trace, row=2, col=2)
                              
                       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=1200,  # Increase overall figure height (default ~450-600)
+                    height=2000,  # Increase overall figure height (default ~450-600)
 
                     showlegend=True,
                     yaxis2=dict(
