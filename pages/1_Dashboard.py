@@ -384,7 +384,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = calculate_f_percentage(intraday, prev_close)
               
-                def compute_option_value(df, premium=64, contracts=100):
+              def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
                     Delta and Gamma change based on moneyness.
@@ -436,20 +436,7 @@ if st.sidebar.button("Run Analysis"):
                     # 7️⃣ Returns
                     df["Call_Return_%"] = ((df["Call_Option_Value"] - premium) / premium) * 100
                     df["Put_Return_%"]  = ((df["Put_Option_Value"] - premium) / premium) * 100
-                 # 1️⃣ Raw speed of the call option value
-                    df["Option_Speed"] = df["Call_Option_Value"].diff()
-                    
-                    # 2️⃣ Smoothed 3-bar trend of that speed
-                    df["Vol_Explosion"] = df["Option_Speed"].rolling(3).mean()
-                    
-                    premium = df["Call_Option_Value"].iloc[0]
-                    df["Vol_Explosion_%"] = (df["Vol_Explosion"] / premium) * 100
-
-                    
-                    # 4️⃣ Optional: Create a binary signal (e.g. breakout)
-                    df["Vol_Surge_Signal"] = df["Vol_Explosion_%"] > 10  # threshold can be tuned
-
-
+                
                     # 🔁 Force starting values
                     df.at[df.index[0], "Call_Option_Value"] = premium
                     df.at[df.index[0], "Put_Option_Value"]  = premium
@@ -460,7 +447,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                intraday = compute_option_value(intraday)           
+                intraday = compute_option_value(intraday)      
                 # def compute_option_value(
                 #         df, *,               # keyword-only for clarity
                 #         delta: float   = 0.50,
