@@ -4058,7 +4058,27 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=2, col=1)
                 
-                                
+                # Mask for Call BB Tag events (🧃 or 🍋)
+                mask_call_bb_tag = df["Call_BB_Tag"] != ""
+                
+                call_bb_tag_scatter = go.Scatter(
+                    x=df.loc[mask_call_bb_tag, "Time"],
+                    y=df.loc[mask_call_bb_tag, "Call_Option_Smooth"],
+                    mode="text",
+                    text=df.loc[mask_call_bb_tag, "Call_BB_Tag"],
+                    textposition="top center",
+                    textfont=dict(size=14),
+                    name="Call BB Tag",
+                    hovertemplate="Time: %{x}<br>Call BB Tag: %{text}<extra></extra>"
+                )
+                fig.add_trace(call_bb_tag_scatter, row=2, col=1)
+                
+                
+
+
+
+
+
                                                 # 🟫 IB High (subtle off-white line)
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
