@@ -393,7 +393,10 @@ if st.sidebar.button("Run Analysis"):
 
 
                               # STEP 1: Simulated Black-Scholes ATM Option Tracker
-                
+                # Ensure a Price column exists (using Close as spot price)
+                if "Price" not in intraday.columns:
+                    intraday["Price"] = intraday["Close"]  # or "Open", if more accurate for spot
+
                 # --- Set constants ---
                 starting_option_value = 64
                 atm_delta = 0.50
