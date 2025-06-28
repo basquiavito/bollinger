@@ -4412,8 +4412,17 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
- 
-                         
+                fig.option_trace = go.Scatter(
+                  x=intraday["Time"],
+                  y=intraday["Option_PnL"],
+                  mode="lines",
+                  name="Simulated Option (Δ+Γ)",
+                  line=dict(width=2, color="white", dash="dot"),
+                  hovertemplate="Time: %{x}<br>Option PnL: %{y:.2f}<extra></extra>"
+              )
+
+                fig.add_trace(fig.option_trace, row=2, col=1)
+             
                       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
