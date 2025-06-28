@@ -3829,7 +3829,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     scatter_bishop_tight = go.Scatter(
                         x=intraday.loc[mask_bbw_tight, "Time"],
-                        y=intraday.loc[mask_bbw_tight, "F_numeric"] - 8,  # Adjusted Y offset
+                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 40,  # Adjusted Y offset
                         mode="text",
                         text=["🐝"] * mask_bbw_tight.sum(),  # ♗ as symbol
                         textposition="bottom center",
