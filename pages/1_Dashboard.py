@@ -480,8 +480,8 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_Option_Speed"] = df["Put_Option_Value"].diff()
 
 
-                  intraday["COV_Change"] = intraday["Call_Option_Value"].diff()
-                  intraday["COV_Accel"] = intraday["COV_Change"].diff()
+                    intraday["COV_Change"] = intraday["Call_Option_Value"].diff()
+                    intraday["COV_Accel"] = intraday["COV_Change"].diff()
 
 
                                     # 2️⃣ Smoothed 3-bar trend of that speed
