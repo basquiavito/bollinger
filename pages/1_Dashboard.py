@@ -3856,7 +3856,7 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>Option Value: %{y:.2f}<extra></extra>"
                 )
                 
-                fig.add_trace(option_pnl_trace, row=2, col=2)
+                fig.add_trace(option_pnl_trace, row=2, col=1)
                              
                       
                 fig.update_layout(
