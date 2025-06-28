@@ -3197,7 +3197,7 @@ if st.sidebar.button("Run Analysis"):
                         rows=2,
                         cols=1,
                         shared_xaxes=True,
-                        vertical_spacing=0.15,
+                        vertical_spacing=0.03,
                         row_heights=[0.7, 0.3]  # main chart taller, option chart smaller
                     )
 
@@ -3861,7 +3861,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=2000,  # Increase overall figure height (default ~450-600)
+                    height=1200,  # Increase overall figure height (default ~450-600)
 
                     showlegend=True,
                     yaxis2=dict(
