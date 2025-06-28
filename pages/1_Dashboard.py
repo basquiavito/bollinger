@@ -501,7 +501,7 @@ if st.sidebar.button("Run Analysis"):
 
                     df["Call_Vol_Explosion_Emoji"] = np.where(df["Call_Vol_Surge_Signal"], "💥", "")
                     df["Put_Vol_Explosion_Emoji"]  = np.where(df["Put_Vol_Surge_Signal"],  "💥", "")
-                    intraday["Tiger"] = np.where(intraday["COV_Change"] > 10, "🐅", "")
+                    intraday["Tiger"] = np.where(intraday["COV_Change"] > 30, "🐅", "")
 
                     # 🔁 Force starting values
                     df.at[df.index[0], "Call_Option_Value"] = premium
