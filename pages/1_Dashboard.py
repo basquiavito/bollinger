@@ -384,51 +384,83 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = calculate_f_percentage(intraday, prev_close)
 
-
-
-              
-                def compute_option_value(
-                        df, *,               # keyword-only for clarity
-                        delta: float   = 0.50,
-                        gamma: float   = 0.05,
-                        premium: float = 64,
-                        contracts: int = 100
-                ):
+                def compute_option_value(df, *, delta=0.50, gamma=0.05, premium=64, contracts=100):
                     """
-                    Add simulated ATM option columns to *df*.
+                    Adds both Call and Put simulated ATM option columns to the DataFrame.
                 
-                    Columns created
-                    ---------------
-                    F%_Move          – intraday F-point move from the open
-                    Dollar_Move_From_F
-                    Option_Value     – Δ + ½Γ approximation, scaled by *contracts*
-                    Option_Return_%  – percentage PnL vs. fixed premium
+                    Columns Created:
+                    - F%_Move, Dollar_Move_From_F
+                    - Call_Option_Value, Call_Return_%
+                    - Put_Option_Value, Put_Return_%
                     """
-                    # 1️⃣  Baseline values at the open
-                    spot_open  = df.iloc[0]["Close"]
-                    f_open     = df.iloc[0]["F_numeric"]
+                    spot_open = df.iloc[0]["Close"]
+                    f_open = df.iloc[0]["F_numeric"]
                 
-                    # 2️⃣  Translate F-move → $-move
-                    df["F%_Move"]           = df["F_numeric"] - f_open
+                    df["F%_Move"] = df["F_numeric"] - f_open
                     df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
                 
-                    # 3️⃣  Option value: Δ + ½Γ *contracts*
-                    df["Option_Value"] = (
+                    # Call Option (delta > 0)
+                    df["Call_Option_Value"] = (
                         delta * df["Dollar_Move_From_F"]
                         + 0.5 * gamma * df["Dollar_Move_From_F"]**2
                     ) * contracts
-
-
-                    df.at[df.index[0], "Option_Value"] = premium
-
-                    # 4️⃣  Return (%) relative to premium
-                    df["Option_Return_%"] = ((df["Option_Value"] - premium) / premium) * 100
+                
+                    df["Call_Return_%"] = ((df["Call_Option_Value"] - premium) / premium) * 100
+                
+                    # Put Option (delta < 0)
+                    df["Put_Option_Value"] = (
+                        -delta * df["Dollar_Move_From_F"]
+                        + 0.5 * gamma * df["Dollar_Move_From_F"]**2
+                    ) * contracts
+                
+                    df["Put_Return_%"] = ((df["Put_Option_Value"] - premium) / premium) * 100
                 
                     return df
+
+
+                intraday = compute_option_value(intraday)              
+                # def compute_option_value(
+                #         df, *,               # keyword-only for clarity
+                #         delta: float   = 0.50,
+                #         gamma: float   = 0.05,
+                #         premium: float = 64,
+                #         contracts: int = 100
+                # ):
+                #     """
+                #     Add simulated ATM option columns to *df*.
+                
+                #     Columns created
+                #     ---------------
+                #     F%_Move          – intraday F-point move from the open
+                #     Dollar_Move_From_F
+                #     Option_Value     – Δ + ½Γ approximation, scaled by *contracts*
+                #     Option_Return_%  – percentage PnL vs. fixed premium
+                #     """
+                #     # 1️⃣  Baseline values at the open
+                #     spot_open  = df.iloc[0]["Close"]
+                #     f_open     = df.iloc[0]["F_numeric"]
+                
+                #     # 2️⃣  Translate F-move → $-move
+                #     df["F%_Move"]           = df["F_numeric"] - f_open
+                #     df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
+                
+                #     # 3️⃣  Option value: Δ + ½Γ *contracts*
+                #     df["Option_Value"] = (
+                #         delta * df["Dollar_Move_From_F"]
+                #         + 0.5 * gamma * df["Dollar_Move_From_F"]**2
+                #     ) * contracts
+
+
+                #     df.at[df.index[0], "Option_Value"] = premium
+
+                #     # 4️⃣  Return (%) relative to premium
+                #     df["Option_Return_%"] = ((df["Option_Value"] - premium) / premium) * 100
+                
+                #     return df
                 
                 
-                # --- call it right after intraday is ready -----------------
-                intraday = compute_option_value(intraday)
+                # # --- call it right after intraday is ready -----------------
+                # intraday = compute_option_value(intraday)
 
             
  
@@ -2984,7 +3016,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Option_Return_%","Option_Value"
+                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Call_Return_%"."Put_Return_%"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
