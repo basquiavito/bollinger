@@ -4159,7 +4159,24 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                                                                # 🟫 IB High (subtle off-white line)
+                                       # Add IB High to MIDAS Option Plot
+                fig.add_hline(
+                    y=ib_high,
+                    line=dict(color="orange", dash="dash"),
+                    row=3, col=1,
+                    annotation_text="IB High",
+                    annotation_position="top right"
+                )
+                
+                # Add IB Low to MIDAS Option Plot
+                fig.add_hline(
+                    y=ib_low,
+                    line=dict(color="orange", dash="dash"),
+                    row=3, col=1,
+                    annotation_text="IB Low",
+                    annotation_position="bottom right"
+                )
+                                                         # 🟫 IB High (subtle off-white line)
                 
                                 
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
