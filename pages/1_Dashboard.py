@@ -459,7 +459,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = compute_option_value(intraday)      
                 
-                def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=80):
+                def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
                     """
                     Detects call/put speed explosions using a ratio test and percentile filter.
                     Only flags emojis if current speed is both:
