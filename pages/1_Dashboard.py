@@ -3871,11 +3871,11 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_adx_alert = go.Scatter(
                         x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 40,  # Offset for visibility
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 9,  # Offset for visibility
                         mode="text",
                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
-                        textposition="bottom center",
-                        textfont=dict(size=18),
+                        textposition="top center",
+                        textfont=dict(size=8),
                         name="ADX Expansion Alert",
                         hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
                         customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
