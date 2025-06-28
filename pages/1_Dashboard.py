@@ -443,8 +443,8 @@ if st.sidebar.button("Run Analysis"):
                     df["Vol_Explosion"] = df["Option_Speed"].rolling(3).mean()
                     
                     # 3️⃣ Optional: Normalize to baseline premium (or 1st value) for relativity
-                    premium = df["Call_Option_Value"].iloc[0]
-                    df["Vol_Explosion_%"] = (df["Vol_Explosion"] / premium) * 100
+                    initial_premium = premium  # from the function argument, e.g., 64
+                    df["Vol_Explosion_%"] = (df["Vol_Explosion"] / initial_premium) * 100
                     
                     # 4️⃣ Optional: Create a binary signal (e.g. breakout)
                     df["Vol_Surge_Signal"] = df["Vol_Explosion_%"] > 10  # threshold can be tuned
