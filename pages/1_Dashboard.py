@@ -3362,10 +3362,12 @@ if st.sidebar.button("Run Analysis"):
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
-                        rows=1,
+                        rows=2,
                         cols=1,
                         shared_xaxes=True,
                         vertical_spacing=0.03,
+                        row_heights=[0.75, 0.25],  # top = 75%, bottom = 25%
+                        subplot_titles=("F% Structure", "Option Flow (Call/Put)")
                        
                          
                     )
@@ -4015,31 +4017,32 @@ if st.sidebar.button("Run Analysis"):
                     name="Long Entry (✅)"
                 )
                 fig.add_trace(long_entry_trace, row=1, col=1)
-
+                # Smooth first if needed
+                intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
+                intraday["Put_Option_Smooth"]  = intraday["Put_Option_Value"].rolling(3).mean()
                 
-              # 📈 Call Option Scaled Line (dotted light purple)
+                # 🎯 Call Flow
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["Call_Option_Scaled_Smooth"],
+                    y=intraday["Call_Option_Smooth"],
                     mode="lines",
-                    line=dict(color="#B57EDC", dash="dot", width=1),  # light purple
-                    name="Call Option Scaled",
+                    name="Call Option Value",
+                    line=dict(color="purple", width=1.5),
                     showlegend=True
-                ), row=1, col=1)
-
-                                # Plot Put
+                ), row=2, col=1)
+                
+                # 🎯 Put Flow
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["Put_Option_Scaled_Smooth"],
+                    y=intraday["Put_Option_Smooth"],
                     mode="lines",
-                    line=dict(color="#00CED1", dash="dot", width=1),
-                    name="Put Option Scaled",
+                    name="Put Option Value",
+                    line=dict(color="teal", width=1.5),
                     showlegend=True
-                ), row=1, col=1)
-                                                
-
+                ), row=2, col=1)
                 
-                                # 🟫 IB High (subtle off-white line)
+                                
+                                                # 🟫 IB High (subtle off-white line)
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
                     y=[ib_high] * len(intraday),
@@ -4069,18 +4072,10 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
-        
-                # 📈 Call Option Scaled Line (dotted light purple)
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Call_Option_Scaled_Smooth"],
-                    mode="lines",
-                    line=dict(color="#B57EDC", dash="dot", width=1),  # light purple
-                    name="Call Option Scaled",
-                    showlegend=True
-                ), row=1, col=1)
-
-                
+         
+                fig.update_yaxes(title_text="F%", row=1, col=1)
+                fig.update_yaxes(title_text="Option Value", row=2, col=1)
+                 
 
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
