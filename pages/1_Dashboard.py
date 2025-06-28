@@ -390,7 +390,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                  # Simulate ATM Option P&L (Delta-only version)
+             # Simulate ATM Option P&L (Delta-only version)
                 
                 # Step 1: Get spot price at open (first close value)
                 spot_price = intraday.iloc[0]["Close"]
@@ -404,6 +404,10 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Step 4: Simulate ATM call option value with delta = 0.50
                 intraday["ATM_Call_Value"] = intraday["Dollar_Move_From_F"] * 0.50
+                
+                # Step 5: Subtract fixed premium to get net P&L
+                intraday["ATM_Call_PnL"] = intraday["ATM_Call_Value"] - 64
+
 
 
 #**********************************************************************************************************************#**********************************************************************************************************************
