@@ -384,7 +384,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = calculate_f_percentage(intraday, prev_close)
               
-              def compute_option_value(df, premium=64, contracts=100):
+                def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
                     Delta and Gamma change based on moneyness.
