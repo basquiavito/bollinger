@@ -3499,29 +3499,29 @@ if st.sidebar.button("Run Analysis"):
 
                     mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
-                    fig.add_trace(go.Scatter(
-                        x=intraday.loc[mask_chikou_above, "Time"],
-                        y=intraday.loc[mask_chikou_above, "F_numeric"] + 39,
-                        mode="text",
-                        text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
-                        textposition="top center",
-                        textfont=dict(size=34),
-                        name="Chikou Above Price",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
-                    ), row=1, col=1)
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday.loc[mask_chikou_above, "Time"],
+                    #     y=intraday.loc[mask_chikou_above, "F_numeric"] + 39,
+                    #     mode="text",
+                    #     text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
+                    #     textposition="top center",
+                    #     textfont=dict(size=34),
+                    #     name="Chikou Above Price",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
+                    # ), row=1, col=1)
 
-                    mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
+                    # mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
 
-                    fig.add_trace(go.Scatter(
-                        x=intraday.loc[mask_chikou_below, "Time"],
-                        y=intraday.loc[mask_chikou_below, "F_numeric"] - 39,
-                        mode="text",
-                        text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
-                        textposition="bottom center",
-                        textfont=dict(size=34),
-                        name="Chikou Below Price",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
-                    ), row=1, col=1)
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday.loc[mask_chikou_below, "Time"],
+                    #     y=intraday.loc[mask_chikou_below, "F_numeric"] - 39,
+                    #     mode="text",
+                    #     text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=34),
+                    #     name="Chikou Below Price",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                    # ), row=1, col=1)
 
 
 
@@ -3871,7 +3871,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_adx_alert = go.Scatter(
                         x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 24,  # Offset for visibility
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 40,  # Offset for visibility
                         mode="text",
                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
                         textposition="bottom center",
