@@ -3850,11 +3850,11 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_bbw_alert = go.Scatter(
                         x=intraday.loc[mask_bbw_alert, "Time"],
-                        y=intraday.loc[mask_bbw_alert, "F_numeric"] + 60,  # Offset above F%
+                        y=intraday.loc[mask_bbw_alert, "F_numeric"] - 6,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
-                        textposition="top center",
-                        textfont=dict(size=13),
+                        textposition="bottom center",
+                        textfont=dict(size=8),
                         name="BBW Expansion Alert",
                         hovertemplate="Time: %{x}<br>BBW Ratio: %{customdata:.2f}<extra></extra>",
                         customdata=intraday.loc[mask_bbw_alert, "BBW_Ratio"]
