@@ -436,7 +436,17 @@ if st.sidebar.button("Run Analysis"):
                     # 7️⃣ Returns
                     df["Call_Return_%"] = ((df["Call_Option_Value"] - premium) / premium) * 100
                     df["Put_Return_%"]  = ((df["Put_Option_Value"] - premium) / premium) * 100
-                
+
+
+                    # 1️⃣ Raw speed of the call option value
+                    df["Call_Option_Speed"] = df["Call_Option_Value"].diff()
+                    # 1️⃣ Raw speed of the call option value
+                    df["Put_Option_Speed"] = df["Put_Option_Value"].diff()
+
+ 
+
+
+                  
                     # 🔁 Force starting values
                     df.at[df.index[0], "Call_Option_Value"] = premium
                     df.at[df.index[0], "Put_Option_Value"]  = premium
@@ -3045,7 +3055,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value"
+                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value","Call_Option_Speed","Put_Option_Speed"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
