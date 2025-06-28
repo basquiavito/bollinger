@@ -392,6 +392,22 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+              # Simulate ATM Option P&L (Delta-only version)
+                
+                # Step 1: Get spot price at open (first close value)
+                spot_price = intraday.iloc[0]["Close"]
+                
+                # Step 2: Get F% at open
+                f_open = intraday.iloc[0]["F_numeric"]
+                
+                # Step 3: Compute F%-based dollar move from open
+                intraday["F%_Move"] = intraday["F_numeric"] - f_open
+                intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10000) * spot_price
+                
+                # Step 4: Simulate ATM call option value with delta = 0.50
+                intraday["ATM_Call_Value"] = intraday["Dollar_Move_From_F"] * 0.50
+                
+
 #**********************************************************************************************************************#**********************************************************************************************************************
 
                                 #Bolinger Bands and BBW Volatility
