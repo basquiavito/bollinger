@@ -2473,7 +2473,7 @@ if st.sidebar.button("Run Analysis"):
 
                     for idx in kijun_cross_indices:
                         start_idx = df.index.get_loc(idx) + 1
-                        end_idx = start_idx + 21
+                        end_idx = start_idx + 40
 
                         future = df.iloc[start_idx:end_idx]
 
