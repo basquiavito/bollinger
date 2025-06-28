@@ -3434,7 +3434,7 @@ if st.sidebar.button("Run Analysis"):
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
-                        rows=2,
+                        rows=3,
                         cols=1,
                         shared_xaxes=True,
                         vertical_spacing=0.03,
@@ -4113,6 +4113,28 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=2, col=1)
                 
+                # Compute displacement from MIDAS curves
+                intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+                
+                # Plot them in Row 3
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_vs_Bull"],
+                    mode="lines",
+                    name="Call vs Midas Bull",
+                    line=dict(color="darkviolet", width=1.5, dash="dot"),
+                    showlegend=True
+                ), row=3, col=1)
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_vs_Bear"],
+                    mode="lines",
+                    name="Put vs Midas Bear",
+                    line=dict(color="darkcyan", width=1.5, dash="dot"),
+                    showlegend=True
+                ), row=3, col=1)
 
                       # 🐅 Tiger markers on top of Call Option Value
                 fig.add_trace(go.Scatter(
