@@ -459,40 +459,37 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = compute_option_value(intraday)      
                 
-                def detect_option_speed_explosion(df, lookback=4, pct=0.85):
-                    df["Call_Speed_Base"] = df["Call_Option_Speed"].rolling(lookback).mean()
-                    df["Put_Speed_Base"]  = df["Put_Option_Speed"].rolling(lookback).mean()
+                def detect_speed_cluster(df, column="Call_Option_Speed", 
+                         emoji="🏎️", 
+                         window=5, 
+                         threshold_count=3, 
+                         percentile=85):
+
+                    if column not in df.columns:
+                        return df
                 
-                    call_thresh = df["Call_Option_Speed"].rolling(lookback * 3).quantile(pct)
-                    put_thresh  = df["Put_Option_Speed"].rolling(lookback * 3).quantile(pct)
+                    # Calculate dynamic speed threshold
+                    threshold = np.percentile(df[column].dropna(), percentile)
                 
-                    df["Call_Speed_Explosion"] = np.select(
-                        [
-                            df["Call_Option_Speed"] >= 1.5 * df["Call_Speed_Base"],
-                            df["Call_Option_Speed"] >= call_thresh
-                        ],
-                        [
-                            "🏎️",
-                            "🚗"
-                        ],
-                        default=""
-                    )
+                    # Create boolean column: is speed > threshold
+                    flag_col = column + "_Flag"
+                    emoji_col = column + "_Emoji"
                 
-                    df["Put_Speed_Explosion"] = np.select(
-                        [
-                            df["Put_Option_Speed"] >= 1.5 * df["Put_Speed_Base"],
-                            df["Put_Option_Speed"] >= put_thresh
-                        ],
-                        [
-                            "🏎️",
-                            "🚗"
-                        ],
-                        default=""
-                    )
+                    df[flag_col] = df[column] > threshold
+                    df[emoji_col] = ""
+                
+                    # Rolling cluster detection (like 🐝)
+                    for i in range(window, len(df)):
+                        recent_flags = df[flag_col].iloc[i-window:i]
+                        if recent_flags.sum() >= threshold_count:
+                            df.at[df.index[i], emoji_col] = emoji
                 
                     return df
 
-                intraday = detect_option_speed_explosion(intraday)      
+
+                intraday = detect_speed_cluster(intraday, column="Call_Option_Speed", emoji="🏎️")
+                intraday = detect_speed_cluster(intraday, column="Put_Option_Speed",  emoji="🏎️")
+
                 
                 # def compute_option_value(
                 #         df, *,               # keyword-only for clarity
