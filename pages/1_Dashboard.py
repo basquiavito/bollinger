@@ -385,31 +385,37 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_f_percentage(intraday, prev_close)
 
 
+
+              
+                def compute_option_value(intraday, delta=0.50, gamma=0.05, premium=64):
+                    """
+                    Calculate Option Value using Delta-Gamma approximation and attach to intraday DataFrame.
+                    Returns intraday with new columns: Option_Value and Option_PnL.
+                    """
+                    # Step 1: Get open values
+                    spot_price = intraday.iloc[0]["Close"]
+                    f_open = intraday.iloc[0]["F_numeric"]
                 
-                  # Constants
-                delta = 0.50
-                gamma = 0.05
-                premium = 64
+                    # Step 2: Calculate dollar move based on F%
+                    intraday["F%_Move"] = intraday["F_numeric"] - f_open
+                    intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10000) * spot_price
                 
-                # Step 1: Spot price and F% at open
-                spot_price = intraday.iloc[0]["Close"]
-                f_open = intraday.iloc[0]["F_numeric"]
+                    # Step 3: Option value with Delta and Gamma
+                    intraday["Option_Value"] = (
+                        delta * intraday["Dollar_Move_From_F"] +
+                        0.5 * gamma * (intraday["Dollar_Move_From_F"] ** 2)
+                    )
                 
-                # Step 2: F% Move → Dollar Move
-                intraday["F%_Move"] = intraday["F_numeric"] - f_open
-                intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10000) * spot_price
+                    # Step 4: PnL relative to fixed premium (optional)
+                    intraday["Option_PnL"] = intraday["Option_Value"] - premium
                 
-                # Step 3: Full Option Value (Delta + Gamma)
-                intraday["Option_Value"] = (
-                    delta * intraday["Dollar_Move_From_F"] +
-                    0.5 * gamma * (intraday["Dollar_Move_From_F"] ** 2)
-                )
-                
-                # Step 4: Option PnL (after subtracting $64 premium)
+                    return intraday
+
                 intraday["Option_PnL"] = intraday["Option_Value"] 
 
             
-                  
+                intraday = compute_option_value(intraday)
+
   
 
 #**********************************************************************************************************************#**********************************************************************************************************************
