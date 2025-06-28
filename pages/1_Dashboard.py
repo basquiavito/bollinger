@@ -3890,11 +3890,11 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_std_alert = go.Scatter(
                         x=intraday.loc[mask_std_alert, "Time"],
-                        y=intraday.loc[mask_std_alert, "F_numeric"] + 110,  # Offset above F%
+                        y=intraday.loc[mask_std_alert, "F_numeric"] - 9,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_std_alert, "STD_Alert"],
-                        textposition="bottom right",
-                        textfont=dict(size=18),
+                        textposition="bottom center",
+                        textfont=dict(size=8),
                         name="F% STD Expansion",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
                     )
