@@ -3653,7 +3653,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% MA"],
                         mode="lines",
-                        line=dict(color="#6a6a6a", dash="dash",width=1.2),  # Set dash style
+                        line=dict(dash="dash",color="#6a6a6a",width=1.2),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
 
