@@ -4036,19 +4036,41 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
+           
+                              # Mask where Call Vol Explosion (💥) occurs
+                mask_call_vol = intraday["Call_Vol_Explosion_Emoji"] != ""
                 
-                # # Plot Option PnL on Row 2
-                # option_pnl_trace = go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Option_ROI_%"],
-                #     mode="lines",
-                #     line=dict(width=1.5, color="gold"),
-                #     name="Simulated ATM Option Value",
-                #     hovertemplate="Time: %{x}<br>Option Value: %{y:.2f}<extra></extra>"
-                # )
+                scatter_call_vol = go.Scatter(
+                    x=intraday.loc[mask_call_vol, "Time"],
+                    y=intraday.loc[mask_call_vol, "F_numeric"] + 45,  # Offset below F%
+                    mode="text",
+                    text=intraday.loc[mask_call_vol, "Call_Vol_Explosion_Emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=10),
+                    name="Call Vol Explosion",
+                    hovertemplate="Time: %{x}<br>Call Vol Explosion<br>%{text}<extra></extra>"
+                )
                 
-                # fig.add_trace(option_pnl_trace, row=2, col=1)
-                             
+                fig.add_trace(scatter_call_vol, row=1, col=1)
+
+
+
+                # Mask where Put Vol Explosion (💥) occurs
+                mask_put_vol = intraday["Put_Vol_Explosion_Emoji"] != ""
+                
+                scatter_put_vol = go.Scatter(
+                    x=intraday.loc[mask_put_vol, "Time"],
+                    y=intraday.loc[mask_put_vol, "F_numeric"] - 45,  # Slightly lower than call
+                    mode="text",
+                    text=intraday.loc[mask_put_vol, "Put_Vol_Explosion_Emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=10),
+                    name="Put Vol Explosion",
+                    hovertemplate="Time: %{x}<br>Put Vol Explosion<br>%{text}<extra></extra>"
+                )
+                
+                fig.add_trace(scatter_put_vol, row=1, col=1)
+
                       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
