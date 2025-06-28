@@ -383,52 +383,68 @@ if st.sidebar.button("Run Analysis"):
                     return intraday_df
 
                 intraday = calculate_f_percentage(intraday, prev_close)
-
-                def compute_option_value(df, *, delta=0.50, gamma=0.05, premium=64, contracts=100):
+              
+                def compute_realistic_option_value(df, premium=64, contracts=100):
                     """
-                    Adds both Call and Put simulated ATM option columns to the DataFrame.
-                
-                    Columns Created:
-                    - F%_Move, Dollar_Move_From_F
-                    - Call_Option_Value, Call_Return_%
-                    - Put_Option_Value, Put_Return_%
+                    Adds realistic Call and Put option simulation columns based on dynamic strike (K).
+                    Delta and Gamma change based on moneyness.
                     """
+                    # 1️⃣ Baseline
                     spot_open = df.iloc[0]["Close"]
-                    f_open = df.iloc[0]["F_numeric"]
+                    f_open    = df.iloc[0]["F_numeric"]
                 
-                    df["F%_Move"] = df["F_numeric"] - f_open
+                    # 2️⃣ Strike offset based on spot price
+                    if spot_open < 50:
+                        strike_offset = 1
+                    elif spot_open < 100:
+                        strike_offset = 2
+                    elif spot_open < 250:
+                        strike_offset = 5
+                    else:
+                        strike_offset = 10
+                
+                    call_strike = spot_open + strike_offset
+                    put_strike  = spot_open - strike_offset
+                
+                    # 3️⃣ Price moves
+                    df["F%_Move"]            = df["F_numeric"] - f_open
                     df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
-
-                                   # Simulate how delta and gamma evolve (very rough, illustrative only)
-                    df["Delta_Live"] = delta + gamma * df["Dollar_Move_From_F"]
-                    df["Gamma_Live"] = gamma  # Assume constant gamma (2nd derivative)
-                    # Call Option (delta > 0)
-                    df["Call_Option_Value"] = (
-                        delta * df["Dollar_Move_From_F"]
-                        + 0.5 * gamma * df["Dollar_Move_From_F"]**2
-                    ) * contracts
-                    df.at[df.index[0], "Call_Option_Value"] = premium
-                    df.at[df.index[0], "Call_Return_%"] = 0
-                    df["Call_Return_%"] = ((df["Call_Option_Value"] - premium) / premium) * 100
+                    df["Sim_Spot"]           = spot_open + df["Dollar_Move_From_F"]
                 
-                    # Put Option (delta < 0)
-                    df["Put_Option_Value"] = (
-                        -delta * df["Dollar_Move_From_F"]
-                        + 0.5 * gamma * df["Dollar_Move_From_F"]**2
+                    # 4️⃣ Moneyness
+                    df["Call_Moneyness"] = df["Sim_Spot"] - call_strike
+                    df["Put_Moneyness"]  = put_strike - df["Sim_Spot"]
+                
+                    # 5️⃣ Dynamic Δ and Γ (clipped for realism)
+                    df["Call_Delta"] = df["Call_Moneyness"].apply(lambda x: max(min(0.5 + 0.05 * x, 1), 0))
+                    df["Put_Delta"]  = df["Put_Moneyness"].apply(lambda x: max(min(0.5 + 0.05 * x, 1), 0))
+                
+                    df["Call_Gamma"] = df["Call_Delta"] * (1 - df["Call_Delta"]) * 0.4
+                    df["Put_Gamma"]  = df["Put_Delta"]  * (1 - df["Put_Delta"])  * 0.4
+                
+                    # 6️⃣ Option Values
+                    df["Call_Option_Value"] = (
+                        df["Call_Delta"] * df["Dollar_Move_From_F"] +
+                        0.5 * df["Call_Gamma"] * df["Dollar_Move_From_F"]**2
                     ) * contracts
-
-
-
-
-                    
-                    df.at[df.index[0], "Put_Option_Value"] = premium
-                    df.at[df.index[0], "Put_Return_%"] = 0
-                    df["Put_Return_%"] = ((df["Put_Option_Value"] - premium) / premium) * 100
-                # Force initial value = premium at open
-                 
-        
-
+                
+                    df["Put_Option_Value"] = (
+                        -df["Put_Delta"] * df["Dollar_Move_From_F"] +
+                        0.5 * df["Put_Gamma"] * df["Dollar_Move_From_F"]**2
+                    ) * contracts
+                
+                    # 7️⃣ Returns
+                    df["Call_Return_%"] = ((df["Call_Option_Value"] - premium) / premium) * 100
+                    df["Put_Return_%"]  = ((df["Put_Option_Value"] - premium) / premium) * 100
+                
+                    # 🔁 Force starting values
+                    df.at[df.index[0], "Call_Option_Value"] = premium
+                    df.at[df.index[0], "Put_Option_Value"]  = premium
+                    df.at[df.index[0], "Call_Return_%"]     = 0
+                    df.at[df.index[0], "Put_Return_%"]      = 0
+                
                     return df
+
 
 
                 intraday = compute_option_value(intraday)              
