@@ -3908,7 +3908,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[mask_atr_alert, "Time"],
                         y=intraday.loc[mask_atr_alert, "F_numeric"]  + 3,  # place above F%
                         mode="text",
-                        textposition="center center",
+                        textposition="bottom center",
 
                         text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
                         textfont=dict(size=11),
