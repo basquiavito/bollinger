@@ -387,29 +387,22 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                import numpy as np
 
 
 
-
-                              # STEP 1: Simulated Black-Scholes ATM Option Tracker
-                # Ensure a Price column exists (using Close as spot price)
-                if "Price" not in intraday.columns:
-                    intraday["Price"] = intraday["Close"]  # or "Open", if more accurate for spot
-
-                # --- Set constants ---
-                starting_option_value = 64
-                atm_delta = 0.50
-                
-                # Spot price is the stock price at market open
-                spot_price = intraday.loc[intraday.index[0], "Price"]  # or replace "Price" with your true spot source
-                f_open = intraday.loc[intraday.index[0], "F_numeric"]
-                
-                # --- Compute synthetic option value and return ---
-                intraday["Option_Value"] = starting_option_value + ((intraday["F_numeric"] - f_open) / 10000) * spot_price * atm_delta
-                intraday["Option_Return_%"] = ((intraday["Option_Value"] - starting_option_value) / starting_option_value) * 100
-
-                
+              # STEP 1: Simulated Black-Scholes ATM Option Tracker
+              
+              # --- Set constants ---
+              starting_option_value = 64
+              atm_delta = 0.50
+              
+              # Spot price is the stock price at market open
+              spot_price = intraday.loc[intraday.index[0], "Price"]  # or replace "Price" with your true spot source
+              f_open = intraday.loc[intraday.index[0], "F_numeric"]
+              
+              # --- Compute synthetic option value and return ---
+              intraday["Option_Value"] = starting_option_value + ((intraday["F_numeric"] - f_open) / 10000) * spot_price * atm_delta
+              intraday["Option_Return_%"] = ((intraday["Option_Value"] - starting_option_value) / starting_option_value) * 100
 
 #**********************************************************************************************************************#**********************************************************************************************************************
 
