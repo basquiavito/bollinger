@@ -479,6 +479,11 @@ if st.sidebar.button("Run Analysis"):
                     # 1️⃣ Raw speed of the call option value
                     df["Put_Option_Speed"] = df["Put_Option_Value"].diff()
 
+
+                  intraday["COV_Change"] = intraday["Call_Option_Value"].diff()
+                  intraday["COV_Accel"] = intraday["COV_Change"].diff()
+
+
                                     # 2️⃣ Smoothed 3-bar trend of that speed
                     df["Call_Vol_Explosion"] = df["Call_Option_Speed"].rolling(3).mean()
                     df["Put_Vol_Explosion"]  = df["Put_Option_Speed"].rolling(3).mean()
@@ -3171,7 +3176,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion"       ]
+                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel"       ]
 
                     st.dataframe(intraday[cols_to_show])
 
