@@ -3195,7 +3195,7 @@ if st.sidebar.button("Run Analysis"):
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
                         rows=2,
-                        cols=2,
+                        cols=1,
                         shared_xaxes=True,
                         vertical_spacing=0.3,
                         row_heights=[0.7, 0.3]  # main chart taller, option chart smaller
