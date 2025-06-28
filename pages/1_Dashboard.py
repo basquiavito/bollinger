@@ -3914,7 +3914,8 @@ if st.sidebar.button("Run Analysis"):
                         textfont=dict(size=21),
                         name="ATR Expansion",
                         hoverinfo="text",
-                        hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"]
+                        hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>ATR_Exp_Alert: %{text}<extra></extra>"
                     )
 
                     fig.add_trace(atr_alert_scatter, row=1, col=1)
