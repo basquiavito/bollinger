@@ -459,50 +459,51 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = compute_option_value(intraday)      
                 
-                def detect_option_speed_explosion(df, lookback=3, epsilon=1e-3):
+                def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
                     """
-                    Detects call/put option speed explosions using rolling mean as baseline.
-                    More stable than comparing to a single lagged bar.
+                    Detects call/put speed explosions using a ratio test and percentile filter.
+                    Only flags emojis if current speed is both:
+                    - Greater than X times the lagged speed
+                    - Within the top N percentile of recent speeds
                     """
+                    # ─── Lagged speed (baseline) ─────────────────
+                    df["Call_Speed_Lag"] = df["Call_Option_Speed"].shift(lookback)
+                    df["Put_Speed_Lag"]  = df["Put_Option_Speed"].shift(lookback)
                 
-                    # ─── 1) Rolling mean baseline ─────────────────────
-                    df["Call_Speed_Base"] = df["Call_Option_Speed"].rolling(lookback).mean().fillna(0)
-                    df["Put_Speed_Base"]  = df["Put_Option_Speed"] .rolling(lookback).mean().fillna(0)
+                    # ─── Avoid division by 0 ─────────────────────
+                    df["Call_Speed_Lag"].replace(0, np.nan, inplace=True)
+                    df["Put_Speed_Lag"] .replace(0, np.nan, inplace=True)
                 
-                    # ─── 2) Avoid division by zero or tiny values ─────
-                    df["Call_Speed_Base"] = df["Call_Speed_Base"].apply(lambda x: x if abs(x) > epsilon else epsilon)
-                    df["Put_Speed_Base"]  = df["Put_Speed_Base"].apply(lambda x: x if abs(x) > epsilon else epsilon)
+                    # ─── Speed ratio ─────────────────────────────
+                    df["Call_Speed_Ratio"] = df["Call_Option_Speed"] / df["Call_Speed_Lag"]
+                    df["Put_Speed_Ratio"]  = df["Put_Option_Speed"]  / df["Put_Speed_Lag"]
                 
-                    # ─── 3) Speed ratio compared to base ──────────────
-                    call_ratio = df["Call_Option_Speed"] / df["Call_Speed_Base"]
-                    put_ratio  = df["Put_Option_Speed"]  / df["Put_Speed_Base"]
+                    # ─── Percentile threshold ─────────────────────
+                    call_thresh = np.percentile(df["Call_Option_Speed"].dropna(), percentile)
+                    put_thresh  = np.percentile(df["Put_Option_Speed"] .dropna(), percentile)
                 
-                    # ─── 4) Label based on strength of explosion ──────
+                    # ─── Flags based on ratio and percentile ─────
+                    call_strong = (df["Call_Speed_Ratio"] >= strong_ratio) & (df["Call_Option_Speed"] >= call_thresh)
+                    call_mild   = (df["Call_Speed_Ratio"] >= mild_ratio)   & (df["Call_Option_Speed"] >= call_thresh * 0.8)
+                
+                    put_strong  = (df["Put_Speed_Ratio"]  >= strong_ratio) & (df["Put_Option_Speed"]  >= put_thresh)
+                    put_mild    = (df["Put_Speed_Ratio"]  >= mild_ratio)   & (df["Put_Option_Speed"]  >= put_thresh * 0.8)
+                
+                    # ─── Emoji assignment ────────────────────────
                     df["Call_Speed_Explosion"] = np.select(
-                        [
-                            call_ratio >= 2,
-                            call_ratio >= 1.5
-                        ],
-                        [
-                            "🏎️",
-                            "🚗"
-                        ],
+                        [call_strong, call_mild],
+                        ["🏎️", "🚗"],
                         default=""
                     )
                 
                     df["Put_Speed_Explosion"] = np.select(
-                        [
-                            put_ratio >= 2,
-                            put_ratio >= 1.5
-                        ],
-                        [
-                            "🏎️",
-                            "🚗"
-                        ],
+                        [put_strong, put_mild],
+                        ["🏎️", "🚗"],
                         default=""
                     )
                 
                     return df
+  
 
                 intraday =  detect_option_speed_explosion(intraday)      
 
