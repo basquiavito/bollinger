@@ -4108,12 +4108,12 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
-                mask_call_bee = df["Call_BBW_Tight_Emoji"] == "🐝"
+                mask_call_bee = intraday["Call_BBW_Tight_Emoji"] == "🐝"
   
                 fig.add_trace(
                     go.Scatter(
-                        x=df.loc[mask_call_bee, "Time"],
-                        y=df.loc[mask_call_bee, "Call_Option_Smooth"] + 0.2,  # small Y offset
+                        x=intraday.loc[mask_call_bee, "Time"],
+                        y=intraday.loc[mask_call_bee, "Call_Option_Smooth"] + 0.2,  # small Y offset
                         mode="text",
                         text=["🐝"] * mask_call_bee.sum(),
                         textposition="top center",
@@ -4126,12 +4126,12 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                mask_put_bee = df["Put_BBW_Tight_Emoji"] == "🐝"
+                mask_put_bee =intraday["Put_BBW_Tight_Emoji"] == "🐝"
   
                 fig.add_trace(
                     go.Scatter(
-                        x=df.loc[mask_put_bee, "Time"],
-                        y=df.loc[mask_put_bee, "Put_Option_Smooth"] - 0.2,  # small Y offset
+                        x=intraday.loc[mask_put_bee, "Time"],
+                        y=intraday.loc[mask_put_bee, "Put_Option_Smooth"] - 0.2,  # small Y offset
                         mode="text",
                         text=["🐝"] * mask_put_bee.sum(),
                         textposition="bottom center",
