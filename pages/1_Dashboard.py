@@ -4196,11 +4196,11 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                fig.add_hline(y=call_ib_high, line=dict(color="purple", dash="dot"), row=2, col=1)
-                fig.add_hline(y=call_ib_low,  line=dict(color="purple", dash="dot"), row=2, col=1)
+                fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.8), row=2, col=1)
+                fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot"), width=0.8, row=2, col=1)
                 
-                fig.add_hline(y=put_ib_high, line=dict(color="teal", dash="dot"), row=2, col=1)
-                fig.add_hline(y=put_ib_low,  line=dict(color="teal", dash="dot"), row=2, col=1)
+                # fig.add_hline(y=put_ib_high, line=dict(color="teal", dash="dot"), row=2, col=1)
+                # fig.add_hline(y=put_ib_low,  line=dict(color="teal", dash="dot"), row=2, col=1)
 
                                 
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
