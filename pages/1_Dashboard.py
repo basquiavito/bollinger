@@ -3829,11 +3829,11 @@ if st.sidebar.button("Run Analysis"):
                     
                     scatter_bishop_tight = go.Scatter(
                         x=intraday.loc[mask_bbw_tight, "Time"],
-                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 40,  # Adjusted Y offset
+                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 6,  # Adjusted Y offset
                         mode="text",
                         text=["🐝"] * mask_bbw_tight.sum(),  # ♗ as symbol
-                        textposition="bottom center",
-                        textfont=dict(size=18, color="mediumvioletred"),  # 🎯 Pink / Purple shade
+                        textposition="top center",
+                        textfont=dict(size=8, color="mediumvioletred"),  # 🎯 Pink / Purple shade
                         name="BBW Tight Bishop (♗🐝)",
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression ♗🐝<extra></extra>"
                     )
