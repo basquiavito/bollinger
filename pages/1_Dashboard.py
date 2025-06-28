@@ -4108,39 +4108,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
-                mask_call_bee = intraday["Call_BBW_Tight_Emoji"] == "🐝"
-  
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[mask_call_bee, "Time"],
-                        y=intraday.loc[mask_call_bee, "Call_Option_Smooth"] + 0.2,  # small Y offset
-                        mode="text",
-                        text=["🐝"] * mask_call_bee.sum(),
-                        textposition="top center",
-                        textfont=dict(size=12, color="orchid"),
-                        name="Call BBW Tight",
-                        hovertemplate="Time: %{x}<br>Call BBW Tight 🐝<extra></extra>"
-                    ),
-                    row=2, col=1
-                )
 
-
-
-                mask_put_bee =intraday["Put_BBW_Tight_Emoji"] == "🐝"
-  
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[mask_put_bee, "Time"],
-                        y=intraday.loc[mask_put_bee, "Put_Option_Smooth"] - 0.2,  # small Y offset
-                        mode="text",
-                        text=["🐝"] * mask_put_bee.sum(),
-                        textposition="bottom center",
-                        textfont=dict(size=12, color="orchid"),
-                        name="Put BBW Tight",
-                        hovertemplate="Time: %{x}<br>Put BBW Tight 🐝<extra></extra>"
-                    ),
-                    row=2, col=1
-                )
               
                               # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
