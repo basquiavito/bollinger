@@ -455,8 +455,8 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_Vol_Explosion_%"]  = (df["Put_Vol_Explosion"]  / put_premium)  * 100
                     
                     # 4️⃣ Signal when smoothed speed crosses 10% threshold
-                    df["Call_Vol_Surge_Signal"] = df["Call_Vol_Explosion_%"] > 10
-                    df["Put_Vol_Surge_Signal"]  = df["Put_Vol_Explosion_%"]  > 10
+                    df["Call_Vol_Surge_Signal"] = df["Call_Vol_Explosion_%"] > 33
+                    df["Put_Vol_Surge_Signal"]  = df["Put_Vol_Explosion_%"]  > 33
 
                     df["Call_Vol_Explosion_Emoji"] = np.where(df["Call_Vol_Surge_Signal"], "💥", "")
                     df["Put_Vol_Explosion_Emoji"]  = np.where(df["Put_Vol_Surge_Signal"],  "💥", "")
