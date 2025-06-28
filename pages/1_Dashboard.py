@@ -3846,6 +3846,17 @@ if st.sidebar.button("Run Analysis"):
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
                 
+                # Plot Option PnL on Row 2
+                option_pnl_trace = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Option_PnL"],
+                    mode="lines",
+                    line=dict(width=1.5, color="gold"),
+                    name="Simulated ATM Option PnL",
+                    hovertemplate="Time: %{x}<br>Option PnL: %{y:.2f}<extra></extra>"
+                )
+                
+                fig.add_trace(option_pnl_trace, row=2, col=1)
                              
                       
                 fig.update_layout(
