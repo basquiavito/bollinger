@@ -390,36 +390,28 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-             # Simulate ATM Option P&L (Delta-only version)
+                    # Constants
+                delta = 0.50
+                gamma = 0.05
+                premium = 64
                 
-                # Step 1: Get spot price at open (first close value)
+                # Step 1: Spot price and F% at open
                 spot_price = intraday.iloc[0]["Close"]
-                
-                # Step 2: Get F% at open
                 f_open = intraday.iloc[0]["F_numeric"]
                 
-                # Step 3: Compute F%-based dollar move from open
+                # Step 2: F% Move → Dollar Move
                 intraday["F%_Move"] = intraday["F_numeric"] - f_open
                 intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10000) * spot_price
                 
-                # Step 4: Simulate ATM call option value with delta = 0.50
-                intraday["ATM_Call_Value"] = intraday["Dollar_Move_From_F"] * 0.50
-                
-                # Step 5: Subtract fixed premium to get net P&L
-                intraday["ATM_Call_PnL"] = intraday["ATM_Call_Value"] - 64
-
-                # Step 5: Add Gamma P&L (convexity)
-                delta = 0.50
-                gamma = 0.05
-                
-                intraday["ATM_Call_Value_Gamma"] = (
+                # Step 3: Full Option Value (Delta + Gamma)
+                intraday["Option_Value"] = (
                     delta * intraday["Dollar_Move_From_F"] +
-                    0.5 * gamma * intraday["Dollar_Move_From_F"]**2
+                    0.5 * gamma * (intraday["Dollar_Move_From_F"] ** 2)
                 )
                 
-                # Step 6: Subtract premium
-                premium = 64
-                intraday["ATM_Call_PnL_Gamma"] = intraday["ATM_Call_Value_Gamma"] - premium
+                # Step 4: Option PnL (after subtracting $64 premium)
+                intraday["Option_PnL"] = intraday["Option_Value"] - premium
+
 
 
 #**********************************************************************************************************************#**********************************************************************************************************************
