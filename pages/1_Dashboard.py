@@ -4550,7 +4550,16 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
                 #                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
-       
+ 
+                option_trace = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["ATM_Call_Value"],
+                    mode="lines",
+                    name="Simulated ATM Call P&L",
+                    line=dict(dash="dot", width=2, color="orange")
+                )
+                fig.add_trace(option_trace, row=1, col=1)
+
                       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
