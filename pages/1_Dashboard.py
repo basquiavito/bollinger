@@ -385,37 +385,34 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_f_percentage(intraday, prev_close)
 
 
-
-
-  
-  
-                  # ──────────────────────────────────────────────────────────────────────────────
-                  # ▶︎  ATM OPTION SIM (Δ + Γ , fixed greeks)  ◀︎
-                  # ──────────────────────────────────────────────────────────────────────────────
-          
-                      # Fixed greeks & premium
-                delta   = 0.50     # ATM Δ
-                gamma   = 0.05     # fixed Γ
-                premium = 64.0     # cost you paid
-            
-                # 1️⃣ Anchors from first bar
+                
+                # ──────────────────────────────────────────────────────────────────────────────
+                # ▶︎  ATM OPTION SIM (Δ + Γ , fixed greeks)  ◀︎
+                # ──────────────────────────────────────────────────────────────────────────────
+                
+                # Constants
+                delta   = 0.50      # fixed ATM Δ
+                gamma   = 0.05      # fixed Γ
+                premium = 64.0      # entry cost
+                
+                # 1️⃣  Anchors at first bar
                 spot_price = intraday.iloc[0]["Close"]
                 f_open     = intraday.iloc[0]["F_numeric"]
-            
-                # 2️⃣ Translate F-move → $-move
+                
+                # 2️⃣  F-move → $-move
                 intraday["F%_Move"]            = intraday["F_numeric"] - f_open
                 intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10_000) * spot_price
-            
-                # 3️⃣ Option value   (Δ·move + ½·Γ·move²)
+                
+                # 3️⃣  Option value  (Δ·move + ½·Γ·move²)
                 move$ = intraday["Dollar_Move_From_F"]
                 intraday["Option_Value"] = (
                     delta * move$ +
                     0.5 * gamma * (move$ ** 2)
                 )
-            
-                # 4️⃣ Net P/L after paying premium
+                
+                # 4️⃣  Net P/L after paying premium
                 intraday["Option_PnL"] = intraday["Option_Value"] - premium
-          
+
             
                   
   
