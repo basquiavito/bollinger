@@ -437,6 +437,24 @@ if st.sidebar.button("Run Analysis"):
                     df["Call_Return_%"] = ((df["Call_Option_Value"] - premium) / premium) * 100
                     df["Put_Return_%"]  = ((df["Put_Option_Value"] - premium) / premium) * 100
 
+                    # 8️⃣ Smooth the raw option values before further logic
+                    df["Call_Option_Smooth"] = df["Call_Option_Value"].rolling(window=3).mean()
+                    df["Put_Option_Smooth"]  = df["Put_Option_Value"].rolling(window=3).mean()
+                    
+                    # 9️⃣ Bollinger Band Logic (used internally, not plotted)
+                    df["Call_MA"] = df["Call_Option_Smooth"].rolling(window=20).mean()
+                    df["Call_STD"] = df["Call_Option_Smooth"].rolling(window=20).std()
+                    df["Call_BB_Upper"] = df["Call_MA"] + 2 * df["Call_STD"]
+                    df["Call_BB_Lower"] = df["Call_MA"] - 2 * df["Call_STD"]
+                    df["Call_BB_Tag"] = np.where(df["Call_Option_Smooth"] > df["Call_BB_Upper"], "🧃", "")
+                    
+                    df["Put_MA"] = df["Put_Option_Smooth"].rolling(window=20).mean()
+                    df["Put_STD"] = df["Put_Option_Smooth"].rolling(window=20).std()
+                    df["Put_BB_Upper"] = df["Put_MA"] + 2 * df["Put_STD"]
+                    df["Put_BB_Lower"] = df["Put_MA"] - 2 * df["Put_STD"]
+                    df["Put_BB_Tag"] = np.where(df["Put_Option_Smooth"] > df["Put_BB_Upper"], "💨", "")
+                    
+                                      
 
                     # 1️⃣ Raw speed of the call option value
                     df["Call_Option_Speed"] = df["Call_Option_Value"].diff()
@@ -3135,8 +3153,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value","Call_Option_Speed","Put_Option_Speed","Call_Speed_Explosion","Put_Speed_Explosion"
-                                ]
+                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value","Call_BB_Tag","Put_BB_Tag"                      ]
 
                     st.dataframe(intraday[cols_to_show])
 
