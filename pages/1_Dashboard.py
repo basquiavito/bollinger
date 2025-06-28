@@ -4072,9 +4072,8 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
-         
-                fig.update_yaxes(title_text="F%", row=1, col=1)
-                fig.update_yaxes(title_text="Option Value", row=2, col=1)
+                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
+ 
                  
 
                 fig.update_layout(
@@ -4083,12 +4082,7 @@ if st.sidebar.button("Run Analysis"):
                     height=1200,  # Increase overall figure height (default ~450-600)
 
                     showlegend=True,
-                    yaxis2=dict(
-                    overlaying='y',
-                    showgrid=False,
-                    showticklabels=False,
-                    range=[-5000, 5000],  # large enough to show any F% line
-    )
+                    
                 )
 
             
