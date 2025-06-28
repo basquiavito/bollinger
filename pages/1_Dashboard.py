@@ -417,7 +417,10 @@ if st.sidebar.button("Run Analysis"):
                         delta * df["Dollar_Move_From_F"]
                         + 0.5 * gamma * df["Dollar_Move_From_F"]**2
                     ) * contracts
-                
+
+
+                    df.at[df.index[0], "Option_Value"] = premium
+
                     # 4️⃣  Return (%) relative to premium
                     df["Option_Return_%"] = ((df["Option_Value"] - premium) / premium) * 100
                 
