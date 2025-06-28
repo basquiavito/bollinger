@@ -503,6 +503,25 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_Vol_Explosion_Emoji"]  = np.where(df["Put_Vol_Surge_Signal"],  "💥", "")
                     intraday["Tiger"] = np.where(intraday["COV_Change"] > 30, "🐅", "")
 
+
+                    intraday["CallPut_Cross"] = (
+                        (intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"]) &
+                        (intraday["Call_Option_Smooth"].shift(1) <= intraday["Put_Option_Smooth"].shift(1))
+                    ) | (
+                        (intraday["Call_Option_Smooth"] < intraday["Put_Option_Smooth"]) &
+                        (intraday["Call_Option_Smooth"].shift(1) >= intraday["Put_Option_Smooth"].shift(1))
+                    )
+                    
+
+                    intraday["Magic_Emoji"] = np.where(intraday["CallPut_Cross"], "🪄", "")
+                    intraday["Magic_Y"] = np.where(
+                        intraday["Call_Option_Smooth"] > intraday["Put_Option_Smooth"],
+                        intraday["Call_Option_Smooth"] + 10,
+                        intraday["Put_Option_Smooth"] - 10
+                    )
+
+
+                  
                     # 🔁 Force starting values
                     df.at[df.index[0], "Call_Option_Value"] = premium
                     df.at[df.index[0], "Put_Option_Value"]  = premium
@@ -4095,8 +4114,16 @@ if st.sidebar.button("Run Analysis"):
                 ), row=2, col=1)
                 
                 
-
-
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Magic_Y"],
+                    mode="text",
+                    text=intraday["Magic_Emoji"],
+                    textposition="middle center",
+                    showlegend=False
+                ), row=1, col=1)
+                
 
 
                                                 # 🟫 IB High (subtle off-white line)
