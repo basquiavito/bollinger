@@ -3829,7 +3829,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     scatter_bishop_tight = go.Scatter(
                         x=intraday.loc[mask_bbw_tight, "Time"],
-                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 6,  # Adjusted Y offset
+                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 9,  # Adjusted Y offset
                         mode="text",
                         text=["🐝"] * mask_bbw_tight.sum(),  # ♗ as symbol
                         textposition="top center",
@@ -3871,7 +3871,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_adx_alert = go.Scatter(
                         x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 9,  # Offset for visibility
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 15,  # Offset for visibility
                         mode="text",
                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
                         textposition="top center",
