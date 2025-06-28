@@ -387,35 +387,48 @@ if st.sidebar.button("Run Analysis"):
 
 
               
-                def compute_option_value(intraday, delta=0.50, gamma=0.05, premium=64):
+                def compute_option_value(
+                        df, *,               # keyword-only for clarity
+                        delta: float   = 0.50,
+                        gamma: float   = 0.05,
+                        premium: float = 64,
+                        contracts: int = 100
+                ):
                     """
-                    Calculate Option Value using Delta-Gamma approximation and attach to intraday DataFrame.
-                    Returns intraday with new columns: Option_Value and Option_PnL.
+                    Add simulated ATM option columns to *df*.
+                
+                    Columns created
+                    ---------------
+                    F%_Move          – intraday F-point move from the open
+                    Dollar_Move_From_F
+                    Option_Value     – Δ + ½Γ approximation, scaled by *contracts*
+                    Option_Return_%  – percentage PnL vs. fixed premium
                     """
-                    # Step 1: Get open values
-                    spot_price = intraday.iloc[0]["Close"]
-                    f_open = intraday.iloc[0]["F_numeric"]
+                    # 1️⃣  Baseline values at the open
+                    spot_open  = df.iloc[0]["Close"]
+                    f_open     = df.iloc[0]["F_numeric"]
                 
-                    # Step 2: Calculate dollar move based on F%
-                    intraday["F%_Move"] = intraday["F_numeric"] - f_open
-                    intraday["Dollar_Move_From_F"] = (intraday["F%_Move"] / 10000) * spot_price
+                    # 2️⃣  Translate F-move → $-move
+                    df["F%_Move"]           = df["F_numeric"] - f_open
+                    df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
                 
-                    # Step 3: Option value with Delta and Gamma
-                    intraday["Option_Value"] = (
-                        delta * intraday["Dollar_Move_From_F"] +
-                        0.5 * gamma * (intraday["Dollar_Move_From_F"] ** 2)
-                    )
+                    # 3️⃣  Option value: Δ + ½Γ *contracts*
+                    df["Option_Value"] = (
+                        delta * df["Dollar_Move_From_F"]
+                        + 0.5 * gamma * df["Dollar_Move_From_F"]**2
+                    ) * contracts
                 
-                    # Step 4: PnL relative to fixed premium (optional)
-                    intraday["Option_PnL"] = intraday["Option_Value"] - premium
-                    intraday["Option_Return_%"] = ((intraday["Option_Value"] - premium) / premium) * 100
-
-                    return intraday
-
-
-            
+                    # 4️⃣  Return (%) relative to premium
+                    df["Option_Return_%"] = ((df["Option_Value"] - premium) / premium) * 100
+                
+                    return df
+                
+                
+                # --- call it right after intraday is ready -----------------
                 intraday = compute_option_value(intraday)
 
+            
+ 
   
 
 #**********************************************************************************************************************#**********************************************************************************************************************
