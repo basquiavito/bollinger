@@ -3787,7 +3787,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
                     textposition="bottom left",
-                    textfont=dict(size=23, color="lime"),
+                    textfont=dict(size=13, color="lime"),
                     name="Short Entry (✅)"
                 )
                 fig.add_trace(short_entry_trace, row=1, col=1)
@@ -3803,7 +3803,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
                     textposition="top left",
-                    textfont=dict(size=23, color="lime"),
+                    textfont=dict(size=13, color="lime"),
                     name="Long Entry (✅)"
                 )
                 fig.add_trace(long_entry_trace, row=1, col=1)
@@ -3861,7 +3861,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=1000,  # Increase overall figure height (default ~450-600)
+                    height=2000,  # Increase overall figure height (default ~450-600)
 
                     showlegend=True,
                     yaxis2=dict(
