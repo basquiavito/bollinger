@@ -4120,6 +4120,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Magic_Y"],
                     mode="text",
+                    textfont=dict(size=30, color="lime"),
                     text=intraday["Magic_Emoji"],
                     textposition="middle center",
                     showlegend=False
