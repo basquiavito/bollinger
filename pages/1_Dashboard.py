@@ -3265,6 +3265,7 @@ if st.sidebar.button("Run Analysis"):
                   # Step 1: Filter Initial Balance (first 4 letters: A–D)
                   initial_letters = ['A', 'B', 'C', 'D']
                   ib_df = intraday[intraday['Letter'].isin(initial_letters)]
+                  ib_option_df = intraday[intraday['Letter'].isin(initial_letters)]
 
 
 
