@@ -447,7 +447,7 @@ if st.sidebar.button("Run Analysis"):
 
                     
                     # 4️⃣ Optional: Create a binary signal (e.g. breakout)
-                    df["Vol_Surge_Signal"] = df["Vol_Explosion_%"] > 10  # threshold can be tuned
+                    df["Vol_Surge_Signal"] = df["Vol_Explosion"] > 10  # threshold can be tuned
 
 
                     # 🔁 Force starting values
