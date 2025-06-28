@@ -4072,7 +4072,7 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
-                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
+                fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
                  
 
