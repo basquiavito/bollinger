@@ -455,6 +455,24 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_BB_Tag"] = np.where(df["Put_Option_Smooth"] > df["Put_BB_Upper"], "💨", "")
                     
                                       
+                    # 🔬 10️⃣ BBW: Bollinger Band Width for Option Flow
+                    
+                    # -- Call Option BBW
+                    df["Call_BBW"] = (df["Call_BB_Upper"] - df["Call_BB_Lower"]) / df["Call_MA"]
+                    
+                    # -- Put Option BBW
+                    df["Put_BBW"] = (df["Put_BB_Upper"] - df["Put_BB_Lower"]) / df["Put_MA"]
+                    
+                    # 🐝 Detect Tightness: below 10th percentile of last 50 bars
+                    call_bbw_thresh = df["Call_BBW"].rolling(50).quantile(0.10)
+                    put_bbw_thresh  = df["Put_BBW"].rolling(50).quantile(0.10)
+                    
+                    df["Call_BBW_Is_Tight"] = df["Call_BBW"] < call_bbw_thresh
+                    df["Put_BBW_Is_Tight"]  = df["Put_BBW"]  < put_bbw_thresh
+                    
+                    # 🐝 Mark tight zones if 3 of last 5 are tight
+                    df["Call_BBW_Tight_Emoji"] = df["Call_BBW_Is_Tight"].rolling(5).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
+                    df["Put_BBW_Tight_Emoji"]  = df["Put_BBW_Is_Tight"] .rolling(5).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
 
                     # 1️⃣ Raw speed of the call option value
                     df["Call_Option_Speed"] = df["Call_Option_Value"].diff()
@@ -4090,8 +4108,41 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
+                mask_call_bee = df["Call_BBW_Tight_Emoji"] == "🐝"
+  
+                fig.add_trace(
+                    go.Scatter(
+                        x=df.loc[mask_call_bee, "Time"],
+                        y=df.loc[mask_call_bee, "Call_Option_Smooth"] + 0.2,  # small Y offset
+                        mode="text",
+                        text=["🐝"] * mask_call_bee.sum(),
+                        textposition="top center",
+                        textfont=dict(size=12, color="orchid"),
+                        name="Call BBW Tight",
+                        hovertemplate="Time: %{x}<br>Call BBW Tight 🐝<extra></extra>"
+                    ),
+                    row=2, col=1
+                )
 
-                # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
+
+
+                mask_put_bee = df["Put_BBW_Tight_Emoji"] == "🐝"
+  
+                fig.add_trace(
+                    go.Scatter(
+                        x=df.loc[mask_put_bee, "Time"],
+                        y=df.loc[mask_put_bee, "Put_Option_Smooth"] - 0.2,  # small Y offset
+                        mode="text",
+                        text=["🐝"] * mask_put_bee.sum(),
+                        textposition="bottom center",
+                        textfont=dict(size=12, color="orchid"),
+                        name="Put BBW Tight",
+                        hovertemplate="Time: %{x}<br>Put BBW Tight 🐝<extra></extra>"
+                    ),
+                    row=2, col=1
+                )
+              
+                              # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
