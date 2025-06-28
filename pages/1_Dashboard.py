@@ -3189,11 +3189,11 @@ if st.sidebar.button("Run Analysis"):
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
-                        rows=1,
+                        rows=2,
                         cols=1,
                         shared_xaxes=True,
-                        vertical_spacing=0.1,
-                        row_heights=[30]  # Adjust row heights to your preference
+                        vertical_spacing=0.3,
+                        row_heights=[0.7, 0.3]  # main chart taller, option chart smaller
                     )
 
     
@@ -4414,8 +4414,17 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Bottom"],
                 #                          name="TB-F Bottom", line=dict(color="#708090", dash="dot")))
 
- 
-             
+                option_trace = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Option_PnL"],  # or Option_Value if no premium subtraction
+                    mode="lines",
+                    name="Simulated Option (Δ+Γ)",
+                    line=dict(width=2, color="white", dash="dot"),
+                    hovertemplate="Time: %{x}<br>Option PnL: %{y:.2f}<extra></extra>"
+                )
+                
+                fig.add_trace(option_trace, row=2, col=1)
+                         
                       
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
