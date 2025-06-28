@@ -4165,7 +4165,7 @@ if st.sidebar.button("Run Analysis"):
                     # IB High (dashed orange)
                     fig.add_hline(
                         y=ib_high,
-                        line=dict(color="orange", dash="dash"),
+                        line=dict(color="orange", dash="dash", width=0.5,),
                         row=r, col=1,
                         annotation_text="IB High" if r == 1 else None,
                         annotation_position="top right" if r == 1 else None
