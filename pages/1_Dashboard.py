@@ -398,7 +398,10 @@ if st.sidebar.button("Run Analysis"):
                 
                     df["F%_Move"] = df["F_numeric"] - f_open
                     df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
-                
+
+                                   # Simulate how delta and gamma evolve (very rough, illustrative only)
+                    df["Delta_Live"] = delta + gamma * df["Dollar_Move_From_F"]
+                    df["Gamma_Live"] = gamma  # Assume constant gamma (2nd derivative)
                     # Call Option (delta > 0)
                     df["Call_Option_Value"] = (
                         delta * df["Dollar_Move_From_F"]
@@ -3026,7 +3029,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value"
+                                    "Time","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Delta_Live","Gamma_Live","Call_Return_%","Put_Return_%","Call_Option_Value","Put_Option_Value"
                                 ]
 
                     st.dataframe(intraday[cols_to_show])
