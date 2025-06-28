@@ -4099,7 +4099,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday["Call_Option_Smooth"],
                     mode="lines",
                     name="Call Option Value",
-                    line=dict(color="purple", width=1.5),
+                    line=dict(color="green", width=1.5),
                     showlegend=True
                 ), row=2, col=1)
                 
@@ -4109,7 +4109,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday["Put_Option_Smooth"],
                     mode="lines",
                     name="Put Option Value",
-                    line=dict(color="teal", width=1.5),
+                    line=dict(color="red", width=1.5),
                     showlegend=True
                 ), row=2, col=1)
                 
