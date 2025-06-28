@@ -3194,12 +3194,12 @@ if st.sidebar.button("Run Analysis"):
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
-                        rows=1,
-                        cols=1,
+                        rows=2,
+                        cols=2,
                         shared_xaxes=True,
                         vertical_spacing=0.03,
                        
-                         option chart smaller
+                         
                     )
 
     
@@ -3846,17 +3846,17 @@ if st.sidebar.button("Run Analysis"):
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
                 
-                # # Plot Option PnL on Row 2
-                # option_pnl_trace = go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Option_Value"],
-                #     mode="lines",
-                #     line=dict(width=1.5, color="gold"),
-                #     name="Simulated ATM Option Value",
-                #     hovertemplate="Time: %{x}<br>Option Value: %{y:.2f}<extra></extra>"
-                # )
+                # Plot Option PnL on Row 2
+                option_pnl_trace = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Option_Value"],
+                    mode="lines",
+                    line=dict(width=1.5, color="gold"),
+                    name="Simulated ATM Option Value",
+                    hovertemplate="Time: %{x}<br>Option Value: %{y:.2f}<extra></extra>"
+                )
                 
-                # fig.add_trace(option_pnl_trace, row=2, col=1)
+                fig.add_trace(option_pnl_trace, row=2, col=1)
                              
                       
                 fig.update_layout(
