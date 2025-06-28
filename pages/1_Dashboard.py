@@ -4197,7 +4197,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                 fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.8), row=2, col=1)
-                fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot"), width=0.8, row=2, col=1)
+                fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot"), width=0.8), row=2, col=1)
                 
                 # fig.add_hline(y=put_ib_high, line=dict(color="teal", dash="dot"), row=2, col=1)
                 # fig.add_hline(y=put_ib_low,  line=dict(color="teal", dash="dot"), row=2, col=1)
