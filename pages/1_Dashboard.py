@@ -4059,13 +4059,13 @@ if st.sidebar.button("Run Analysis"):
                 ), row=2, col=1)
                 
                 # Mask for Call BB Tag events (🧃 or 🍋)
-                mask_call_bb_tag = df["Call_BB_Tag"] != ""
+                mask_call_bb_tag = intraday["Call_BB_Tag"] != ""
                 
                 call_bb_tag_scatter = go.Scatter(
-                    x=df.loc[mask_call_bb_tag, "Time"],
-                    y=df.loc[mask_call_bb_tag, "Call_Option_Smooth"],
+                    x=intraday.loc[mask_call_bb_tag, "Time"],
+                    y=intraday.loc[mask_call_bb_tag, "Call_Option_Smooth"],
                     mode="text",
-                    text=df.loc[mask_call_bb_tag, "Call_BB_Tag"],
+                    text=intraday.loc[mask_call_bb_tag, "Call_BB_Tag"],
                     textposition="top center",
                     textfont=dict(size=14),
                     name="Call BB Tag",
