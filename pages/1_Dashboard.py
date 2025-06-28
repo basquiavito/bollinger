@@ -3363,7 +3363,7 @@ if st.sidebar.button("Run Analysis"):
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
                         rows=2,
-                        cols=2,
+                        cols=1,
                         shared_xaxes=True,
                         vertical_spacing=0.03,
                         row_heights=[0.75, 0.25],  # top = 75%, bottom = 25%
