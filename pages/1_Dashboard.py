@@ -4058,22 +4058,7 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=2, col=1)
                 
-                # Mask for Call BB Tag events (🧃 or 🍋)
-                mask_call_bb_tag = intraday["Call_BB_Tag"] != ""
-                
-                call_bb_tag_scatter = go.Scatter(
-                    x=intraday.loc[mask_call_bb_tag, "Time"],
-                    y=intraday.loc[mask_call_bb_tag, "Call_Option_Smooth"],
-                    mode="text",
-                    text=intraday.loc[mask_call_bb_tag, "Call_BB_Tag"],
-                    textposition="top center",
-                    textfont=dict(size=14),
-                    name="Call BB Tag",
-                    hovertemplate="Time: %{x}<br>Call BB Tag: %{text}<extra></extra>"
-                )
-                fig.add_trace(call_bb_tag_scatter, row=2, col=1)
-                
-                
+     
 
 
 
