@@ -4318,7 +4318,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
                     textposition="bottom center",
-                    textfont=dict(size=24, color="red"),             # red for down
+                    textfont=dict(size=20, color="red"),             # red for down
                     name="Pawn Down (Tenkan Cross)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♟️ Downward Tenkan Cross<extra></extra>"
                 )
