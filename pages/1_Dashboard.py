@@ -2287,25 +2287,31 @@ if st.sidebar.button("Run Analysis"):
 
 
                 def add_mike_kijun_atr_emoji(df):
-                    # Ensure all required columns exist
-                    required = ["F_numeric", "Kijun_F", "ATR_Exp_Alert"]
-                    if not all(col in df.columns for col in required):
-                        return df
+                    """
+                    Adds 🚀 emoji when Mike crosses Kijun AND ATR expansion occurred within ±3 bars of the cross.
+                    """
+                    crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
+                    
+                    emoji_flags = []
                 
-                    # Detect cross up: Mike crosses above Kijun
-                    cross_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
+                    for i in range(len(df)):
+                        if not crosses_up.iloc[i]:
+                            emoji_flags.append("")
+                            continue
                 
-                    # Check if any of the 3 prior bars had an ATR expansion emoji (☄️)
-                    atr_recent = (
-                        df["ATR_Exp_Alert"].shift(1).eq("☄️") |
-                        df["ATR_Exp_Alert"].shift(2).eq("☄️") |
-                        df["ATR_Exp_Alert"].shift(3).eq("☄️")
-                    )
+                        # Define window ±3 bars around the cross
+                        start = max(0, i - 3)
+                        end = min(len(df), i + 4)
                 
-                    # Add emoji if both conditions met
-                    df["Mike_Kijun_ATR_Emoji"] = np.where(cross_up & atr_recent, "🚀", "")
+                        atr_window = df.iloc[start:end]["ATR_Exp_Alert"]
+                        if any(atr_window == "☄️"):
+                            emoji_flags.append("🚀")
+                        else:
+                            emoji_flags.append("")
                 
+                    df["Mike_Kijun_ATR_Emoji"] = emoji_flags
                     return df
+
 
                 intraday = add_mike_kijun_atr_emoji(intraday)
         
