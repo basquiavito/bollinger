@@ -4272,34 +4272,7 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
                 # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
              # Bullish crosses (🚀)
-                bull_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
-                
-                # Bearish crosses (🌪️)
-                bear_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🌪️"]
-
-                
-                fig.add_trace(go.Scatter(
-                    x=emoji_df["TimeIndex"],               # x-axis: time
-                    y=emoji_df["F_numeric"],               # y-axis: Mike (F%)
-                    mode="text",
-                    text=emoji_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=20),
-                    name="Mike x Kijun + ATR",
-                    showlegend=True
-                ))
-                # 🌪️ Bearish Mike x Kijun + ATR
-                fig.add_trace(go.Scatter(
-                    x=bear_df["TimeIndex"],
-                    y=bear_df["F_numeric"],
-                    mode="text",
-                    text=bear_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="bottom center",
-                    textfont=dict(size=20),
-                    name="Mike ↓ Kijun + ATR",
-                    showlegend=True
-                ))
-
+                 
                 fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 
@@ -4310,6 +4283,31 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
+                # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
+                bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                fig.add_trace(go.Scatter(
+                    x=bullish_df["TimeIndex"],
+                    y=bullish_df["F_numeric"],
+                    mode="text",
+                    text=bullish_df["Mike_Kijun_ATR_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=20),
+                    name="Bullish Mike x Kijun + ATR 🚀",
+                    showlegend=True
+                ))
+                
+                # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
+                bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🧨"]
+                fig.add_trace(go.Scatter(
+                    x=bearish_df["TimeIndex"],
+                    y=bearish_df["F_numeric"],
+                    mode="text",
+                    text=bearish_df["Mike_Kijun_ATR_Emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=20),
+                    name="Bearish Mike x Kijun + ATR 🧨",
+                    showlegend=True
+                ))
 
               
                               # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
