@@ -3438,35 +3438,29 @@ if st.sidebar.button("Run Analysis"):
                     # Display anchor info
                     st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
                     st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
-
-                    def add_mike_midas_cross_emojis(df):
-                        """
-                        Adds 🚀 if Mike crosses above MIDAS_Bull and next bar closes higher.
-                        Adds ⚓️ if Mike crosses below MIDAS_Bear and next bar closes lower.
-                        """
-                        if not all(col in df.columns for col in ["Mike", "MIDAS_Bull", "MIDAS_Bear"]):
+                    def add_mike_midas_cross_emojis(df, price_col="Mike"):
+                        if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
                             print("Required columns not found.")
                             return df
                     
-                        mike = df["Mike"]
+                        price = df[price_col]
                         bull = df["MIDAS_Bull"]
                         bear = df["MIDAS_Bear"]
-                        close_next = mike.shift(-1)
+                        close_next = price.shift(-1)
                     
                         # 🚀 Cross above Bull + confirm
-                        bull_cross = (mike.shift(1) < bull.shift(1)) & (mike >= bull)
-                        bull_confirm = close_next > mike
+                        bull_cross = (price.shift(1) < bull.shift(1)) & (price >= bull)
+                        bull_confirm = close_next > price
                         df["Mike_MIDAS_Bull_Emoji"] = np.where(bull_cross & bull_confirm, "🚀", "")
                     
                         # ⚓️ Cross below Bear + confirm
-                        bear_cross = (mike.shift(1) > bear.shift(1)) & (mike <= bear)
-                        bear_confirm = close_next < mike
+                        bear_cross = (price.shift(1) > bear.shift(1)) & (price <= bear)
+                        bear_confirm = close_next < price
                         df["Mike_MIDAS_Bear_Emoji"] = np.where(bear_cross & bear_confirm, "⚓️", "")
                     
                         return df
+                        intraday = add_mike_midas_cross_emojis(intraday, price_col=price_col)
 
-
-                    intraday = add_mike_midas_cross_emojis(intraday)
 
 
                   
