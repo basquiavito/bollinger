@@ -4271,7 +4271,12 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=1, col=1)
                 # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
-                emoji_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+             # Bullish crosses (🚀)
+                bull_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                
+                # Bearish crosses (🌪️)
+                bear_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🌪️"]
+
                 
                 fig.add_trace(go.Scatter(
                     x=emoji_df["TimeIndex"],               # x-axis: time
