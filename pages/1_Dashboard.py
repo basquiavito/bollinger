@@ -2274,6 +2274,18 @@ if st.sidebar.button("Run Analysis"):
 
                     return df
 
+                
+
+
+
+                intraday = detect_atr_expansion(intraday, lookback=5)
+
+
+
+
+
+
+
                 def add_mike_kijun_atr_emoji(df):
                     # Ensure all required columns exist
                     required = ["F_numeric", "Kijun_F", "ATR_Exp_Alert"]
@@ -2296,11 +2308,7 @@ if st.sidebar.button("Run Analysis"):
                     return df
 
                 intraday = add_mike_kijun_atr_emoji(intraday)
-
-
-
-                intraday = detect_atr_expansion(intraday, lookback=5)
-                # 🐢 Turtle condition: extremely slow velocity
+        
 
                 intraday["Tenkan"] = (intraday["High"].rolling(window=9).max() + intraday["Low"].rolling(window=9).min()) / 2
                 intraday["Kijun"] = (intraday["High"].rolling(window=26).max() + intraday["Low"].rolling(window=26).min()) / 2
@@ -3229,7 +3237,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel", "Mike_Kijun_ATR_Emoji"     ]
+                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
