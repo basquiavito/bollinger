@@ -3228,34 +3228,7 @@ if st.sidebar.button("Run Analysis"):
                     print("RVOL_5 missing")
                     return df
 
-                def add_mike_kijun_horse_emoji(df):
-                    """
-                    Adds 🏇🏽 emoji when Mike crosses Kijun and relative volume (RVOL_5) > 1.5
-                    in any of the 3 bars: before, at, or after the cross.
-                    """
-                    crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
-                    crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
-                
-                    emoji_flags = []
-                
-                    for i in range(len(df)):
-                        if not (crosses_up.iloc[i] or crosses_down.iloc[i]):
-                            emoji_flags.append("")
-                            continue
-                
-                        start = max(0, i - 1)
-                        end = min(len(df), i + 2)
-                        rvol_slice = df.iloc[start:end]["RVOL_5"]
-                
-                        if any(rvol_slice > 1.5):
-                            emoji_flags.append("🏇🏽")
-                        else:
-                            emoji_flags.append("")
-                
-                    df["Mike_Kijun_Horse_Emoji"] = emoji_flags
-                    return df
-  
-
+           
                 intraday = add_mike_kijun_horse_emoji(intraday)
 
                 # 1️⃣   compute θ on a lightly-smoothed F%
