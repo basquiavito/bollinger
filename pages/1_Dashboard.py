@@ -4120,7 +4120,7 @@ if st.sidebar.button("Run Analysis"):
                     "<b>Time:</b> %{x}<br>" +
                     "<b>Call Option:</b> %{y:.2f}<br>" +
                     "<b>%{text}</b><extra></extra>"
-            )
+              
 
                 ), row=2, col=1)
                 
@@ -4136,7 +4136,7 @@ if st.sidebar.button("Run Analysis"):
                     "<b>Time:</b> %{x}<br>" +
                     "<b>Put Option:</b> %{y:.2f}<br>" +
                     "<b>%{text}</b><extra></extra>"
-            )
+            
 
                 ), row=2, col=1)
                 
