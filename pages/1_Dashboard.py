@@ -4283,15 +4283,7 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=False
                 ))
 
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Magic_Y"],
-                    mode="text",
-                    textfont=dict(size=30, color="lime"),
-                    text=intraday["Magic_Emoji"],
-                    textposition="middle center",
-                    showlegend=False
-                ), row=1, col=1)
+                 
 
 
                                        # Add IB High to MIDAS Option Plot
