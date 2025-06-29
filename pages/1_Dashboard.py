@@ -770,36 +770,7 @@ if st.sidebar.button("Run Analysis"):
 
  
             
-                def add_mike_kijun_rvol_emoji(df):
-                    """
-                    Adds 🏇🏽 when Mike crosses Kijun AND RVOL_5 > 1.5 in any of the 3 bars:
-                    prior, current, or next.
-                    """
-                    crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
-                    crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
-                    
-                    emoji_flags = []
                 
-                    for i in range(len(df)):
-                        if not (crosses_up.iloc[i] or crosses_down.iloc[i]):
-                            emoji_flags.append("")
-                            continue
-                
-                        # Check RVOL in [i-1, i, i+1]
-                        start = max(0, i - 1)
-                        end = min(len(df), i + 2)
-                        rvol_window = df.iloc[start:end]["RVOL_5"]
-                
-                        if any(rvol_window > 1.5):
-                            emoji_flags.append("🏇🏽")
-                        else:
-                            emoji_flags.append("")
-                
-                    df["Mike_Kijun_Horse_Emoji"] = emoji_flags
-                    return df
-                    intraday = add_mike_kijun_rvol_emoji(intraday)
-
-
               
                 # def calculate_bollinger_band_angles(df, band_col="F% Upper", angle_col="Upper Angle", window=1):
                 #     """
@@ -3219,7 +3190,36 @@ if st.sidebar.button("Run Analysis"):
                 #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
 
 
+                def add_mike_kijun_rvol_emoji(df):
+                    """
+                    Adds 🏇🏽 when Mike crosses Kijun AND RVOL_5 > 1.5 in any of the 3 bars:
+                    prior, current, or next.
+                    """
+                    crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
+                    crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
+                    
+                    emoji_flags = []
                 
+                    for i in range(len(df)):
+                        if not (crosses_up.iloc[i] or crosses_down.iloc[i]):
+                            emoji_flags.append("")
+                            continue
+                
+                        # Check RVOL in [i-1, i, i+1]
+                        start = max(0, i - 1)
+                        end = min(len(df), i + 2)
+                        rvol_window = df.iloc[start:end]["RVOL_5"]
+                
+                        if any(rvol_window > 1.5):
+                            emoji_flags.append("🏇🏽")
+                        else:
+                            emoji_flags.append("")
+                
+                    df["Mike_Kijun_Horse_Emoji"] = emoji_flags
+                    return df
+                    intraday = add_mike_kijun_rvol_emoji(intraday)
+
+
                 
                 def add_mike_kijun_bee_emoji(df):
                     """
