@@ -4163,16 +4163,16 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ), row=3, col=1)
 
-                      # 🐅 Tiger markers on top of Call Option Value
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["tiger],
-                    mode="text",
-                    text=intraday["Tiger"],
-                    textposition="top center",
-                    showlegend=False,
-                    name="Tiger"
-                ), row=2, col=1)
+                #       # 🐅 Tiger markers on top of Call Option Value
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["tiger],
+                #     mode="text",
+                #     text=intraday["Tiger"],
+                #     textposition="top center",
+                #     showlegend=False,
+                #     name="Tiger"
+                # ), row=2, col=1)
                 
              
                 fig.add_trace(go.Scatter(
