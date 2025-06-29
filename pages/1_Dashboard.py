@@ -4307,7 +4307,19 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
 
-              
+                emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
+  
+                fig.add_trace(go.Scatter(
+                    x=emoji_df["TimeIndex"],
+                    y=emoji_df["F_numeric"],
+                    mode="text",
+                    text=emoji_df["Mike_Kijun_Bee_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=20),
+                    name="Mike x Kijun + Bees",
+                    showlegend=False
+                ))
+
                               # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
                 #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
  
