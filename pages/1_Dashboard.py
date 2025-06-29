@@ -3194,6 +3194,29 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                def add_mike_kijun_bee_emoji(df):
+                    """
+                    Marks only the actual cross bar with 🍯 if a 🐝 BBW alert is found
+                    within ±3 bars of the cross (up or down).
+                    """
+                    crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
+                    crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
+                    
+                    emoji_flags = [""] * len(df)
+                
+                    for i in range(len(df)):
+                        if crosses_up.iloc[i] or crosses_down.iloc[i]:
+                            start = max(0, i - 3)
+                            end = min(len(df), i + 4)
+                            bee_window = df.iloc[start:end]["BBW_Alert"]
+                            if any(bee_window == "🐝"):
+                                emoji_flags[i] = "🍯"
+                
+                    df["Mike_Kijun_Bee_Emoji"] = emoji_flags
+                    return df
+                
+                # ✅ Apply
+                intraday = add_mike_kijun_bee_emoji(intraday)
 
 
 
@@ -3244,7 +3267,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji"    ]
+                                    "Time","F_numeric","RVOL_5","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji" ,"Mike_Kijun_Bee_Emoji"   ]
 
                     st.dataframe(intraday[cols_to_show])
 
