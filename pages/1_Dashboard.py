@@ -3190,37 +3190,40 @@ if st.sidebar.button("Run Analysis"):
                 #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
              
   
-                 def add_mike_kijun_horse_emoji(df):
-                      """
-                      Adds 🏇🏽 emoji when Mike (F_numeric) crosses Kijun and relative volume (RVOL_5) > 1.5
-                      in any of the 7 bars: 3 before, the cross itself, and 3 after.
-                      """
-                      crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
-                      crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
-                  
-                      emoji_flags = []
-                  
-                      for i in range(len(df)):
-                          if not (crosses_up.iloc[i] or crosses_down.iloc[i]):
-                              emoji_flags.append("")
-                              continue
-                  
-                          start = max(0, i - 3)
-                          end = min(len(df), i + 4)  # +4 because end index is exclusive
-                          rvol_slice = df.iloc[start:end]["RVOL_5"]
-                  
-                          if any(rvol_slice > 1.5):
-                              emoji_flags.append("🏇🏽")
-                          else:
-                              emoji_flags.append("")
-                  
-                      df["Mike_Kijun_Horse_Emoji"] = emoji_flags
-                      return df
+             
 
+
+
+                def add_mike_kijun_horse_emoji(df):
+                    """
+                    Adds 🏇🏽 emoji when Mike (F_numeric) crosses Kijun and relative volume (RVOL_5) > 1.5
+                    in any of the 7 bars: 3 before, the cross itself, and 3 after.
+                    """
+                    crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
+                    crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
+                
+                    emoji_flags = []
+                
+                    for i in range(len(df)):
+                        if not (crosses_up.iloc[i] or crosses_down.iloc[i]):
+                            emoji_flags.append("")
+                            continue
+                
+                        start = max(0, i - 3)
+                        end = min(len(df), i + 4)  # +4 because end index is exclusive
+                        rvol_slice = df.iloc[start:end]["RVOL_5"]
+                
+                        if any(rvol_slice > 1.5):
+                            emoji_flags.append("🏇🏽")
+                        else:
+                            emoji_flags.append("")
+                
+                    df["Mike_Kijun_Horse_Emoji"] = emoji_flags
+                    return df
+                
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_horse_emoji(intraday)
 
- 
                 def add_mike_kijun_bee_emoji(df):
                     """
                     Adds 🍯 emoji at the point Mike (F_numeric) crosses Kijun_F,
