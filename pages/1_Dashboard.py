@@ -3230,12 +3230,9 @@ if st.sidebar.button("Run Analysis"):
 
                 def add_mike_kijun_horse_emoji(df):
                     """
-                    Adds 🏇🏽 emoji when Mike crosses Kijun and RVOL_5 > 1.5
-                    in either the prior bar, current bar, or next bar.
+                    Adds 🏇🏽 emoji when Mike crosses Kijun and relative volume (RVOL_5) > 1.5
+                    in any of the 3 bars: before, at, or after the cross.
                     """
-                    if not all(col in df.columns for col in ["F_numeric", "Kijun_F", "RVOL_5"]):
-                        return df
-                
                     crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
                     crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
                 
@@ -3248,15 +3245,16 @@ if st.sidebar.button("Run Analysis"):
                 
                         start = max(0, i - 1)
                         end = min(len(df), i + 2)
-                        rvol_window = df.iloc[start:end]["RVOL_5"]
+                        rvol_slice = df.iloc[start:end]["RVOL_5"]
                 
-                        if any(rvol_window > 1.5):
+                        if any(rvol_slice > 1.5):
                             emoji_flags.append("🏇🏽")
                         else:
                             emoji_flags.append("")
                 
                     df["Mike_Kijun_Horse_Emoji"] = emoji_flags
                     return df
+  
 
                 intraday = add_mike_kijun_horse_emoji(intraday)
 
