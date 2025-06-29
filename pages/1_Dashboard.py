@@ -4286,11 +4286,11 @@ if st.sidebar.button("Run Analysis"):
                 # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
                 bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
                 fig.add_trace(go.Scatter(
-                    x=bullish_df["TimeIndex"],
+                    x=bullish_df["TimeIndex"] + 30,
                     y=bullish_df["F_numeric"],
                     mode="text",
                     text=bullish_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="top center",
+                    textposition="top right",
                     textfont=dict(size=20),
                     name="Bullish Mike x Kijun + ATR 🚀",
                     showlegend=True
@@ -4300,10 +4300,10 @@ if st.sidebar.button("Run Analysis"):
                 bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🧨"]
                 fig.add_trace(go.Scatter(
                     x=bearish_df["TimeIndex"],
-                    y=bearish_df["F_numeric"],
+                    y=bearish_df["F_numeric"] - 30,
                     mode="text",
                     text=bearish_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="bottom center",
+                    textposition="bottom right",
                     textfont=dict(size=20),
                     name="Bearish Mike x Kijun + ATR 🧨",
                     showlegend=True
