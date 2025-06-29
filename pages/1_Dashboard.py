@@ -4115,7 +4115,9 @@ if st.sidebar.button("Run Analysis"):
                     mode="lines",
                     name="Call Option Value",
                     line=dict(color="darkviolet", width=1.5),
-                    showlegend=True
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>Call_Option_Smooth: %{y}<br>%{text}"
+
                 ), row=2, col=1)
                 
                 # 🎯 Put Flow
@@ -4125,7 +4127,9 @@ if st.sidebar.button("Run Analysis"):
                     mode="lines",
                     name="Put Option Value",
                     line=dict(color="darkcyan", width=1.5),
-                    showlegend=True
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>Put_Option_Smooth: %{y}<br>%{text}"
+
                 ), row=2, col=1)
                 
                 # Compute displacement from MIDAS curves
@@ -4196,8 +4200,8 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.8), row=2, col=1)
-                fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot", width=0.8), row=2, col=1)
+                fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
+                fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 
                 # fig.add_hline(y=put_ib_high, line=dict(color="teal", dash="dot"), row=2, col=1)
                 # fig.add_hline(y=put_ib_low,  line=dict(color="teal", dash="dot"), row=2, col=1)
