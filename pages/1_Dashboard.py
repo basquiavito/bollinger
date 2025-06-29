@@ -3472,7 +3472,7 @@ if st.sidebar.button("Run Analysis"):
                   
                     # Display data table
                     st.dataframe(
-                        intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull']].dropna(subset=['MIDAS_Bear', 'MIDAS_Bull', 'Mike_MIDAS_Bull_Emoji', 'Mike_MIDAS_Bear_Emoji'], how='all').reset_index(drop=True)
+                        intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull', 'Mike_MIDAS_Bull_Emoji', 'Mike_MIDAS_Bear_Emoji']].dropna(subset=['MIDAS_Bear', 'MIDAS_Bull',], how='all').reset_index(drop=True)
                     )
 
                 
