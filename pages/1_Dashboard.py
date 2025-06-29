@@ -4311,11 +4311,11 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=emoji_df["TimeIndex"],
-                    y=emoji_df["F_numeric"] - 20,
+                    y=emoji_df["F_numeric"] - 13,
                     mode="text",
                     text=emoji_df["Mike_Kijun_Bee_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=20),
+                    textfont=dict(size=13),
                     name="Mike x Kijun + Bees",
                     showlegend=False
                 ))
