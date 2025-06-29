@@ -3191,32 +3191,39 @@ if st.sidebar.button("Run Analysis"):
                 #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
 
 
-
-
-
+                
+                
                 def add_mike_kijun_bee_emoji(df):
                     """
-                    Marks only the actual cross bar with 🍯 if a 🐝 BBW alert is found
-                    within ±3 bars of the cross (up or down).
+                    Adds 🍯 emoji at the point Mike (F_numeric) crosses Kijun_F,
+                    but only if a 🐝 (BBW tight) was seen within ±3 bars of the cross.
                     """
                     crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
                     crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
-                    
-                    emoji_flags = [""] * len(df)
+                
+                    emoji_flags = []
                 
                     for i in range(len(df)):
-                        if crosses_up.iloc[i] or crosses_down.iloc[i]:
-                            start = max(0, i - 3)
-                            end = min(len(df), i + 4)
-                            bee_window = df.iloc[start:end]["BBW_Alert"]
-                            if any(bee_window == "🐝"):
-                                emoji_flags[i] = "🍯"
+                        if not (crosses_up.iloc[i] or crosses_down.iloc[i]):
+                            emoji_flags.append("")
+                            continue
+                
+                        # Look ±3 bars for 🐝
+                        start = max(0, i - 3)
+                        end = min(len(df), i + 4)
+                        bee_window = df.iloc[start:end]["BBW_Tight_Emoji"]
+                
+                        if "🐝" in bee_window.values:
+                            emoji_flags.append("🍯")
+                        else:
+                            emoji_flags.append("")
                 
                     df["Mike_Kijun_Bee_Emoji"] = emoji_flags
                     return df
                 
-                # ✅ Apply
+                # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_bee_emoji(intraday)
+
 
 
 
