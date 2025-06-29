@@ -4263,6 +4263,19 @@ if st.sidebar.button("Run Analysis"):
                     name="IB Low",
                     showlegend=True
                 ), row=1, col=1)
+                # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
+                emoji_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                
+                fig.add_trace(go.Scatter(
+                    x=emoji_df["TimeIndex"],               # x-axis: time
+                    y=emoji_df["F_numeric"],               # y-axis: Mike (F%)
+                    mode="text",
+                    text=emoji_df["Mike_Kijun_ATR_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=20),
+                    name="Mike x Kijun + ATR",
+                    showlegend=False
+                ))
 
 
                 fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
