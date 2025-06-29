@@ -3438,35 +3438,11 @@ if st.sidebar.button("Run Analysis"):
                     # Display anchor info
                     st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
                     st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
-                    def add_mike_midas_cross_emojis(df, price_col="Mike"):
-                        if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
-                            print("Required columns not found.")
-                            return df
-                    
-                        price = df[price_col]
-                        bull = df["MIDAS_Bull"]
-                        bear = df["MIDAS_Bear"]
-                        close_next = price.shift(-1)
-                    
-                        # 🚀 Cross above Bull + confirm
-                        bull_cross = (price.shift(1) < bull.shift(1)) & (price >= bull)
-                        bull_confirm = close_next > price
-                        df["Mike_MIDAS_Bull_Emoji"] = np.where(bull_cross & bull_confirm, "🚀", "")
-                    
-                        # ⚓️ Cross below Bear + confirm
-                        bear_cross = (price.shift(1) > bear.shift(1)) & (price <= bear)
-                        bear_confirm = close_next < price
-                        df["Mike_MIDAS_Bear_Emoji"] = np.where(bear_cross & bear_confirm, "⚓️", "")
-                    
-                        return df
-                        intraday = add_mike_midas_cross_emojis(intraday, price_col=price_col)
-
-
-
+             
                   
                     # Display data table
                     st.dataframe(
-                        intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull', 'Mike_MIDAS_Bull_Emoji', 'Mike_MIDAS_Bear_Emoji']].dropna(subset=['MIDAS_Bear', 'MIDAS_Bull',], how='all').reset_index(drop=True)
+                        intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull'  ]].dropna(subset=['MIDAS_Bear', 'MIDAS_Bull',], how='all').reset_index(drop=True)
                     )
 
                 
