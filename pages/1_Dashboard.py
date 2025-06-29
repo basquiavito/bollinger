@@ -4116,7 +4116,11 @@ if st.sidebar.button("Run Analysis"):
                     name="Call Option Value",
                     line=dict(color="darkviolet", width=1.5),
                     showlegend=True,
-                    hovertemplate="Time: %{x}<br>Call_Option_Smooth: %{y}<br>%{text}"
+                    hovertemplate=
+                    "<b>Time:</b> %{x}<br>" +
+                    "<b>Call Option:</b> %{y:.2f}<br>" +
+                    "<b>%{text}</b><extra></extra>"
+            )
 
                 ), row=2, col=1)
                 
@@ -4128,7 +4132,11 @@ if st.sidebar.button("Run Analysis"):
                     name="Put Option Value",
                     line=dict(color="darkcyan", width=1.5),
                     showlegend=True,
-                    hovertemplate="Time: %{x}<br>Put_Option_Smooth: %{y}<br>%{text}"
+                    hovertemplate=
+                    "<b>Time:</b> %{x}<br>" +
+                    "<b>Put Option:</b> %{y:.2f}<br>" +
+                    "<b>%{text}</b><extra></extra>"
+            )
 
                 ), row=2, col=1)
                 
