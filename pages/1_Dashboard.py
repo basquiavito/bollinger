@@ -2286,31 +2286,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def add_mike_kijun_atr_emoji(df):
-                    """
-                    Adds 🚀 emoji when Mike crosses Kijun AND ATR expansion occurred within ±3 bars of the cross.
-                    """
-                    crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
-                    
-                    emoji_flags = []
-                
-                    for i in range(len(df)):
-                        if not crosses_up.iloc[i]:
-                            emoji_flags.append("")
-                            continue
-                
-                        # Define window ±3 bars around the cross
-                        start = max(0, i - 3)
-                        end = min(len(df), i + 4)
-                
-                        atr_window = df.iloc[start:end]["ATR_Exp_Alert"]
-                        if any(atr_window == "☄️"):
-                            emoji_flags.append("🚀")
-                        else:
-                            emoji_flags.append("")
-                
-                    df["Mike_Kijun_ATR_Emoji"] = emoji_flags
-                    return df
+               def add_mike_kijun_atr_emoji(df):
+                  """
+                  Adds 🚀 for upward cross and 🧨 for downward cross,
+                  if ATR expansion occurs within ±3 bars of the cross.
+                  """
+                  crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
+                  crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
+              
+                  emoji_flags = []
+              
+                  for i in range(len(df)):
+                      if not (crosses_up.iloc[i] or crosses_down.iloc[i]):
+                          emoji_flags.append("")
+                          continue
+              
+                      start = max(0, i - 3)
+                      end = min(len(df), i + 4)
+                      atr_window = df.iloc[start:end]["ATR_Exp_Alert"]
+              
+                      if any(atr_window == "☄️"):
+                          emoji_flags.append("🚀" if crosses_up.iloc[i] else "🧨")
+                      else:
+                          emoji_flags.append("")
+              
+                  df["Mike_Kijun_ATR_Emoji"] = emoji_flags
+                  return df
 
 
                 intraday = add_mike_kijun_atr_emoji(intraday)
