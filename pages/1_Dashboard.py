@@ -3188,16 +3188,21 @@ if st.sidebar.button("Run Analysis"):
                 # st.markdown("### 📘 Full Kijun Streak Log with $ Returns:")
                 # for line in log_with_returns:
                 #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
+                if "RVOL_5" not in df.columns:
+                    print("RVOL_5 missing")
+                    return df
 
-
-                def add_mike_kijun_rvol_emoji(df):
+                def add_mike_kijun_horse_emoji(df):
                     """
-                    Adds 🏇🏽 when Mike crosses Kijun AND RVOL_5 > 1.5 in any of the 3 bars:
-                    prior, current, or next.
+                    Adds 🏇🏽 emoji when Mike crosses Kijun and RVOL_5 > 1.5
+                    in either the prior bar, current bar, or next bar.
                     """
+                    if not all(col in df.columns for col in ["F_numeric", "Kijun_F", "RVOL_5"]):
+                        return df
+                
                     crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
                     crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
-                    
+                
                     emoji_flags = []
                 
                     for i in range(len(df)):
@@ -3205,7 +3210,6 @@ if st.sidebar.button("Run Analysis"):
                             emoji_flags.append("")
                             continue
                 
-                        # Check RVOL in [i-1, i, i+1]
                         start = max(0, i - 1)
                         end = min(len(df), i + 2)
                         rvol_window = df.iloc[start:end]["RVOL_5"]
@@ -3217,8 +3221,9 @@ if st.sidebar.button("Run Analysis"):
                 
                     df["Mike_Kijun_Horse_Emoji"] = emoji_flags
                     return df
-                    intraday = add_mike_kijun_rvol_emoji(intraday)
 
+                intraday = add_mike_kijun_horse_emoji(intraday)
+  
 
                 
                 def add_mike_kijun_bee_emoji(df):
