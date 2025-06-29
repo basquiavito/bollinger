@@ -2286,7 +2286,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-               def add_mike_kijun_atr_emoji(df):
+                def add_mike_kijun_atr_emoji(df):
                   """
                   Adds 🚀 for upward cross and 🧨 for downward cross,
                   if ATR expansion occurs within ±3 bars of the cross.
