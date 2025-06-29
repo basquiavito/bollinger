@@ -2274,7 +2274,28 @@ if st.sidebar.button("Run Analysis"):
 
                     return df
 
+                def add_mike_kijun_atr_emoji(df):
+                    # Ensure all required columns exist
+                    required = ["F_numeric", "Kijun_F", "ATR_Exp_Alert"]
+                    if not all(col in df.columns for col in required):
+                        return df
+                
+                    # Detect cross up: Mike crosses above Kijun
+                    cross_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
+                
+                    # Check if any of the 3 prior bars had an ATR expansion emoji (☄️)
+                    atr_recent = (
+                        df["ATR_Exp_Alert"].shift(1).eq("☄️") |
+                        df["ATR_Exp_Alert"].shift(2).eq("☄️") |
+                        df["ATR_Exp_Alert"].shift(3).eq("☄️")
+                    )
+                
+                    # Add emoji if both conditions met
+                    df["Mike_Kijun_ATR_Emoji"] = np.where(cross_up & atr_recent, "🚀", "")
+                
+                    return df
 
+                intraday = add_mike_kijun_atr_emoji(intraday)
 
 
 
