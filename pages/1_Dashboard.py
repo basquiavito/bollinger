@@ -4269,11 +4269,11 @@ if st.sidebar.button("Run Analysis"):
                 # Add trace to your figure
                 fig.add_trace(go.Scatter(
                     x=horse_df["TimeIndex"],
-                    y=horse_df["F_numeric"],
+                    y=horse_df["F_numeric"] + 30,
                     mode="text",
                     text=horse_df["Mike_Kijun_Horse_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=20),
+                    textfont=dict(size=30),
                     name="Mike x Kijun + Horse",
                     showlegend=False
                 ))
