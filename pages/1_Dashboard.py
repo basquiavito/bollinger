@@ -3224,12 +3224,8 @@ if st.sidebar.button("Run Analysis"):
                 intraday = add_mike_kijun_bee_emoji(intraday)
 
 
-                if "RVOL_5" not in df.columns:
-                    print("RVOL_5 missing")
-                    return df
 
            
-                intraday = add_mike_kijun_horse_emoji(intraday)
 
                 # 1️⃣   compute θ on a lightly-smoothed F%
                 intraday["F_smoothed"] = intraday["F_numeric"].ewm(span=3, adjust=False).mean()
