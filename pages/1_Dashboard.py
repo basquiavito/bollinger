@@ -4311,7 +4311,7 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=emoji_df["TimeIndex"],
-                    y=emoji_df["F_numeric"] - 13,
+                    y=emoji_df["F_numeric"] - 18,
                     mode="text",
                     text=emoji_df["Mike_Kijun_Bee_Emoji"],
                     textposition="top center",
