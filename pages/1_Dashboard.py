@@ -3593,9 +3593,9 @@ if st.sidebar.button("Run Analysis"):
                       intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
                   # Call function and unpack
  
-                      # Display anchor info
-                      st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
-                      st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
+                      # # Display anchor info
+                      # st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
+                      # st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
                   
                       # # Optional preview
                       # st.dataframe(
