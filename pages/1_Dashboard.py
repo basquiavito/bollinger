@@ -4727,7 +4727,14 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=False
                 ), row=2, col=1)
 
+                  # Get the first time the call wake-up happened
+                first_call_wake_idx = intraday.index[intraday["Call_Wake_Emoji"] == "👁️"]
+                first_call_wake_idx = first_call_wake_idx.min() if not first_call_wake_idx.empty else None
                 
+                # Get the first time the put wake-up happened
+                first_put_wake_idx = intraday.index[intraday["Put_Wake_Emoji"] == "🦉"]
+                first_put_wake_idx = first_put_wake_idx.min() if not first_put_wake_idx.empty else None
+
                                 # 👁️ First Call Wake-Up on F% plot
                 if pd.notna(first_call_wake_idx):
                     fig.add_trace(go.Scatter(
