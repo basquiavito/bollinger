@@ -4734,8 +4734,8 @@ if st.sidebar.button("Run Analysis"):
                                 # 👁️ First Call Wake-Up on F% plot
                 if pd.notna(first_call_wake_idx):
                     fig.add_trace(go.Scatter(
-                        x=[df.loc[first_call_wake_idx, "Time"]],
-                        y=[df.loc[first_call_wake_idx, "f_numeric"]],
+                        x=[intraday.loc[first_call_wake_idx, "Time"]],
+                        y=[intraday.loc[first_call_wake_idx, "f_numeric"]],
                         mode="text",
                         text=["👁️"],
                         textposition="top center",
@@ -4747,8 +4747,8 @@ if st.sidebar.button("Run Analysis"):
                 # 🦉 First Put Wake-Up on F% plot
                 if pd.notna(first_put_wake_idx):
                     fig.add_trace(go.Scatter(
-                        x=[df.loc[first_put_wake_idx, "Time"]],
-                        y=[df.loc[first_put_wake_idx, "f_numeric"]],
+                        x=[intraday.loc[first_put_wake_idx, "Time"]],
+                        y=[intraday.loc[first_put_wake_idx, "f_numeric"]],
                         mode="text",
                         text=["🦉"],
                         textposition="bottom center",
