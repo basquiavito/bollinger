@@ -3590,7 +3590,7 @@ if st.sidebar.button("Run Analysis"):
 
                   
                       # Apply emoji marking
-                      intraday = add_mike_midas_cross_emojis(intraday, price_col=price_col)
+                      intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
                   # Call function and unpack
  
                       # Display anchor info
