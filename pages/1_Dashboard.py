@@ -4389,6 +4389,34 @@ if st.sidebar.button("Run Analysis"):
                                 showlegend=False
                             ))
 
+                
+                # Step: Add 👃🏽 marker into intraday at the bar where breakout happened
+                # Get the F% level with the most letters
+                max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+                
+                # Get the first row where current Mike broke away from that level
+                breakout_row = intraday[np.digitize(intraday[mike_col], f_bins) - 1 != max_letter_level]
+                if not breakout_row.empty:
+                    first_break = breakout_row.iloc[0].name
+                    intraday.loc[first_break, "Mike_Nose_Emoji"] = "👃🏽"
+
+
+                # Plot 👃🏽 emoji on the intraday plot
+                nose_df = intraday[intraday["Mike_Nose_Emoji"] == "👃🏽"]
+                
+                fig.add_trace(go.Scatter(
+                    x=nose_df["TimeIndex"],
+                    y=nose_df["F_numeric"] + 10,  # Adjust position above Mike
+                    mode="text",
+                    text=nose_df["Mike_Nose_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Mike breaks from Letter POC 👃🏽",
+                    showlegend=True
+                ))
+
+
+
 
 
                 # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
