@@ -4349,6 +4349,45 @@ if st.sidebar.button("Run Analysis"):
                     name="Long Entry (✅)"
                 )
                 fig.add_trace(long_entry_trace, row=1, col=1)
+
+
+                # 🔍 First Wake-Up Detection
+                first_call_eye_idx = intraday.index[intraday["Call_Wake_Emoji"] == "👁️"]
+                first_put_eye_idx  = intraday.index[intraday["Put_Wake_Emoji"]  == "🦉"]
+                
+                # ✅ Plot Call Wake 👁️ once
+                if not first_call_eye_idx.empty:
+                    first_idx = first_call_eye_idx[0]
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_idx, "Time"]],
+                        y=[intraday.loc[first_idx, price_col] + 20],  # position above
+                        mode="text",
+                        text=["👁️"],
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hoverinfo="text",
+                        name="Call Wake-Up"
+                    ), row=1, col=1)
+                
+                # ✅ Plot Put Wake 🦉 once
+                if not first_put_eye_idx.empty:
+                    first_idx = first_put_eye_idx[0]
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_idx, "Time"]],
+                        y=[intraday.loc[first_idx, price_col] - 20],  # position below
+                        mode="text",
+                        text=["🦉"],
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hoverinfo="text",
+                        name="Put Wake-Up"
+                    ), row=1, col=1)
+
+
+
+
                 # Smooth first if needed
                 intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
                 intraday["Put_Option_Smooth"]  = intraday["Put_Option_Value"].rolling(3).mean()
