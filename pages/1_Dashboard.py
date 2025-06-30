@@ -4848,7 +4848,8 @@ if st.sidebar.button("Run Analysis"):
                    hoverinfo="skip"
                 ), row=3, col=1)
         
-               
+             if first_bear_midas_idx is not None:
+
                 fig.add_trace(go.Scatter(
                     x=[intraday.loc[first_bear_midas_idx, "Time"]],
                     y=[intraday.loc[first_bear_midas_idx, price_col]],
