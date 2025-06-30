@@ -26,7 +26,7 @@ st.title("VOLMIKE.COM")
 # ======================================
 st.sidebar.header("Input Options")
 
-default_tickers = ["SPY","QQQ","NVDA","SMCI","MU", "AVGO","AMD","PLTR","MRVL","uber","AMZN","AAPL","googl","META","MARA","nke","GM","c","wfc","hood","coin","bac","jpm","HIMS","TXM","QCOM","MU","INTC","CRDO","RMBS","ON","ORCL", "CRWD","PANW","APP","MSTR","IBM","AMAT","DELL","WDC","CRM","CHWY","ETSY","CART","W"]
+default_tickers = ["SPY","QQQ","NVDA","SMCI","MU", "AVGO","TSLA","AMD","PLTR","MRVL","uber","AMZN","AAPL","googl","META","MARA","nke","GM","c","wfc","hood","coin","bac","jpm","HIMS","TXM","QCOM","MU","INTC","CRDO","RMBS","ON","ORCL", "CRWD","PANW","APP","MSTR","IBM","AMAT","DELL","WDC","CRM","CHWY","ETSY","CART","W"]
 tickers = st.sidebar.multiselect(
     "Select Tickers",
     options=default_tickers,
@@ -4354,8 +4354,8 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
                                 
-                fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
-                fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
+                fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
+                fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
                 # 🦻🏼 Add Ear line if it exists
                 ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
