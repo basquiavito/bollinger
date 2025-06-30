@@ -4497,7 +4497,7 @@ if st.sidebar.button("Run Analysis"):
                                 text=["🪶"],
                                 textposition="middle right",
                                 textfont=dict(size=20),
-                                showlegend=False,
+                                showlegend=True,
                                 hovertemplate=(
                                     "🪶 Tail<br>"
                                     f"F% Level: {row['F% Level']}<br>"
@@ -4548,7 +4548,7 @@ if st.sidebar.button("Run Analysis"):
                     textposition="top center",
                     textfont=dict(size=18),
                     name="Mike x Kijun + Bees",
-                    showlegend=False
+                    showlegend=True
                 ))
           
                 
