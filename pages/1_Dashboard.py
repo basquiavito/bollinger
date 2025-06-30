@@ -4723,38 +4723,7 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=False
                 ), row=2, col=1)
 
-                  # Get the first time the call wake-up happened
-                first_call_wake_idx = intraday.index[intraday["Call_Wake_Emoji"] == "👁️"]
-                first_call_wake_idx = first_call_wake_idx.min() if not first_call_wake_idx.empty else None
-                
-                # Get the first time the put wake-up happened
-                first_put_wake_idx = intraday.index[intraday["Put_Wake_Emoji"] == "🦉"]
-                first_put_wake_idx = first_put_wake_idx.min() if not first_put_wake_idx.empty else None
-
-                 if pd.notna(first_call_wake_idx):
-                     fig.add_trace(go.Scatter(
-                          x=[intraday.loc[first_call_wake_idx, "Time"]],
-                          y=[intraday.loc[first_call_wake_idx, price_col]],
-                          mode="text",
-                          text=["👁️"],
-                          textposition="top center",
-                          showlegend=False,
-                          hoverinfo="skip",
-                          name="Call Wake (👁️)"
-                      ), row=1, col=1)
-      
-                if pd.notna(first_put_wake_idx):
-                    fig.add_trace(go.Scatter(
-                        x=[intraday.loc[first_put_wake_idx, "Time"]],
-                        y=[intraday.loc[first_put_wake_idx, price_col]],
-                        mode="text",
-                        text=["🦉"],
-                        textposition="bottom center",
-                        showlegend=False,
-                        hoverinfo="skip",
-                        name="Put Wake (🦉)"
-                    ), row=1, col=1)
-
+           
                          
                  
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
