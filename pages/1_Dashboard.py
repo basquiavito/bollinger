@@ -4444,15 +4444,31 @@ if st.sidebar.button("Run Analysis"):
                     text=nose_df["Mike_Nose_Emoji"],
                     textposition="top center",
                     textfont=dict(size=18),
+                    hovertemplate="👃🏽 Nose Line: %{y}<extra></extra>",
+
                     name="Mike breaks from Letter POC 👃🏽",
                     showlegend=True
                 ))
+                             # 1. Add the pink dotted line as a shape (visual line)
                 fig.add_hline(
                     y=poc_f_level,
-                    showlegend=True,
-                    line=dict(color="#ff1493", dash="dot", width=0.6),  # Hot pink for 👃🏽
+                    line=dict(color="#ff1493", dash="dot", width=0.6),
                     row=1, col=1
                 )
+                
+                # 2. Add an invisible scatter point at the same y to appear in legend and hover
+                fig.add_trace(go.Scatter(
+                    x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
+                    y=[poc_f_level],
+                    mode="markers+text",
+                    marker=dict(size=0, color="#ff1493"),
+                    text=["👃🏽 Nose (Most Price Acceptance)"],
+                    textposition="top right",
+                    name="👃🏽 Nose Line",
+                    showlegend=True,
+                    hovertemplate="👃🏽 Nose Line: %{y}<extra></extra>",
+                ), row=1, col=1)
+
 
                 # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
                 bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
