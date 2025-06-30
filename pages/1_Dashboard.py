@@ -4315,7 +4315,7 @@ if st.sidebar.button("Run Analysis"):
                     textposition="bottom left",
                     textfont=dict(size=30),
                     name="Mike x Kijun + Horse",
-                    showlegend=False
+                    showlegend=True
                 ))
 
                  
