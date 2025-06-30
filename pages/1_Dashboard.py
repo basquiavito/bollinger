@@ -4561,8 +4561,13 @@ if st.sidebar.button("Run Analysis"):
                     text=["👋🏽"] * len(bull_hand_rows),
                     textposition="top center",
                     textfont=dict(size=18),
-                    showlegend=False
-                     
+                    showlegend=False,
+                    hovertemplate=(
+                        "👋🏽 Bull MIDAS Hand<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        + price_col + ": %{y:.2f}<extra></extra>"
+                    )
+                                     
                 ), row=1, col=1)
                 
                 # Plot 🧤 MIDAS Bear Cross Glove
@@ -4574,7 +4579,12 @@ if st.sidebar.button("Run Analysis"):
                     text=["🧤"] * len(bear_glove_rows),
                     textposition="bottom center",
                     textfont=dict(size=18),
-                    showlegend=False
+                    showlegend=False,
+                    hovertemplate=(
+                        "🧤 Bear MIDAS Hand<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        + price_col + ": %{y:.2f}<extra></extra>"
+                    )
                 ), row=1, col=1)
 
 
