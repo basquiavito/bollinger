@@ -4552,44 +4552,43 @@ if st.sidebar.button("Run Analysis"):
                 ))
           
                 
-                # # Plot 👋🏽 MIDAS Bull Cross Hand
-                # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                # fig.add_trace(go.Scatter(
-                #     x=bull_hand_rows["TimeIndex"],
-                #     y=bull_hand_rows[price_col],
-                #     mode="text",
-                #     text=["👋🏽"] * len(bull_hand_rows),
-                #     textposition="top center",
-                #     textfont=dict(size=18),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "👋🏽 Bull MIDAS Hand<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         + price_col + ": %{y:.2f}<extra></extra>"
-                #     )
+                # Plot 👋🏽 MIDAS Bull Cross Hand
+                bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                fig.add_trace(go.Scatter(
+                    x=bull_hand_rows["TimeIndex"],
+                    y=bull_hand_rows[price_col],
+                    mode="text",
+                    text=["👋🏽"] * len(bull_hand_rows),
+                    textposition="top right",
+                    textfont=dict(size=12),
+                    showlegend=False,
+                    hovertemplate=(
+                        "👋🏽 Bull MIDAS Hand<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        + price_col + ": %{y:.2f}<extra></extra>"
+                    )
                                      
-                # ), row=1, col=1)
+                ), row=1, col=1)
                 
-                # # Plot 🧤 MIDAS Bear Cross Glove
-                # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_glove_rows["TimeIndex"],
-                #     y=bear_glove_rows[price_col],
-                #     mode="text",
-                #     text=["🧤"] * len(bear_glove_rows),
-                #     textposition="bottom center",
-                #     textfont=dict(size=18),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🧤 Bear MIDAS Hand<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         + price_col + ": %{y:.2f}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                # Plot 🧤 MIDAS Bear Cross Glove
+                bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                fig.add_trace(go.Scatter(
+                    x=bear_glove_rows["TimeIndex"],
+                    y=bear_glove_rows[price_col],
+                    mode="text",
+                    text=["🧤"] * len(bear_glove_rows),
+                    textposition="bottom right",
+                    textfont=dict(size=12),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🧤 Bear MIDAS Hand<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        + price_col + ": %{y:.2f}<extra></extra>"
+                    )
+                ), row=1, col=1)
 
 
-                              # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
-                #                          name="TB-F Top", line=dict(color="#708090", dash="dot")))
+                          
  
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
