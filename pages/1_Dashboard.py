@@ -4331,8 +4331,8 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 
-                fig.add_hline(y=va_min, line=dict(color="brown", dash="dot", width=0.3), row=1, col=1)
-                fig.add_hline(y=va_max, line=dict(color="#0ff", dash="dot", width=0.3), row=1, col=1)
+                fig.add_hline(y=va_min, line=dict(color="brown", dash="dot", width=0.5), row=1, col=1)
+                fig.add_hline(y=va_max, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
                                 
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
