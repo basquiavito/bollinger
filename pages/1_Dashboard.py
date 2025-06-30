@@ -3765,7 +3765,12 @@ if st.sidebar.button("Run Analysis"):
                           # Fill the column in the dataframe
                           intraday["Bear_Midas_Wake"] = [""] * start_idx + wake_flags
        
-                  
+                                            # Detect first Bull MIDAS Wake-Up (🦵🏼)
+                          first_bull_midas_idx = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"].min()
+                          
+                          # Detect first Bear MIDAS Wake-Up (🦶🏼)
+                          first_bear_midas_idx = intraday.index[intraday["Bear_Midas_Wake"] == "🦶🏼"].min()
+
                           return df, bull_cross, bear_cross
                   
                       intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
@@ -4857,6 +4862,34 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=False,
                     hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
                 ), row=3, col=1)
+
+
+                # Only if a Bull Midas Wake-Up exists
+                if pd.notna(first_bull_midas_idx):
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_bull_midas_idx, "Time"]],
+                        y=[intraday.loc[first_bull_midas_idx, price_col]],
+                        mode="text",
+                        text=["🦵🏼"],
+                        textposition="top right",
+                        hovertemplate="Bull MIDAS Wake-Up<br>Time: %{x}<br>Value: %{y:.2f}",
+                        showlegend=False,
+                        name="Bull Midas Wake (🦵🏼)"
+                    ), row=1, col=1)
+                
+                # Only if a Bear Midas Wake-Up exists
+                if pd.notna(first_bear_midas_idx):
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_bear_midas_idx, "Time"]],
+                        y=[intraday.loc[first_bear_midas_idx, price_col]],
+                        mode="text",
+                        text=["🦶🏼"],
+                        textposition="bottom right",
+                        hovertemplate="Bear MIDAS Wake-Up<br>Time: %{x}<br>Value: %{y:.2f}",
+                        showlegend=False,
+                        name="Bear Midas Wake (🦶🏼)"
+                    ), row=1, col=1)
+
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
