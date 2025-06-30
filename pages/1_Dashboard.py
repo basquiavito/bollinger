@@ -3565,31 +3565,35 @@ if st.sidebar.button("Run Analysis"):
                   
                       intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
                   
-                      # 👉 Add Mike vs MIDAS cross emojis
                       def add_mike_midas_cross_emojis(df, price_col):
                           if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
-                              return df
-                  
+                              return df, None, None  # return dummy placeholders
+                      
                           price = df[price_col]
                           bull = df["MIDAS_Bull"]
                           bear = df["MIDAS_Bear"]
                           close_next = price.shift(-1)
-                  
-                          # 🚀 Bull cross and confirmation
+                      
+                          # Cross conditions
                           bull_cross = (price.shift(1) < bull.shift(1)) & (price >= bull)
                           bull_confirm = close_next > price
-                          df["Mike_MIDAS_Bull_Emoji"] = np.where(bull_cross & bull_confirm, "🚀", "")
-                  
-                          # ⚓️ Bear cross and confirmation
                           bear_cross = (price.shift(1) > bear.shift(1)) & (price <= bear)
                           bear_confirm = close_next < price
+                      
+                          # Emojis
+                          df["Mike_MIDAS_Bull_Emoji"] = np.where(bull_cross & bull_confirm, "🚀", "")
                           df["Mike_MIDAS_Bear_Emoji"] = np.where(bear_cross & bear_confirm, "⚓️", "")
-                  
-                          return df
+                          df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
+                          df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
+                      
+                          return df, bull_cross, bear_cross
+
                   
                       # Apply emoji marking
                       intraday = add_mike_midas_cross_emojis(intraday, price_col=price_col)
-                  
+                  # Call function and unpack
+                      intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
+
                       # Display anchor info
                       st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
                       st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
@@ -4549,34 +4553,6 @@ if st.sidebar.button("Run Analysis"):
                 ))
           
 
-                df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
-                df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
-
-                # 👋🏽 Support Skin (Bull MIDAS Cross)
-                fig.add_trace(go.Scatter(
-                    x=intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]["TimeIndex"],
-                    y=intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]["F_numeric"],
-                    mode="text",
-                    text=intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]["MIDAS_Bull_Hand"],
-                    textposition="bottom right",
-                    textfont=dict(size=20),
-                    name="👋🏽 MIDAS Support Skin",
-                    showlegend=False,
-                    hovertemplate="👋🏽 MIDAS Bull Cross<br>F%: %{y}<br>Time: %{x|%I:%M %p}<extra></extra>"
-                ), row=1, col=1)
-                
-                # 🧤 Resistance Skin (Bear MIDAS Cross)
-                fig.add_trace(go.Scatter(
-                    x=intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]["TimeIndex"],
-                    y=intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]["F_numeric"],
-                    mode="text",
-                    text=intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]["MIDAS_Bear_Glove"],
-                    textposition="top left",
-                    textfont=dict(size=20),
-                    name="🧤 MIDAS Resistance Skin",
-                    showlegend=False,
-                    hovertemplate="🧤 MIDAS Bear Cross<br>F%: %{y}<br>Time: %{x|%I:%M %p}<extra></extra>"
-                ), row=1, col=1)
 
 
                               # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
