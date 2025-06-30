@@ -4374,6 +4374,18 @@ if st.sidebar.button("Run Analysis"):
                     name="Mike x Kijun + Bees",
                     showlegend=False
                 ))
+                ear_df = intraday[intraday["Ear_Emoji"] == "🦻🏼"]
+                
+                fig.add_trace(go.Scatter(
+                    x=ear_df["TimeIndex"],
+                    y=ear_df["F_numeric"] - 25,  # Lower than Bee (-13)
+                    mode="text",
+                    text=ear_df["Ear_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Left Volume Cluster 🦻🏼",
+                    showlegend=False
+                ))
 
 
 
