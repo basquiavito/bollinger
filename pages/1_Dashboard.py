@@ -4338,6 +4338,19 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
+                # 🦻🏼 Add Ear line if it exists
+                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                
+                if not ear_row.empty:
+                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+                    fig.add_hline(
+                        y=ear_level,
+                        line=dict(color="black", dash="dot", width=0.6),
+                        row=1, col=1,
+                        annotation_text="🦻🏼 Ear Shift",
+                        annotation_position="top left",
+                        annotation_font=dict(color="black")
+                    )
 
 
 
