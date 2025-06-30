@@ -4494,7 +4494,28 @@ if st.sidebar.button("Run Analysis"):
                     name="Bullish Mike x Kijun + ATR 🚀",
                     showlegend=True
                 ))
-                
+
+
+                # Add a 🪶 Tail marker to the F% plot if any exist
+                for _, row in profile_df.iterrows():
+                    if row["Tail"] == "🪶":
+                        fig.add_trace(go.Scatter(
+                            x=[intraday["TimeIndex"].iloc[-1]],  # any valid time
+                            y=[row["F% Level"]],
+                            mode="text",
+                            text=["🪶"],
+                            textposition="middle right",
+                            textfont=dict(size=20),
+                            showlegend=False,
+                            hovertemplate=(
+                                "🪶 Tail<br>"
+                                f"F% Level: {row['F% Level']}<br>"
+                                f"Time: {row['Time']}<extra></extra>"
+                            )
+                        ), row=1, col=1)
+
+
+
                 # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
                 bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
                 fig.add_trace(go.Scatter(
