@@ -547,6 +547,37 @@ if st.sidebar.button("Run Analysis"):
                     df["Call_Eye"] = np.where(df["Call_Δ"] >= 10, "👁️", "")
                     df["Put_Eye"]  = np.where(df["Put_Δ"]  >= 10, "👀", "")
 
+                    # 🔭 Detect "Wake-Up" Phase After Cross
+                
+                    # Store initial smooth values for comparison
+                    df["Call_Smooth_Cross"] = (
+                        (df["Call_Option_Smooth"] > df["Put_Option_Smooth"]) &
+                        (df["Call_Option_Smooth"].shift(1) <= df["Put_Option_Smooth"].shift(1))
+                    )
+                
+                    df["Put_Smooth_Cross"] = (
+                        (df["Put_Option_Smooth"] > df["Call_Option_Smooth"]) &
+                        (df["Put_Option_Smooth"].shift(1) <= df["Call_Option_Smooth"].shift(1))
+                    )
+                
+                    # Forward fill cross triggers to track the phase
+                    df["Call_Tracking"] = df["Call_Smooth_Cross"].replace(False, np.nan).ffill(limit=3)
+                    df["Put_Tracking"]  = df["Put_Smooth_Cross"].replace(False, np.nan).ffill(limit=3)
+                
+                    # Measure rise since cross for each
+                    df["Call_Rise_Since_Cross"] = df["Call_Option_Smooth"] - df["Call_Option_Smooth"].where(df["Call_Smooth_Cross"]).ffill(limit=3)
+                    df["Put_Rise_Since_Cross"]  = df["Put_Option_Smooth"]  - df["Put_Option_Smooth"] .where(df["Put_Smooth_Cross"]).ffill(limit=3)
+                
+                    # Detect wake-up emoji
+                    df["Call_Wake_Emoji"] = np.where(
+                        (df["Call_Tracking"]) & (df["Call_Rise_Since_Cross"] >= 12),
+                        "👁️", ""
+                    )
+                
+                    df["Put_Wake_Emoji"] = np.where(
+                        (df["Put_Tracking"]) & (df["Put_Rise_Since_Cross"] >= 12),
+                        "🦉", ""
+                    )
 
 
 
@@ -4679,32 +4710,28 @@ if st.sidebar.button("Run Analysis"):
                     )
                 ), row=1, col=1)
 
-                
-                # 👁️ CALL EYE: when call option value jumps ≥10
+                               # Wake-up Emojis 📈
                 fig.add_trace(go.Scatter(
-                    x=intraday["TimeIndex"],
-                    y=intraday["F_numeric"] + 13,  # slightly above Mike for visibility
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Smooth"],
                     mode="text",
-                    text=intraday["Call_Eye"],
-                    textfont=dict(size=16),
-                    name="Call Eye",
+                    text=intraday["Call_Wake_Emoji"],
+                    textposition="top center",
                     showlegend=False
-                ))
+                ), row=2, col=1)
                 
-                # 👀 PUT EYE: when put option value jumps ≥10
                 fig.add_trace(go.Scatter(
-                    x=intraday["TimeIndex"],
-                    y=intraday["F_numeric"] - 13,  # slightly below Mike for visibility
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
                     mode="text",
-                    text=intraday["Put_Eye"],
-                    textfont=dict(size=16),
-                    name="Put Eye",
+                    text=intraday["Put_Wake_Emoji"],
+                    textposition="bottom center",
                     showlegend=False
-                ))
-
-
-                          
- 
+                ), row=2, col=1)
+                
+                
+                                          
+                 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
                  
