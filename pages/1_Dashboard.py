@@ -4848,18 +4848,16 @@ if st.sidebar.button("Run Analysis"):
                    hoverinfo="skip"
                 ), row=3, col=1)
         
-             if first_bear_midas_idx is not None:
-
                 fig.add_trace(go.Scatter(
-                    x=[intraday.loc[first_bear_midas_idx, "Time"]],
-                    y=[intraday.loc[first_bear_midas_idx, price_col]],
+                    x=intraday["Time"],
+                    y=intraday["Put_vs_Bear"],
                     mode="text",
-                    text=["🦶🏼"],
+                    text=intraday["Bear_Midas_Wake"],
                     textposition="bottom center",
                     showlegend=False,
-                    hoverinfo="skip",
-                    name="Bear MIDAS Wake-Up (🦶🏼)"
-                ), row=1, col=1)
+                    hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
+                ), row=3, col=1)
+
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
