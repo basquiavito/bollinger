@@ -545,7 +545,7 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_Δ"]  = df["Put_Option_Value"].diff()
                 
                     df["Call_Eye"] = np.where(df["Call_Δ"] >= 10, "👁️", "")
-                    df["Put_Eye"]  = np.where(df["Put_Δ"]  >= 10, "👁️", "")
+                    df["Put_Eye"]  = np.where(df["Put_Δ"]  >= 10, "👀", "")
 
 
 
@@ -4691,7 +4691,7 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=False
                 ))
                 
-                # 👁️ PUT EYE: when put option value jumps ≥10
+                # 👀 PUT EYE: when put option value jumps ≥10
                 fig.add_trace(go.Scatter(
                     x=intraday["TimeIndex"],
                     y=intraday["F_numeric"] - 13,  # slightly below Mike for visibility
