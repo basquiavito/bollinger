@@ -3488,7 +3488,21 @@ if st.sidebar.button("Run Analysis"):
                   
                   
                   
-                                    
+                                   # Add the Ear_Emoji column to intraday based on the profile logic
+
+                  # Make sure 'F_Bin' exists in intraday
+                  if "F_Bin" not in intraday.columns:
+                      intraday['F_Bin'] = pd.cut(intraday["F_numeric"], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
+                  
+                  # Calculate the current Mike bin
+                  current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
+                  
+                  # Add Ear_Emoji flag only if Mike has moved away from volume-dominant F% level
+                  ear_flag = (intraday["F_Bin"].astype(int) != max_vol_level)
+                  intraday["Ear_Emoji"] = np.where(
+                      ear_flag & (intraday["F_Bin"].astype(int) == max_vol_level), "🦻🏼", ""
+                  )
+ 
               
                   
 
