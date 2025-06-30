@@ -3588,87 +3588,87 @@ if st.sidebar.button("Run Analysis"):
                 #           df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")  # Glove = breakdown through Bull MIDAS
 
                       
-                #           return df, bull_cross, bear_cross
+                # #           return df, bull_cross, bear_cross
 
                   
-                #       # Apply emoji marking
+                # #       # Apply emoji marking
+                #       intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
+
+
+                  with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
+                  
+                      # Detect price column
+                      if "Mike" in intraday.columns:
+                          price_col = "Mike"
+                      elif "F_numeric" in intraday.columns:
+                          price_col = "F_numeric"
+                      else:
+                          st.warning("Mike or F_numeric column not found.")
+                          st.stop()
+                  
+                      if "Volume" not in intraday.columns:
+                          st.warning("Volume column not found.")
+                          st.stop()
+                  
+                      # Defensive check for valid prices
+                      if intraday[price_col].dropna().empty:
+                          st.warning(f"No valid values in '{price_col}' for MIDAS anchor calculation.")
+                          st.stop()
+                  
+                      # Convert time
+                      intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+                  
+                      ### 🐻 BEARISH MIDAS (anchor at max)
+                      anchor_idx_bear = intraday[price_col].idxmax()
+                      anchor_time_bear = intraday.loc[anchor_idx_bear, 'TimeIndex']
+                      anchor_price_bear = intraday.loc[anchor_idx_bear, price_col]
+                  
+                      midas_curve_bear = []
+                      for i in range(anchor_idx_bear, len(intraday)):
+                          vol_window = intraday.loc[anchor_idx_bear:i, 'Volume']
+                          price_window = intraday.loc[anchor_idx_bear:i, price_col]
+                          weights = vol_window / vol_window.sum()
+                          midas_price = (price_window * weights).sum()
+                          midas_curve_bear.append(midas_price)
+                  
+                      intraday["MIDAS_Bear"] = [np.nan] * anchor_idx_bear + midas_curve_bear
+                  
+                      ### 🐂 BULLISH MIDAS (anchor at min)
+                      anchor_idx_bull = intraday[price_col].idxmin()
+                      anchor_time_bull = intraday.loc[anchor_idx_bull, 'TimeIndex']
+                      anchor_price_bull = intraday.loc[anchor_idx_bull, price_col]
+                  
+                      midas_curve_bull = []
+                      for i in range(anchor_idx_bull, len(intraday)):
+                          vol_window = intraday.loc[anchor_idx_bull:i, 'Volume']
+                          price_window = intraday.loc[anchor_idx_bull:i, price_col]
+                          weights = vol_window / vol_window.sum()
+                          midas_price = (price_window * weights).sum()
+                          midas_curve_bull.append(midas_price)
+                  
+                      intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
+                  
+                      # Add emojis
+                      def add_mike_midas_cross_emojis(df, price_col):
+                          if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
+                              return df, None, None
+                  
+                          price = df[price_col]
+                          bull = df["MIDAS_Bull"]
+                          bear = df["MIDAS_Bear"]
+                          close_next = price.shift(-1)
+                  
+                          # 👋🏽 Bull breakout = price crosses above MIDAS_Bear from below
+                          bull_cross = (price.shift(1) < bear.shift(1)) & (price >= bear)
+                          # 🧤 Bear breakdown = price crosses below MIDAS_Bull from above
+                          bear_cross = (price.shift(1) > bull.shift(1)) & (price <= bull)
+                  
+                          df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
+                          df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
+                  
+                          return df, bull_cross, bear_cross
+                  
                       intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
-
-
-                with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
-                
-                    # Detect price column
-                    if "Mike" in intraday.columns:
-                        price_col = "Mike"
-                    elif "F_numeric" in intraday.columns:
-                        price_col = "F_numeric"
-                    else:
-                        st.warning("Mike or F_numeric column not found.")
-                        st.stop()
-                
-                    if "Volume" not in intraday.columns:
-                        st.warning("Volume column not found.")
-                        st.stop()
-                
-                    # Defensive check for valid prices
-                    if intraday[price_col].dropna().empty:
-                        st.warning(f"No valid values in '{price_col}' for MIDAS anchor calculation.")
-                        st.stop()
-                
-                    # Convert time
-                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-                
-                    ### 🐻 BEARISH MIDAS (anchor at max)
-                    anchor_idx_bear = intraday[price_col].idxmax()
-                    anchor_time_bear = intraday.loc[anchor_idx_bear, 'TimeIndex']
-                    anchor_price_bear = intraday.loc[anchor_idx_bear, price_col]
-                
-                    midas_curve_bear = []
-                    for i in range(anchor_idx_bear, len(intraday)):
-                        vol_window = intraday.loc[anchor_idx_bear:i, 'Volume']
-                        price_window = intraday.loc[anchor_idx_bear:i, price_col]
-                        weights = vol_window / vol_window.sum()
-                        midas_price = (price_window * weights).sum()
-                        midas_curve_bear.append(midas_price)
-                
-                    intraday["MIDAS_Bear"] = [np.nan] * anchor_idx_bear + midas_curve_bear
-                
-                    ### 🐂 BULLISH MIDAS (anchor at min)
-                    anchor_idx_bull = intraday[price_col].idxmin()
-                    anchor_time_bull = intraday.loc[anchor_idx_bull, 'TimeIndex']
-                    anchor_price_bull = intraday.loc[anchor_idx_bull, price_col]
-                
-                    midas_curve_bull = []
-                    for i in range(anchor_idx_bull, len(intraday)):
-                        vol_window = intraday.loc[anchor_idx_bull:i, 'Volume']
-                        price_window = intraday.loc[anchor_idx_bull:i, price_col]
-                        weights = vol_window / vol_window.sum()
-                        midas_price = (price_window * weights).sum()
-                        midas_curve_bull.append(midas_price)
-                
-                    intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
-                
-                    # Add emojis
-                    def add_mike_midas_cross_emojis(df, price_col):
-                        if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
-                            return df, None, None
-                
-                        price = df[price_col]
-                        bull = df["MIDAS_Bull"]
-                        bear = df["MIDAS_Bear"]
-                        close_next = price.shift(-1)
-                
-                        # 👋🏽 Bull breakout = price crosses above MIDAS_Bear from below
-                        bull_cross = (price.shift(1) < bear.shift(1)) & (price >= bear)
-                        # 🧤 Bear breakdown = price crosses below MIDAS_Bull from above
-                        bear_cross = (price.shift(1) > bull.shift(1)) & (price <= bull)
-                
-                        df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
-                        df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
-                
-                        return df, bull_cross, bear_cross
-                
-                    intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
 
 
                   # Call function and unpack
