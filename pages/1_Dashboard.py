@@ -3489,19 +3489,7 @@ if st.sidebar.button("Run Analysis"):
                   
                   
                                    # Add the Ear_Emoji column to intraday based on the profile logic
-
-                  # Make sure 'F_Bin' exists in intraday
-                  if "F_Bin" not in intraday.columns:
-                      intraday['F_Bin'] = pd.cut(intraday["F_numeric"], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
-                  
-                  # Calculate the current Mike bin
-                  current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
-                  
-                  # Add Ear_Emoji flag only if Mike has moved away from volume-dominant F% level
-                  ear_flag = (intraday["F_Bin"].astype(int) != max_vol_level)
-                  intraday["Ear_Emoji"] = np.where(
-                      ear_flag & (intraday["F_Bin"].astype(int) == max_vol_level), "🦻🏼", ""
-                  )
+ 
  
               
                   
@@ -4343,12 +4331,16 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 
-                # fig.add_hline(y=put_ib_high, line=dict(color="teal", dash="dot"), row=2, col=1)
-                # fig.add_hline(y=put_ib_low,  line=dict(color="teal", dash="dot"), row=2, col=1)
+               fig.add_hline(y=va_min, line=dict(color="green", dash="dot", width=0.6), row=1, col=1)
+               fig.add_hline(y=va_max, line=dict(color="green", dash="dot", width=0.6), row=1, col=1)
 
                                 
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
+
+
+
+
 
                 # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
                 bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
