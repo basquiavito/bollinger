@@ -3765,17 +3765,17 @@ if st.sidebar.button("Run Analysis"):
                           # Fill the column in the dataframe
                           intraday["Bear_Midas_Wake"] = [""] * start_idx + wake_flags
                                  # Detect first Bull MIDAS Wake-Up (🦵🏼)
-                          bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
-                          first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
-                          
-                          # Detect first Bear MIDAS Wake-Up (🦶🏼)
-                          bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "🦶🏼"]
-                          first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
-
+                   
 
                           return df, bull_cross, bear_cross
                   
                       intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
+                      bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
+                      first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
+                      
+                      # Detect first Bear MIDAS Wake-Up (🦶🏼)
+                      bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "🦶🏼"]
+                      first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
 
 
                   # Call function and unpack
@@ -4461,7 +4461,30 @@ if st.sidebar.button("Run Analysis"):
                     ), row=1, col=1)
 
 
-
+              if pd.notna(first_bull_midas_idx):
+                  fig.add_trace(go.Scatter(
+                      x=[intraday.loc[first_bull_midas_idx, "Time"]],
+                      y=[intraday.loc[first_bull_midas_idx, "f_numeric"]],
+                      mode="text",
+                      text=["🦵🏼"],
+                      textposition="top center",
+                      showlegend=False,
+                      hoverinfo="skip",
+                      name="Bull MIDAS Wake (🦵🏼)"
+                  ), row=1, col=1)
+              
+              # 🦶🏼 Bear MIDAS Wake
+              if pd.notna(first_bear_midas_idx):
+                  fig.add_trace(go.Scatter(
+                      x=[intraday.loc[first_bear_midas_idx, "Time"]],
+                      y=[intraday.loc[first_bear_midas_idx, "f_numeric"]],
+                      mode="text",
+                      text=["🦶🏼"],
+                      textposition="bottom center",
+                      showlegend=False,
+                      hoverinfo="skip",
+                      name="Bear MIDAS Wake (🦶🏼)"
+                  ), row=1, col=1)
 
                 # Smooth first if needed
                 intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
@@ -4865,32 +4888,9 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
                 ), row=3, col=1)
 
-                # 🦵🏼 Bull Midas Wake-Up on F% plot
-                if pd.notna(first_bull_midas_idx):
-                    fig.add_trace(go.Scatter(
-                        x=[intraday.loc[first_bull_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bull_midas_idx, "f_numeric"]],
-                        mode="text",
-                        text=["🦵🏼"],
-                        textposition="top center",
-                        showlegend=False,
-                        hoverinfo="skip",
-                        name="Bull MIDAS Wake (🦵🏼)"
-                    ), row=1, col=1)
+            # 🦵🏼 Bull MIDAS Wake
                 
-                # 🦶🏼 Bear Midas Wake-Up on F% plot
-                if pd.notna(first_bear_midas_idx):
-                    fig.add_trace(go.Scatter(
-                        x=[intraday.loc[first_bear_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bear_midas_idx, "f_numeric"]],
-                        mode="text",
-                        text=["🦶🏼"],
-                        textposition="bottom center",
-                        showlegend=False,
-                        hoverinfo="skip",
-                        name="Bear MIDAS Wake (🦶🏼)"
-                    ), row=1, col=1)
-                
+
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
