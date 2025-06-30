@@ -548,8 +548,30 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_Eye"]  = np.where(df["Put_Δ"]  >= 10, "👀", "")
 
                     # 🔭 Detect "Wake-Up" Phase After Cross
-                
-                  
+                                    #  ---- CROSS FLAGS (unchanged) ----
+                    df["Call_Smooth_Cross"] = (df["Call_Option_Smooth"] > df["Put_Option_Smooth"]) & \
+                                              (df["Call_Option_Smooth"].shift(1) <= df["Put_Option_Smooth"].shift(1))
+                    
+                    df["Put_Smooth_Cross"]  = (df["Put_Option_Smooth"] > df["Call_Option_Smooth"]) & \
+                                              (df["Put_Option_Smooth"].shift(1) <= df["Call_Option_Smooth"].shift(1))
+                    
+                    #  ---- TRACKING, no limit ----
+                    df["Call_Tracking"] = df["Call_Smooth_Cross"].replace(False, np.nan).ffill()
+                    df["Put_Tracking"]  = df["Put_Smooth_Cross"] .replace(False, np.nan).ffill()
+                    
+                    #  ---- BASELINE AT CROSS ----
+                    df["Call_Cross_Base"] = df["Call_Option_Smooth"].where(df["Call_Smooth_Cross"]).ffill()
+                    df["Put_Cross_Base"]  = df["Put_Option_Smooth"] .where(df["Put_Smooth_Cross"]).ffill()
+                    
+                    #  ---- RISE SINCE CROSS ----
+                    df["Call_Rise_Since_Cross"] = df["Call_Option_Smooth"] - df["Call_Cross_Base"]
+                    df["Put_Rise_Since_Cross"]  = df["Put_Option_Smooth"]  - df["Put_Cross_Base"]
+                    
+                    #  ---- EMOJI ----
+                    df["Call_Wake_Emoji"] = np.where(df["Call_Rise_Since_Cross"] >= 12, "👁️", "")
+                    df["Put_Wake_Emoji"]  = np.where(df["Put_Rise_Since_Cross"]  >= 12, "🦉", "")
+                    
+                                      
                     return df
 
 
@@ -4677,7 +4699,25 @@ if st.sidebar.button("Run Analysis"):
                         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
                     )
                 ), row=1, col=1)
-
+                
+                # Wake-up Emojis 📈
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Smooth"],
+                    mode="text",
+                    text=intraday["Call_Wake_Emoji"],
+                    textposition="top center",
+                    showlegend=False
+                ), row=2, col=1)
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
+                    mode="text",
+                    text=intraday["Put_Wake_Emoji"],
+                    textposition="bottom center",
+                    showlegend=False
+                ), row=2, col=1)
 
                 
                                           
