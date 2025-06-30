@@ -4481,22 +4481,28 @@ if st.sidebar.button("Run Analysis"):
                       )
                 ), row=1, col=1)
      # Add a 🪶 Tail marker to the F% plot if any exist
-                for _, row in profile_df.iterrows():
+               for _, row in profile_df.iterrows():
                     if row["Tail"] == "🪶":
-                        fig.add_trace(go.Scatter(
-                            x=[intraday["TimeIndex"].iloc[-1]],  # any valid time
-                            y=[row["F% Level"]],
-                            mode="text",
-                            text=["🪶"],
-                            textposition="middle right",
-                            textfont=dict(size=20),
-                            showlegend=False,
-                            hovertemplate=(
-                                "🪶 Tail<br>"
-                                f"F% Level: {row['F% Level']}<br>"
-                                f"Time: {row['Time']}<extra></extra>"
-                            )
-                        ), row=1, col=1)
+                        # Get actual TimeIndex from intraday at this F% Level
+                        time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
+                        if not time_row.empty:
+                            time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
+                
+                            fig.add_trace(go.Scatter(
+                                x=[time_at_level],
+                                y=[row["F% Level"]],
+                                mode="text",
+                                text=["🪶"],
+                                textposition="middle right",
+                                textfont=dict(size=20),
+                                showlegend=False,
+                                hovertemplate=(
+                                    "🪶 Tail<br>"
+                                    f"F% Level: {row['F% Level']}<br>"
+                                    f"Time: {row['Time']}<extra></extra>"
+                                )
+                            ), row=1, col=1)
+
 
 
                 # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
