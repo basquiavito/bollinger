@@ -3708,15 +3708,10 @@ if st.sidebar.button("Run Analysis"):
                           intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
 
                           
-                          # Continuous emoji display when threshold is met
-                          intraday["Bull_Leg_Emoji"] = np.where(intraday["Call_vs_Bull"] >= 12, "🦵🏼", "")
-                          intraday["Bear_Leg_Emoji"] = np.where(intraday["Put_vs_Bear"] <= -12, "🦶🏼", "")
+                                                  # 🦵🏼 Bull MIDAS Wake-Up Detection (call value - MIDAS Bull)
+                          intraday["Bull_Midas_Wake"] = np.where(intraday["Call_vs_Bull"] >= 12, "🦵🏼", "")
+                          first_bull_midas_idx = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"].min()
 
-
-                          
-                          # Find first index where threshold is met
-                          first_bull_leg_idx = intraday.index[intraday["Call_vs_Bull"] >= 12].min()
-                          first_bear_leg_idx = intraday.index[intraday["Put_vs_Bear"] <= -12].min()
 
                   
                           return df, bull_cross, bear_cross
@@ -4470,25 +4465,16 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Call_vs_Bull"],
-                    mode="text",
-                    text=intraday["Bull_Leg_Emoji"],
-                    textposition="top center",
-                    showlegend=False
-                ), row=3, col=1)
-                
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Put_vs_Bear"],
-                    mode="text",
-                    text=intraday["Bear_Leg_Emoji"],
-                    textposition="bottom center",
-                    showlegend=False
-                ), row=3, col=1)
-                
-                
+                 fig.add_trace(go.Scatter(
+                      x=intraday["Time"],
+                      y=intraday["Call_vs_Bull"],
+                      mode="text",
+                      text=intraday["Bull_Midas_Wake"],
+                      textposition="top center",
+                      showlegend=False,
+                      hoverinfo="skip"
+                  ), row=3, col=1)
+
 
 
 
