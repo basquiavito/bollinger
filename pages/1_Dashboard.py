@@ -3701,6 +3701,23 @@ if st.sidebar.button("Run Analysis"):
                   
                           df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
                           df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
+
+
+                  # Compute option premium displacement from MIDAS anchors
+                          intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                          intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+
+                          
+                          # Continuous emoji display when threshold is met
+                          intraday["Bull_Leg_Emoji"] = np.where(intraday["Call_vs_Bull"] >= 12, "🦵🏼", "")
+                          intraday["Bear_Leg_Emoji"] = np.where(intraday["Put_vs_Bear"] <= -12, "🦶🏼", "")
+
+
+                          
+                          # Find first index where threshold is met
+                          first_bull_leg_idx = intraday.index[intraday["Call_vs_Bull"] >= 12].min()
+                          first_bear_leg_idx = intraday.index[intraday["Put_vs_Bear"] <= -12].min()
+
                   
                           return df, bull_cross, bear_cross
                   
@@ -4450,6 +4467,30 @@ if st.sidebar.button("Run Analysis"):
                     line=dict(color="darkcyan", width=1.5, dash="dot"),
                     showlegend=True
                 ), row=3, col=1)
+
+
+
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_vs_Bull"],
+                    mode="text",
+                    text=intraday["Bull_Leg_Emoji"],
+                    textposition="top center",
+                    showlegend=False
+                ), row=3, col=1)
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_vs_Bear"],
+                    mode="text",
+                    text=intraday["Bear_Leg_Emoji"],
+                    textposition="bottom center",
+                    showlegend=False
+                ), row=3, col=1)
+                
+                
+
+
 
                 #       # 🐅 Tiger markers on top of Call Option Value
                 # fig.add_trace(go.Scatter(
