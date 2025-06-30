@@ -4466,7 +4466,11 @@ if st.sidebar.button("Run Analysis"):
                     textposition="top right",
                     name="👃🏽 Nose Line",
                     showlegend=True,
-                    hovertemplate="👃🏽 Nose Line: %{y}<extra></extra>",
+                    hovertemplate=(
+                          "👃🏽 Nose Line<br>"
+                          "F% Level: %{y}<br>"
+                          f"Time: {nose_time}<extra></extra>"
+                      )
                 ), row=1, col=1)
 
 
