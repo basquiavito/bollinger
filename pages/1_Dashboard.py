@@ -571,11 +571,7 @@ if st.sidebar.button("Run Analysis"):
                     df["Call_Wake_Emoji"] = np.where(df["Call_Rise_Since_Cross"] >= 12, "👁️", "")
                     df["Put_Wake_Emoji"]  = np.where(df["Put_Rise_Since_Cross"]  >= 12, "🦉", "")
                     
-                                                 # Get the first time the call wake-up happened
-                    first_call_wake_idx = df.index[df["Call_Wake_Emoji"] == "👁️"].min()
-                    
-                    # Get the first time the put wake-up happened
-                    first_put_wake_idx = df.index[df["Put_Wake_Emoji"] == "🦉"].min()
+             
          
                     return df
 
