@@ -3468,15 +3468,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-       
-
-
+                         # Step 1: Identify the volume-dominant F% level
+                  max_vol_level = profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level']
                   
+                  # Step 2: Bin the current Mike value to its F% level
+                  current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
+                  
+                  # Step 3: Add a 🦻🏼 to any profile row that used to be the dominant %Vol level but is no longer the current Mike bin
+                  def ear_marker(row):
+                      if row['F% Level'] == max_vol_level and current_mike_bin != max_vol_level:
+                          return "🦻🏼"  # Permanently add
+                      return row.get("🦻🏼", "")  # Preserve existing 🦻🏼 if already present
+                  
+                  # Apply the marker logic
+                  if "🦻🏼" not in profile_df.columns:
+                      profile_df["🦻🏼"] = ""
+                  
+                  profile_df["🦻🏼"] = profile_df.apply(ear_marker, axis=1)
+                  
+                  
+                  
+                                    
               
                   
 
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea",]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼"]])
 
 
          
