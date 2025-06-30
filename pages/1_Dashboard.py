@@ -4621,7 +4621,7 @@ if st.sidebar.button("Run Analysis"):
 
                     st.dataframe(intraday[cols_to_show])
 
-                ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
+                # ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
     # with st.expander("📆 Daily Chart Overview", expanded=True):
