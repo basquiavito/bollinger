@@ -3732,8 +3732,39 @@ if st.sidebar.button("Run Analysis"):
                               df["Call_vs_Bull"] = np.nan
                               df["Bull_Midas_Wake"] = ""
                       
-                          return df, bull_cross, bear_cross                                
-                                       
+                                                    
+                                # 🦶🏼 Bear MIDAS Wake-Up Detection (Put vs MIDAS Bear)
+
+                          # Step 1: Find the first index with a valid Put_vs_Bear after anchor
+                          put_series = intraday["Put_vs_Bear"].copy()
+                          start_idx = anchor_idx_bear  # From the Bear MIDAS anchor point
+                          
+                          min_val = float('inf')
+                          wake_flags = []
+                          wake_triggered = False
+                          first_bear_midas_idx = None
+                          
+                          for i in range(start_idx, len(put_series)):
+                              current = put_series.iloc[i]
+                              
+                              if pd.isna(current):
+                                  wake_flags.append("")
+                                  continue
+                              
+                              min_val = min(min_val, current)
+                              
+                              if not wake_triggered and current - min_val >= 12:
+                                  wake_triggered = True
+                                  first_bear_midas_idx = put_series.index[i]
+                                  wake_flags.append("🦶🏼")
+                              elif wake_triggered and current - min_val >= 12:
+                                  wake_flags.append("🦶🏼")
+                              else:
+                                  wake_flags.append("")
+                          
+                          # Fill the column in the dataframe
+                          intraday["Bear_Midas_Wake"] = [""] * start_idx + wake_flags
+       
                   
                           return df, bull_cross, bear_cross
                   
@@ -4817,7 +4848,18 @@ if st.sidebar.button("Run Analysis"):
                    hoverinfo="skip"
                 ), row=3, col=1)
         
-                 
+               
+                fig.add_trace(go.Scatter(
+                    x=[intraday.loc[first_bear_midas_idx, "Time"]],
+                    y=[intraday.loc[first_bear_midas_idx, price_col]],
+                    mode="text",
+                    text=["🦶🏼"],
+                    textposition="bottom center",
+                    showlegend=False,
+                    hoverinfo="skip",
+                    name="Bear MIDAS Wake-Up (🦶🏼)"
+                ), row=1, col=1)
+
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
                  
