@@ -4480,23 +4480,7 @@ if st.sidebar.button("Run Analysis"):
                           f"Time: {nose_time}<extra></extra>"
                       )
                 ), row=1, col=1)
-
-
-                # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
-                bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
-                fig.add_trace(go.Scatter(
-                    x=bullish_df["TimeIndex"] ,
-                    y=bullish_df["F_numeric"],
-                    mode="text",
-                    text=bullish_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="top right",
-                    textfont=dict(size=20),
-                    name="Bullish Mike x Kijun + ATR 🚀",
-                    showlegend=True
-                ))
-
-
-                # Add a 🪶 Tail marker to the F% plot if any exist
+     # Add a 🪶 Tail marker to the F% plot if any exist
                 for _, row in profile_df.iterrows():
                     if row["Tail"] == "🪶":
                         fig.add_trace(go.Scatter(
@@ -4514,6 +4498,22 @@ if st.sidebar.button("Run Analysis"):
                             )
                         ), row=1, col=1)
 
+
+                # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
+                bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                fig.add_trace(go.Scatter(
+                    x=bullish_df["TimeIndex"] ,
+                    y=bullish_df["F_numeric"],
+                    mode="text",
+                    text=bullish_df["Mike_Kijun_ATR_Emoji"],
+                    textposition="top right",
+                    textfont=dict(size=20),
+                    name="Bullish Mike x Kijun + ATR 🚀",
+                    showlegend=True
+                ))
+
+
+           
 
 
                 # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
