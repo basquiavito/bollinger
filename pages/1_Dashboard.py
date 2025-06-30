@@ -4345,7 +4345,7 @@ if st.sidebar.button("Run Analysis"):
                     ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
                     fig.add_hline(
                         y=ear_level,
-                        line=dict(color="black", dash="dot", width=0.6),
+                        line=dict(color="black", dash="dot", width=2.6),
                         row=1, col=1,
                         annotation_text="🦻🏼 Ear Shift",
                         annotation_position="top left",
