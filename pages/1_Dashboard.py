@@ -4463,6 +4463,8 @@ if st.sidebar.button("Run Analysis"):
 # 1. Add the pink dotted line as a shape (visual line)
                 fig.add_hline(
                     y=poc_f_level,
+                    showlegend=True,
+
                     line=dict(color="#ff1493", dash="dot", width=0.6),
                     row=1, col=1
                 )
