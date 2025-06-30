@@ -4401,12 +4401,40 @@ if st.sidebar.button("Run Analysis"):
                     intraday.loc[first_break, "Mike_Nose_Emoji"] = "👃🏽"
 
 
-                # Plot 👃🏽 emoji on the intraday plot
+                # # Plot 👃🏽 emoji on the intraday plot
+                # nose_df = intraday[intraday["Mike_Nose_Emoji"] == "👃🏽"]
+                
+                # fig.add_trace(go.Scatter(
+                #     x=nose_df["TimeIndex"],
+                #     y=nose_df["F_numeric"] + 10,  # Adjust position above Mike
+                #     mode="text",
+                #     text=nose_df["Mike_Nose_Emoji"],
+                #     textposition="top center",
+                #     textfont=dict(size=18),
+                #     name="Mike breaks from Letter POC 👃🏽",
+                #     showlegend=True
+                # ))
+
+
+
+                # Get the F% level with the most letters (temporal Point of Control)
+                poc_f_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+                # Find first row where Mike exits the POC level
+                current_bins = np.digitize(intraday[mike_col], f_bins) - 1
+                intraday["Current_F_Bin"] = f_bins[current_bins]
+                
+                breakout_row_nose = intraday[intraday["Current_F_Bin"] != poc_f_level]
+                
+                # Place 👃🏽 emoji on the first breakout
+                if not breakout_row_nose.empty:
+                    first_nose_index = breakout_row_nose.iloc[0].name
+                    intraday.loc[first_nose_index, "Mike_Nose_Emoji"] = "👃🏽"
+                
                 nose_df = intraday[intraday["Mike_Nose_Emoji"] == "👃🏽"]
                 
                 fig.add_trace(go.Scatter(
                     x=nose_df["TimeIndex"],
-                    y=nose_df["F_numeric"] + 10,  # Adjust position above Mike
+                    y=nose_df["F_numeric"] + 10,
                     mode="text",
                     text=nose_df["Mike_Nose_Emoji"],
                     textposition="top center",
@@ -4414,10 +4442,11 @@ if st.sidebar.button("Run Analysis"):
                     name="Mike breaks from Letter POC 👃🏽",
                     showlegend=True
                 ))
-
-
-
-
+                fig.add_hline(
+                    y=poc_f_level,
+                    line=dict(color="#ff1493", dash="dot", width=0.6),  # Hot pink for 👃🏽
+                    row=1, col=1
+                )
 
                 # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
                 bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
