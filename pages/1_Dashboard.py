@@ -3575,11 +3575,11 @@ if st.sidebar.button("Run Analysis"):
                           close_next = price.shift(-1)
                       
                           # 🚀 Bull breakout through Bear MIDAS (from below → up)
-                          bull_cross = (price.shift(1) < midas_bear.shift(1)) & (price >= midas_bear)
+                          bull_cross = (price.shift(1) < midas_bear.shift(1)) & (price >= bear)
                           bull_confirm = close_next > price
 
                           # ⚓️ Bear breakdown through Bull MIDAS (from above → down)
-                          bear_cross = (price.shift(1) > midas_bull.shift(1)) & (price <= midas_bull)
+                          bear_cross = (price.shift(1) > midas_bull.shift(1)) & (price <= bull)
                           bear_confirm = close_next < price
                       
                            # Assign emojis
