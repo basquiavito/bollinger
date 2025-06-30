@@ -4341,15 +4341,16 @@ if st.sidebar.button("Run Analysis"):
                 # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
              # Bullish crosses (🚀)
                  
-                fig.add_hline(y=call_ib_high, line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
+                # 🦻🏼 Add Ear line if it exists
+                fig.add_hline(y=call_ib_high, showlegend=True,line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 
-                fig.add_hline(y=va_min, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
-                fig.add_hline(y=va_max, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
+                fig.add_hline(y=va_min,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
+                fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
                                 
-                fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
-                fig.add_trace(go.Scatter(x=intraday['TimeIndex'], y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
+                fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
+                fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
                 # 🦻🏼 Add Ear line if it exists
                 ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
@@ -4360,6 +4361,7 @@ if st.sidebar.button("Run Analysis"):
                         y=ear_level,
                         line=dict(color="black", dash="dot", width=2.6),
                         row=1, col=1,
+                        showlegend=True,
                         annotation_text="🦻🏼 Ear Shift",
                         annotation_position="top left",
                         annotation_font=dict(color="black")
@@ -4383,6 +4385,7 @@ if st.sidebar.button("Run Analysis"):
                                 y=[last_touch["F_numeric"] + 10],  # small vertical offset
                                 mode="text",
                                 text=["🦻🏼"],
+                                showlegend=True,
                                 textposition="bottom center",
                                 textfont=dict(size=24),
                                 name="Ear Shift",
@@ -4444,6 +4447,7 @@ if st.sidebar.button("Run Analysis"):
                 ))
                 fig.add_hline(
                     y=poc_f_level,
+                    showlegend=True,
                     line=dict(color="#ff1493", dash="dot", width=0.6),  # Hot pink for 👃🏽
                     row=1, col=1
                 )
