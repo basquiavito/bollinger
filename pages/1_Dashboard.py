@@ -571,12 +571,20 @@ if st.sidebar.button("Run Analysis"):
                     df["Call_Wake_Emoji"] = np.where(df["Call_Rise_Since_Cross"] >= 12, "👁️", "")
                     df["Put_Wake_Emoji"]  = np.where(df["Put_Rise_Since_Cross"]  >= 12, "🦉", "")
                     
-                                      
+                                                 # Get the first time the call wake-up happened
+                    first_call_wake_idx = df.index[df["Call_Wake_Emoji"] == "👁️"].min()
+                    
+                    # Get the first time the put wake-up happened
+                    first_put_wake_idx = df.index[df["Put_Wake_Emoji"] == "🦉"].min()
+         
                     return df
 
 
 
                 intraday = compute_option_value(intraday)      
+
+
+              
                 
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
                     """
@@ -4720,7 +4728,32 @@ if st.sidebar.button("Run Analysis"):
                 ), row=2, col=1)
 
                 
-                                          
+                                # 👁️ First Call Wake-Up on F% plot
+                if pd.notna(first_call_wake_idx):
+                    fig.add_trace(go.Scatter(
+                        x=[df.loc[first_call_wake_idx, "Time"]],
+                        y=[df.loc[first_call_wake_idx, "f_numeric"]],
+                        mode="text",
+                        text=["👁️"],
+                        textposition="top center",
+                        showlegend=False,
+                        hoverinfo="skip",
+                        name="Call Wake (👁️)"
+                    ), row=1, col=1)
+                
+                # 🦉 First Put Wake-Up on F% plot
+                if pd.notna(first_put_wake_idx):
+                    fig.add_trace(go.Scatter(
+                        x=[df.loc[first_put_wake_idx, "Time"]],
+                        y=[df.loc[first_put_wake_idx, "f_numeric"]],
+                        mode="text",
+                        text=["🦉"],
+                        textposition="bottom center",
+                        showlegend=False,
+                        hoverinfo="skip",
+                        name="Put Wake (🦉)"
+                    ), row=1, col=1)
+                         
                  
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
