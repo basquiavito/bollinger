@@ -4480,8 +4480,8 @@ if st.sidebar.button("Run Analysis"):
                           f"Time: {nose_time}<extra></extra>"
                       )
                 ), row=1, col=1)
-                 for _, row in profile_df.iterrows():
-                     if row["Tail"] == "🪶":
+                for _, row in profile_df.iterrows():
+                    if row["Tail"] == "🪶":
                           # Get actual TimeIndex from intraday at this F% Level
                         time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
                         if not time_row.empty:
