@@ -3574,17 +3574,19 @@ if st.sidebar.button("Run Analysis"):
                           bear = df["MIDAS_Bear"]
                           close_next = price.shift(-1)
                       
-                          # Cross conditions
-                          bull_cross = (price.shift(1) < bull.shift(1)) & (price >= bull)
+                          # 🚀 Bull breakout through Bear MIDAS (from below → up)
+                          bull_cross = (price.shift(1) < midas_bear.shift(1)) & (price >= midas_bear)
                           bull_confirm = close_next > price
-                          bear_cross = (price.shift(1) > bear.shift(1)) & (price <= bear)
+
+                          # ⚓️ Bear breakdown through Bull MIDAS (from above → down)
+                          bear_cross = (price.shift(1) > midas_bull.shift(1)) & (price <= midas_bull)
                           bear_confirm = close_next < price
                       
-                          # Emojis
-                          df["Mike_MIDAS_Bull_Emoji"] = np.where(bull_cross & bull_confirm, "🚀", "")
-                          df["Mike_MIDAS_Bear_Emoji"] = np.where(bear_cross & bear_confirm, "⚓️", "")
-                          df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
-                          df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
+                           # Assign emojis
+                     
+                          df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")  # Hand = breakout through Bear MIDAS
+                          df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")  # Glove = breakdown through Bull MIDAS
+
                       
                           return df, bull_cross, bear_cross
 
@@ -3599,7 +3601,7 @@ if st.sidebar.button("Run Analysis"):
                   
                       # # Optional preview
                       # st.dataframe(
-                      #     intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull', 'Mike_MIDAS_Bull_Emoji', 'Mike_MIDAS_Bear_Emoji']]
+                      #     intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull',"MIDAS_Bull_Hand", "MIDAS_Bear_Glove"]]
                       #     .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
                       #     .reset_index(drop=True)
                       # )
@@ -4554,40 +4556,41 @@ if st.sidebar.button("Run Analysis"):
                 ))
           
                 
-                # Plot 👋🏽 MIDAS Bull Cross Hand
+                                # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
                 bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
                 fig.add_trace(go.Scatter(
                     x=bull_hand_rows["TimeIndex"],
-                    y=bull_hand_rows[price_col] + 20,
+                    y=bull_hand_rows["MIDAS_Bear"] + 0.5,  # Adjust for spacing above line
                     mode="text",
                     text=["👋🏽"] * len(bull_hand_rows),
                     textposition="top right",
                     textfont=dict(size=16),
-                    showlegend=True,
+                    showlegend=False,
                     hovertemplate=(
-                        "👋🏽 Bull MIDAS Hand<br>"
+                        "👋🏽 Bull MIDAS Breakout<br>"
                         "Time: %{x|%I:%M %p}<br>"
-                        + price_col + ": %{y:.2f}<extra></extra>"
+                        f"Bear MIDAS: {{y:.2f}}<extra></extra>"
                     )
-                                     
                 ), row=1, col=1)
                 
-                # Plot 🧤 MIDAS Bear Cross Glove
+                # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
                 bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
                 fig.add_trace(go.Scatter(
                     x=bear_glove_rows["TimeIndex"],
-                    y=bear_glove_rows[price_col] - 20,
+                    y=bear_glove_rows["MIDAS_Bull"] - 0.5,  # Adjust for spacing below line
                     mode="text",
                     text=["🧤"] * len(bear_glove_rows),
                     textposition="bottom right",
                     textfont=dict(size=16),
-                    showlegend=True,
+                    showlegend=False,
                     hovertemplate=(
-                        "🧤 Bear MIDAS Hand<br>"
+                        "🧤 Bear MIDAS Breakdown<br>"
                         "Time: %{x|%I:%M %p}<br>"
-                        + price_col + ": %{y:.2f}<extra></extra>"
+                        f"Bull MIDAS: {{y:.2f}}<extra></extra>"
                     )
                 ), row=1, col=1)
+
+
 
 
                           
