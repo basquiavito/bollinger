@@ -3708,11 +3708,17 @@ if st.sidebar.button("Run Analysis"):
                           intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
 
                           
-                                                  # 🦵🏼 Bull MIDAS Wake-Up Detection (call value - MIDAS Bull)
-                          intraday["Bull_Midas_Wake"] = np.where(intraday["Call_vs_Bull"] >= 12, "🦵🏼", "")
-                          first_bull_midas_idx = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"].min()
-
-
+                          # 🦵🏼 Bull MIDAS Wake-Up Detection (but only after anchor)
+                          anchor_idx_bull = df[price_col].idxmin()
+                          bull_midas_wake = [""] * len(df)
+                      
+                          for i in range(anchor_idx_bull, len(df)):
+                              if df.loc[i, "Call_vs_Bull"] >= 12:
+                                  bull_midas_wake[i] = "🦵🏼"
+                      
+                          df["Bull_Midas_Wake"] = bull_midas_wake
+                          first_bull_midas_idx = df.index[df["Bull_Midas_Wake"] == "🦵🏼"].min()
+                     
                   
                           return df, bull_cross, bear_cross
                   
