@@ -4787,14 +4787,14 @@ if st.sidebar.button("Run Analysis"):
 
            
                fig.add_trace(go.Scatter(
-                  x=intraday["Time"],
-                  y=intraday["Call_vs_Bull"],
-                  mode="text",
-                  text=intraday["Bull_Midas_Wake"],
-                  textposition="top center",
-                  showlegend=False,
-                  hoverinfo="skip"
-              ), row=3, col=1)
+                   x=intraday["Time"],
+                   y=intraday["Call_vs_Bull"],
+                   mode="text",
+                   text=intraday["Bull_Midas_Wake"],
+                   textposition="top center",
+                   showlegend=False,
+                   hoverinfo="skip"
+                ), row=3, col=1)
         
                  
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
