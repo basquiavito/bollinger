@@ -3764,12 +3764,14 @@ if st.sidebar.button("Run Analysis"):
                           
                           # Fill the column in the dataframe
                           intraday["Bear_Midas_Wake"] = [""] * start_idx + wake_flags
-       
-                                            # Detect first Bull MIDAS Wake-Up (🦵🏼)
-                          first_bull_midas_idx = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"].min()
+                                 # Detect first Bull MIDAS Wake-Up (🦵🏼)
+                          bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
+                          first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
                           
                           # Detect first Bear MIDAS Wake-Up (🦶🏼)
-                          first_bear_midas_idx = intraday.index[intraday["Bear_Midas_Wake"] == "🦶🏼"].min()
+                          bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "🦶🏼"]
+                          first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
+
 
                           return df, bull_cross, bear_cross
                   
@@ -4863,33 +4865,32 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
                 ), row=3, col=1)
 
-
-                # Only if a Bull Midas Wake-Up exists
+                # 🦵🏼 Bull Midas Wake-Up on F% plot
                 if pd.notna(first_bull_midas_idx):
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_bull_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bull_midas_idx, price_col]],
+                        y=[intraday.loc[first_bull_midas_idx, "f_numeric"]],
                         mode="text",
                         text=["🦵🏼"],
-                        textposition="top right",
-                        hovertemplate="Bull MIDAS Wake-Up<br>Time: %{x}<br>Value: %{y:.2f}",
+                        textposition="top center",
                         showlegend=False,
-                        name="Bull Midas Wake (🦵🏼)"
+                        hoverinfo="skip",
+                        name="Bull MIDAS Wake (🦵🏼)"
                     ), row=1, col=1)
                 
-                # Only if a Bear Midas Wake-Up exists
+                # 🦶🏼 Bear Midas Wake-Up on F% plot
                 if pd.notna(first_bear_midas_idx):
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_bear_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bear_midas_idx, price_col]],
+                        y=[intraday.loc[first_bear_midas_idx, "f_numeric"]],
                         mode="text",
                         text=["🦶🏼"],
-                        textposition="bottom right",
-                        hovertemplate="Bear MIDAS Wake-Up<br>Time: %{x}<br>Value: %{y:.2f}",
+                        textposition="bottom center",
                         showlegend=False,
-                        name="Bear Midas Wake (🦶🏼)"
+                        hoverinfo="skip",
+                        name="Bear MIDAS Wake (🦶🏼)"
                     ), row=1, col=1)
-
+                
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
