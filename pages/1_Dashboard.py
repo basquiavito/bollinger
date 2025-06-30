@@ -3486,7 +3486,20 @@ if st.sidebar.button("Run Analysis"):
                   
                   profile_df["🦻🏼"] = profile_df.apply(ear_marker, axis=1)
                   
+                  # Step 1: Identify F% level with most letters (most time spent)
+                  max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
                   
+                  # Step 2: Find current Mike bin
+                  current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
+                  
+                  # Step 3: If current Mike ≠ that time-dominant level, mark 👃🏽
+                  def nose_marker(row):
+                      if row['F% Level'] == max_letter_level and current_mike_bin != max_letter_level:
+                          return "👃🏽"
+                      return ""
+                  
+                  profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
+
                   
                                    # Add the Ear_Emoji column to intraday based on the profile logic
  
@@ -3495,7 +3508,7 @@ if st.sidebar.button("Run Analysis"):
                   
 
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼"]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
 
          
