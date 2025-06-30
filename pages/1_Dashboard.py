@@ -4367,6 +4367,8 @@ if st.sidebar.button("Run Analysis"):
                         textfont=dict(size=18),
                         showlegend=False,
                         hoverinfo="text",
+                        hovertemplate="<b>Call Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+
                         name="Call Wake-Up"
                     ), row=1, col=1)
                 
@@ -4382,6 +4384,8 @@ if st.sidebar.button("Run Analysis"):
                         textfont=dict(size=18),
                         showlegend=False,
                         hoverinfo="text",
+                        hovertemplate="<b>Put Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+
                         name="Put Wake-Up"
                     ), row=1, col=1)
 
