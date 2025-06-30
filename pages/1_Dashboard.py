@@ -4786,7 +4786,7 @@ if st.sidebar.button("Run Analysis"):
                 ), row=2, col=1)
 
            
-               fig.add_trace(go.Scatter(
+                fig.add_trace(go.Scatter(
                    x=intraday["Time"],
                    y=intraday["Call_vs_Bull"],
                    mode="text",
