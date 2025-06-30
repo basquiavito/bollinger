@@ -3707,17 +3707,24 @@ if st.sidebar.button("Run Analysis"):
                           intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
                           intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
 
+                                                    
+                                                    # Step 1: Start from the anchor
+                          anchor_idx = intraday[price_col].idxmin()
                           
-                          # 🦵🏼 Bull MIDAS Wake-Up Detection (but only after anchor)
-                          anchor_idx_bull = df[price_col].idxmin()
-                          bull_midas_wake = [""] * len(df)
-                      
-                          for i in range(anchor_idx_bull, len(df)):
-                              if df.loc[i, "Call_vs_Bull"] >= 12:
+                          # Step 2: Slice the data after anchor
+                          post_anchor = intraday.loc[anchor_idx:].copy()
+                          
+                          # Step 3: Find the lowest Call_vs_Bull after anchor (start of possible leg)
+                          lowest_idx = post_anchor["Call_vs_Bull"].idxmin()
+                          lowest_val = post_anchor.loc[lowest_idx, "Call_vs_Bull"]
+                          
+                          # Step 4: Mark 🦵🏼 when we rise at least 12 from the lowest point
+                          bull_midas_wake = [""] * len(intraday)
+                          for i in range(lowest_idx + 1, len(intraday)):
+                              if intraday.loc[i, "Call_vs_Bull"] >= lowest_val + 12:
                                   bull_midas_wake[i] = "🦵🏼"
-                      
-                          df["Bull_Midas_Wake"] = bull_midas_wake
-                          first_bull_midas_idx = df.index[df["Bull_Midas_Wake"] == "🦵🏼"].min()
+                                  break  # Only mark the first valid wake
+
                      
                   
                           return df, bull_cross, bear_cross
