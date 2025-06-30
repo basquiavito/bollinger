@@ -3707,25 +3707,27 @@ if st.sidebar.button("Run Analysis"):
                           intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
                           intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
 
-                                                    
-                                                    # Step 1: Start from the anchor
-                          anchor_idx = intraday[price_col].idxmin()
-                          
-                          # Step 2: Slice the data after anchor
-                          post_anchor = intraday.loc[anchor_idx:].copy()
-                          
-                          # Step 3: Find the lowest Call_vs_Bull after anchor (start of possible leg)
-                          lowest_idx = post_anchor["Call_vs_Bull"].idxmin()
-                          lowest_val = post_anchor.loc[lowest_idx, "Call_vs_Bull"]
-                          
-                          # Step 4: Mark 🦵🏼 when we rise at least 12 from the lowest point
-                          bull_midas_wake = [""] * len(intraday)
-                          for i in range(lowest_idx + 1, len(intraday)):
-                              if intraday.loc[i, "Call_vs_Bull"] >= lowest_val + 12:
-                                  bull_midas_wake[i] = "🦵🏼"
-                                  break  # Only mark the first valid wake
-
-                     
+                                                          # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
+                          anchor_idx = df[price_col].idxmin()
+                          post_anchor = df.loc[anchor_idx:].copy()
+                  
+                          if not post_anchor["Call_vs_Bull"].dropna().empty:
+                              low_idx = post_anchor["Call_vs_Bull"].idxmin()
+                              low_val = df.loc[low_idx, "Call_vs_Bull"]
+                  
+                              df["Bull_Midas_Wake"] = ""
+                              for i in range(low_idx + 1, len(df)):
+                                  if df.loc[i, "Call_vs_Bull"] >= low_val + 12:
+                                      df.loc[i, "Bull_Midas_Wake"] = "🦵🏼"
+                                      break  # Only mark the first wake
+                          else:
+                              df["Bull_Midas_Wake"] = ""
+                      else:
+                          df["Call_vs_Bull"] = np.nan
+                          df["Bull_Midas_Wake"] = ""
+                                 
+                                                                    
+                                       
                   
                           return df, bull_cross, bear_cross
                   
