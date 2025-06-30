@@ -4549,6 +4549,34 @@ if st.sidebar.button("Run Analysis"):
                 ))
           
 
+                df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
+                df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
+
+                # 👋🏽 Support Skin (Bull MIDAS Cross)
+                fig.add_trace(go.Scatter(
+                    x=intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]["TimeIndex"],
+                    y=intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]["F_numeric"],
+                    mode="text",
+                    text=intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]["MIDAS_Bull_Hand"],
+                    textposition="bottom right",
+                    textfont=dict(size=20),
+                    name="👋🏽 MIDAS Support Skin",
+                    showlegend=False,
+                    hovertemplate="👋🏽 MIDAS Bull Cross<br>F%: %{y}<br>Time: %{x|%I:%M %p}<extra></extra>"
+                ), row=1, col=1)
+                
+                # 🧤 Resistance Skin (Bear MIDAS Cross)
+                fig.add_trace(go.Scatter(
+                    x=intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]["TimeIndex"],
+                    y=intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]["F_numeric"],
+                    mode="text",
+                    text=intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]["MIDAS_Bear_Glove"],
+                    textposition="top left",
+                    textfont=dict(size=20),
+                    name="🧤 MIDAS Resistance Skin",
+                    showlegend=False,
+                    hovertemplate="🧤 MIDAS Bear Cross<br>F%: %{y}<br>Time: %{x|%I:%M %p}<extra></extra>"
+                ), row=1, col=1)
 
 
                               # fig.add_trace(go.Scatter(x=intraday["Time"], y=intraday["TB-F Top"],
