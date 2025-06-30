@@ -4389,7 +4389,7 @@ if st.sidebar.button("Run Analysis"):
                                 textposition="bottom center",
                                 textfont=dict(size=24),
                                 name="Ear Shift",
-                                showlegend=False
+                             
                             ))
 
                 
