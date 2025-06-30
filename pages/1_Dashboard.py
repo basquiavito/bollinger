@@ -539,7 +539,18 @@ if st.sidebar.button("Run Analysis"):
                     df.at[df.index[0], "Put_Option_Value"]  = premium
                     df.at[df.index[0], "Call_Return_%"]     = 0
                     df.at[df.index[0], "Put_Return_%"]      = 0
+
+                    # 👁️ Mark sharp jumps in option value
+                    df["Call_Δ"] = df["Call_Option_Value"].diff()
+                    df["Put_Δ"]  = df["Put_Option_Value"].diff()
                 
+                    df["Call_Eye"] = np.where(df["Call_Δ"] >= 10, "👁️", "")
+                    df["Put_Eye"]  = np.where(df["Put_Δ"]  >= 10, "👁️", "")
+
+
+
+
+                  
                     return df
 
 
@@ -4668,7 +4679,28 @@ if st.sidebar.button("Run Analysis"):
                     )
                 ), row=1, col=1)
 
-
+                
+                # 👁️ CALL EYE: when call option value jumps ≥10
+                fig.add_trace(go.Scatter(
+                    x=intraday["TimeIndex"],
+                    y=intraday["F_numeric"] + 13,  # slightly above Mike for visibility
+                    mode="text",
+                    text=intraday["Call_Eye"],
+                    textfont=dict(size=16),
+                    name="Call Eye",
+                    showlegend=False
+                ))
+                
+                # 👁️ PUT EYE: when put option value jumps ≥10
+                fig.add_trace(go.Scatter(
+                    x=intraday["TimeIndex"],
+                    y=intraday["F_numeric"] - 13,  # slightly below Mike for visibility
+                    mode="text",
+                    text=intraday["Put_Eye"],
+                    textfont=dict(size=16),
+                    name="Put Eye",
+                    showlegend=False
+                ))
 
 
                           
