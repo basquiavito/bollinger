@@ -4217,38 +4217,38 @@ if st.sidebar.button("Run Analysis"):
 
                   
 
-# 🟢 TD SUPPLY
+# # 🟢 TD SUPPLY
 
-          # 🟤 TD Supply Line (F%)
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday['Time'],
-                            y=intraday['TD Supply Line F'],
-                            mode='lines',
-                            line=dict(width=1, color="#8A2BE2", dash='dot'),
-                            name='TD Supply F%',
-                            hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
-                        ),
-                        row=1, col=1
-                    )
-
-
-
-#🟢 TD DEMAND
+#           # 🟤 TD Supply Line (F%)
+#                     fig.add_trace(
+#                         go.Scatter(
+#                             x=intraday['Time'],
+#                             y=intraday['TD Supply Line F'],
+#                             mode='lines',
+#                             line=dict(width=1, color="#8A2BE2", dash='dot'),
+#                             name='TD Supply F%',
+#                             hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
+#                         ),
+#                         row=1, col=1
+#                     )
 
 
-                    # 🔵 TD Demand Line (F%)
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday['Time'],
-                            y=intraday['TD Demand Line F'],
-                            mode='lines',
-                            line=dict(width=1, color="#5DADE2", dash='dot'),
-                            name='TD Demand F%',
-                            hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
-                        ),
-                        row=1, col=1
-                    )
+
+# #🟢 TD DEMAND
+
+
+#                     # 🔵 TD Demand Line (F%)
+#                     fig.add_trace(
+#                         go.Scatter(
+#                             x=intraday['Time'],
+#                             y=intraday['TD Demand Line F'],
+#                             mode='lines',
+#                             line=dict(width=1, color="#5DADE2", dash='dot'),
+#                             name='TD Demand F%',
+#                             hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
+#                         ),
+#                         row=1, col=1
+#                     )
 
 
 
