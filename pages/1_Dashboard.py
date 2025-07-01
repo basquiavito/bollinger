@@ -4869,7 +4869,7 @@ if st.sidebar.button("Run Analysis"):
                 if pd.notna(first_bull_midas_idx):
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_bull_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bull_midas_idx, "f_numeric"]],
+                        y=[intraday.loc[first_bull_midas_idx, "price_col"]],
                         mode="text",
                         text=["🦵🏼"],
                         textposition="top center",
@@ -4882,7 +4882,7 @@ if st.sidebar.button("Run Analysis"):
                 if pd.notna(first_bear_midas_idx):
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_bear_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bear_midas_idx, "f_numeric"]],
+                        y=[intraday.loc[first_bear_midas_idx, "price_col"]],
                         mode="text",
                         text=["🦶🏼"],
                         textposition="bottom center",
