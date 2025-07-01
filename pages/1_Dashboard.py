@@ -4750,7 +4750,7 @@ if st.sidebar.button("Run Analysis"):
                 bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
                 fig.add_trace(go.Scatter(
                     x=bullish_df["TimeIndex"] ,
-                    y=bullish_df["F_numeric"],
+                    y=bullish_df["F_numeric"] + 24,
                     mode="text",
                     text=bullish_df["Mike_Kijun_ATR_Emoji"],
                     textposition="top right",
@@ -4767,11 +4767,11 @@ if st.sidebar.button("Run Analysis"):
                 bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
                 fig.add_trace(go.Scatter(
                     x=bearish_df["TimeIndex"],
-                    y=bearish_df["F_numeric"],
+                    y=bearish_df["F_numeric"] - 24,
                     mode="text",
                     text=bearish_df["Mike_Kijun_ATR_Emoji"],
                     textposition="bottom right",
-                    textfont=dict(size=20),
+                    textfont=dict(size=24),
                     name="Bearish Mike x Kijun + ATR ⚓️",
                     showlegend=True
                 ))
@@ -4780,7 +4780,7 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=emoji_df["TimeIndex"],
-                    y=emoji_df["F_numeric"] - 33,
+                    y=emoji_df["F_numeric"] - 24,
                     mode="text",
                     text=emoji_df["Mike_Kijun_Bee_Emoji"],
                     textposition="top center",
