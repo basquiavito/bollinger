@@ -3733,7 +3733,7 @@ if st.sidebar.button("Run Analysis"):
                               df["Bull_Midas_Wake"] = ""
                       
                                                     
-                                # 🦶🏼 Bear MIDAS Wake-Up Detection (Put vs MIDAS Bear)
+                                # 💥 Bear MIDAS Wake-Up Detection (Put vs MIDAS Bear)
 
                           # Step 1: Find the first index with a valid Put_vs_Bear after anchor
                           put_series = intraday["Put_vs_Bear"].copy()
@@ -3756,9 +3756,9 @@ if st.sidebar.button("Run Analysis"):
                               if not wake_triggered and current - min_val >= 12:
                                   wake_triggered = True
                                   first_bear_midas_idx = put_series.index[i]
-                                  wake_flags.append("🦶🏼")
+                                  wake_flags.append("💥")
                               elif wake_triggered and current - min_val >= 12:
-                                  wake_flags.append("🦶🏼")
+                                  wake_flags.append("💥")
                               else:
                                   wake_flags.append("")
                           
@@ -3773,8 +3773,8 @@ if st.sidebar.button("Run Analysis"):
                       bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
                       first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
                       
-                      # Detect first Bear MIDAS Wake-Up (🦶🏼)
-                      bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "🦶🏼"]
+                      # Detect first Bear MIDAS Wake-Up (💥)
+                      bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "💥"]
                       first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
 
 
