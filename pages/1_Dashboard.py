@@ -4883,9 +4883,10 @@ if st.sidebar.button("Run Analysis"):
                 if pd.notna(first_bear_midas_idx):
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_bear_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bear_midas_idx, price_col]],  # <- no quotes
+                        y=[intraday.loc[first_bear_midas_idx, price_col] + 20],  # <- no quotes
                         mode="text",
                         text=["🦶🏼"],
+                        textfont=dict(size=30),
                         textposition="bottom center",
                         showlegend=False,
                         hoverinfo="skip",
