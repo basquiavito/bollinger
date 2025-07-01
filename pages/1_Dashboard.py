@@ -4456,11 +4456,11 @@ if st.sidebar.button("Run Analysis"):
                     first_idx = first_put_eye_idx[0]
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_idx, "Time"]],
-                        y=[intraday.loc[first_idx, price_col] - 30],  # position below
+                        y=[intraday.loc[first_idx, price_col] - 0],  # position below
                         mode="text",
                         text=["🦉"],
-                        textposition="bottom center",
-                        textfont=dict(size=18),
+                        textposition="bottom right",
+                        textfont=dict(size=25),
                         showlegend=False,
                         hoverinfo="text",
                         hovertemplate="<b>Put Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
