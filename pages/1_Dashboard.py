@@ -4865,11 +4865,11 @@ if st.sidebar.button("Run Analysis"):
                 ), row=3, col=1)
 
                                
-                # 🦵🏼 Bull MIDAS Wake
+                               # 🦵🏼 Bull MIDAS Wake
                 if pd.notna(first_bull_midas_idx):
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_bull_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bull_midas_idx, "price_col"]],
+                        y=[intraday.loc[first_bull_midas_idx, price_col]],  # <- no quotes
                         mode="text",
                         text=["🦵🏼"],
                         textposition="top center",
@@ -4882,7 +4882,7 @@ if st.sidebar.button("Run Analysis"):
                 if pd.notna(first_bear_midas_idx):
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_bear_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bear_midas_idx, "price_col"]],
+                        y=[intraday.loc[first_bear_midas_idx, price_col]],  # <- no quotes
                         mode="text",
                         text=["🦶🏼"],
                         textposition="bottom center",
@@ -4890,6 +4890,7 @@ if st.sidebar.button("Run Analysis"):
                         hoverinfo="skip",
                         name="Bear MIDAS Wake (🦶🏼)"
                     ), row=1, col=1)
+
                 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
