@@ -4431,7 +4431,7 @@ if st.sidebar.button("Run Analysis"):
                     first_idx = first_call_eye_idx[0]
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_idx, "Time"]],
-                        y=[intraday.loc[first_idx, price_col] + 20],  # position above
+                        y=[intraday.loc[first_idx, price_col] + 30],  # position above
                         mode="text",
                         text=["👁️"],
                         textposition="top center",
@@ -4448,7 +4448,7 @@ if st.sidebar.button("Run Analysis"):
                     first_idx = first_put_eye_idx[0]
                     fig.add_trace(go.Scatter(
                         x=[intraday.loc[first_idx, "Time"]],
-                        y=[intraday.loc[first_idx, price_col] - 20],  # position below
+                        y=[intraday.loc[first_idx, price_col] - 30],  # position below
                         mode="text",
                         text=["🦉"],
                         textposition="bottom center",
