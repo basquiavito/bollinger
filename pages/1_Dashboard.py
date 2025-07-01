@@ -4858,6 +4858,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Put_vs_Bear"],
                     mode="text",
+                    textfont=dict(size=20),
                     text=intraday["Bear_Midas_Wake"],
                     textposition="bottom center",
                     showlegend=False,
@@ -4873,6 +4874,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["🦵🏼"],
                         textposition="top center",
+                        textfont=dict(size=20),
                         showlegend=False,
                         hoverinfo="skip",
                         name="Bull MIDAS Wake (🦵🏼)"
