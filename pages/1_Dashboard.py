@@ -571,8 +571,17 @@ if st.sidebar.button("Run Analysis"):
                     df["Call_Wake_Emoji"] = np.where(df["Call_Rise_Since_Cross"] >= 12, "👁️", "")
                     df["Put_Wake_Emoji"]  = np.where(df["Put_Rise_Since_Cross"]  >= 12, "🦉", "")
                     
-             
-         
+             # 🔥 New: Detect strong option gain WITHOUT any cross
+                    
+                    # 12% gain from original premium (entry-based, not cross-based)
+                    df["Call_Pure_Gain"] = ((df["Call_Option_Value"] - df["Call_Option_Value"].iloc[0]) / df["Call_Option_Value"].iloc[0]) * 100
+                    df["Put_Pure_Gain"]  = ((df["Put_Option_Value"]  - df["Put_Option_Value"].iloc[0]) / df["Put_Option_Value"].iloc[0]) * 100
+                    
+                    # 🔥 Use flame emoji for strong rise without needing a cross
+                    df["Call_Flame_Emoji"] = np.where((df["Call_Pure_Gain"] >= 12) & (~df["Call_Tracking"].notna()), "🔥", "")
+                    df["Put_Flame_Emoji"]  = np.where((df["Put_Pure_Gain"]  >= 12) & (~df["Put_Tracking"].notna()), "🔥", "")
+                    
+                             
                     return df
 
 
