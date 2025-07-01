@@ -4903,6 +4903,27 @@ if st.sidebar.button("Run Analysis"):
                     ), row=1, col=1)
 
                 
+                # 🔥 Call Flame Plot
+                fig.add_trace(go.Scatter(
+                    x=df.index,
+                    y=df["Call_Option_Smooth"] + 10,  # Float it above the line
+                    mode="text",
+                    text=df["Call_Flame_Emoji"],
+                    textposition="top center",
+                    showlegend=False,
+                    hoverinfo="skip"
+                ))
+                
+                # 🔥 Put Flame Plot
+                fig.add_trace(go.Scatter(
+                    x=df.index,
+                    y=df["Put_Option_Smooth"] - 10,  # Float it below the line
+                    mode="text",
+                    text=df["Put_Flame_Emoji"],
+                    textposition="bottom center",
+                    showlegend=False,
+                    hoverinfo="skip"
+                ))
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
