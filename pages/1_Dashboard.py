@@ -4885,12 +4885,12 @@ if st.sidebar.button("Run Analysis"):
                         x=[intraday.loc[first_bear_midas_idx, "Time"]],
                         y=[intraday.loc[first_bear_midas_idx, price_col] + 20],  # <- no quotes
                         mode="text",
-                        text=["🦶🏼"],
+                        text=["💥"],
                         textfont=dict(size=30),
                         textposition="bottom center",
                         showlegend=False,
                         hoverinfo="skip",
-                        name="Bear MIDAS Wake (🦶🏼)"
+                        name="Bear MIDAS Wake (💥)"
                     ), row=1, col=1)
 
                 
