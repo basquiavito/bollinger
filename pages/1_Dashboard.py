@@ -4708,7 +4708,7 @@ if st.sidebar.button("Run Analysis"):
                 # 2. Add an invisible scatter point at the same y to appear in legend and hover
                 fig.add_trace(go.Scatter(
                     x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
-                    y=[poc_f_level],
+                    y=[poc_f_level]  + 20,
                     mode="markers+text",
                     marker=dict(size=0, color="#ff1493"),
                     text=["👃🏽 Nose (Most Price Acceptance)"],
@@ -4721,27 +4721,27 @@ if st.sidebar.button("Run Analysis"):
                           f"Time: {nose_time}<extra></extra>"
                       )
                 ), row=1, col=1)
-                for _, row in profile_df.iterrows():
-                    if row["Tail"] == "🪶":
-                          # Get actual TimeIndex from intraday at this F% Level
-                        time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
-                        if not time_row.empty:
-                            time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
+                # for _, row in profile_df.iterrows():
+                #     if row["Tail"] == "🪶":
+                #           # Get actual TimeIndex from intraday at this F% Level
+                #         time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
+                #         if not time_row.empty:
+                #             time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
                 
-                            fig.add_trace(go.Scatter(
-                                x=[time_at_level],
-                                y=[row["F% Level"]],
-                                mode="text",
-                                text=["🪶"],
-                                textposition="middle right",
-                                textfont=dict(size=20),
-                                showlegend=True,
-                                hovertemplate=(
-                                    "🪶 Tail<br>"
-                                    f"F% Level: {row['F% Level']}<br>"
-                                    f"Time: {row['Time']}<extra></extra>"
-                                )
-                            ), row=1, col=1)
+                #             fig.add_trace(go.Scatter(
+                #                 x=[time_at_level],
+                #                 y=[row["F% Level"]],
+                #                 mode="text",
+                #                 text=["🪶"],
+                #                 textposition="middle right",
+                #                 textfont=dict(size=20),
+                #                 showlegend=True,
+                #                 hovertemplate=(
+                #                     "🪶 Tail<br>"
+                #                     f"F% Level: {row['F% Level']}<br>"
+                #                     f"Time: {row['Time']}<extra></extra>"
+                #                 )
+                #             ), row=1, col=1)
   
 
 
@@ -4750,7 +4750,7 @@ if st.sidebar.button("Run Analysis"):
                 bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
                 fig.add_trace(go.Scatter(
                     x=bullish_df["TimeIndex"] ,
-                    y=bullish_df["F_numeric"] + 24,
+                    y=bullish_df["F_numeric"] + 14,
                     mode="text",
                     text=bullish_df["Mike_Kijun_ATR_Emoji"],
                     textposition="top right",
@@ -4767,7 +4767,7 @@ if st.sidebar.button("Run Analysis"):
                 bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
                 fig.add_trace(go.Scatter(
                     x=bearish_df["TimeIndex"],
-                    y=bearish_df["F_numeric"] - 24,
+                    y=bearish_df["F_numeric"] - 14,
                     mode="text",
                     text=bearish_df["Mike_Kijun_ATR_Emoji"],
                     textposition="bottom right",
