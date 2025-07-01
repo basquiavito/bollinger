@@ -4027,7 +4027,7 @@ if st.sidebar.button("Run Analysis"):
                     marengo_mask = intraday["Marengo"] == "🐎"
                     
                     # Vertical offset to place 🐎 just below the Upper Band
-                    offset = 24  # adjust as needed for clarity
+                    offset = 34  # adjust as needed for clarity
                     
                     # Marengo trace (plotted just below the upper band)
                     marengo_trace = go.Scatter(
@@ -4050,7 +4050,7 @@ if st.sidebar.button("Run Analysis"):
                     south_mask = intraday["South_Marengo"] == "🐎"
                     
                     # Offset downward from lower band
-                    offset_south = 24
+                    offset_south = 34
                     
                     south_marengo_trace = go.Scatter(
                         x=intraday.loc[south_mask, "Time"],
