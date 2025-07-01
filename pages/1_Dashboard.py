@@ -4866,31 +4866,31 @@ if st.sidebar.button("Run Analysis"):
 
             # 🦵🏼 Bull MIDAS Wake
                 
-                 if pd.notna(first_bull_midas_idx):
-                    fig.add_trace(go.Scatter(
-                        x=[intraday.loc[first_bull_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bull_midas_idx, "f_numeric"]],
-                        mode="text",
-                        text=["🦵🏼"],
-                        textposition="top center",
-                        showlegend=False,
-                        hoverinfo="skip",
-                        name="Bull MIDAS Wake (🦵🏼)"
-                    ), row=1, col=1)
-                
-                # 🦶🏼 Bear MIDAS Wake
-                if pd.notna(first_bear_midas_idx):
-                    fig.add_trace(go.Scatter(
-                        x=[intraday.loc[first_bear_midas_idx, "Time"]],
-                        y=[intraday.loc[first_bear_midas_idx, "f_numeric"]],
-                        mode="text",
-                        text=["🦶🏼"],
-                        textposition="bottom center",
-                        showlegend=False,
-                        hoverinfo="skip",
-                        name="Bear MIDAS Wake (🦶🏼)"
-                    ), row=1, col=1)
-  
+             if pd.notna(first_bull_midas_idx):
+                fig.add_trace(go.Scatter(
+                    x=[intraday.loc[first_bull_midas_idx, "Time"]],
+                    y=[intraday.loc[first_bull_midas_idx, "f_numeric"]],
+                    mode="text",
+                    text=["🦵🏼"],
+                    textposition="top center",
+                    showlegend=False,
+                    hoverinfo="skip",
+                    name="Bull MIDAS Wake (🦵🏼)"
+                ), row=1, col=1)
+            
+            # 🦶🏼 Bear MIDAS Wake
+            if pd.notna(first_bear_midas_idx):
+                fig.add_trace(go.Scatter(
+                    x=[intraday.loc[first_bear_midas_idx, "Time"]],
+                    y=[intraday.loc[first_bear_midas_idx, "f_numeric"]],
+                    mode="text",
+                    text=["🦶🏼"],
+                    textposition="bottom center",
+                    showlegend=False,
+                    hoverinfo="skip",
+                    name="Bear MIDAS Wake (🦶🏼)"
+                ), row=1, col=1)
+
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
