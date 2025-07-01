@@ -4904,29 +4904,7 @@ if st.sidebar.button("Run Analysis"):
 
                                 
                              # 🔥 Call Flame Plot
-                fig.add_trace(go.Scatter(
-                    x=intraday["Datetime"],  # or your actual time column
-                    y=intraday["Call_Option_Smooth"] + 10,  # Float it visually
-                    mode="text",
-                    text=intraday["Call_Flame_Emoji"],
-                    textposition="top center",
-                    showlegend=False,
-                    hoverinfo="skip",
-                    name="Call Flame"
-                ))
-                
-                # 🔥 Put Flame Plot
-                fig.add_trace(go.Scatter(
-                    x=intraday["Datetime"],
-                    y=intraday["Put_Option_Smooth"] - 10,
-                    mode="text",
-                    text=intraday["Put_Flame_Emoji"],
-                    textposition="bottom center",
-                    showlegend=False,
-                    hoverinfo="skip",
-                    name="Put Flame"
-                ))
-
+           
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
