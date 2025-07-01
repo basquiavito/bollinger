@@ -4905,7 +4905,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 # 🔥 Call Flame Plot
                 fig.add_trace(go.Scatter(
-                    x=intraday.index,
+                    x=intraday.[time],
                     y=intraday["Call_Option_Smooth"] + 10,  # Float it above the line
                     mode="text",
                     text=intraday["Call_Flame_Emoji"],
@@ -4916,7 +4916,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 # 🔥 Put Flame Plot
                 fig.add_trace(go.Scatter(
-                    x=intraday.index,
+                    x=intraday.[time],
                     y=intraday["Put_Option_Smooth"] - 10,  # Float it below the line
                     mode="text",
                     text=intraday["Put_Flame_Emoji"],
