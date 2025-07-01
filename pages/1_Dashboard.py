@@ -4606,32 +4606,32 @@ if st.sidebar.button("Run Analysis"):
                         annotation_font=dict(color="black")
                     )
 
-                    # Step 1: Get the F% Level marked with 🦻🏼
-                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                    # # Step 1: Get the F% Level marked with 🦻🏼
+                    # ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                     
-                    if not ear_row.empty:
-                        ear_level = ear_row["F% Level"].values[0]  # numeric
-                        # Step 2: Find a matching row in intraday that hit that F% bin and came after the ear shift
-                        # Convert F% bin to string to match 'F_Bin'
-                        ear_bin_str = str(ear_level)
-                        matching_rows = intraday[intraday["F_Bin"] == ear_bin_str]
+                    # # if not ear_row.empty:
+                    # #     ear_level = ear_row["F% Level"].values[0]  # numeric
+                    # #     # Step 2: Find a matching row in intraday that hit that F% bin and came after the ear shift
+                    # #     # Convert F% bin to string to match 'F_Bin'
+                    # #     ear_bin_str = str(ear_level)
+                    # #     matching_rows = intraday[intraday["F_Bin"] == ear_bin_str]
                     
-                        if not matching_rows.empty:
-                            # Use the last known time this level was touched
-                            last_touch = matching_rows.iloc[-1]
-                            fig.add_trace(go.Scatter(
-                                x=[last_touch["TimeIndex"]],
-                                y=[last_touch["F_numeric"] + 10],  # small vertical offset
-                                mode="text",
-                                text=["🦻🏼"],
-                                showlegend=True,
-                                textposition="bottom center",
-                                textfont=dict(size=24),
-                                name="Ear Shift",
-                                hovertemplate="Time: %{x}<br>🦻🏼: %{y}<br>%{text}"
+                    # #     if not matching_rows.empty:
+                    # #         # Use the last known time this level was touched
+                    # #         last_touch = matching_rows.iloc[-1]
+                    # #         fig.add_trace(go.Scatter(
+                    # #             x=[last_touch["TimeIndex"]],
+                    # #             y=[last_touch["F_numeric"] + 10],  # small vertical offset
+                    # #             mode="text",
+                    # #             text=["🦻🏼"],
+                    # #             showlegend=True,
+                    # #             textposition="bottom center",
+                    # #             textfont=dict(size=24),
+                    # #             name="Ear Shift",
+                    # #             hovertemplate="Time: %{x}<br>🦻🏼: %{y}<br>%{text}"
 
                              
-                            ))
+                    # #         ))
 
                 
                 # Step: Add 👃🏽 marker into intraday at the bar where breakout happened
