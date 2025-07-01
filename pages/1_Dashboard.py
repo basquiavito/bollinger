@@ -4706,21 +4706,21 @@ if st.sidebar.button("Run Analysis"):
                 )
                 
                 # 2. Add an invisible scatter point at the same y to appear in legend and hover
-                fig.add_trace(go.Scatter(
-                    x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
-                    y=[poc_f_level]  + 20,
-                    mode="markers+text",
-                    marker=dict(size=0, color="#ff1493"),
-                    text=["👃🏽 Nose (Most Price Acceptance)"],
-                    textposition="top right",
-                    name="👃🏽 Nose Line",
-                    showlegend=True,
-                    hovertemplate=(
-                          "👃🏽 Nose Line<br>"
-                          "F% Level: %{y}<br>"
-                          f"Time: {nose_time}<extra></extra>"
-                      )
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
+                #     y=[poc_f_level],
+                #     mode="markers+text",
+                #     marker=dict(size=0, color="#ff1493"),
+                #     text=["👃🏽 Nose (Most Price Acceptance)"],
+                #     textposition="top right",
+                #     name="👃🏽 Nose Line",
+                #     showlegend=True,
+                #     hovertemplate=(
+                #           "👃🏽 Nose Line<br>"
+                #           "F% Level: %{y}<br>"
+                #           f"Time: {nose_time}<extra></extra>"
+                #       )
+                # ), row=1, col=1)
                 # for _, row in profile_df.iterrows():
                 #     if row["Tail"] == "🪶":
                 #           # Get actual TimeIndex from intraday at this F% Level
