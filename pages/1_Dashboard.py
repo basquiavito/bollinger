@@ -4937,10 +4937,10 @@ if st.sidebar.button("Run Analysis"):
                 high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
                 fig.add_trace(go.Scatter(
                     x=high_break_df["TimeIndex"],
-                    y=high_break_df["F_numeric"] + 20,
+                    y=high_break_df["F_numeric"] + 10,
                     mode="text",
                     text=high_break_df["IB_High_Break"],
-                    textposition="top center",
+                    textposition="top right",
                     textfont=dict(size=22),
                     name="Breakout Above IB 💸",
                     showlegend=True,
