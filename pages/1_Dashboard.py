@@ -4887,9 +4887,28 @@ if st.sidebar.button("Run Analysis"):
                                # 🦻🏼 Top 3 Ear Lines based on %Vol
                
                              # Step 1: Filter Ear-marked rows
-                 
+                               # 🦻🏼 Top 3 Ear Lines based on %Vol
+              top_ears = profile_df[profile_df["🦻🏼"] == "🦻🏼"].nlargest(3, "%Vol")
+              
+              for _, row in top_ears.iterrows():
+                  ear_level = row["F% Level"]
+                  vol = row["%Vol"]
+                  time = row["Time"]  # Or row["TimeIndex"] if Time is not a string
+              
+                  fig.add_hline(
+                      y=ear_level,
+                      line=dict(color="darkgray", dash="dot", width=1.5),
+                      row=1, col=1,
+                      showlegend=False,
+                      annotation_text="🦻🏼",
+                      annotation_position="top left",
+                      annotation_font=dict(color="black"),
+                      hoverlabel=dict(bgcolor="white"),
+                      hovertemplate=f"🦻🏼 Ear Shift<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>"
+                  )
+
   
-                  fig.update_yaxes(title_text="Option Value", row=2, col=1)
+                fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
                  
 
