@@ -4924,6 +4924,8 @@ if st.sidebar.button("Run Analysis"):
                         line=dict(color="darkgray", dash="dot", width=1.5),
                         row=1, col=1,
                         annotation_text="🦻🏼",
+                        showlegend=True,
+
                         annotation_position="top left",
                         annotation_font=dict(color="black")
                     )
@@ -4935,7 +4937,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="markers",
                         marker=dict(size=10, color="rgba(0,0,0,0)"),
                         hovertemplate=f"🦻🏼 Ear Shift<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
-                        showlegend=False
+                        showlegend=True
                     ), row=1, col=1)
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
