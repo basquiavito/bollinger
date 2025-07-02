@@ -3823,6 +3823,37 @@ if st.sidebar.button("Run Analysis"):
                     intraday["SpanA_F"] = intraday["SpanA_F"].bfill()
                     intraday["SpanB_F"] = intraday["SpanB_F"].bfill()
 
+                    intraday["Chikou"] = intraday["Close"].shift(-26)
+
+
+                    # Chikou moved ABOVE price (🕵🏻‍♂️) — signal at time when it actually happened
+                    chikou_above_mask = (intraday["Chikou"] > intraday["Close"]).shift(26)
+                    chikou_above = intraday[chikou_above_mask.fillna(False)]
+
+                    # Chikou moved BELOW price (👮🏻‍♂️)
+                    chikou_below_mask = (intraday["Chikou"] < intraday["Close"]).shift(26)
+                    chikou_below = intraday[chikou_below_mask.fillna(False)]
+
+
+
+                   # Calculate Chikou (lagging span) using Close price shifted BACKWARD
+                    intraday["Chikou"] = intraday["Close"].shift(-26)
+
+                    # Calculate Chikou_F using shifted price, keeping Time as-is
+                    intraday["Chikou_F"] = ((intraday["Chikou"] - prev_close) / prev_close) * 10000
+
+                    # Drop rows where Chikou_F is NaN (due to shifting)
+                    chikou_plot = intraday.dropna(subset=["Chikou_F"])
+
+                    # Plot without shifting time
+                    chikou_line = go.Scatter(
+                        x=chikou_plot["Time"],
+                        y=chikou_plot["Chikou_F"],
+                        mode="lines",
+                        name="Chikou (F%)",
+                        line=dict(color="purple", dash="dash")
+                    )
+                    fig.add_trace(chikou_line, row=1, col=1)
 
                     intraday["Chikou"] = intraday["Close"].shift(-26)
 
