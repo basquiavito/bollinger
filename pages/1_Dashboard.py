@@ -4066,7 +4066,7 @@ if st.sidebar.button("Run Analysis"):
                     marengo_mask = intraday["Marengo"] == "🐎"
                     
                     # Vertical offset to place 🐎 just below the Upper Band
-                    offset = 14  # adjust as needed for clarity
+                    offset = 10  # adjust as needed for clarity
                     
                     # Marengo trace (plotted just below the upper band)
                     marengo_trace = go.Scatter(
@@ -4089,7 +4089,7 @@ if st.sidebar.button("Run Analysis"):
                     south_mask = intraday["South_Marengo"] == "🐎"
                     
                     # Offset downward from lower band
-                    offset_south = 14
+                    offset_south = 10
                     
                     south_marengo_trace = go.Scatter(
                         x=intraday.loc[south_mask, "Time"],
@@ -4954,8 +4954,8 @@ if st.sidebar.button("Run Analysis"):
                     y=low_break_df["F_numeric"] - 16,
                     mode="text",
                     text=low_break_df["IB_Low_Break"],
-                    textposition="top center",
-                    textfont=dict(size=22),
+                    textposition="bottom right",
+                    textfont=dict(size=12),
                     name="Breakdown Below IB 🧧",
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
