@@ -3582,51 +3582,28 @@ if st.sidebar.button("Run Analysis"):
                   intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
 
+                  
+                  def get_top3_ear_lines(profile_df):
+                      """
+                      Returns a list of dicts with the top 3 %Vol rows from profile_df.
+                      Each dict includes F% Level, %Vol, Time, and rank.
+                      """
+                      ear_specs = []
+                      ear_top3 = profile_df.nlargest(3, "%Vol")
+                  
+                      for rank, (_, row) in enumerate(ear_top3.iterrows(), start=1):
+                          ear_specs.append({
+                              "level": row["F% Level"],
+                              "vol": row["%Vol"],
+                              "time": row["Time"],
+                              "rank": rank
+                          })
+                  
+                      return ear_specs
+                  
+                                              
+                  ear_lines = get_top3_ear_lines(profile_df)
 
-
-
-                                 # …all your existing Market-Profile code up to this point …
-                  profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
-                  
-                  # ─────────────────────────────────────────────────────────────
-                  # ▶▶  INSERT Ear-Top-3 block right here ◀◀
-                  # (indented to match the surrounding expander code)
-                  ear_top3 = profile_df.nlargest(3, "%Vol").copy()
-                  ear_top3.sort_values("Time", inplace=True)
-                  
-                  for rank, (_, ear_row) in enumerate(ear_top3.iterrows(), start=1):
-                      ear_level = ear_row["F% Level"]
-                      ear_vol   = ear_row["%Vol"]
-                      ear_time  = ear_row["Time"]
-                  
-                      fig.add_hline(
-                          y=ear_level,
-                          line=dict(color="darkgray", dash="dot", width=1.5),
-                          row=1, col=1,
-                          annotation_text="🦻🏼",
-                          annotation_position="top left",
-                          annotation_font=dict(color="black"),
-                          showlegend=False
-                      )
-                  
-                      # invisible hover marker
-                      x_hover = intraday["TimeIndex"].iloc[-1]   # pick any x inside chart
-                      fig.add_trace(go.Scatter(
-                          x=[x_hover],
-                          y=[ear_level],
-                          mode="markers",
-                          marker=dict(size=12, color="rgba(0,0,0,0)"),
-                          showlegend=False,
-                          hovertemplate=(
-                              f"🦻🏼 Ear #{rank}<br>"
-                              f"%Vol: {ear_vol:.2f}<br>"
-                              f"First seen: {ear_time}<extra></extra>"
-                          )
-                      ))
-                  # ─────────────────────────────────────────────────────────────
-
-                            
-                  
                   # Show DataFrame
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
@@ -4926,38 +4903,30 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
                 ), row=1, col=1)
                 
-                                           # 🦻🏼 Top 3 Ear Lines based on %Vol
-                                # 1) Filter Ear-marked rows
-                ear_rows = profile_df[profile_df["🦻🏼"] == "🦻🏼"].copy()
+                def plot_ear_lines(fig, ear_lines, x_hover):
+                    for ear in ear_lines:
+                        fig.add_hline(
+                            y=ear["level"],
+                            line=dict(color="darkgray", dash="dot", width=1.5),
+                            row=1, col=1,
+                            annotation_text="🦻🏼",
+                            annotation_position="top left"
+                        )
                 
-                # 2) If you truly have more than one Ear, take the top 3 by %Vol
-                ear_rows = ear_rows.sort_values("%Vol", ascending=False).head(3)
-                
-                for _, r in ear_rows.iterrows():
-                    ear_y   = r["F% Level"]
-                    ear_vol = r["%Vol"]
-                    ear_time = r["TimeIndex"] if "TimeIndex" in r else r["Time"]   # choose the field that matches your x-axis
-                
-                    # ----- visual line -----
-                    fig.add_hline(
-                        y=ear_y,
-                        line=dict(color="darkgray", dash="dot", width=1.5),
-                        row=1, col=1,
-                        annotation_text="🦻🏼",
-                        annotation_position="top left"
-                    )
-                
-                    # ----- invisible marker only for hover -----
-                    fig.add_trace(go.Scatter(
-                        x=[ear_time],           # MUST be a datetime on the same x-axis
-                        y=[ear_y],
-                        mode="markers",
-                        marker=dict(size=12, color="rgba(0,0,0,0)"),  # invisible
-                        hovertemplate=f"🦻🏼 Ear<br>%Vol: {ear_vol:.2f}<br>{ear_time}<extra></extra>",
-                        showlegend=False
-                    ))
+                        fig.add_trace(go.Scatter(
+                            x=[x_hover],
+                            y=[ear["level"]],
+                            mode="markers",
+                            marker=dict(size=8, color="rgba(0,0,0,0)"),
+                            hovertemplate=(
+                                f"🦻🏼 Ear #{ear['rank']}<br>"
+                                f"%Vol: {ear['vol']:.2f}%<br>"
+                                f"First Seen: {ear['time']}<extra></extra>"
+                            ),
+                            showlegend=False
+                        ))
 
-
+             
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
                  
