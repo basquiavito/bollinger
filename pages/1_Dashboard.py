@@ -5090,7 +5090,37 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_bishop_up, row=1, col=1)
                 fig.add_trace(scatter_bishop_down, row=1, col=1)
          
-                
+                                # Mask the rook crosses
+                mask_rook_up = intraday["TD_Supply_Rook"] == "♖"
+                mask_rook_down = intraday["TD_Supply_Rook"] == "♜"
+
+                # White rook (up cross)
+                scatter_rook_up = go.Scatter(
+                    x=intraday.loc[mask_rook_up, "Time"],
+                    y=intraday.loc[mask_rook_up, "F_numeric"] + 13,  # Offset upward
+                    mode="text",
+                    text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
+                    textposition="top left",
+                    textfont=dict(size=21,  color="green"),
+                    name="TD Supply Cross Up (♖)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Up ♖<extra></extra>"
+                )
+
+                # Black rook (down cross)
+                scatter_rook_down = go.Scatter(
+                    x=intraday.loc[mask_rook_down, "Time"],
+                    y=intraday.loc[mask_rook_down, "F_numeric"] - 13,  # Offset downward
+                    mode="text",
+                    text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
+                    textposition="bottom left",
+                    textfont=dict(size=21,  color="red"),
+                    name="TD Supply Cross Down (♜)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
+                )
+
+                # Add both to figure
+                fig.add_trace(scatter_rook_up, row=1, col=1)
+                fig.add_trace(scatter_rook_down, row=1, col=1)
 
 
 
