@@ -4903,8 +4903,7 @@ if st.sidebar.button("Run Analysis"):
                         annotation_text="🦻🏼",
                         annotation_position="top left",
                         annotation_font=dict(color="black"),
-                        hoverlabel=dict(bgcolor="white"),
-                        hovertemplate=f"🦻🏼 Ear Shift<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>"
+              
                     )
 
   
