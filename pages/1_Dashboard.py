@@ -3827,13 +3827,13 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Chikou"] = intraday["Close"].shift(-26)
 
 
-                    # # Chikou moved ABOVE price (🕵🏻‍♂️) — signal at time when it actually happened
-                    # chikou_above_mask = (intraday["Chikou"] > intraday["Close"]).shift(26)
-                    # chikou_above = intraday[chikou_above_mask.fillna(False)]
+                    # Chikou moved ABOVE price (🕵🏻‍♂️) — signal at time when it actually happened
+                    chikou_above_mask = (intraday["Chikou"] > intraday["Close"]).shift(26)
+                    chikou_above = intraday[chikou_above_mask.fillna(False)]
 
-                    # # Chikou moved BELOW price (👮🏻‍♂️)
-                    # chikou_below_mask = (intraday["Chikou"] < intraday["Close"]).shift(26)
-                    # chikou_below = intraday[chikou_below_mask.fillna(False)]
+                    # Chikou moved BELOW price (👮🏻‍♂️)
+                    chikou_below_mask = (intraday["Chikou"] < intraday["Close"]).shift(26)
+                    chikou_below = intraday[chikou_below_mask.fillna(False)]
 
 
 
