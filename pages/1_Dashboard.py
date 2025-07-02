@@ -4941,7 +4941,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=high_break_df["IB_High_Break"],
                     textposition="top right",
-                    textfont=dict(size=22),
+                    textfont=dict(size=16),
                     name="Breakout Above IB 💸",
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>💸 IB High Breakout"
@@ -4955,7 +4955,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=low_break_df["IB_Low_Break"],
                     textposition="bottom right",
-                    textfont=dict(size=12),
+                    textfont=dict(size=14),
                     name="Breakdown Below IB 🧧",
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
