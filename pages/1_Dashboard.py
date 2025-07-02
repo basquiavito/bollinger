@@ -4909,36 +4909,21 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                top_ears = profile_df[profile_df["🦻🏼"] == "🦻🏼"].nlargest(3, "%Vol")
+                 # 🦻🏼 Add Ear line if it exists
+                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                 
-                x_hover = intraday["TimeIndex"].iloc[-1]  # or any visible x-coordinate
-                
-                for _, row in top_ears.iterrows():
-                    ear_level = row["F% Level"]
-                    vol = row["%Vol"]
-                    time = row["Time"]
-                
-                    # 1. Add the horizontal line (no hover here)
+                if not ear_row.empty:
+                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
                     fig.add_hline(
                         y=ear_level,
                         line=dict(color="darkgray", dash="dot", width=1.5),
                         row=1, col=1,
-                        annotation_text="🦻🏼",
                         showlegend=True,
-
+                        annotation_text="🦻🏼 Ear Shift",
                         annotation_position="top left",
                         annotation_font=dict(color="black")
                     )
-                
-                    # 2. Add an invisible trace for hover
-                    fig.add_trace(go.Scatter(
-                        x=[x_hover],
-                        y=[ear_level],
-                        mode="markers",
-                        marker=dict(size=10, color="rgba(0,0,0,0)"),
-                        hovertemplate=f"🦻🏼 Ear Shift<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
-                        showlegend=True
-                    ), row=1, col=1)
+
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
