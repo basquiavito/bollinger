@@ -3550,10 +3550,31 @@ if st.sidebar.button("Run Analysis"):
  
  
               
+                                    # Initialize IB breakout emojis
+                  intraday["IB_High_Break"] = ""
+                  intraday["IB_Low_Break"] = ""
                   
+                  # Track prior state (inside/outside IB)
+                  intraday["Inside_IB"] = (intraday["F_numeric"] >= intraday["IB_Low"]) & (intraday["F_numeric"] <= intraday["IB_High"])
+                  intraday["Prior_Inside_IB"] = intraday["Inside_IB"].shift(1)
+                  
+                  # 💸 Breakout above IB High
+                  ib_high_break = (
+                      (intraday["F_numeric"] > intraday["IB_High"]) &  # now above
+                      (intraday["Prior_Inside_IB"] == True)            # came from inside
+                  )
+                  intraday.loc[ib_high_break, "IB_High_Break"] = "💸"
+                  
+                  # 🧧 Breakdown below IB Low
+                  ib_low_break = (
+                      (intraday["F_numeric"] < intraday["IB_Low"]) &   # now below
+                      (intraday["Prior_Inside_IB"] == True)            # came from inside
+                  )
+                  intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
+
 
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽""💸","🧧",]])
 
 
          
@@ -4903,8 +4924,35 @@ if st.sidebar.button("Run Analysis"):
                     ), row=1, col=1)
 
                                 
-                             # 🔥 Call Flame Plot
-           
+                                   # Plot 💸 for breakout above IB High
+                high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
+                fig.add_trace(go.Scatter(
+                    x=high_break_df["TimeIndex"],
+                    y=high_break_df["F_numeric"] + 10,
+                    mode="text",
+                    text=high_break_df["IB_High_Break"],
+                    textposition="top center",
+                    textfont=dict(size=22),
+                    name="Breakout Above IB 💸",
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>💸 IB High Breakout"
+                ), row=1, col=1)
+                
+                # Plot 🧧 for breakdown below IB Low
+                low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
+                fig.add_trace(go.Scatter(
+                    x=low_break_df["TimeIndex"],
+                    y=low_break_df["F_numeric"] - 10,
+                    mode="text",
+                    text=low_break_df["IB_Low_Break"],
+                    textposition="bottom center",
+                    textfont=dict(size=22),
+                    name="Breakdown Below IB 🧧",
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
+                ), row=1, col=1)
+                
+                           
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
