@@ -4155,12 +4155,12 @@ if st.sidebar.button("Run Analysis"):
 
                     atr_alert_scatter = go.Scatter(
                         x=intraday.loc[mask_atr_alert, "Time"],
-                        y=intraday.loc[mask_atr_alert, "F_numeric"]  - 3,  # place above F%
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  - 7,  # place above F%
                         mode="text",
                         textposition="bottom center",
 
                         text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
-                        textfont=dict(size=8),
+                        textfont=dict(size=12),
                         name="ATR Expansion",
                         hoverinfo="text",
                         hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
