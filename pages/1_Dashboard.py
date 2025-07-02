@@ -3935,7 +3935,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["SpanA_F"],
                         mode="lines",
-                        line=dict(color="yellow", width=0.9),
+                        line=dict(color="yellow", width=0.4),
                         name="Span A (F%)"
                     )
                     fig.add_trace(span_a_line, row=1, col=1)
@@ -3945,7 +3945,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["SpanB_F"],
                         mode="lines",
-                        line=dict(color="blue", width=0.9),
+                        line=dict(color="blue", width=0.4),
                         name="Span B (F%)"
                     )
                     fig.add_trace(span_b_line, row=1, col=1)
