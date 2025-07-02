@@ -4951,7 +4951,7 @@ if st.sidebar.button("Run Analysis"):
                 low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
                 fig.add_trace(go.Scatter(
                     x=low_break_df["TimeIndex"],
-                    y=low_break_df["F_numeric"] - 9,
+                    y=low_break_df["F_numeric"] - 5,
                     mode="text",
                     text=low_break_df["IB_Low_Break"],
                     textposition="bottom right",
