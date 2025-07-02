@@ -4955,7 +4955,7 @@ if st.sidebar.button("Run Analysis"):
                         xanchor="right",
                         yanchor="middle",
                         hovertext=f"💲 Time-Zone<br>Letters: {row['Letter_Count']}<br>First Seen: {row['Time']}",
-                        hoverlabel=dict(bgcolor="white"),
+                   
                         ax=0, ay=0
                     )
 
