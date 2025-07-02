@@ -4561,6 +4561,31 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=va_min,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
                 fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
+                ib_third = (ib_high_f - ib_low_f) / 3
+                ib_upper_third = ib_low_f + 2 * ib_third
+                ib_middle_third = ib_low_f + ib_third
+
+                
+                fig.add_shape(type="rect",
+                    xref="x", yref="y",
+                    x0=intraday.index.min(), x1=intraday.index.max(),
+                    y0=ib_low_f, y1=ib_middle_third,
+                    fillcolor="rgba(255,0,0,0.05)", line_width=0, row=1, col=1)
+                
+                fig.add_shape(type="rect",
+                    xref="x", yref="y",
+                    x0=intraday.index.min(), x1=intraday.index.max(),
+                    y0=ib_middle_third, y1=ib_upper_third,
+                    fillcolor="rgba(255,255,0,0.05)", line_width=0, row=1, col=1)
+                
+                fig.add_shape(type="rect",
+                    xref="x", yref="y",
+                    x0=intraday.index.min(), x1=intraday.index.max(),
+                    y0=ib_upper_third, y1=ib_high_f,
+                    fillcolor="rgba(0,255,0,0.05)", line_width=0, row=1, col=1)
+
+
+
                 fig.add_shape(type="rect",
                     xref="x", yref="y",
                     x0=intraday.index.min(), x1=intraday.index.max(),
