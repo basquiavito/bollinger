@@ -3548,8 +3548,17 @@ if st.sidebar.button("Run Analysis"):
                   
                                    # Add the Ear_Emoji column to intraday based on the profile logic
  
- 
-              
+                   # Define Initial Balance from first 12 candles
+                  ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
+                  
+                  ib_high = ib_data["F_numeric"].max()
+                  ib_low = ib_data["F_numeric"].min()
+                  
+                  # Add to intraday as constant columns
+                  intraday["IB_High"] = ib_high
+                  intraday["IB_Low"] = ib_low
+                  
+                                
                                     # Initialize IB breakout emojis
                   intraday["IB_High_Break"] = ""
                   intraday["IB_Low_Break"] = ""
