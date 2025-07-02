@@ -4906,25 +4906,7 @@ if st.sidebar.button("Run Analysis"):
 
               
                              # Step 1: Filter Ear-marked rows
-                  ear_rows = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
-                  
-                  # Step 2: Sort by %Vol descending and take top 3
-                  top_ear_lines = ear_rows.sort_values(by="%Vol", ascending=False).head(3)
-                  
-                  # Step 3: Plot each of the top 3 Ear lines
-                  for idx, row in top_ear_lines.iterrows():
-                      ear_level = row["F% Level"]
-                      ear_time = row["Time"]
-                      ear_vol = row["%Vol"]
-                  
-                      fig.add_hline(
-                          y=ear_level,
-                          line=dict(color="darkgray", dash="dot", width=1.5),
-                          row=1, col=1,
-                          annotation_text=f"🦻🏼 Vol: {ear_vol} | {ear_time}",
-                          annotation_position="top left",
-                          annotation_font=dict(color="black")
-                      )
+                 
   
                   fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
