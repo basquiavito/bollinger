@@ -4964,7 +4964,36 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
                 ), row=1, col=1)
                 
-                           
+                           # 🦻🏼 Top 3 Ear Lines based on %Vol
+                top_ears = profile_df[profile_df["🦻🏼"] == "🦻🏼"].nlargest(3, "%Vol")
+                
+                for _, row in top_ears.iterrows():
+                    ear_level = row["F% Level"]
+                    vol = row["%Vol"]
+                    time = row["Time"]  # assuming it's already a string or formatted datetime
+                
+                    # 1. Add the visual Ear line
+                    fig.add_hline(
+                        y=ear_level,
+                        line=dict(color="darkgray", dash="dot", width=1.5),
+                        row=1, col=1,
+                        showlegend=False,
+                        annotation_text="🦻🏼",
+                        annotation_position="top left",
+                        annotation_font=dict(color="black")
+                    )
+                
+                    # 2. Add an invisible scatter point for hover info
+                    fig.add_trace(go.Scatter(
+                        x=[time],
+                        y=[ear_level],
+                        mode="markers",
+                        marker=dict(color="rgba(0,0,0,0)", size=10),  # invisible dot
+                        hovertemplate=f"🦻🏼 Ear Shift<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
+                        name="Ear Hover",
+                        showlegend=False
+                    ))
+                
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
@@ -4978,30 +5007,7 @@ if st.sidebar.button("Run Analysis"):
                      
                 )
 
-                         # Step 1: Filter Ear-marked rows
-                ear_rows = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
-                
-                # Step 2: Sort by %Vol descending and take top 3
-                top_ear_lines = ear_rows.sort_values(by="%Vol", ascending=False).head(3)
-                
-                          # 🦻🏼 Top 3 Ear Lines based on %Vol
-                top_ears = profile_df[profile_df["🦻🏼"] == "🦻🏼"].nlargest(3, "%Vol")
-                
-                for _, row in top_ears.iterrows():
-                    ear_level = row["F% Level"]
-                    vol = row["%Vol"]
-                    time = row["Time"]  # Or row["TimeIndex"] if Time is not a string
-                
-                    fig.add_hline(
-                        y=ear_level,
-                        line=dict(color="darkgray", dash="dot", width=1.5),
-                        row=1, col=1,
-                        showlegend=False,
-                        annotation_text="🦻🏼",
-                        annotation_position="top left",
-                        annotation_font=dict(color="black"),
-                    )
-                
+      
 
 
                 st.plotly_chart(fig, use_container_width=True)
