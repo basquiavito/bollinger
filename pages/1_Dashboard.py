@@ -4554,8 +4554,8 @@ if st.sidebar.button("Run Analysis"):
                 ib_middle_third = ib_low + ib_third
   
   
-                fig.add_hline(y=ib_middle_third, line=dict(color="gray", dash="dash", width=0.5), row=2, col=1)
-                fig.add_hline(y=ib_upper_third, line=dict(color="gray", dash="dash", width=0.5), row=2, col=1)
+                fig.add_hline(y=ib_middle_third, line=dict(color="gray", dash="dash", width=0.5), row=1, col=1)
+                fig.add_hline(y=ib_upper_third, line=dict(color="gray", dash="dash", width=0.5), row=1, col=1)
                 
 
                 # fig.add_hline(y=va_min,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
