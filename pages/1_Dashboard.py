@@ -4099,7 +4099,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_bbw_alert = go.Scatter(
                         x=intraday.loc[mask_bbw_alert, "Time"],
-                        y=intraday.loc[mask_bbw_alert, "F_numeric"] - 10,  # Offset above F%
+                        y=intraday.loc[mask_bbw_alert, "F_numeric"] - 8,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
                         textposition="bottom center",
@@ -4124,7 +4124,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
                         textposition="top center",
-                        textfont=dict(size=8),
+                        textfont=dict(size=11),
                         name="ADX Expansion Alert",
                         hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
                         customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
@@ -4139,11 +4139,11 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_std_alert = go.Scatter(
                         x=intraday.loc[mask_std_alert, "Time"],
-                        y=intraday.loc[mask_std_alert, "F_numeric"] - 10,  # Offset above F%
+                        y=intraday.loc[mask_std_alert, "F_numeric"] - 16,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_std_alert, "STD_Alert"],
                         textposition="bottom center",
-                        textfont=dict(size=8),
+                        textfont=dict(size=11),
                         name="F% STD Expansion",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
                     )
@@ -4886,7 +4886,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=high_break_df["IB_High_Break"],
                     textposition="top left",
-                    textfont=dict(size=10),
+                    textfont=dict(size=14),
                     name="Breakout Above IB 💸",
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>💸 IB High Breakout"
@@ -4900,7 +4900,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=low_break_df["IB_Low_Break"],
                     textposition="bottom left",
-                    textfont=dict(size=10),
+                    textfont=dict(size=14),
                     name="Breakdown Below IB 🧧",
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
