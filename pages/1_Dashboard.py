@@ -4907,26 +4907,7 @@ if st.sidebar.button("Run Analysis"):
                 #     )
 
 
-              top_ears = profile_df.nlargest(3, "%Vol")
-              
-              x_hover = intraday["TimeIndex"].iloc[-1]  # Use last bar time for clean placement
-              
-              for _, row in top_ears.iterrows():
-                  ear_level = row["F% Level"]
-                  vol = row["%Vol"]
-                  time = row["Time"]
-              
-                  fig.add_trace(go.Scatter(
-                      x=[x_hover],
-                      y=[ear_level],
-                      mode="text",
-                      text=["🥁"],
-                      textposition="middle right",
-                      hovertemplate=f"🥁 Top %Vol<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
-                      showlegend=False
-                  ), row=1, col=1)
-              
-
+             
                # 🦻🏼 Add Ear line if it exists
               ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
               
@@ -4944,7 +4925,25 @@ if st.sidebar.button("Run Analysis"):
 
 
               
-          
+              top_ears = profile_df.nlargest(3, "%Vol")
+    
+              x_hover = intraday["TimeIndex"].iloc[-1]  # Use last bar time for clean placement
+              
+              for _, row in top_ears.iterrows():
+                  ear_level = row["F% Level"]
+                  vol = row["%Vol"]
+                  time = row["Time"]
+              
+                  fig.add_trace(go.Scatter(
+                      x=[x_hover],
+                      y=[ear_level],
+                      mode="text",
+                      text=["🥁"],
+                      textposition="middle right",
+                      hovertemplate=f"🥁 Top %Vol<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
+                      showlegend=False
+                  ), row=1, col=1)
+              
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
