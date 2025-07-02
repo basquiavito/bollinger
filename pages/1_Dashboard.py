@@ -4964,36 +4964,37 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
                 ), row=1, col=1)
                 
-                           # 🦻🏼 Top 3 Ear Lines based on %Vol
-                top_ears = profile_df[profile_df["🦻🏼"] == "🦻🏼"].nlargest(3, "%Vol")
+                                           # 🦻🏼 Top 3 Ear Lines based on %Vol
+                                # 1) Filter Ear-marked rows
+                ear_rows = profile_df[profile_df["🦻🏼"] == "🦻🏼"].copy()
                 
-                for _, row in top_ears.iterrows():
-                    ear_level = row["F% Level"]
-                    vol = row["%Vol"]
-                    time = row["Time"]  # assuming it's already a string or formatted datetime
+                # 2) If you truly have more than one Ear, take the top 3 by %Vol
+                ear_rows = ear_rows.sort_values("%Vol", ascending=False).head(3)
                 
-                    # 1. Add the visual Ear line
+                for _, r in ear_rows.iterrows():
+                    ear_y   = r["F% Level"]
+                    ear_vol = r["%Vol"]
+                    ear_time = r["TimeIndex"] if "TimeIndex" in r else r["Time"]   # choose the field that matches your x-axis
+                
+                    # ----- visual line -----
                     fig.add_hline(
-                        y=ear_level,
+                        y=ear_y,
                         line=dict(color="darkgray", dash="dot", width=1.5),
                         row=1, col=1,
-                        showlegend=False,
                         annotation_text="🦻🏼",
-                        annotation_position="top left",
-                        annotation_font=dict(color="black")
+                        annotation_position="top left"
                     )
                 
-                    # 2. Add an invisible scatter point for hover info
+                    # ----- invisible marker only for hover -----
                     fig.add_trace(go.Scatter(
-                        x=[time],
-                        y=[ear_level],
+                        x=[ear_time],           # MUST be a datetime on the same x-axis
+                        y=[ear_y],
                         mode="markers",
-                        marker=dict(color="rgba(0,0,0,0)", size=10),  # invisible dot
-                        hovertemplate=f"🦻🏼 Ear Shift<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
-                        name="Ear Hover",
+                        marker=dict(size=12, color="rgba(0,0,0,0)"),  # invisible
+                        hovertemplate=f"🦻🏼 Ear<br>%Vol: {ear_vol:.2f}<br>{ear_time}<extra></extra>",
                         showlegend=False
                     ))
-                
+
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
