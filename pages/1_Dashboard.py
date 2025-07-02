@@ -4942,7 +4942,22 @@ if st.sidebar.button("Run Analysis"):
                         showlegend=False
                     ), row=1, col=1)
               
-                        
+                                        
+                top_price_levels = profile_df.nlargest(3, "Letter_Count")
+                
+                for _, row in top_price_levels.iterrows():
+                    fig.add_annotation(
+                        x=intraday["TimeIndex"].min(),  # far left
+                        y=row["F% Level"],
+                        text="💲",
+                        showarrow=False,
+                        font=dict(size=20),
+                        xanchor="right",
+                        yanchor="middle",
+                        hovertext=f"💲 Time-Zone<br>Letters: {row['Letter_Count']}<br>First Seen: {row['Time']}",
+                        hoverlabel=dict(bgcolor="white"),
+                        ax=0, ay=0
+                    )
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
