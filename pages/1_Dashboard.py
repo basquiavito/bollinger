@@ -4560,7 +4560,7 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_hline(y=va_min,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
                 fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
-Lower third (light red)
+
                 fig.add_shape(type="rect",
                     xref="x", yref="y",
                     x0=intraday.index.min(), x1=intraday.index.max(),
