@@ -3583,26 +3583,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                   
-                  def get_top3_ear_lines(profile_df):
-                      """
-                      Returns a list of dicts with the top 3 %Vol rows from profile_df.
-                      Each dict includes F% Level, %Vol, Time, and rank.
-                      """
-                      ear_specs = []
-                      ear_top3 = profile_df.nlargest(3, "%Vol")
-                  
-                      for rank, (_, row) in enumerate(ear_top3.iterrows(), start=1):
-                          ear_specs.append({
-                              "level": row["F% Level"],
-                              "vol": row["%Vol"],
-                              "time": row["Time"],
-                              "rank": rank
-                          })
-                  
-                      return ear_specs
-                  
-                                              
-                  ear_lines = get_top3_ear_lines(profile_df)
+ 
 
                   # Show DataFrame
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
@@ -4925,8 +4906,28 @@ if st.sidebar.button("Run Analysis"):
                             ),
                             showlegend=False
                         ))
+              
+                           # Step 1: Filter Ear-marked rows
+              ear_rows = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+              
+              # Step 2: Sort by %Vol descending and take top 3
+              top_ear_lines = ear_rows.sort_values(by="%Vol", ascending=False).head(3)
+              
+              # Step 3: Plot each of the top 3 Ear lines
+              for idx, row in top_ear_lines.iterrows():
+                  ear_level = row["F% Level"]
+                  ear_time = row["Time"]
+                  ear_vol = row["%Vol"]
+              
+                  fig.add_hline(
+                      y=ear_level,
+                      line=dict(color="darkgray", dash="dot", width=1.5),
+                      row=1, col=1,
+                      annotation_text=f"🦻🏼 Vol: {ear_vol} | {ear_time}",
+                      annotation_position="top left",
+                      annotation_font=dict(color="black")
+                  )
 
-             
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
  
                  
