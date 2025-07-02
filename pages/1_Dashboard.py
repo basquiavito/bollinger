@@ -4558,28 +4558,28 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=ib_upper_third, line=dict(color="gray", dash="dash", width=0.5), row=1, col=1)
                 
 
-                # fig.add_hline(y=va_min,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
-                # fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
-# Lower third (light red)
-                # fig.add_shape(type="rect",
-                #     xref="x", yref="y",
-                #     x0=intraday.index.min(), x1=intraday.index.max(),
-                #     y0=ib_low, y1=ib_middle_third,
-                #     fillcolor="rgba(255,0,0,0.05)", line_width=0, row=2, col=1)
+                fig.add_hline(y=va_min,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
+                fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
+Lower third (light red)
+                fig.add_shape(type="rect",
+                    xref="x", yref="y",
+                    x0=intraday.index.min(), x1=intraday.index.max(),
+                    y0=ib_low, y1=ib_middle_third,
+                    fillcolor="rgba(255,0,0,0.05)", line_width=0, row=2, col=1)
                 
-                # # Middle third (light yellow)
-                # fig.add_shape(type="rect",
-                #     xref="x", yref="y",
-                #     x0=intraday.index.min(), x1=intraday.index.max(),
-                #     y0=ib_middle_third, y1=ib_upper_third,
-                #     fillcolor="rgba(255,255,0,0.05)", line_width=0, row=2, col=1)
+                # Middle third (light yellow)
+                fig.add_shape(type="rect",
+                    xref="x", yref="y",
+                    x0=intraday.index.min(), x1=intraday.index.max(),
+                    y0=ib_middle_third, y1=ib_upper_third,
+                    fillcolor="rgba(255,255,0,0.05)", line_width=0, row=2, col=1)
                 
-                # # Upper third (light green)
-                # fig.add_shape(type="rect",
-                #     xref="x", yref="y",
-                #     x0=intraday.index.min(), x1=intraday.index.max(),
-                #     y0=ib_upper_third, y1=ib_high,
-                #     fillcolor="rgba(0,255,0,0.05)", line_width=0, row=2, col=1)
+                # Upper third (light green)
+                fig.add_shape(type="rect",
+                    xref="x", yref="y",
+                    x0=intraday.index.min(), x1=intraday.index.max(),
+                    y0=ib_upper_third, y1=ib_high,
+                    fillcolor="rgba(0,255,0,0.05)", line_width=0, row=2, col=1)
 
                                 
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
