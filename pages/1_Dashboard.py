@@ -4549,50 +4549,50 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
-                # # 🦻🏼 Add Ear line if it exists
-                # ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                # 🦻🏼 Add Ear line if it exists
+                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                 
-                # if not ear_row.empty:
-                #     ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
-                #     fig.add_hline(
-                #         y=ear_level,
-                #         line=dict(color="darkgray", dash="dot", width=1.5),
-                #         row=1, col=1,
-                #         showlegend=True,
-                #         annotation_text="🦻🏼 Ear Shift",
-                #         annotation_position="top left",
-                #         annotation_font=dict(color="black")
-                #     )
+                if not ear_row.empty:
+                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+                    fig.add_hline(
+                        y=ear_level,
+                        line=dict(color="darkgray", dash="dot", width=1.5),
+                        row=1, col=1,
+                        showlegend=True,
+                        annotation_text="🦻🏼 Ear Shift",
+                        annotation_position="top left",
+                        annotation_font=dict(color="black")
+                    )
 
                 
    
 
-                    # # Step 1: Get the F% Level marked with 🦻🏼
-                    # ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                    # Step 1: Get the F% Level marked with 🦻🏼
+                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                     
-                    # # if not ear_row.empty:
-                    # #     ear_level = ear_row["F% Level"].values[0]  # numeric
-                    # #     # Step 2: Find a matching row in intraday that hit that F% bin and came after the ear shift
-                    # #     # Convert F% bin to string to match 'F_Bin'
-                    # #     ear_bin_str = str(ear_level)
-                    # #     matching_rows = intraday[intraday["F_Bin"] == ear_bin_str]
+                    # if not ear_row.empty:
+                    #     ear_level = ear_row["F% Level"].values[0]  # numeric
+                    #     # Step 2: Find a matching row in intraday that hit that F% bin and came after the ear shift
+                    #     # Convert F% bin to string to match 'F_Bin'
+                    #     ear_bin_str = str(ear_level)
+                    #     matching_rows = intraday[intraday["F_Bin"] == ear_bin_str]
                     
-                    # #     if not matching_rows.empty:
-                    # #         # Use the last known time this level was touched
-                    # #         last_touch = matching_rows.iloc[-1]
-                    # #         fig.add_trace(go.Scatter(
-                    # #             x=[last_touch["TimeIndex"]],
-                    # #             y=[last_touch["F_numeric"] + 10],  # small vertical offset
-                    # #             mode="text",
-                    # #             text=["🦻🏼"],
-                    # #             showlegend=True,
-                    # #             textposition="bottom center",
-                    # #             textfont=dict(size=24),
-                    # #             name="Ear Shift",
-                    # #             hovertemplate="Time: %{x}<br>🦻🏼: %{y}<br>%{text}"
+                    #     if not matching_rows.empty:
+                    #         # Use the last known time this level was touched
+                    #         last_touch = matching_rows.iloc[-1]
+                    #         fig.add_trace(go.Scatter(
+                    #             x=[last_touch["TimeIndex"]],
+                    #             y=[last_touch["F_numeric"] + 10],  # small vertical offset
+                    #             mode="text",
+                    #             text=["🦻🏼"],
+                    #             showlegend=True,
+                    #             textposition="bottom center",
+                    #             textfont=dict(size=24),
+                    #             name="Ear Shift",
+                    #             hovertemplate="Time: %{x}<br>🦻🏼: %{y}<br>%{text}"
 
                              
-                    # #         ))
+                    #         ))
 
                 
                 # Step: Add 👃🏽 marker into intraday at the bar where breakout happened
@@ -4666,22 +4666,22 @@ if st.sidebar.button("Run Analysis"):
                     row=1, col=1
                 )
                 
-                # 2. Add an invisible scatter point at the same y to appear in legend and hover
-                # fig.add_trace(go.Scatter(
-                #     x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
-                #     y=[poc_f_level],
-                #     mode="markers+text",
-                #     marker=dict(size=0, color="#ff1493"),
-                #     text=["👃🏽 Nose (Most Price Acceptance)"],
-                #     textposition="top right",
-                #     name="👃🏽 Nose Line",
-                #     showlegend=True,
-                #     hovertemplate=(
-                #           "👃🏽 Nose Line<br>"
-                #           "F% Level: %{y}<br>"
-                #           f"Time: {nose_time}<extra></extra>"
-                #       )
-                # ), row=1, col=1)
+                2. Add an invisible scatter point at the same y to appear in legend and hover
+                fig.add_trace(go.Scatter(
+                    x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
+                    y=[poc_f_level],
+                    mode="markers+text",
+                    marker=dict(size=0, color="#ff1493"),
+                    text=["👃🏽 Nose (Most Price Acceptance)"],
+                    textposition="top right",
+                    name="👃🏽 Nose Line",
+                    showlegend=True,
+                    hovertemplate=(
+                          "👃🏽 Nose Line<br>"
+                          "F% Level: %{y}<br>"
+                          f"Time: {nose_time}<extra></extra>"
+                      )
+                ), row=1, col=1)
                 # for _, row in profile_df.iterrows():
                 #     if row["Tail"] == "🪶":
                 #           # Get actual TimeIndex from intraday at this F% Level
