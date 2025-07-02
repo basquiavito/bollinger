@@ -4078,11 +4078,11 @@ if st.sidebar.button("Run Analysis"):
                     
                     scatter_bishop_tight = go.Scatter(
                         x=intraday.loc[mask_bbw_tight, "Time"],
-                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 16,  # Adjusted Y offset
+                        y=intraday.loc[mask_bbw_tight, "F_numeric"] + 12,  # Adjusted Y offset
                         mode="text",
                         text=["🐝"] * mask_bbw_tight.sum(),  # ♗ as symbol
                         textposition="top center",
-                        textfont=dict(size=16, color="mediumvioletred"),  # 🎯 Pink / Purple shade
+                        textfont=dict(size=8, color="mediumvioletred"),  # 🎯 Pink / Purple shade
                         name="BBW Tight Bishop (♗🐝)",
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression ♗🐝<extra></extra>"
                     )
@@ -4099,11 +4099,11 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_bbw_alert = go.Scatter(
                         x=intraday.loc[mask_bbw_alert, "Time"],
-                        y=intraday.loc[mask_bbw_alert, "F_numeric"] - 20,  # Offset above F%
+                        y=intraday.loc[mask_bbw_alert, "F_numeric"] - 10,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
                         textposition="bottom center",
-                        textfont=dict(size=13),
+                        textfont=dict(size=8),
                         name="BBW Expansion Alert",
                         hovertemplate="Time: %{x}<br>BBW Ratio: %{customdata:.2f}<extra></extra>",
                         customdata=intraday.loc[mask_bbw_alert, "BBW_Ratio"]
@@ -4120,7 +4120,7 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_adx_alert = go.Scatter(
                         x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 15,  # Offset for visibility
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 10,  # Offset for visibility
                         mode="text",
                         text=intraday.loc[mask_adx_alert, "ADX_Alert"],
                         textposition="top center",
@@ -4139,11 +4139,11 @@ if st.sidebar.button("Run Analysis"):
 
                     scatter_std_alert = go.Scatter(
                         x=intraday.loc[mask_std_alert, "Time"],
-                        y=intraday.loc[mask_std_alert, "F_numeric"] - 34,  # Offset above F%
+                        y=intraday.loc[mask_std_alert, "F_numeric"] - 10,  # Offset above F%
                         mode="text",
                         text=intraday.loc[mask_std_alert, "STD_Alert"],
                         textposition="bottom center",
-                        textfont=dict(size=16),
+                        textfont=dict(size=8),
                         name="F% STD Expansion",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>STD Alert: %{text}<extra></extra>"
                     )
@@ -4155,12 +4155,12 @@ if st.sidebar.button("Run Analysis"):
 
                     atr_alert_scatter = go.Scatter(
                         x=intraday.loc[mask_atr_alert, "Time"],
-                        y=intraday.loc[mask_atr_alert, "F_numeric"]  - 7,  # place above F%
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  - 3,  # place above F%
                         mode="text",
                         textposition="bottom center",
 
                         text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
-                        textfont=dict(size=12),
+                        textfont=dict(size=8),
                         name="ATR Expansion",
                         hoverinfo="text",
                         hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
@@ -4882,11 +4882,11 @@ if st.sidebar.button("Run Analysis"):
                 high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
                 fig.add_trace(go.Scatter(
                     x=high_break_df["TimeIndex"],
-                    y=high_break_df["F_numeric"] + 50,
+                    y=high_break_df["F_numeric"] + 10,
                     mode="text",
                     text=high_break_df["IB_High_Break"],
-                    textposition="top right",
-                    textfont=dict(size=44),
+                    textposition="top left",
+                    textfont=dict(size=10),
                     name="Breakout Above IB 💸",
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>💸 IB High Breakout"
@@ -4896,11 +4896,11 @@ if st.sidebar.button("Run Analysis"):
                 low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
                 fig.add_trace(go.Scatter(
                     x=low_break_df["TimeIndex"],
-                    y=low_break_df["F_numeric"] - 50,
+                    y=low_break_df["F_numeric"] - 10,
                     mode="text",
                     text=low_break_df["IB_Low_Break"],
-                    textposition="bottom right",
-                    textfont=dict(size=44),
+                    textposition="bottom left",
+                    textfont=dict(size=10),
                     name="Breakdown Below IB 🧧",
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
