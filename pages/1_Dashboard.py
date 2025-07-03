@@ -3305,7 +3305,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = delayedVolumeCheck(intraday)
 
-                def delayedVolumeCheck(df):
+                def add_mike_kijun_bee_emoji(df):
                     """
                     Adds 🍯 emoji at the point Mike (F_numeric) crosses Kijun_F,
                     but only if a 🐝 (BBW tight) was seen within ±3 bars of the cross.
