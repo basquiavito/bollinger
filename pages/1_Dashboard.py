@@ -3045,73 +3045,73 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it
                 intraday = detect_fortress_bee_clusters(intraday)
                
-                def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
-                    """
-                    Enhanced Entry Alert System:
-                    - ✅: Structure + volume confirmation at entry bar.
-                    - ☑️: Structure confirmed, but volume came later.
-                    """
+                # def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
+                #     """
+                #     Enhanced Entry Alert System:
+                #     - ✅: Structure + volume confirmation at entry bar.
+                #     - ☑️: Structure confirmed, but volume came later.
+                #     """
                 
-                    # Initialize columns
-                    intraday["Entry_Alert_Long"] = False
-                    intraday["Entry_Alert_Short"] = False
-                    intraday["Entry_Emoji_Long"] = ""
-                    intraday["Entry_Emoji_Short"] = ""
+                #     # Initialize columns
+                #     intraday["Entry_Alert_Long"] = False
+                #     intraday["Entry_Alert_Short"] = False
+                #     intraday["Entry_Emoji_Long"] = ""
+                #     intraday["Entry_Emoji_Short"] = ""
                 
-                    pending_long = []   # store indices awaiting volume
-                    pending_short = []
+                #     pending_long = []   # store indices awaiting volume
+                #     pending_short = []
                 
-                    for i in range(1, len(intraday) - 1):
-                        prev_f = intraday.iloc[i-1]["F_numeric"]
-                        prev_k = intraday.iloc[i-1]["Kijun_F"]
-                        curr_f = intraday.iloc[i]["F_numeric"]
-                        curr_k = intraday.iloc[i]["Kijun_F"]
-                        next_f = intraday.iloc[i+1]["F_numeric"]
+                #     for i in range(1, len(intraday) - 1):
+                #         prev_f = intraday.iloc[i-1]["F_numeric"]
+                #         prev_k = intraday.iloc[i-1]["Kijun_F"]
+                #         curr_f = intraday.iloc[i]["F_numeric"]
+                #         curr_k = intraday.iloc[i]["Kijun_F"]
+                #         next_f = intraday.iloc[i+1]["F_numeric"]
                 
-                        # ➡️ LONG CROSS
-                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
-                            if next_f >= curr_f:
-                                # Check for recent RVOL
-                                start_idx = max(0, i - rvol_lookback + 1)
-                                rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-                                if (rvol_window > rvol_threshold).any():
-                                    intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
-                                    intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
-                                else:
-                                    pending_long.append(i)  # store for later ☑️ tagging
+                #         # ➡️ LONG CROSS
+                #         if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
+                #             if next_f >= curr_f:
+                #                 # Check for recent RVOL
+                #                 start_idx = max(0, i - rvol_lookback + 1)
+                #                 rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                #                 if (rvol_window > rvol_threshold).any():
+                #                     intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+                #                     intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
+                #                 else:
+                #                     pending_long.append(i)  # store for later ☑️ tagging
                 
-                        # ⬅️ SHORT CROSS
-                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
-                            if next_f <= curr_f:
-                                start_idx = max(0, i - rvol_lookback + 1)
-                                rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-                                if (rvol_window > rvol_threshold).any():
-                                    intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
-                                    intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
-                                else:
-                                    pending_short.append(i)
+                #         # ⬅️ SHORT CROSS
+                #         if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
+                #             if next_f <= curr_f:
+                #                 start_idx = max(0, i - rvol_lookback + 1)
+                #                 rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                #                 if (rvol_window > rvol_threshold).any():
+                #                     intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+                #                     intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
+                #                 else:
+                #                     pending_short.append(i)
                 
-                    # 🔁 Second pass: look for volume spikes to validate pending entries
-                    for i in range(len(intraday)):
-                        rvol = intraday.iloc[i]["RVOL_5"]
+                #     # 🔁 Second pass: look for volume spikes to validate pending entries
+                #     for i in range(len(intraday)):
+                #         rvol = intraday.iloc[i]["RVOL_5"]
                 
-                        if rvol > rvol_threshold:
-                            if pending_long:
-                                idx = pending_long.pop(0)
-                                intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
-                                intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
+                #         if rvol > rvol_threshold:
+                #             if pending_long:
+                #                 idx = pending_long.pop(0)
+                #                 intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
+                #                 intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
                 
-                            if pending_short:
-                                idx = pending_short.pop(0)
-                                intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
-                                intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
+                #             if pending_short:
+                #                 idx = pending_short.pop(0)
+                #                 intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
+                #                 intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
             
-                    return intraday
+                #     return intraday
 
 
-                intraday = entryAlert(intraday, threshold=0.1)
+                # intraday = entryAlert(intraday, threshold=0.1)
 
-
+     
 
                 #  def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
                 #     """
@@ -3234,7 +3234,61 @@ if st.sidebar.button("Run Analysis"):
                 # for line in log_with_returns:
                 #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
              
-  
+                 def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9, future_lookahead=5):
+                        """
+                        Enhanced Entry Alert System with Forward Volume Check:
+                        - ✅: Structure + volume confirmation at entry bar or past 9 bars
+                        - ☑️: Structure confirmed, and volume appeared in the next 5 bars
+                        """
+                        
+                        # Initialize columns
+                        intraday["Entry_Alert_Long"] = False
+                        intraday["Entry_Alert_Short"] = False
+                        intraday["Entry_Emoji_Long"] = ""
+                        intraday["Entry_Emoji_Short"] = ""
+                    
+                        for i in range(1, len(intraday) - 1):
+                            prev_f = intraday.iloc[i-1]["F_numeric"]
+                            prev_k = intraday.iloc[i-1]["Kijun_F"]
+                            curr_f = intraday.iloc[i]["F_numeric"]
+                            curr_k = intraday.iloc[i]["Kijun_F"]
+                            next_f = intraday.iloc[i+1]["F_numeric"]
+                    
+                            # ➡️ LONG CROSS
+                            if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
+                                if next_f >= curr_f:
+                                    # RVOL in past rvol_lookback window
+                                    start_idx = max(0, i - rvol_lookback + 1)
+                                    rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                                    if (rvol_window > rvol_threshold).any():
+                                        intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+                                        intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
+                                    else:
+                                        # Look ahead for volume confirmation
+                                        end_idx = min(i + future_lookahead + 1, len(intraday))
+                                        future_rvol = intraday.iloc[i+1:end_idx]["RVOL_5"]
+                                        if (future_rvol > rvol_threshold).any():
+                                            intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+                                            intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "☑️"
+                    
+                            # ⬅️ SHORT CROSS
+                            if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
+                                if next_f <= curr_f:
+                                    start_idx = max(0, i - rvol_lookback + 1)
+                                    rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                                    if (rvol_window > rvol_threshold).any():
+                                        intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+                                        intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
+                                    else:
+                                        end_idx = min(i + future_lookahead + 1, len(intraday))
+                                        future_rvol = intraday.iloc[i+1:end_idx]["RVOL_5"]
+                                        if (future_rvol > rvol_threshold).any():
+                                            intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+                                            intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "☑️"
+                    
+                        return intraday
+                intraday = entryAlert(intraday, threshold=0.1)
+
              
 
 
