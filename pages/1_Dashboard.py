@@ -3303,7 +3303,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     return intraday
 
-                intraday = add_mike_kijun_horse_emoji(intraday)
+                intraday = delayedVolumeCheck(intraday)
 
                 def delayedVolumeCheck(df):
                     """
