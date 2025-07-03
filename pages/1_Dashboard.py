@@ -3234,7 +3234,7 @@ if st.sidebar.button("Run Analysis"):
                 # for line in log_with_returns:
                 #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
              
-                 def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9, future_lookahead=5):
+                def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9, future_lookahead=5):
                         """
                         Enhanced Entry Alert System with Forward Volume Check:
                         - ✅: Structure + volume confirmation at entry bar or past 9 bars
