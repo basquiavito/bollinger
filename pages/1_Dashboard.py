@@ -3268,7 +3268,44 @@ if st.sidebar.button("Run Analysis"):
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_horse_emoji(intraday)
 
-                def add_mike_kijun_bee_emoji(df):
+                
+                def delayedVolumeCheck(intraday, threshold=10.0, rvol_threshold=1.2, lookahead=5):
+                    """
+                    Independent logic to find ☑️ entries:
+                    - Valid Kijun cross (long/short),
+                    - NO RVOL at cross,
+                    - But RVOL appears in next 5 bars.
+                    """
+                    intraday["Gray_Long"] = False
+                    intraday["Gray_Short"] = False
+                
+                    for i in range(1, len(intraday) - lookahead - 1):
+                        prev_f = intraday.iloc[i - 1]["F_numeric"]
+                        curr_f = intraday.iloc[i]["F_numeric"]
+                        next_f = intraday.iloc[i + 1]["F_numeric"]
+                        prev_k = intraday.iloc[i - 1]["Kijun_F"]
+                        curr_k = intraday.iloc[i]["Kijun_F"]
+                        rvol_now = intraday.iloc[i]["RVOL_5"]
+                
+                        # ⬆️ Long Cross (structure-only)
+                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold) and (next_f >= curr_f):
+                            if rvol_now <= rvol_threshold:
+                                future_rvol = intraday.iloc[i+1:i+1+lookahead]["RVOL_5"]
+                                if (future_rvol > rvol_threshold).any():
+                                    intraday.at[intraday.index[i], "Gray_Long"] = True
+                
+                        # ⬇️ Short Cross (structure-only)
+                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold) and (next_f <= curr_f):
+                            if rvol_now <= rvol_threshold:
+                                future_rvol = intraday.iloc[i+1:i+1+lookahead]["RVOL_5"]
+                                if (future_rvol > rvol_threshold).any():
+                                    intraday.at[intraday.index[i], "Gray_Short"] = True
+                
+                    return intraday
+
+                intraday = add_mike_kijun_horse_emoji(intraday)
+
+                def delayedVolumeCheck(df):
                     """
                     Adds 🍯 emoji at the point Mike (F_numeric) crosses Kijun_F,
                     but only if a 🐝 (BBW tight) was seen within ±3 bars of the cross.
@@ -4453,6 +4490,32 @@ if st.sidebar.button("Run Analysis"):
                     name="Long Entry (✅)"
                 )
                 fig.add_trace(long_entry_trace, row=1, col=1)
+
+                long_gray_trace = go.Scatter(
+                    x=intraday.loc[intraday["Gray_Long"], "Time"],
+                    y=intraday.loc[intraday["Gray_Long"], "F_numeric"] + 25,
+                    mode="text",
+                    text=[" ☑️"] * intraday["Gray_Long"].sum(),
+                    textposition="top right",
+                    textfont=dict(size=16, color="gray"),
+                    name="Long Entry (☑️)"
+                )
+                fig.add_trace(long_gray_trace, row=1, col=1)
+
+
+                short_gray_trace = go.Scatter(
+                    x=intraday.loc[intraday["Gray_Short"], "Time"],
+                    y=intraday.loc[intraday["Gray_Short"], "F_numeric"] - 25,
+                    mode="text",
+                    text=[" ☑️"] * intraday["Gray_Short"].sum(),
+                    textposition="bottom right",
+                    textfont=dict(size=16, color="gray"),
+                    name="Short Entry (☑️)"
+                )
+                fig.add_trace(short_gray_trace, row=1, col=1)
+
+
+
 
 
                 # 🔍 First Wake-Up Detection
