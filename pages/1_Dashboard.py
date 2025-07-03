@@ -5371,9 +5371,9 @@ if st.sidebar.button("Run Analysis"):
      #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
      #            )
 
-                # Add to the F% Plot
-                fig.add_trace(scatter_tk_sun, row=1, col=1)
-                fig.add_trace(scatter_tk_moon, row=1, col=1)
+                # # Add to the F% Plot
+                # fig.add_trace(scatter_tk_sun, row=1, col=1)
+                # fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
