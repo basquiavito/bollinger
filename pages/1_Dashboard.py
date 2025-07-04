@@ -256,14 +256,19 @@ if st.sidebar.button("Run Analysis"):
                     # Build 'Time' column for letter coding (e.g., 09:35 AM)
                     intraday_yesterday["Time"] = intraday_yesterday["Datetime"].dt.strftime("%I:%M %p")
                 
-                    # Choose price column for VA: F_numeric → Mike → fallback Close
-                    if "F_numeric" in intraday_yesterday.columns:
-                        mike_col_va = "F_numeric"
-                    elif "Mike" in intraday_yesterday.columns:
-                        mike_col_va = "Mike"
-                    else:
-                        mike_col_va = "Close"
-                
+                    # # Choose price column for VA: F_numeric → Mike → fallback Close
+                    # if "F_numeric" in intraday_yesterday.columns:
+                    #     mike_col_va = "F_numeric"
+                    # elif "Mike" in intraday_yesterday.columns:
+                    #     mike_col_va = "Mike"
+                    # else:
+                    #     mike_col_va = "Close"
+
+
+                                      # ✅ Add F_numeric based on yesterday's closing price
+                    if prev_close:
+                        intraday_yesterday["F_numeric"] = ((intraday_yesterday["Close"] - prev_close) / prev_close * 100).round(1)
+
                     try:
                         yva_min, yva_max, y_profile_df = compute_value_area(
                             intraday_yesterday,
