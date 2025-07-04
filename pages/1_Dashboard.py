@@ -3393,6 +3393,15 @@ if st.sidebar.button("Run Analysis"):
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
+                intraday["TimeIndex"] = pd.to_datetime(intraday["Time"], format="%I:%M %p", errors="coerce")
+                intraday = intraday[intraday["TimeIndex"].notna()]
+                intraday["Date"] = intraday["TimeIndex"].dt.date
+                
+
+
+
+
+
 
                 with st.expander("Market Profile (F% Letters View)", expanded=False):
     
