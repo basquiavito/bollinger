@@ -3854,21 +3854,39 @@ if st.sidebar.button("Run Analysis"):
                       #     .reset_index(drop=True)
                       # )
                   
-
-                
-
-                with ticker_tabs[0]:
-                    # -- Create Subplots: Row1=F%, Row2=Momentum
-                    fig = make_subplots(
-                        rows=3,
-                        cols=1,
-                        shared_xaxes=True,
-                        vertical_spacing=0.03,
-                        row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
-                        subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS")
-                       
-                         
-                    )
+             
+                    from datetime import timedelta
+                    
+                    daily_va = {}
+                    
+                    # Run profile logic for each day in your data
+                    for date, df_day in intraday.groupby("Date"):
+                        profile_df = build_market_profile(df_day)
+                        va_data = extract_value_area(profile_df)
+                        daily_va[date] = va_data
+                    
+                    # Get yesterday’s value area
+                    today = intraday["Date"].max()
+                    yesterday = today - timedelta(days=1)
+                    
+                    y_va = daily_va.get(yesterday, None)
+                    
+                    if y_va:
+                        st.markdown(f"**Yesterday's VAH:** {y_va['VAH']} — **VAL:** {y_va['VAL']} — **POC:** {y_va['POC']}")
+                    
+                    
+                                    with ticker_tabs[0]:
+                                        # -- Create Subplots: Row1=F%, Row2=Momentum
+                                        fig = make_subplots(
+                                            rows=3,
+                                            cols=1,
+                                            shared_xaxes=True,
+                                            vertical_spacing=0.03,
+                                            row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
+                                            subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS")
+                                       
+                                         
+                                    )
 
     
 #**************************************************************************************************************************************************************************
