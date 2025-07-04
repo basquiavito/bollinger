@@ -3446,6 +3446,18 @@ if st.sidebar.button("Run Analysis"):
                     
                     return profile_df
 
+                def extract_value_area(profile_df):
+                    profile_df = profile_df.copy()
+                    profile_df["F% Level"] = profile_df["F% Level"].astype(int)
+                    
+                    poc_row = profile_df.loc[profile_df["Letter_Count"].idxmax()]
+                    poc = poc_row["F% Level"]
+                    
+                    va_rows = profile_df[profile_df["✅ ValueArea"] == "✅"]
+                    vah = va_rows["F% Level"].max()
+                    val = va_rows["F% Level"].min()
+                    
+                    return {"VAH": vah, "VAL": val, "POC": poc}
 
 
 
