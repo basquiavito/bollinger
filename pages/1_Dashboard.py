@@ -286,9 +286,7 @@ if st.sidebar.button("Run Analysis"):
                 else:
                     st.warning(f"No intraday data for yesterday on {t}.")
 
-                st.markdown(f"### 🟡 Yesterday's Value Area for {t}")
-                st.markdown(f"• `VA Min`: **{yva_min}**")
-                st.markdown(f"• `VA Max`: **{yva_max}**")
+            
 
                 # ================
                 # 2) Fetch Intraday Data
