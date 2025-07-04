@@ -5662,38 +5662,29 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_trace(scatter_swimmer, row=1, col=1)
 
-                if yva_min is not None and yva_max is not None and prev_high is not None and prev_low is not None:
-        
-                    final_bar = intraday.iloc[-1]
-                    opening_price = intraday["Close"].iloc[0]
-                    opened_inside_yva = yva_min < opening_price < yva_max
-                
-                    first_6 = intraday.iloc[:6]
-                    broke_above_yva = first_6["Close"].max() > yva_max
-                    broke_below_yva = first_6["Close"].min() < yva_min
-                    broke_above_prev_high = first_6["Close"].max() > prev_high
-                    broke_below_prev_low = first_6["Close"].min() < prev_low
-                
-                    still_above_yva = final_bar["Close"] > yva_max
-                    still_below_yva = final_bar["Close"] < yva_min
-                
-                    # 🔍 Debug print to trace logic path
-                    st.write({
-                        "opened_inside_yva": opened_inside_yva,
-                        "broke_above_yva": broke_above_yva,
-                        "broke_below_yva": broke_below_yva,
-                        "broke_above_prev_high": broke_above_prev_high,
-                        "broke_below_prev_low": broke_below_prev_low,
-                        "still_above_yva": still_above_yva,
-                        "still_below_yva": still_below_yva,
-                    })
+                   if yva_min is not None and yva_max is not None and prev_high is not None and prev_low is not None:
             
-                if opened_inside_yva:
-                    if broke_above_yva and broke_above_prev_high and still_above_yva:
-                        st.markdown("🚀 **Initiative Breakout ↑: Opened in YVA → Broke YH → Sustained above**")
-                    elif broke_below_yva and broke_below_prev_low and still_below_yva:
-                        st.markdown("🚨 **Initiative Breakdown ↓: Opened in YVA → Broke YL → Sustained below**")
-  
+                        final_bar = intraday.iloc[-1]
+                        opening_price = intraday["Close"].iloc[0]
+                    
+                        opened_inside_yva = yva_min < opening_price < yva_max
+                    
+                        first_6 = intraday.iloc[:6]
+                        broke_above_yva = first_6["Close"].max() > yva_max
+                        broke_below_yva = first_6["Close"].min() < yva_min
+                        broke_above_prev_high = first_6["Close"].max() > prev_high
+                        broke_below_prev_low = first_6["Close"].min() < prev_low
+                    
+                        still_above_yva = final_bar["Close"] > yva_max
+                        still_below_yva = final_bar["Close"] < yva_min
+            
+                  if opened_inside_yva:
+                      if broke_above_yva and broke_above_prev_high and still_above_yva:
+                          st.markdown("🚀 **Initiative Breakout ↑: Opened in YVA → Broke YH → Sustained above**")
+                      elif broke_below_yva and broke_below_prev_low and still_below_yva:
+                          st.markdown("🚨 **Initiative Breakdown ↓: Opened in YVA → Broke YL → Sustained below**")
+        
+          
   
                                 
                   # if yva_min is not None and yva_max is not None:
