@@ -5624,6 +5624,37 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(down_high_trace, row=1, col=1)
 
                 fig.add_trace(scatter_swimmer, row=1, col=1)
+
+
+
+                if yva_min is not None and yva_max is not None:
+                    # Show in text
+                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
+                
+                    # Overlay dashed cyan lines on today’s plot
+                    fig.add_trace(
+                        go.Scatter(
+                            x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                            y=[yva_min, yva_min],
+                            mode="lines",
+                            name="YVA Min",
+                            line=dict(color="#0ff", dash="dot", width=0.6),
+                            hovertemplate="📘 YVA Min: %{y:.2f}<extra></extra>"
+                        ),
+                        row=1, col=1
+                    )
+                    fig.add_trace(
+                        go.Scatter(
+                            x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                            y=[yva_max, yva_max],
+                            mode="lines",
+                            name="YVA Max",
+                            line=dict(color="#0ff", dash="dot", width=0.6),
+                            hovertemplate="📘 YVA Max: %{y:.2f}<extra></extra>"
+                        ),
+                        row=1, col=1
+                    )
+
      # Mask for Tenkan-Kijun Crosses
                 # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
                 # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
