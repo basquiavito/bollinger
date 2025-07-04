@@ -3358,6 +3358,52 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+                
+                intraday["TimeIndex"] = pd.to_datetime(intraday["Time"], format="%I:%M %p", errors="coerce")
+                intraday = intraday[intraday["TimeIndex"].notna()]
+                intraday["Date"] = intraday["TimeIndex"].dt.date
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
                 with st.expander("Market Profile (F% Letters View)", expanded=False):
     
                   # Detect Mike column — fallback to F_numeric if 'Mike' isn't present
