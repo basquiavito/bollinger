@@ -274,13 +274,13 @@ if st.sidebar.button("Run Analysis"):
                         )
 
 
-                  # 🔁 Convert price VA into F%
-                    if prev_close:
-                        yva_min_f = round((yva_min - prev_close) / prev_close * 100, 1)
-                        yva_max_f = round((yva_max - prev_close) / prev_close * 100, 1)
-                    else:
-                        yva_min_f = yva_min
-                        yva_max_f = yva_max
+                      # 🔁 Convert price VA into F%
+                        if prev_close:
+                            yva_min_f = round((yva_min - prev_close) / prev_close * 100, 1)
+                            yva_max_f = round((yva_max - prev_close) / prev_close * 100, 1)
+                        else:
+                            yva_min_f = yva_min
+                            yva_max_f = yva_max
                     except Exception as e:
                         st.warning(f"Could not compute yesterday VA for {t}: {e}")
                 else:
