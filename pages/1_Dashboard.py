@@ -3824,7 +3824,6 @@ if st.sidebar.button("Run Analysis"):
                           return va_min, va_max, profile_df
 
                                # After downloading intraday_yesterday
-                yva_min, yva_max, y_profile_df = compute_value_area(intraday_yesterday)
            
  
                 # Display anchor info
