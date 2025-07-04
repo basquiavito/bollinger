@@ -5640,7 +5640,7 @@ if st.sidebar.button("Run Analysis"):
                             y=[yva_min, yva_min],
                             mode="lines",
                             name="YVA Min",
-                            line=dict(color="brown", dash="dot", width=0.6),
+                            line=dict(color="brown", dash="dot", width=3),
                             hovertemplate="📘 YVA Min: %{y:.2f}<extra></extra>"
                         ),
                         row=1, col=1
@@ -5651,7 +5651,7 @@ if st.sidebar.button("Run Analysis"):
                             y=[yva_max, yva_max],
                             mode="lines",
                             name="YVA Max",
-                            line=dict(color="brown", dash="dot", width=0.6),
+                            line=dict(color="brown", dash="dot", width=3),
                             hovertemplate="📘 YVA Max: %{y:.2f}<extra></extra>"
                         ),
                         row=1, col=1
