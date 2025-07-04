@@ -249,7 +249,9 @@ if st.sidebar.button("Run Analysis"):
                 else:
                     st.warning(f"No intraday data for yesterday on {t}.")
 
-          
+                st.markdown(f"### 🟡 Yesterday's Value Area for {t}")
+                st.markdown(f"• `VA Min`: **{yva_min}**")
+                st.markdown(f"• `VA Max`: **{yva_max}**")
 
                 # ================
                 # 2) Fetch Intraday Data
@@ -5638,7 +5640,7 @@ if st.sidebar.button("Run Analysis"):
                             y=[yva_min, yva_min],
                             mode="lines",
                             name="YVA Min",
-                            line=dict(color="#0ff", dash="dot", width=0.6),
+                            line=dict(color="brown", dash="dot", width=0.6),
                             hovertemplate="📘 YVA Min: %{y:.2f}<extra></extra>"
                         ),
                         row=1, col=1
@@ -5649,7 +5651,7 @@ if st.sidebar.button("Run Analysis"):
                             y=[yva_max, yva_max],
                             mode="lines",
                             name="YVA Max",
-                            line=dict(color="#0ff", dash="dot", width=0.6),
+                            line=dict(color="brown", dash="dot", width=0.6),
                             hovertemplate="📘 YVA Max: %{y:.2f}<extra></extra>"
                         ),
                         row=1, col=1
