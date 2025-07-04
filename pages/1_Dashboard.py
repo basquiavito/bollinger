@@ -5669,26 +5669,44 @@ if st.sidebar.button("Run Analysis"):
                     opened_inside_yva = True
                 else:
                     opened_inside_yva = False
+
+
                 
-                # Breakout check (within first 6 bars = ~30 min on 5m)
+                # Opening Price (Close of first bar today)
+                opening_price = intraday["Close"].iloc[0]
+                
+                # Did we open inside yesterday's value area (price-based)?
+                opened_inside_yva = False
+                if yva_min is not None and yva_max is not None:
+                    if yva_min < opening_price < yva_max:
+                        opened_inside_yva = True
+                
+                # Breakout check: first 30 minutes (6 bars on 5m)
                 first_6 = intraday.iloc[:6]
-                broke_above_yva = first_6["F_numeric"].max() > yva_max_f
-                broke_below_yva = first_6["F_numeric"].min() < yva_min_f
+                broke_above_yva = first_6["Close"].max() > yva_max
+                broke_below_yva = first_6["Close"].min() < yva_min
                 broke_above_prev_high = first_6["Close"].max() > prev_high
                 broke_below_prev_low = first_6["Close"].min() < prev_low
+                
+                # 💬 Display info
+                if yva_min is not None and yva_max is not None:
+                    st.markdown(f"📘 Yesterday’s Value Area: **{yva_min:.2f} → {yva_max:.2f}**")
+                if prev_close:
+                    range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+                    st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+                if opened_inside_yva and (broke_above_yva or broke_below_yva):
+                    st.markdown("🚀 **Initiative Drive Out of Value!**")
 
+
+
+              
                 if yva_min is not None and yva_max is not None:
                     # Show in text
                     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
                 if prev_close:
                     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
                     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
-                if opened_inside_yva and (broke_above_yva or broke_below_yva):
-                    st.markdown("🚀 **Initiative Drive Out of Value!**")
-                st.write("Opening F%:", opening_f)
-                st.write("YVA Min F%:", yva_min_f)
-                st.write("YVA Max F%:", yva_max_f)
-                st.write("Opened inside YVA?", opened_inside_yva)
+         
 
 
 
