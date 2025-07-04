@@ -197,32 +197,41 @@ if st.sidebar.button("Run Analysis"):
                     # ───────── 1.5) Yesterday's intraday for Value Area ─────────
                 
                     
-                    # Make sure start_date is a datetime.date object
-                    if isinstance(start_date, str):
-                        start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
-                    else:
-                        start_dt = start_date
-                    
-                    yesterday_date = start_dt - timedelta(days=1)
-                    
-                    intraday_yesterday = yf.download(
-                        t,
-                        start=yesterday_date.strftime("%Y-%m-%d"),
-                        end=start_dt.strftime("%Y-%m-%d"),     # end is the morning of start_date
-                        interval=timeframe,                    # same 5 m / 2 m / etc.
-                        progress=False
+                              # ───────── 1.5) Yesterday's intraday for Value Area ─────────
+                # Ensure start_date is a date object
+                if isinstance(start_date, str):
+                    start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
+                else:
+                    start_dt = start_date                       # e.g., 2025-05-01
+                
+                yesterday_date = start_dt - timedelta(days=1)
+                
+                intraday_yesterday = yf.download(
+                    t,
+                    start=yesterday_date.strftime("%Y-%m-%d"),
+                    end=start_dt.strftime("%Y-%m-%d"),          # up to but not including start_dt
+                    interval=timeframe,                         # same 2 m / 5 m / etc.
+                    progress=False
+                )
+                
+                # ── Flatten multi-index columns so 'Close' is a Series ──
+                if isinstance(intraday_yesterday.columns, pd.MultiIndex):
+                    intraday_yesterday.columns = intraday_yesterday.columns.map(
+                        lambda c: c[0] if isinstance(c, tuple) else c
                     )
-
-                yva_min = yva_max = None  # default
-          
+                
+                # Default values
+                yva_min = yva_max = None
+                
                 if not intraday_yesterday.empty:
-                    # bring Datetime out of the index
+                
+                    # Bring Datetime out of the index
                     intraday_yesterday = intraday_yesterday.reset_index()
                 
-                    # build a Time column for letter coding
+                    # Build 'Time' column for letter coding (e.g., 09:35 AM)
                     intraday_yesterday["Time"] = intraday_yesterday["Datetime"].dt.strftime("%I:%M %p")
                 
-                    # choose a price column for VA (use F_numeric if you’ve computed it, else Close)
+                    # Choose price column for VA: F_numeric → Mike → fallback Close
                     if "F_numeric" in intraday_yesterday.columns:
                         mike_col_va = "F_numeric"
                     elif "Mike" in intraday_yesterday.columns:
@@ -239,6 +248,7 @@ if st.sidebar.button("Run Analysis"):
                         st.warning(f"Could not compute yesterday VA for {t}: {e}")
                 else:
                     st.warning(f"No intraday data for yesterday on {t}.")
+
           
 
                 # ================
