@@ -4853,7 +4853,7 @@ if st.sidebar.button("Run Analysis"):
                 bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
                 fig.add_trace(go.Scatter(
                     x=bull_hand_rows["TimeIndex"],
-                    y=bull_hand_rows["MIDAS_Bear"] + 0.5,  # Adjust for spacing above line
+                    y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
                     mode="text",
                     text=["👋🏽"] * len(bull_hand_rows),
                     textposition="top right",
@@ -4870,7 +4870,7 @@ if st.sidebar.button("Run Analysis"):
                 bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
                 fig.add_trace(go.Scatter(
                     x=bear_glove_rows["TimeIndex"],
-                    y=bear_glove_rows["MIDAS_Bull"] - 0.5,  # Adjust for spacing below line
+                    y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
                     mode="text",
                     text=["🧤"] * len(bear_glove_rows),
                     textposition="bottom right",
