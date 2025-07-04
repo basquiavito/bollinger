@@ -168,12 +168,6 @@ if st.sidebar.button("Run Analysis"):
                 intraday["Date"] = intraday["Date"].dt.tz_localize(None)
 
 
-
-
-      
-
-              
-
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
                     Adjusts Y-axis positions dynamically to prevent symbol overlap.
@@ -3051,118 +3045,118 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it
                 intraday = detect_fortress_bee_clusters(intraday)
                
-                def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
-                    """
-                    Enhanced Entry Alert System:
-                    - ✅: Structure + volume confirmation at entry bar.
-                    - ☑️: Structure confirmed, but volume came later.
-                    """
-                
-                    # Initialize columns
-                    intraday["Entry_Alert_Long"] = False
-                    intraday["Entry_Alert_Short"] = False
-                    intraday["Entry_Emoji_Long"] = ""
-                    intraday["Entry_Emoji_Short"] = ""
-                
-                    pending_long = []   # store indices awaiting volume
-                    pending_short = []
-                
-                    for i in range(1, len(intraday) - 1):
-                        prev_f = intraday.iloc[i-1]["F_numeric"]
-                        prev_k = intraday.iloc[i-1]["Kijun_F"]
-                        curr_f = intraday.iloc[i]["F_numeric"]
-                        curr_k = intraday.iloc[i]["Kijun_F"]
-                        next_f = intraday.iloc[i+1]["F_numeric"]
-                
-                        # ➡️ LONG CROSS
-                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
-                            if next_f >= curr_f:
-                                # Check for recent RVOL
-                                start_idx = max(0, i - rvol_lookback + 1)
-                                rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-                                if (rvol_window > rvol_threshold).any():
-                                    intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
-                                    intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
-                                else:
-                                    pending_long.append(i)  # store for later ☑️ tagging
-                
-                        # ⬅️ SHORT CROSS
-                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
-                            if next_f <= curr_f:
-                                start_idx = max(0, i - rvol_lookback + 1)
-                                rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-                                if (rvol_window > rvol_threshold).any():
-                                    intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
-                                    intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
-                                else:
-                                    pending_short.append(i)
-                
-                    # 🔁 Second pass: look for volume spikes to validate pending entries
-                    for i in range(len(intraday)):
-                        rvol = intraday.iloc[i]["RVOL_5"]
-                
-                        if rvol > rvol_threshold:
-                            if pending_long:
-                                idx = pending_long.pop(0)
-                                intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
-                                intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
-                
-                            if pending_short:
-                                idx = pending_short.pop(0)
-                                intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
-                                intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
-            
-                    return intraday
-
-
-                intraday = entryAlert(intraday, threshold=0.1)
-
-
-
-                #  def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
+                # def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
                 #     """
-                #     Entry Alert System (Corrected):
-                #     - Step 1: Detect clean cross of F% through Kijun_F with buffer threshold.
-                #     - Step 2: Confirm with next bar continuation.
-                #     - Step 3: Require at least one RVOL_5 > threshold in the last rvol_lookback bars.
+                #     Enhanced Entry Alert System:
+                #     - ✅: Structure + volume confirmation at entry bar.
+                #     - ☑️: Structure confirmed, but volume came later.
                 #     """
-
+                
+                #     # Initialize columns
+                #     intraday["Entry_Alert_Long"] = False
                 #     intraday["Entry_Alert_Short"] = False
-                #     intraday["Entry_Alert_Long"]  = False
-
+                #     intraday["Entry_Emoji_Long"] = ""
+                #     intraday["Entry_Emoji_Short"] = ""
+                
+                #     pending_long = []   # store indices awaiting volume
+                #     pending_short = []
+                
                 #     for i in range(1, len(intraday) - 1):
                 #         prev_f = intraday.iloc[i-1]["F_numeric"]
                 #         prev_k = intraday.iloc[i-1]["Kijun_F"]
                 #         curr_f = intraday.iloc[i]["F_numeric"]
                 #         curr_k = intraday.iloc[i]["Kijun_F"]
                 #         next_f = intraday.iloc[i+1]["F_numeric"]
-
+                
                 #         # ➡️ LONG CROSS
                 #         if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
                 #             if next_f >= curr_f:
-                #                 intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
-
+                #                 # Check for recent RVOL
+                #                 start_idx = max(0, i - rvol_lookback + 1)
+                #                 rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                #                 if (rvol_window > rvol_threshold).any():
+                #                     intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+                #                     intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
+                #                 else:
+                #                     pending_long.append(i)  # store for later ☑️ tagging
+                
                 #         # ⬅️ SHORT CROSS
                 #         if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
                 #             if next_f <= curr_f:
-                #                 intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
-
-                #     # 🔍 Second pass: check if at least one high RVOL_5
-                #     for i in range(1, len(intraday) - 1):
-                #         if intraday.iloc[i]["Entry_Alert_Long"] or intraday.iloc[i]["Entry_Alert_Short"]:
-                #             start_idx = max(0, i - rvol_lookback + 1)
-                #             rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-
-                #             if (rvol_window > rvol_threshold).sum() == 0:
-                #                 # 🛑 No bars with RVOL > threshold → kill alert
-                #                 intraday.at[intraday.index[i], "Entry_Alert_Long"] = False
-                #                 intraday.at[intraday.index[i], "Entry_Alert_Short"] = False
-
+                #                 start_idx = max(0, i - rvol_lookback + 1)
+                #                 rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                #                 if (rvol_window > rvol_threshold).any():
+                #                     intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+                #                     intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
+                #                 else:
+                #                     pending_short.append(i)
+                
+                #     # 🔁 Second pass: look for volume spikes to validate pending entries
+                #     for i in range(len(intraday)):
+                #         rvol = intraday.iloc[i]["RVOL_5"]
+                
+                #         if rvol > rvol_threshold:
+                #             if pending_long:
+                #                 idx = pending_long.pop(0)
+                #                 intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
+                #                 intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
+                
+                #             if pending_short:
+                #                 idx = pending_short.pop(0)
+                #                 intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
+                #                 intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
+            
                 #     return intraday
 
 
-
                 # intraday = entryAlert(intraday, threshold=0.1)
+
+     
+
+                def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
+                    """
+                    Entry Alert System (Corrected):
+                    - Step 1: Detect clean cross of F% through Kijun_F with buffer threshold.
+                    - Step 2: Confirm with next bar continuation.
+                    - Step 3: Require at least one RVOL_5 > threshold in the last rvol_lookback bars.
+                    """
+
+                    intraday["Entry_Alert_Short"] = False
+                    intraday["Entry_Alert_Long"]  = False
+
+                    for i in range(1, len(intraday) - 1):
+                        prev_f = intraday.iloc[i-1]["F_numeric"]
+                        prev_k = intraday.iloc[i-1]["Kijun_F"]
+                        curr_f = intraday.iloc[i]["F_numeric"]
+                        curr_k = intraday.iloc[i]["Kijun_F"]
+                        next_f = intraday.iloc[i+1]["F_numeric"]
+
+                        # ➡️ LONG CROSS
+                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
+                            if next_f >= curr_f:
+                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+
+                        # ⬅️ SHORT CROSS
+                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
+                            if next_f <= curr_f:
+                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+
+                    # 🔍 Second pass: check if at least one high RVOL_5
+                    for i in range(1, len(intraday) - 1):
+                        if intraday.iloc[i]["Entry_Alert_Long"] or intraday.iloc[i]["Entry_Alert_Short"]:
+                            start_idx = max(0, i - rvol_lookback + 1)
+                            rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+
+                            if (rvol_window > rvol_threshold).sum() == 0:
+                                # 🛑 No bars with RVOL > threshold → kill alert
+                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = False
+                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = False
+
+                    return intraday
+
+
+
+                intraday = entryAlert(intraday, threshold=0.1)
                 
 
                 
@@ -3240,8 +3234,7 @@ if st.sidebar.button("Run Analysis"):
                 # for line in log_with_returns:
                 #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
              
-  
-             
+           
 
 
 
@@ -3275,7 +3268,44 @@ if st.sidebar.button("Run Analysis"):
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_horse_emoji(intraday)
 
-                def add_mike_kijun_bee_emoji(df):
+                
+                def delayedVolumeCheck(intraday, threshold=10.0, rvol_threshold=1.2, lookahead=5):
+                    """
+                    Independent logic to find ☑️ entries:
+                    - Valid Kijun cross (long/short),
+                    - NO RVOL at cross,
+                    - But RVOL appears in next 5 bars.
+                    """
+                    intraday["Gray_Long"] = False
+                    intraday["Gray_Short"] = False
+                
+                    for i in range(1, len(intraday) - lookahead - 1):
+                        prev_f = intraday.iloc[i - 1]["F_numeric"]
+                        curr_f = intraday.iloc[i]["F_numeric"]
+                        next_f = intraday.iloc[i + 1]["F_numeric"]
+                        prev_k = intraday.iloc[i - 1]["Kijun_F"]
+                        curr_k = intraday.iloc[i]["Kijun_F"]
+                        rvol_now = intraday.iloc[i]["RVOL_5"]
+                
+                        # ⬆️ Long Cross (structure-only)
+                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold) and (next_f >= curr_f):
+                            if rvol_now <= rvol_threshold:
+                                future_rvol = intraday.iloc[i+1:i+1+lookahead]["RVOL_5"]
+                                if (future_rvol > rvol_threshold).any():
+                                    intraday.at[intraday.index[i], "Gray_Long"] = True
+                
+                        # ⬇️ Short Cross (structure-only)
+                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold) and (next_f <= curr_f):
+                            if rvol_now <= rvol_threshold:
+                                future_rvol = intraday.iloc[i+1:i+1+lookahead]["RVOL_5"]
+                                if (future_rvol > rvol_threshold).any():
+                                    intraday.at[intraday.index[i], "Gray_Short"] = True
+                
+                    return intraday
+
+                intraday = delayedVolumeCheck(intraday)
+
+                def delayedVolumeCheck(df):
                     """
                     Adds 🍯 emoji at the point Mike (F_numeric) crosses Kijun_F,
                     but only if a 🐝 (BBW tight) was seen within ±3 bars of the cross.
@@ -3362,70 +3392,6 @@ if st.sidebar.button("Run Analysis"):
 
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
-                intraday["TimeIndex"] = pd.to_datetime(intraday["Time"], format="%I:%M %p", errors="coerce")
-                intraday = intraday[intraday["TimeIndex"].notna()]
-                intraday["Date"] = intraday["TimeIndex"].dt.date
-
-                def build_market_profile(df, f_col="F_numeric"):
-                    # Bin F%
-                    f_bins = np.arange(-400, 401, 20)
-                    df = df.copy()
-                    df['F_Bin'] = pd.cut(df[f_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
-                    
-                    # Letter assignment
-                    df['LetterIndex'] = ((df['TimeIndex'].dt.hour * 60 + df['TimeIndex'].dt.minute) // 15).astype(int)
-                    df['LetterIndex'] -= df['LetterIndex'].min()
-                    
-                    def letter_code(n):
-                        import string
-                        letters = string.ascii_uppercase
-                        if n < 26:
-                            return letters[n]
-                        else:
-                            return letters[(n // 26) - 1] + letters[n % 26]
-                    
-                    df['Letter'] = df['LetterIndex'].apply(letter_code)
-                
-                    # Build profile
-                    profile = {}
-                    for f_bin in f_bins[:-1]:
-                        f_bin_str = str(f_bin)
-                        letters = df.loc[df['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
-                        if len(letters) > 0:
-                            profile[f_bin_str] = ''.join(sorted(letters))
-                    
-                    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-                    profile_df['F% Level'] = profile_df['F% Level'].astype(int)
-                    profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
-                    
-                    # Value area (70%)
-                    total_letters = profile_df["Letter_Count"].sum()
-                    target_count = total_letters * 0.7
-                    profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
-                    
-                    cumulative = 0
-                    value_area_levels = []
-                    for i, row in profile_sorted.iterrows():
-                        cumulative += row["Letter_Count"]
-                        value_area_levels.append(row["F% Level"])
-                        if cumulative >= target_count:
-                            break
-                    profile_df["✅ ValueArea"] = profile_df["F% Level"].apply(lambda x: "✅" if x in value_area_levels else "")
-                    
-                    return profile_df
-
-                    def extract_value_area(profile_df):
-                        profile_df = profile_df.copy()
-                        profile_df["F% Level"] = profile_df["F% Level"].astype(int)
-                        
-                        poc_row = profile_df.loc[profile_df["Letter_Count"].idxmax()]
-                        poc = poc_row["F% Level"]
-                        
-                        va_rows = profile_df[profile_df["✅ ValueArea"] == "✅"]
-                        vah = va_rows["F% Level"].max()
-                        val = va_rows["F% Level"].min()
-                        
-                        return {"VAH": vah, "VAL": val, "POC": poc}
 
 
                 with st.expander("Market Profile (F% Letters View)", expanded=False):
@@ -3660,236 +3626,152 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                  with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
-                  # ---- STEP: EXTRACT YESTERDAY VALUE AREA AND SAVE ----
+                      # Detect price column
+                      if "Mike" in intraday.columns:
+                          price_col = "Mike"
+                      elif "F_numeric" in intraday.columns:
+                          price_col = "F_numeric"
+                      else:
+                          st.warning("Mike or F_numeric column not found.")
+                          st.stop()
                   
- 
+                      if "Volume" not in intraday.columns:
+                          st.warning("Volume column not found.")
+                          st.stop()
                   
-
-
-
-
- 
+                      # Defensive check for valid prices
+                      if intraday[price_col].dropna().empty:
+                          st.warning(f"No valid values in '{price_col}' for MIDAS anchor calculation.")
+                          st.stop()
                   
-                  def get_yesterday_value_area(df, f_col="F_numeric", bin_width=20):
-                      """
-                      Given an intraday DataFrame with a 'Date' column (YYYY-MM-DD strings) 
-                      and your F% column, returns (VAH, VAL, POC) for the previous trading day.
-                      
-                      - Groups F% into bins of size `bin_width`
-                      - Counts one TPO per bar (row) in each bin
-                      - Finds the bin with max TPO = POC
-                      - Accumulates highest-count bins until 70% of all TPOs covered = Value Area
-                      """
-                      # 1) Figure out yesterday’s date
-                      dates = sorted(df["Date"].unique())
-                      if len(dates) < 2:
-                          return None, None, None
-                      yesterday = dates[-2]
-                      
-                      # 2) Slice to just yesterday’s bars
-                      dy = df[df["Date"] == yesterday]
-                      if dy.empty:
-                          return None, None, None
-                      
-                      # 3) Bin your F% data
-                      lo, hi = dy[f_col].min(), dy[f_col].max()
-                      bins = np.arange(
-                          np.floor(lo/bin_width)*bin_width,
-                          np.ceil(hi/bin_width)*bin_width + bin_width,
-                          bin_width
-                      )
-                      dy["Bin"] = pd.cut(dy[f_col], bins=bins, labels=bins[:-1])
-                      
-                      # 4) Count TPOs per bin
-                      tpo = dy.groupby("Bin").size().reset_index(name="Count")
-                      tpo["Bin"] = tpo["Bin"].astype(float)
-                      
-                      # 5) Point of Control = highest-count bin
-                      poc = float(tpo.loc[tpo["Count"].idxmax(), "Bin"])
-                      
-                      # 6) Value Area = smallest range of bins covering 70% of TPOs
-                      total = tpo["Count"].sum()
-                      target = total * 0.7
-                      tpo_sorted = tpo.sort_values("Count", ascending=False)
-                      cum = 0
-                      va_bins = []
-                      for _, row in tpo_sorted.iterrows():
-                          cum += row["Count"]
-                          va_bins.append(row["Bin"])
-                          if cum >= target:
-                              break
-                      
-                      vah = max(va_bins)
-                      val = min(va_bins)
-                      return vah, val, poc
+                      # Convert time
+                      intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
                   
-                
-                y_VAH, y_VAL, y_POC = get_yesterday_value_area(intraday)
-  
-
-
-
-
-                
-
-            with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
-            
-                # Detect price column
-                if "Mike" in intraday.columns:
-                    price_col = "Mike"
-                elif "F_numeric" in intraday.columns:
-                    price_col = "F_numeric"
-                else:
-                    st.warning("Mike or F_numeric column not found.")
-                    st.stop()
-            
-                if "Volume" not in intraday.columns:
-                    st.warning("Volume column not found.")
-                    st.stop()
-            
-                # Defensive check for valid prices
-                if intraday[price_col].dropna().empty:
-                    st.warning(f"No valid values in '{price_col}' for MIDAS anchor calculation.")
-                    st.stop()
-            
-                # Convert time
-                intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-            
-                ### 🐻 BEARISH MIDAS (anchor at max)
-                anchor_idx_bear = intraday[price_col].idxmax()
-                anchor_time_bear = intraday.loc[anchor_idx_bear, 'TimeIndex']
-                anchor_price_bear = intraday.loc[anchor_idx_bear, price_col]
-            
-                midas_curve_bear = []
-                for i in range(anchor_idx_bear, len(intraday)):
-                    vol_window = intraday.loc[anchor_idx_bear:i, 'Volume']
-                    price_window = intraday.loc[anchor_idx_bear:i, price_col]
-                    weights = vol_window / vol_window.sum()
-                    midas_price = (price_window * weights).sum()
-                    midas_curve_bear.append(midas_price)
-            
-                intraday["MIDAS_Bear"] = [np.nan] * anchor_idx_bear + midas_curve_bear
-            
-                ### 🐂 BULLISH MIDAS (anchor at min)
-                anchor_idx_bull = intraday[price_col].idxmin()
-                anchor_time_bull = intraday.loc[anchor_idx_bull, 'TimeIndex']
-                anchor_price_bull = intraday.loc[anchor_idx_bull, price_col]
-            
-                midas_curve_bull = []
-                for i in range(anchor_idx_bull, len(intraday)):
-                    vol_window = intraday.loc[anchor_idx_bull:i, 'Volume']
-                    price_window = intraday.loc[anchor_idx_bull:i, price_col]
-                    weights = vol_window / vol_window.sum()
-                    midas_price = (price_window * weights).sum()
-                    midas_curve_bull.append(midas_price)
-            
-                intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
-
-
-
-
-                    
-                    
-
-
-
-
-                    
+                      ### 🐻 BEARISH MIDAS (anchor at max)
+                      anchor_idx_bear = intraday[price_col].idxmax()
+                      anchor_time_bear = intraday.loc[anchor_idx_bear, 'TimeIndex']
+                      anchor_price_bear = intraday.loc[anchor_idx_bear, price_col]
                   
-            # Add emojis
-            def add_mike_midas_cross_emojis(df, price_col):
-                if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
-                    return df, None, None
-        
-                price = df[price_col]
-                bull = df["MIDAS_Bull"]
-                bear = df["MIDAS_Bear"]
-                close_next = price.shift(-1)
-        
-                # 👋🏽 Bull breakout = price crosses above MIDAS_Bear from below
-                bull_cross = (price.shift(1) < bear.shift(1)) & (price >= bear)
-                # 🧤 Bear breakdown = price crosses below MIDAS_Bull from above
-                bear_cross = (price.shift(1) > bull.shift(1)) & (price <= bull)
-        
-                df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
-                df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
-  
-  
-        # Compute option premium displacement from MIDAS anchors
-                intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
-                intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
-  
-                                                # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
-              
-                           # Option displacement
-                if "Call_Option_Smooth" in df.columns:
-                    df["Call_vs_Bull"] = df["Call_Option_Smooth"] - df["MIDAS_Bull"]
-            
-                    # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
-                    anchor_idx = df[price_col].idxmin()
-                    post_anchor = df.loc[anchor_idx:].copy()
-            
-                    if not post_anchor["Call_vs_Bull"].dropna().empty:
-                        low_idx = post_anchor["Call_vs_Bull"].idxmin()
-                        low_val = df.loc[low_idx, "Call_vs_Bull"]
-            
-                        df["Bull_Midas_Wake"] = ""
-                        for i in range(low_idx + 1, len(df)):
-                            if df.loc[i, "Call_vs_Bull"] >= low_val + 12:
-                                df.loc[i, "Bull_Midas_Wake"] = "🦵🏼"
-                                break  # Only mark the first wake
-                    else:
-                        df["Bull_Midas_Wake"] = ""
-                else:
-                    df["Call_vs_Bull"] = np.nan
-                    df["Bull_Midas_Wake"] = ""
-            
-                                          
-                      # 💥 Bear MIDAS Wake-Up Detection (Put vs MIDAS Bear)
-  
-                # Step 1: Find the first index with a valid Put_vs_Bear after anchor
-                put_series = intraday["Put_vs_Bear"].copy()
-                start_idx = anchor_idx_bear  # From the Bear MIDAS anchor point
-                
-                min_val = float('inf')
-                wake_flags = []
-                wake_triggered = False
-                first_bear_midas_idx = None
-                
-                for i in range(start_idx, len(put_series)):
-                    current = put_series.iloc[i]
-                    
-                    if pd.isna(current):
-                        wake_flags.append("")
-                        continue
-                    
-                    min_val = min(min_val, current)
-                    
-                    if not wake_triggered and current - min_val >= 12:
-                        wake_triggered = True
-                        first_bear_midas_idx = put_series.index[i]
-                        wake_flags.append("💥")
-                    elif wake_triggered and current - min_val >= 12:
-                        wake_flags.append("💥")
-                    else:
-                        wake_flags.append("")
-                
-                # Fill the column in the dataframe
-                intraday["Bear_Midas_Wake"] = [""] * start_idx + wake_flags
-                       # Detect first Bull MIDAS Wake-Up (🦵🏼)
-         
-  
-                return df, bull_cross, bear_cross
-        
-            intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
-            bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
-            first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
-            
-            # Detect first Bear MIDAS Wake-Up (💥)
-            bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "💥"]
-            first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
-  
+                      midas_curve_bear = []
+                      for i in range(anchor_idx_bear, len(intraday)):
+                          vol_window = intraday.loc[anchor_idx_bear:i, 'Volume']
+                          price_window = intraday.loc[anchor_idx_bear:i, price_col]
+                          weights = vol_window / vol_window.sum()
+                          midas_price = (price_window * weights).sum()
+                          midas_curve_bear.append(midas_price)
+                  
+                      intraday["MIDAS_Bear"] = [np.nan] * anchor_idx_bear + midas_curve_bear
+                  
+                      ### 🐂 BULLISH MIDAS (anchor at min)
+                      anchor_idx_bull = intraday[price_col].idxmin()
+                      anchor_time_bull = intraday.loc[anchor_idx_bull, 'TimeIndex']
+                      anchor_price_bull = intraday.loc[anchor_idx_bull, price_col]
+                  
+                      midas_curve_bull = []
+                      for i in range(anchor_idx_bull, len(intraday)):
+                          vol_window = intraday.loc[anchor_idx_bull:i, 'Volume']
+                          price_window = intraday.loc[anchor_idx_bull:i, price_col]
+                          weights = vol_window / vol_window.sum()
+                          midas_price = (price_window * weights).sum()
+                          midas_curve_bull.append(midas_price)
+                  
+                      intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
+                  
+                      # Add emojis
+                      def add_mike_midas_cross_emojis(df, price_col):
+                          if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
+                              return df, None, None
+                  
+                          price = df[price_col]
+                          bull = df["MIDAS_Bull"]
+                          bear = df["MIDAS_Bear"]
+                          close_next = price.shift(-1)
+                  
+                          # 👋🏽 Bull breakout = price crosses above MIDAS_Bear from below
+                          bull_cross = (price.shift(1) < bear.shift(1)) & (price >= bear)
+                          # 🧤 Bear breakdown = price crosses below MIDAS_Bull from above
+                          bear_cross = (price.shift(1) > bull.shift(1)) & (price <= bull)
+                  
+                          df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
+                          df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
+
+
+                  # Compute option premium displacement from MIDAS anchors
+                          intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                          intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+
+                                                          # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
+                        
+                                     # Option displacement
+                          if "Call_Option_Smooth" in df.columns:
+                              df["Call_vs_Bull"] = df["Call_Option_Smooth"] - df["MIDAS_Bull"]
+                      
+                              # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
+                              anchor_idx = df[price_col].idxmin()
+                              post_anchor = df.loc[anchor_idx:].copy()
+                      
+                              if not post_anchor["Call_vs_Bull"].dropna().empty:
+                                  low_idx = post_anchor["Call_vs_Bull"].idxmin()
+                                  low_val = df.loc[low_idx, "Call_vs_Bull"]
+                      
+                                  df["Bull_Midas_Wake"] = ""
+                                  for i in range(low_idx + 1, len(df)):
+                                      if df.loc[i, "Call_vs_Bull"] >= low_val + 12:
+                                          df.loc[i, "Bull_Midas_Wake"] = "🦵🏼"
+                                          break  # Only mark the first wake
+                              else:
+                                  df["Bull_Midas_Wake"] = ""
+                          else:
+                              df["Call_vs_Bull"] = np.nan
+                              df["Bull_Midas_Wake"] = ""
+                      
+                                                    
+                                # 💥 Bear MIDAS Wake-Up Detection (Put vs MIDAS Bear)
+
+                          # Step 1: Find the first index with a valid Put_vs_Bear after anchor
+                          put_series = intraday["Put_vs_Bear"].copy()
+                          start_idx = anchor_idx_bear  # From the Bear MIDAS anchor point
+                          
+                          min_val = float('inf')
+                          wake_flags = []
+                          wake_triggered = False
+                          first_bear_midas_idx = None
+                          
+                          for i in range(start_idx, len(put_series)):
+                              current = put_series.iloc[i]
+                              
+                              if pd.isna(current):
+                                  wake_flags.append("")
+                                  continue
+                              
+                              min_val = min(min_val, current)
+                              
+                              if not wake_triggered and current - min_val >= 12:
+                                  wake_triggered = True
+                                  first_bear_midas_idx = put_series.index[i]
+                                  wake_flags.append("💥")
+                              elif wake_triggered and current - min_val >= 12:
+                                  wake_flags.append("💥")
+                              else:
+                                  wake_flags.append("")
+                          
+                          # Fill the column in the dataframe
+                          intraday["Bear_Midas_Wake"] = [""] * start_idx + wake_flags
+                                 # Detect first Bull MIDAS Wake-Up (🦵🏼)
+                   
+
+                          return df, bull_cross, bear_cross
+                  
+                      intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
+                      bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
+                      first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
+                      
+                      # Detect first Bear MIDAS Wake-Up (💥)
+                      bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "💥"]
+                      first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
+
 
                   # Call function and unpack
  
@@ -3905,9 +3787,7 @@ if st.sidebar.button("Run Analysis"):
                       # )
                   
 
- 
-             
-
+                
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
@@ -4610,6 +4490,32 @@ if st.sidebar.button("Run Analysis"):
                     name="Long Entry (✅)"
                 )
                 fig.add_trace(long_entry_trace, row=1, col=1)
+
+                long_gray_trace = go.Scatter(
+                    x=intraday.loc[intraday["Gray_Long"], "Time"],
+                    y=intraday.loc[intraday["Gray_Long"], "F_numeric"] + 25,
+                    mode="text",
+                    text=[" ☑️"] * intraday["Gray_Long"].sum(),
+                    textposition="top right",
+                    textfont=dict(size=16, color="gray"),
+                    name="Long Entry (☑️)"
+                )
+                fig.add_trace(long_gray_trace, row=1, col=1)
+
+
+                short_gray_trace = go.Scatter(
+                    x=intraday.loc[intraday["Gray_Short"], "Time"],
+                    y=intraday.loc[intraday["Gray_Short"], "F_numeric"] - 25,
+                    mode="text",
+                    text=[" ☑️"] * intraday["Gray_Short"].sum(),
+                    textposition="bottom right",
+                    textfont=dict(size=16, color="gray"),
+                    name="Short Entry (☑️)"
+                )
+                fig.add_trace(short_gray_trace, row=1, col=1)
+
+
+
 
 
                 # 🔍 First Wake-Up Detection
@@ -5435,12 +5341,39 @@ if st.sidebar.button("Run Analysis"):
                     name="Price Dropped Below Demand 🌧️",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
-           
-             
+  
 
+     # Mask for Tenkan-Kijun Crosses
+                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-     
+                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                scatter_tk_sun = go.Scatter(
+                    x=intraday.loc[mask_tk_sun, "Time"],
+                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 26,  # Offset for visibility
+                    mode="text",
+                    text="🌞",
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Tenkan-Kijun Bullish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                )
 
+                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                scatter_tk_moon = go.Scatter(
+                    x=intraday.loc[mask_tk_moon, "Time"],
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 26,  # Offset for visibility
+                    mode="text",
+                    text="🌙",
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="Tenkan-Kijun Bearish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                )
+
+                # Add to the F% Plot
+                fig.add_trace(scatter_tk_sun, row=1, col=1)
+                fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
