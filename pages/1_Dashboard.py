@@ -174,32 +174,32 @@ if st.sidebar.button("Run Analysis"):
                            # ================
                 # 1.5) Fetch Yesterday's Intraday Data for Value Area
                 # ================
-                from datetime import datetime, timedelta
+                # from datetime import datetime, timedelta
                 
-                # Convert start_date if needed
-                if isinstance(start_date, str):
-                    start_dt = datetime.strptime(start_date, "%Y-%m-%d")
-                else:
-                    start_dt = start_date
+                # # Convert start_date if needed
+                # if isinstance(start_date, str):
+                #     start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+                # else:
+                #     start_dt = start_date
                 
-                yesterday_date = start_dt - timedelta(days=1)
-                day_after_yesterday = start_dt  # same as start_date
+                # yesterday_date = start_dt - timedelta(days=1)
+                # day_after_yesterday = start_dt  # same as start_date
                 
-                intraday_yesterday = yf.download(
-                    t,
-                    start=yesterday_date.strftime("%Y-%m-%d"),
-                    end=day_after_yesterday.strftime("%Y-%m-%d"),
-                    interval=timeframe,  # match today’s interval (5m or 1m)
-                    progress=False
-                )
+                # intraday_yesterday = yf.download(
+                #     t,
+                #     start=yesterday_date.strftime("%Y-%m-%d"),
+                #     end=day_after_yesterday.strftime("%Y-%m-%d"),
+                #     interval=timeframe,  # match today’s interval (5m or 1m)
+                #     progress=False
+                # )
                 
-                # Run the value area engine
-                yva_min, yva_max = None, None
-                if not intraday_yesterday.empty:
-                    try:
-                        yva_min, yva_max, _ = compute_value_area(intraday_yesterday)
-                    except Exception as e:
-                        st.warning(f"Value Area error for {t}: {e}")
+                # # Run the value area engine
+                # yva_min, yva_max = None, None
+                # if not intraday_yesterday.empty:
+                #     try:
+                #         yva_min, yva_max, _ = compute_value_area(intraday_yesterday)
+                #     except Exception as e:
+                #         st.warning(f"Value Area error for {t}: {e}")
 
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
@@ -3770,73 +3770,73 @@ if st.sidebar.button("Run Analysis"):
                       first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
 
                       # === Value Area Engine for Any Session (Today, Yesterday, Backtest) ===
-                      def compute_value_area(df: pd.DataFrame, mike_col: str = None, bin_size: int = 20):
-                          import numpy as np
-                          import pandas as pd
-                          import string
+                #       def compute_value_area(df: pd.DataFrame, mike_col: str = None, bin_size: int = 20):
+                #           import numpy as np
+                #           import pandas as pd
+                #           import string
                       
-                          # Step 0: Detect Mike column
-                          if mike_col is None:
-                              if "Mike" in df.columns:
-                                  mike_col = "Mike"
-                              elif "F_numeric" in df.columns:
-                                  mike_col = "F_numeric"
-                              else:
-                                  raise ValueError("No 'Mike' or 'F_numeric' column found in DataFrame.")
+                #           # Step 0: Detect Mike column
+                #           if mike_col is None:
+                #               if "Mike" in df.columns:
+                #                   mike_col = "Mike"
+                #               elif "F_numeric" in df.columns:
+                #                   mike_col = "F_numeric"
+                #               else:
+                #                   raise ValueError("No 'Mike' or 'F_numeric' column found in DataFrame.")
                       
-                          # Step 1: Clean and bin
-                          df = df.copy()
-                          f_bins = np.arange(-400, 401, bin_size)
-                          df['F_Bin'] = pd.cut(df[mike_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
+                #           # Step 1: Clean and bin
+                #           df = df.copy()
+                #           f_bins = np.arange(-400, 401, bin_size)
+                #           df['F_Bin'] = pd.cut(df[mike_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
                       
-                          # Step 2: Assign letters if time is available
-                          if "Time" in df.columns:
-                              df = df[df["Time"].notna()]
-                              df['TimeIndex'] = pd.to_datetime(df['Time'], format="%I:%M %p", errors='coerce')
-                              df = df[df['TimeIndex'].notna()]
-                              df['LetterIndex'] = ((df['TimeIndex'].dt.hour * 60 + df['TimeIndex'].dt.minute) // 15).astype(int)
-                              df['LetterIndex'] -= df['LetterIndex'].min()
+                #           # Step 2: Assign letters if time is available
+                #           if "Time" in df.columns:
+                #               df = df[df["Time"].notna()]
+                #               df['TimeIndex'] = pd.to_datetime(df['Time'], format="%I:%M %p", errors='coerce')
+                #               df = df[df['TimeIndex'].notna()]
+                #               df['LetterIndex'] = ((df['TimeIndex'].dt.hour * 60 + df['TimeIndex'].dt.minute) // 15).astype(int)
+                #               df['LetterIndex'] -= df['LetterIndex'].min()
                       
-                              def letter_code(n: int) -> str:
-                                  letters = string.ascii_uppercase
-                                  if n < 26:
-                                      return letters[n]
-                                  return letters[(n // 26) - 1] + letters[n % 26]
+                #               def letter_code(n: int) -> str:
+                #                   letters = string.ascii_uppercase
+                #                   if n < 26:
+                #                       return letters[n]
+                #                   return letters[(n // 26) - 1] + letters[n % 26]
                       
-                              df['Letter'] = df['LetterIndex'].apply(letter_code)
-                          else:
-                              df['Letter'] = "X"  # Fallback if no time info exists
+                #               df['Letter'] = df['LetterIndex'].apply(letter_code)
+                #           else:
+                #               df['Letter'] = "X"  # Fallback if no time info exists
                       
-                          # Step 3: Build Market Profile by F_Bin
-                          profile = {}
-                          for f_bin in f_bins[:-1]:
-                              f_bin_str = str(f_bin)
-                              letters = df.loc[df['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
-                              if len(letters) > 0:
-                                  profile[f_bin_str] = ''.join(sorted(letters))
+                #           # Step 3: Build Market Profile by F_Bin
+                #           profile = {}
+                #           for f_bin in f_bins[:-1]:
+                #               f_bin_str = str(f_bin)
+                #               letters = df.loc[df['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
+                #               if len(letters) > 0:
+                #                   profile[f_bin_str] = ''.join(sorted(letters))
                       
-                          profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-                          profile_df['F% Level'] = profile_df['F% Level'].astype(int)
-                          profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
+                #           profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+                #           profile_df['F% Level'] = profile_df['F% Level'].astype(int)
+                #           profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
                       
-                          # Step 4: Accumulate 70% of letter activity (time-based value area)
-                          total_letters = profile_df["Letter_Count"].sum()
-                          target_letters = total_letters * 0.7
-                          profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
+                #           # Step 4: Accumulate 70% of letter activity (time-based value area)
+                #           total_letters = profile_df["Letter_Count"].sum()
+                #           target_letters = total_letters * 0.7
+                #           profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
                       
-                          value_area_levels = []
-                          cumulative = 0
-                          for _, row in profile_sorted.iterrows():
-                              cumulative += row["Letter_Count"]
-                              value_area_levels.append(row["F% Level"])
-                              if cumulative >= target_letters:
-                                  break
+                #           value_area_levels = []
+                #           cumulative = 0
+                #           for _, row in profile_sorted.iterrows():
+                #               cumulative += row["Letter_Count"]
+                #               value_area_levels.append(row["F% Level"])
+                #               if cumulative >= target_letters:
+                #                   break
                       
-                          va_min = min(value_area_levels)
-                          va_max = max(value_area_levels)
+                #           va_min = min(value_area_levels)
+                #           va_max = max(value_area_levels)
                       
-                          return va_min, va_max, profile_df
-                yva_min, yva_max, y_profile_df = compute_value_area(intraday_yesterday)
+                #           return va_min, va_max, profile_df
+                # yva_min, yva_max, y_profile_df = compute_value_area(intraday_yesterday)
 
                                # After downloading intraday_yesterday
            
