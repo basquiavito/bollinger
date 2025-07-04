@@ -3797,99 +3797,99 @@ if st.sidebar.button("Run Analysis"):
 
                     
                   
-                      # Add emojis
-                      def add_mike_midas_cross_emojis(df, price_col):
-                          if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
-                              return df, None, None
-                  
-                          price = df[price_col]
-                          bull = df["MIDAS_Bull"]
-                          bear = df["MIDAS_Bear"]
-                          close_next = price.shift(-1)
-                  
-                          # 👋🏽 Bull breakout = price crosses above MIDAS_Bear from below
-                          bull_cross = (price.shift(1) < bear.shift(1)) & (price >= bear)
-                          # 🧤 Bear breakdown = price crosses below MIDAS_Bull from above
-                          bear_cross = (price.shift(1) > bull.shift(1)) & (price <= bull)
-                  
-                          df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
-                          df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
-
-
-                  # Compute option premium displacement from MIDAS anchors
-                          intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
-                          intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
-
-                                                          # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
-                        
-                                     # Option displacement
-                          if "Call_Option_Smooth" in df.columns:
-                              df["Call_vs_Bull"] = df["Call_Option_Smooth"] - df["MIDAS_Bull"]
-                      
-                              # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
-                              anchor_idx = df[price_col].idxmin()
-                              post_anchor = df.loc[anchor_idx:].copy()
-                      
-                              if not post_anchor["Call_vs_Bull"].dropna().empty:
-                                  low_idx = post_anchor["Call_vs_Bull"].idxmin()
-                                  low_val = df.loc[low_idx, "Call_vs_Bull"]
-                      
-                                  df["Bull_Midas_Wake"] = ""
-                                  for i in range(low_idx + 1, len(df)):
-                                      if df.loc[i, "Call_vs_Bull"] >= low_val + 12:
-                                          df.loc[i, "Bull_Midas_Wake"] = "🦵🏼"
-                                          break  # Only mark the first wake
-                              else:
-                                  df["Bull_Midas_Wake"] = ""
-                          else:
-                              df["Call_vs_Bull"] = np.nan
-                              df["Bull_Midas_Wake"] = ""
-                      
-                                                    
-                                # 💥 Bear MIDAS Wake-Up Detection (Put vs MIDAS Bear)
-
-                          # Step 1: Find the first index with a valid Put_vs_Bear after anchor
-                          put_series = intraday["Put_vs_Bear"].copy()
-                          start_idx = anchor_idx_bear  # From the Bear MIDAS anchor point
-                          
-                          min_val = float('inf')
-                          wake_flags = []
-                          wake_triggered = False
-                          first_bear_midas_idx = None
-                          
-                          for i in range(start_idx, len(put_series)):
-                              current = put_series.iloc[i]
-                              
-                              if pd.isna(current):
-                                  wake_flags.append("")
-                                  continue
-                              
-                              min_val = min(min_val, current)
-                              
-                              if not wake_triggered and current - min_val >= 12:
-                                  wake_triggered = True
-                                  first_bear_midas_idx = put_series.index[i]
-                                  wake_flags.append("💥")
-                              elif wake_triggered and current - min_val >= 12:
-                                  wake_flags.append("💥")
-                              else:
-                                  wake_flags.append("")
-                          
-                          # Fill the column in the dataframe
-                          intraday["Bear_Midas_Wake"] = [""] * start_idx + wake_flags
-                                 # Detect first Bull MIDAS Wake-Up (🦵🏼)
-                   
-
-                          return df, bull_cross, bear_cross
-                  
-                      intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
-                      bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
-                      first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
-                      
-                      # Detect first Bear MIDAS Wake-Up (💥)
-                      bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "💥"]
-                      first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
-
+            # Add emojis
+            def add_mike_midas_cross_emojis(df, price_col):
+                if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
+                    return df, None, None
+        
+                price = df[price_col]
+                bull = df["MIDAS_Bull"]
+                bear = df["MIDAS_Bear"]
+                close_next = price.shift(-1)
+        
+                # 👋🏽 Bull breakout = price crosses above MIDAS_Bear from below
+                bull_cross = (price.shift(1) < bear.shift(1)) & (price >= bear)
+                # 🧤 Bear breakdown = price crosses below MIDAS_Bull from above
+                bear_cross = (price.shift(1) > bull.shift(1)) & (price <= bull)
+        
+                df["MIDAS_Bull_Hand"] = np.where(bull_cross, "👋🏽", "")
+                df["MIDAS_Bear_Glove"] = np.where(bear_cross, "🧤", "")
+  
+  
+        # Compute option premium displacement from MIDAS anchors
+                intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+  
+                                                # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
+              
+                           # Option displacement
+                if "Call_Option_Smooth" in df.columns:
+                    df["Call_vs_Bull"] = df["Call_Option_Smooth"] - df["MIDAS_Bull"]
+            
+                    # 🦵🏼 Leg Detection (rise of 12 after lowest point post-anchor)
+                    anchor_idx = df[price_col].idxmin()
+                    post_anchor = df.loc[anchor_idx:].copy()
+            
+                    if not post_anchor["Call_vs_Bull"].dropna().empty:
+                        low_idx = post_anchor["Call_vs_Bull"].idxmin()
+                        low_val = df.loc[low_idx, "Call_vs_Bull"]
+            
+                        df["Bull_Midas_Wake"] = ""
+                        for i in range(low_idx + 1, len(df)):
+                            if df.loc[i, "Call_vs_Bull"] >= low_val + 12:
+                                df.loc[i, "Bull_Midas_Wake"] = "🦵🏼"
+                                break  # Only mark the first wake
+                    else:
+                        df["Bull_Midas_Wake"] = ""
+                else:
+                    df["Call_vs_Bull"] = np.nan
+                    df["Bull_Midas_Wake"] = ""
+            
+                                          
+                      # 💥 Bear MIDAS Wake-Up Detection (Put vs MIDAS Bear)
+  
+                # Step 1: Find the first index with a valid Put_vs_Bear after anchor
+                put_series = intraday["Put_vs_Bear"].copy()
+                start_idx = anchor_idx_bear  # From the Bear MIDAS anchor point
+                
+                min_val = float('inf')
+                wake_flags = []
+                wake_triggered = False
+                first_bear_midas_idx = None
+                
+                for i in range(start_idx, len(put_series)):
+                    current = put_series.iloc[i]
+                    
+                    if pd.isna(current):
+                        wake_flags.append("")
+                        continue
+                    
+                    min_val = min(min_val, current)
+                    
+                    if not wake_triggered and current - min_val >= 12:
+                        wake_triggered = True
+                        first_bear_midas_idx = put_series.index[i]
+                        wake_flags.append("💥")
+                    elif wake_triggered and current - min_val >= 12:
+                        wake_flags.append("💥")
+                    else:
+                        wake_flags.append("")
+                
+                # Fill the column in the dataframe
+                intraday["Bear_Midas_Wake"] = [""] * start_idx + wake_flags
+                       # Detect first Bull MIDAS Wake-Up (🦵🏼)
+         
+  
+                return df, bull_cross, bear_cross
+        
+            intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
+            bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
+            first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
+            
+            # Detect first Bear MIDAS Wake-Up (💥)
+            bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "💥"]
+            first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
+  
 
                   # Call function and unpack
  
