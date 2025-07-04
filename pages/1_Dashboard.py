@@ -287,8 +287,8 @@ if st.sidebar.button("Run Analysis"):
                     st.warning(f"No intraday data for yesterday on {t}.")
 
                 st.markdown(f"### 🟡 Yesterday's Value Area for {t}")
-                st.markdown(f"• `VA Min`: **{yva_min_f}**")
-                st.markdown(f"• `VA Max`: **{yva_max_f}**")
+                st.markdown(f"• `VA Min`: **{yva_min}**")
+                st.markdown(f"• `VA Max`: **{yva_max}**")
 
                 # ================
                 # 2) Fetch Intraday Data
@@ -5666,59 +5666,59 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # if yva_min is not None and yva_max is not None:
-                #     # Show in text
-                #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
+                if yva_min is not None and yva_max is not None:
+                    # Show in text
+                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
                 
-                #     # Overlay dashed cyan lines on today’s plot
-                #     fig.add_trace(
-                #         go.Scatter(
-                #             x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                #             y=[yva_min, yva_min],
-                #             mode="lines",
-                #             name="YVA Min",
-                #             line=dict(color="brown", dash="dot", width=3),
-                #             hovertemplate="📘 YVA Min: %{y:.2f}<extra></extra>"
-                #         ),
-                #         row=1, col=1
-                #     )
-                #     fig.add_trace(
-                #         go.Scatter(
-                #             x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                #             y=[yva_max, yva_max],
-                #             mode="lines",
-                #             name="YVA Max",
-                #             line=dict(color="brown", dash="dot", width=3),
-                #             hovertemplate="📘 YVA Max: %{y:.2f}<extra></extra>"
-                #         ),
-                #         row=1, col=1
-                #     )
+                    # Overlay dashed cyan lines on today’s plot
+                    fig.add_trace(
+                        go.Scatter(
+                            x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                            y=[yva_min, yva_min],
+                            mode="lines",
+                            name="YVA Min",
+                            line=dict(color="brown", dash="dot", width=3),
+                            hovertemplate="📘 YVA Min: %{y:.2f}<extra></extra>"
+                        ),
+                        row=1, col=1
+                    )
+                    fig.add_trace(
+                        go.Scatter(
+                            x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                            y=[yva_max, yva_max],
+                            mode="lines",
+                            name="YVA Max",
+                            line=dict(color="brown", dash="dot", width=3),
+                            hovertemplate="📘 YVA Max: %{y:.2f}<extra></extra>"
+                        ),
+                        row=1, col=1
+                    )
 
 
-                # Overlay dashed lines on today's F% chart
-                fig.add_trace(
-                    go.Scatter(
-                        x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                        y=[yva_min_f, yva_min_f],  # Converted to F%
-                        mode="lines",
-                        name="YVA Min",
-                        line=dict(color="brown", dash="dot", width=3),
-                        hovertemplate="📘 YVA Min (F%): %{y:.1f}<extra></extra>"
-                    ),
-                    row=1, col=1
-                )
+                # # Overlay dashed lines on today's F% chart
+                # fig.add_trace(
+                #     go.Scatter(
+                #         x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                #         y=[yva_min_f, yva_min_f],  # Converted to F%
+                #         mode="lines",
+                #         name="YVA Min",
+                #         line=dict(color="brown", dash="dot", width=3),
+                #         hovertemplate="📘 YVA Min (F%): %{y:.1f}<extra></extra>"
+                #     ),
+                #     row=1, col=1
+                # )
                 
-                fig.add_trace(
-                    go.Scatter(
-                        x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                        y=[yva_max_f, yva_max_f],  # Converted to F%
-                        mode="lines",
-                        name="YVA Max",
-                        line=dict(color="brown", dash="dot", width=3),
-                        hovertemplate="📘 YVA Max (F%): %{y:.1f}<extra></extra>"
-                    ),
-                    row=1, col=1
-                )
+                # fig.add_trace(
+                #     go.Scatter(
+                #         x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                #         y=[yva_max_f, yva_max_f],  # Converted to F%
+                #         mode="lines",
+                #         name="YVA Max",
+                #         line=dict(color="brown", dash="dot", width=3),
+                #         hovertemplate="📘 YVA Max (F%): %{y:.1f}<extra></extra>"
+                #     ),
+                #     row=1, col=1
+                # )
 
      # Mask for Tenkan-Kijun Crosses
                 # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
