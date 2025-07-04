@@ -5441,39 +5441,48 @@ if st.sidebar.button("Run Analysis"):
                     name="Price Dropped Below Demand 🌧️",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
-  
+                fig.add_hline(y=y_VAH, line_dash="dash", line_color="green",
+                            annotation_text="VAH (y-1)", annotation_position="top left")
+              
+                fig.add_hline(y=y_VAL, line_dash="dash", line_color="red",
+                              annotation_text="VAL (y-1)", annotation_position="bottom left")
+                
+                fig.add_hline(y=y_POC, line_dash="dot", line_color="gray",
+                              annotation_text="POC (y-1)", annotation_position="middle left")
 
-     # Mask for Tenkan-Kijun Crosses
-                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                scatter_tk_sun = go.Scatter(
-                    x=intraday.loc[mask_tk_sun, "Time"],
-                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 26,  # Offset for visibility
-                    mode="text",
-                    text="🌞",
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bullish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                )
+     # # Mask for Tenkan-Kijun Crosses
+     #            mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+     #            mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                scatter_tk_moon = go.Scatter(
-                    x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 26,  # Offset for visibility
-                    mode="text",
-                    text="🌙",
-                    textposition="bottom center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bearish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                )
+     #            # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+     #            scatter_tk_sun = go.Scatter(
+     #                x=intraday.loc[mask_tk_sun, "Time"],
+     #                y=intraday.loc[mask_tk_sun, "F_numeric"] + 26,  # Offset for visibility
+     #                mode="text",
+     #                text="🌞",
+     #                textposition="top center",
+     #                textfont=dict(size=34),
+     #                name="Tenkan-Kijun Bullish Cross",
+     #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+     #            )
 
-                # Add to the F% Plot
-                fig.add_trace(scatter_tk_sun, row=1, col=1)
-                fig.add_trace(scatter_tk_moon, row=1, col=1)
+     #            # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+     #            scatter_tk_moon = go.Scatter(
+     #                x=intraday.loc[mask_tk_moon, "Time"],
+     #                y=intraday.loc[mask_tk_moon, "F_numeric"] - 26,  # Offset for visibility
+     #                mode="text",
+     #                text="🌙",
+     #                textposition="bottom center",
+     #                textfont=dict(size=34),
+     #                name="Tenkan-Kijun Bearish Cross",
+     #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+     #            )
+
+                # # Add to the F% Plot
+                # fig.add_trace(scatter_tk_sun, row=1, col=1)
+                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
