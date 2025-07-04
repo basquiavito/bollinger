@@ -3836,6 +3836,7 @@ if st.sidebar.button("Run Analysis"):
                           va_max = max(value_area_levels)
                       
                           return va_min, va_max, profile_df
+                yva_min, yva_max, y_profile_df = compute_value_area(intraday_yesterday)
 
                                # After downloading intraday_yesterday
            
