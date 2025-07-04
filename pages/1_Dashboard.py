@@ -3875,24 +3875,8 @@ if st.sidebar.button("Run Analysis"):
                       # )
                   
 
-                import pandas as pd
-                from datetime import datetime, timedelta
-                
-                # Load yesterday's VAH/VAL/POC from file
-                va_df = pd.read_csv("yesterday_value_area.csv")
-                ticker = current_ticker  # whatever ticker you're plotting
-                yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-                
-                row = va_df[(va_df["Ticker"] == ticker) & (va_df["date"] == yesterday)]
-                if not row.empty:
-                    y_VAH = row["VAH"].values[0]
-                    y_VAL = row["VAL"].values[0]
-                    y_POC = row["POC"].values[0]
-                
-                    # Plot horizontal lines
-                    fig.add_hline(y=y_VAH, line_dash="dash", line_color="green", annotation_text="VAH (y-1)")
-                    fig.add_hline(y=y_VAL, line_dash="dash", line_color="red", annotation_text="VAL (y-1)")
-                    fig.add_hline(y=y_POC, line_dash="dot",  line_color="gray", annotation_text="POC (y-1)")
+ 
+             
 
 
                 with ticker_tabs[0]:
