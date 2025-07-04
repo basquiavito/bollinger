@@ -213,7 +213,33 @@ if st.sidebar.button("Run Analysis"):
                         progress=False
                     )
 
-     
+                yva_min = yva_max = None  # default
+          
+                if not intraday_yesterday.empty:
+                    # bring Datetime out of the index
+                    intraday_yesterday = intraday_yesterday.reset_index()
+                
+                    # build a Time column for letter coding
+                    intraday_yesterday["Time"] = intraday_yesterday["Datetime"].dt.strftime("%I:%M %p")
+                
+                    # choose a price column for VA (use F_numeric if you’ve computed it, else Close)
+                    if "F_numeric" in intraday_yesterday.columns:
+                        mike_col_va = "F_numeric"
+                    elif "Mike" in intraday_yesterday.columns:
+                        mike_col_va = "Mike"
+                    else:
+                        mike_col_va = "Close"
+                
+                    try:
+                        yva_min, yva_max, y_profile_df = compute_value_area(
+                            intraday_yesterday,
+                            mike_col=mike_col_va
+                        )
+                    except Exception as e:
+                        st.warning(f"Could not compute yesterday VA for {t}: {e}")
+                else:
+                    st.warning(f"No intraday data for yesterday on {t}.")
+          
 
                 # ================
                 # 2) Fetch Intraday Data
