@@ -133,6 +133,10 @@ if st.sidebar.button("Run Analysis"):
                     prev_high_str = f"{prev_high:.2f}"
                     prev_low_str = f"{prev_low:.2f}"
 
+                               # ➕ Add Yesterday's Range
+                    yesterday_range = prev_high - prev_low
+                    yesterday_range_str = f"{yesterday_range:.2f}"
+
                 # ================
                 # 2) Fetch Intraday Data
                 # ================
@@ -5349,7 +5353,54 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
   
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 140,  # Higher offset
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],
+                    textposition="top center",
+                    name="New Highs 👨🏽‍🚀",
+                    textfont=dict(size=21),
+                 )
+
+                fig.add_trace(scatter_astronaut, row=1, col=1)
+
+
+
+                    # Filter where the Astronaut or Moon emoji exist
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
+
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 140,  # Offset so it floats higher
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
+                    textposition="top center",
+                    name="New Highs 🌒",
+                    textfont=dict(size=21),
+                   
+                )
+
+                fig.add_trace(scatter_astronaut, row=1, col=1)
+
+
+                # Filter where Swimmer or Squid exist
+                swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
+
+                scatter_swimmer = go.Scatter(
+                    x=swimmer_points["Time"],
+                    y=swimmer_points["F_numeric"] - 140,  # Offset downward so it floats below price
+                    mode="text",
+                    text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
+                    textposition="bottom center",
+                    name="New Lows 🏊🏽‍♂️🦑",
+                    textfont=dict(size=21),
+                    showlegend=True
+                )
+
+#                 fig.add_trace(scatter_swimmer, row=1, col=1)
      # Mask for Tenkan-Kijun Crosses
                 # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
                 # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
