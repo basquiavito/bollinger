@@ -3739,17 +3739,17 @@ if st.sidebar.button("Run Analysis"):
 
                
  
-                      # Display anchor info
-                      st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
-                      st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
-                  
-                      # Optional preview
-                      st.dataframe(
-                          intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull',"MIDAS_Bull_Hand", "MIDAS_Bear_Glove"]]
-                          .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
-                          .reset_index(drop=True)
-                      )
-                  
+                # Display anchor info
+                st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
+                st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
+            
+                # Optional preview
+                st.dataframe(
+                    intraday[['Time', price_col, 'Volume', 'MIDAS_Bear', 'MIDAS_Bull',"MIDAS_Bull_Hand", "MIDAS_Bear_Glove"]]
+                    .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+                    .reset_index(drop=True)
+                )
+            
 
                 
 
