@@ -265,14 +265,11 @@ if st.sidebar.button("Run Analysis"):
                         mike_col_va = "Close"
 
 
-                                      # ✅ Add F_numeric based on yesterday's closing price
-                    if prev_close:
-                        intraday_yesterday["F_numeric"] = ((intraday_yesterday["Close"] - prev_close) / prev_close * 100).round(1)
-
+           
                     try:
                         yva_min, yva_max, y_profile_df = compute_value_area(
                             intraday_yesterday,
-                            mike_col="F_numeric" ,
+                            mike_col="Close" ,
                   
                         )
                     except Exception as e:
