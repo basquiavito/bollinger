@@ -5442,54 +5442,24 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
            
-            if yesterday in daily_va:
-                y_VAH = daily_va[yesterday]["VAH"]
-                y_VAL = daily_va[yesterday]["VAL"]
-                y_POC = daily_va[yesterday]["POC"]
-            
-                fig.add_hline(y=y_VAH, line_dash="dash", line_color="green",
-                              annotation_text="VAH (y-1)")
-                fig.add_hline(y=y_VAL, line_dash="dash", line_color="red",
-                              annotation_text="VAL (y-1)")
-                fig.add_hline(y=y_POC, line_dash="dot",  line_color="gray",
-                              annotation_text="POC (y-1)")
-            else:
-                st.warning("Yesterday’s value area not available for this ticker.")
+                if yesterday in daily_va:
+                    y_VAH = daily_va[yesterday]["VAH"]
+                    y_VAL = daily_va[yesterday]["VAL"]
+                    y_POC = daily_va[yesterday]["POC"]
+                
+                    fig.add_hline(y=y_VAH, line_dash="dash", line_color="green",
+                                  annotation_text="VAH (y-1)")
+                    fig.add_hline(y=y_VAL, line_dash="dash", line_color="red",
+                                  annotation_text="VAL (y-1)")
+                    fig.add_hline(y=y_POC, line_dash="dot",  line_color="gray",
+                                  annotation_text="POC (y-1)")
+                else:
+                    st.warning("Yesterday’s value area not available for this ticker.")
 
             
 
 
-     # # Mask for Tenkan-Kijun Crosses
-     #            mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-     #            mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
-
-     #            # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-     #            scatter_tk_sun = go.Scatter(
-     #                x=intraday.loc[mask_tk_sun, "Time"],
-     #                y=intraday.loc[mask_tk_sun, "F_numeric"] + 26,  # Offset for visibility
-     #                mode="text",
-     #                text="🌞",
-     #                textposition="top center",
-     #                textfont=dict(size=34),
-     #                name="Tenkan-Kijun Bullish Cross",
-     #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-     #            )
-
-     #            # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-     #            scatter_tk_moon = go.Scatter(
-     #                x=intraday.loc[mask_tk_moon, "Time"],
-     #                y=intraday.loc[mask_tk_moon, "F_numeric"] - 26,  # Offset for visibility
-     #                mode="text",
-     #                text="🌙",
-     #                textposition="bottom center",
-     #                textfont=dict(size=34),
-     #                name="Tenkan-Kijun Bearish Cross",
-     #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-     #            )
-
-                # # Add to the F% Plot
-                # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+     
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
