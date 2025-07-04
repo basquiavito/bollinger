@@ -170,53 +170,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # ============================
-                # Value Area (Market Profile) from Yesterday
-                # ============================
-                
-                # Get yesterday's date based on the start_date
-                import datetime
-                yesterday = start_date - datetime.timedelta(days=1)
-                
-                # Fetch 5m bars for yesterday only
-                mp_data = yf.download(
-                    t,
-                    start=yesterday,
-                    end=start_date,
-                    interval="5m",
-                    progress=False
-                )
-                
-                # Continue only if we got intraday data
-                if not mp_data.empty:
-                    mp_data.reset_index(inplace=True)
-                    mp_data["Price"] = mp_data["Close"].round(2)  # Bin size = $0.01
-                    volume_by_price = mp_data.groupby("Price")["Volume"].sum().sort_values(ascending=False)
-                
-                    # Get total volume
-                    total_volume = volume_by_price.sum()
-                    target_volume = total_volume * 0.70
-                
-                    # Accumulate volume until we hit 70%
-                    cumulative_volume = 0
-                    value_area_prices = []
-                
-                    for price, volume in volume_by_price.items():
-                        cumulative_volume += volume
-                        value_area_prices.append(price)
-                        if cumulative_volume >= target_volume:
-                            break
-                
-                    # Calculate VAL, VAH, POC
-                    yesterday_val = min(value_area_prices)
-                    yesterday_vah = max(value_area_prices)
-                    yesterday_poc = volume_by_price.idxmax()
-                
-                    # ✅ Now you can plot these values later
-                    print("VAL:", yesterday_val, "VAH:", yesterday_vah, "POC:", yesterday_poc)
-                else:
-                    yesterday_val = yesterday_vah = yesterday_poc = None
-                    print("⚠️ No 5m data for yesterday to calculate Value Area.")
+      
 
               
 
@@ -3715,9 +3669,63 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-
-
+ 
+                    
+                    def get_yesterday_value_area(df, f_col="F_numeric", bin_width=20):
+                        """
+                        Given an intraday DataFrame with a 'Date' column (YYYY-MM-DD strings) 
+                        and your F% column, returns (VAH, VAL, POC) for the previous trading day.
+                        
+                        - Groups F% into bins of size `bin_width`
+                        - Counts one TPO per bar (row) in each bin
+                        - Finds the bin with max TPO = POC
+                        - Accumulates highest-count bins until 70% of all TPOs covered = Value Area
+                        """
+                        # 1) Figure out yesterday’s date
+                        dates = sorted(df["Date"].unique())
+                        if len(dates) < 2:
+                            return None, None, None
+                        yesterday = dates[-2]
+                        
+                        # 2) Slice to just yesterday’s bars
+                        dy = df[df["Date"] == yesterday]
+                        if dy.empty:
+                            return None, None, None
+                        
+                        # 3) Bin your F% data
+                        lo, hi = dy[f_col].min(), dy[f_col].max()
+                        bins = np.arange(
+                            np.floor(lo/bin_width)*bin_width,
+                            np.ceil(hi/bin_width)*bin_width + bin_width,
+                            bin_width
+                        )
+                        dy["Bin"] = pd.cut(dy[f_col], bins=bins, labels=bins[:-1])
+                        
+                        # 4) Count TPOs per bin
+                        tpo = dy.groupby("Bin").size().reset_index(name="Count")
+                        tpo["Bin"] = tpo["Bin"].astype(float)
+                        
+                        # 5) Point of Control = highest-count bin
+                        poc = float(tpo.loc[tpo["Count"].idxmax(), "Bin"])
+                        
+                        # 6) Value Area = smallest range of bins covering 70% of TPOs
+                        total = tpo["Count"].sum()
+                        target = total * 0.7
+                        tpo_sorted = tpo.sort_values("Count", ascending=False)
+                        cum = 0
+                        va_bins = []
+                        for _, row in tpo_sorted.iterrows():
+                            cum += row["Count"]
+                            va_bins.append(row["Bin"])
+                            if cum >= target:
+                                break
+                        
+                        vah = max(va_bins)
+                        val = min(va_bins)
+                        return vah, val, poc
+                    
+                  
+                  y_VAH, y_VAL, y_POC = get_yesterday_value_area(intraday)
 
 
 
