@@ -3305,7 +3305,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = delayedVolumeCheck(intraday)
 
-                def delayedVolumeCheck(df):
+                def add_mike_kijun_bee_emoji(df):
                     """
                     Adds 🍯 emoji at the point Mike (F_numeric) crosses Kijun_F,
                     but only if a 🐝 (BBW tight) was seen within ±3 bars of the cross.
@@ -3391,6 +3391,74 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(intraday[cols_to_show])
 
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
+
+
+                intraday["TimeIndex"] = pd.to_datetime(intraday["Time"], format="%I:%M %p", errors="coerce")
+                intraday = intraday[intraday["TimeIndex"].notna()]
+                intraday["Date"] = intraday["TimeIndex"].dt.date
+                
+
+                def build_market_profile(df, f_col="F_numeric"):
+                    # Bin F%
+                    f_bins = np.arange(-400, 401, 20)
+                    df = df.copy()
+                    df['F_Bin'] = pd.cut(df[f_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
+                    
+                    # Letter assignment
+                    df['LetterIndex'] = ((df['TimeIndex'].dt.hour * 60 + df['TimeIndex'].dt.minute) // 15).astype(int)
+                    df['LetterIndex'] -= df['LetterIndex'].min()
+                    
+                    def letter_code(n):
+                        import string
+                        letters = string.ascii_uppercase
+                        if n < 26:
+                            return letters[n]
+                        else:
+                            return letters[(n // 26) - 1] + letters[n % 26]
+                    
+                    df['Letter'] = df['LetterIndex'].apply(letter_code)
+                
+                    # Build profile
+                    profile = {}
+                    for f_bin in f_bins[:-1]:
+                        f_bin_str = str(f_bin)
+                        letters = df.loc[df['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
+                        if len(letters) > 0:
+                            profile[f_bin_str] = ''.join(sorted(letters))
+                    
+                    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+                    profile_df['F% Level'] = profile_df['F% Level'].astype(int)
+                    profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
+                    
+                    # Value area (70%)
+                    total_letters = profile_df["Letter_Count"].sum()
+                    target_count = total_letters * 0.7
+                    profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
+                    
+                    cumulative = 0
+                    value_area_levels = []
+                    for i, row in profile_sorted.iterrows():
+                        cumulative += row["Letter_Count"]
+                        value_area_levels.append(row["F% Level"])
+                        if cumulative >= target_count:
+                            break
+                    profile_df["✅ ValueArea"] = profile_df["F% Level"].apply(lambda x: "✅" if x in value_area_levels else "")
+                    
+                    return profile_df
+  
+               
+                def extract_value_area(profile_df):
+                    profile_df = profile_df.copy()
+                    profile_df["F% Level"] = profile_df["F% Level"].astype(int)
+                    
+                    poc_row = profile_df.loc[profile_df["Letter_Count"].idxmax()]
+                    poc = poc_row["F% Level"]
+                    
+                    va_rows = profile_df[profile_df["✅ ValueArea"] == "✅"]
+                    vah = va_rows["F% Level"].max()
+                    val = va_rows["F% Level"].min()
+                    
+                    return {"VAH": vah, "VAL": val, "POC": poc}
 
 
 
@@ -3786,9 +3854,27 @@ if st.sidebar.button("Run Analysis"):
                       #     .reset_index(drop=True)
                       # )
                   
-
-                
-
+             
+                      from datetime import timedelta
+                      
+                      daily_va = {}
+                      
+                      # Run profile logic for each day in your data
+                      for date, df_day in intraday.groupby("Date"):
+                          profile_df = build_market_profile(df_day)
+                          va_data = extract_value_area(profile_df)
+                          daily_va[date] = va_data
+                      
+                      # Get yesterday’s value area
+                      today = intraday["Date"].max()
+                      yesterday = today - timedelta(days=1)
+                      
+                      y_va = daily_va.get(yesterday, None)
+                      
+                      if y_va:
+                          st.markdown(f"**Yesterday's VAH:** {y_va['VAH']} — **VAL:** {y_va['VAL']} — **POC:** {y_va['POC']}")
+                    
+                    
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
@@ -3798,11 +3884,11 @@ if st.sidebar.button("Run Analysis"):
                         vertical_spacing=0.03,
                         row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
                         subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS")
-                       
-                         
-                    )
+                   
+                     
+                )
 
-    
+
 #**************************************************************************************************************************************************************************
 
 
@@ -4493,7 +4579,7 @@ if st.sidebar.button("Run Analysis"):
 
                 long_gray_trace = go.Scatter(
                     x=intraday.loc[intraday["Gray_Long"], "Time"],
-                    y=intraday.loc[intraday["Gray_Long"], "F_numeric"] + 25,
+                    y=intraday.loc[intraday["Gray_Long"], "F_numeric"] + 13,
                     mode="text",
                     text=[" ☑️"] * intraday["Gray_Long"].sum(),
                     textposition="top right",
@@ -4505,7 +4591,7 @@ if st.sidebar.button("Run Analysis"):
 
                 short_gray_trace = go.Scatter(
                     x=intraday.loc[intraday["Gray_Short"], "Time"],
-                    y=intraday.loc[intraday["Gray_Short"], "F_numeric"] - 25,
+                    y=intraday.loc[intraday["Gray_Short"], "F_numeric"] - 13,
                     mode="text",
                     text=[" ☑️"] * intraday["Gray_Short"].sum(),
                     textposition="bottom right",
@@ -5343,37 +5429,37 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
   
 
-     # Mask for Tenkan-Kijun Crosses
-                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
+     # # Mask for Tenkan-Kijun Crosses
+     #            mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+     #            mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                scatter_tk_sun = go.Scatter(
-                    x=intraday.loc[mask_tk_sun, "Time"],
-                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 26,  # Offset for visibility
-                    mode="text",
-                    text="🌞",
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bullish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                )
+     #            # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+     #            scatter_tk_sun = go.Scatter(
+     #                x=intraday.loc[mask_tk_sun, "Time"],
+     #                y=intraday.loc[mask_tk_sun, "F_numeric"] + 26,  # Offset for visibility
+     #                mode="text",
+     #                text="🌞",
+     #                textposition="top center",
+     #                textfont=dict(size=34),
+     #                name="Tenkan-Kijun Bullish Cross",
+     #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+     #            )
 
-                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                scatter_tk_moon = go.Scatter(
-                    x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 26,  # Offset for visibility
-                    mode="text",
-                    text="🌙",
-                    textposition="bottom center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bearish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                )
+     #            # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+     #            scatter_tk_moon = go.Scatter(
+     #                x=intraday.loc[mask_tk_moon, "Time"],
+     #                y=intraday.loc[mask_tk_moon, "F_numeric"] - 26,  # Offset for visibility
+     #                mode="text",
+     #                text="🌙",
+     #                textposition="bottom center",
+     #                textfont=dict(size=34),
+     #                name="Tenkan-Kijun Bearish Cross",
+     #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+     #            )
 
-                # Add to the F% Plot
-                fig.add_trace(scatter_tk_sun, row=1, col=1)
-                fig.add_trace(scatter_tk_moon, row=1, col=1)
+                # # Add to the F% Plot
+                # fig.add_trace(scatter_tk_sun, row=1, col=1)
+                # fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
