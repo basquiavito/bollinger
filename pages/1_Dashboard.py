@@ -5694,21 +5694,29 @@ if st.sidebar.button("Run Analysis"):
                 if prev_close:
                     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
                     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
-               # ✅ Market opens inside Value Area
-                if opened_inside_yva:
+             # ✅ Use only if yva_min and yva_max are defined
+                if yva_min is not None and yva_max is not None and prev_high is not None and prev_low is not None:
                 
-                    # ✅ Early breakout from YVA
-                    if broke_above_yva or broke_below_yva:
+                    final_bar = intraday.iloc[-1]
+                    opening_price = intraday["Close"].iloc[0]
                 
-                        # ✅ And also breaks out of entire prior day's range
-                        if broke_above_prev_high or broke_below_prev_low:
+                    opened_inside_yva = yva_min < opening_price < yva_max
                 
-                            # ✅ Final bar is still outside Value Area = sustained drive
-                            still_outside = (final_bar["Close"] > yva_max) or (final_bar["Close"] < yva_min)
+                    first_6 = intraday.iloc[:6]
+                    broke_above_yva = first_6["Close"].max() > yva_max
+                    broke_below_yva = first_6["Close"].min() < yva_min
+                    broke_above_prev_high = first_6["Close"].max() > prev_high
+                    broke_below_prev_low = first_6["Close"].min() < prev_low
                 
-                            if still_outside:
-                                st.markdown("🚀 **True Initiative Drive: Broke Out of Value *and* Yesterday’s Range!**")
+                    still_above_yva = final_bar["Close"] > yva_max
+                    still_below_yva = final_bar["Close"] < yva_min
                 
+                    if opened_inside_yva:
+                        if broke_above_yva and broke_above_prev_high and still_above_yva:
+                            st.markdown("🚀 **Initiative Breakout ↑: Opened in YVA → Broke YH → Sustained above**")
+                        elif broke_below_yva and broke_below_prev_low and still_below_yva:
+                            st.markdown("🚨 **Initiative Breakdown ↓: Opened in YVA → Broke YL → Sustained below**")
+
                               
                 # if yva_min is not None and yva_max is not None:
                 #     # Show in text
