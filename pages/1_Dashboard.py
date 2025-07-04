@@ -5441,19 +5441,19 @@ if st.sidebar.button("Run Analysis"):
                     name="Price Dropped Below Demand 🌧️",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
-                 if yesterday in daily_va:              # ← keeps code safe
-                      y_VAH = daily_va[yesterday]["VAH"]
-                      y_VAL = daily_va[yesterday]["VAL"]
-                      y_POC = daily_va[yesterday]["POC"]
-                  
-                      fig.add_hline(y=y_VAH, line_dash="dash", line_color="green",
-                                    annotation_text="VAH (y-1)")
-                      fig.add_hline(y=y_VAL, line_dash="dash", line_color="red",
-                                    annotation_text="VAL (y-1)")
-                      fig.add_hline(y=y_POC, line_dash="dot",  line_color="gray",
-                                    annotation_text="POC (y-1)")
-                  else:
-                      st.warning("Yesterday’s value area not available for this ticker.")
+           if yesterday in daily_va:              # ← keeps code safe
+                y_VAH = daily_va[yesterday]["VAH"]
+                y_VAL = daily_va[yesterday]["VAL"]
+                y_POC = daily_va[yesterday]["POC"]
+            
+                fig.add_hline(y=y_VAH, line_dash="dash", line_color="green",
+                              annotation_text="VAH (y-1)")
+                fig.add_hline(y=y_VAL, line_dash="dash", line_color="red",
+                              annotation_text="VAL (y-1)")
+                fig.add_hline(y=y_POC, line_dash="dot",  line_color="gray",
+                              annotation_text="POC (y-1)")
+            else:
+                st.warning("Yesterday’s value area not available for this ticker.")
 
 
 
