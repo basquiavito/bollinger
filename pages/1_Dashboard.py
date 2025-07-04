@@ -5663,6 +5663,9 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_swimmer, row=1, col=1)
 
 
+                if yva_min is not None and yva_max is not None:
+                    # Show in text
+                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
