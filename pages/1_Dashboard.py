@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import date
+from datetime import timedelta, datetime
 import io
                 
 
@@ -193,6 +194,24 @@ if st.sidebar.button("Run Analysis"):
                     yesterday_range = prev_high - prev_low
                     yesterday_range_str = f"{yesterday_range:.2f}"
 
+                    # ───────── 1.5) Yesterday's intraday for Value Area ─────────
+                
+                    
+                    # Make sure start_date is a datetime.date object
+                    if isinstance(start_date, str):
+                        start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
+                    else:
+                        start_dt = start_date
+                    
+                    yesterday_date = start_dt - timedelta(days=1)
+                    
+                    intraday_yesterday = yf.download(
+                        t,
+                        start=yesterday_date.strftime("%Y-%m-%d"),
+                        end=start_dt.strftime("%Y-%m-%d"),     # end is the morning of start_date
+                        interval=timeframe,                    # same 5 m / 2 m / etc.
+                        progress=False
+                    )
 
      
 
