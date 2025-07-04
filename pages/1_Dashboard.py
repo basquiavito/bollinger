@@ -11,72 +11,97 @@ from datetime import timedelta, datetime
 import io
                 
 
-def compute_value_area(df: pd.DataFrame, mike_col: str = None, bin_size: int = 20):
-    import numpy as np
-    import pandas as pd
-    import string
+def compute_value_area(
+        df: pd.DataFrame,
+        mike_col: str | None = None,
+        target_bins: int = 20,       # how many price buckets to aim for
+        min_bin_width: float = 0.5   # never make a bucket wider than this
+) -> tuple[float, float, pd.DataFrame]:
+    """
+    Full Market-Profile / Value-Area engine.
+    Returns: (va_min, va_max, profile_df)
 
-    # Step 0: Detect Mike column
+    • Works with Mike, F_numeric, or any price column you pass in `mike_col`.
+    • Auto-adjusts bin width so prints never collapse to one bucket.
+    """
+    import numpy as np, pandas as pd, string
+
+    # 0️⃣ pick column ────────────────────────────────────────────────────────
     if mike_col is None:
         if "Mike" in df.columns:
             mike_col = "Mike"
         elif "F_numeric" in df.columns:
             mike_col = "F_numeric"
         else:
-            raise ValueError("No 'Mike' or 'F_numeric' column found in DataFrame.")
+            raise ValueError("Need a Mike or F_numeric column.")
 
-    # Step 1: Clean and bin
+    # 1️⃣ adaptive bin array ────────────────────────────────────────────────
+    lo, hi = df[mike_col].min(), df[mike_col].max()
+    price_range = max(hi - lo, 1e-6)            # avoid zero divide
+    step = max(price_range / target_bins, min_bin_width)
+    f_bins = np.arange(lo - step, hi + step, step)
+
     df = df.copy()
-    f_bins = np.arange(-400, 401, bin_size)
-    df['F_Bin'] = pd.cut(df[mike_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
+    df["F_Bin"] = pd.cut(
+        df[mike_col],
+        bins=f_bins,
+        labels=[str(x) for x in f_bins[:-1]]
+    )
 
-    # Step 2: Assign letters if time is available
-    if "Time" in df.columns:
-        df = df[df["Time"].notna()]
-        df['TimeIndex'] = pd.to_datetime(df['Time'], format="%I:%M %p", errors='coerce')
-        df = df[df['TimeIndex'].notna()]
-        df['LetterIndex'] = ((df['TimeIndex'].dt.hour * 60 + df['TimeIndex'].dt.minute) // 15).astype(int)
-        df['LetterIndex'] -= df['LetterIndex'].min()
-
-        def letter_code(n: int) -> str:
-            letters = string.ascii_uppercase
-            if n < 26:
-                return letters[n]
-            return letters[(n // 26) - 1] + letters[n % 26]
-
-        df['Letter'] = df['LetterIndex'].apply(letter_code)
+    # 2️⃣ letter assignment (15-min alphabet) ──────────────────────────────
+    if "Time" not in df.columns:
+        df["Letter"] = "X"          # fallback if no intraday clock
     else:
-        df['Letter'] = "X"  # Fallback if no time info exists
+        df = df[df["Time"].notna()]
+        df["TimeIndex"] = pd.to_datetime(
+            df["Time"], format="%I:%M %p", errors="coerce"
+        )
+        df = df[df["TimeIndex"].notna()]
+        df["LetterIndex"] = (
+            (df["TimeIndex"].dt.hour * 60 + df["TimeIndex"].dt.minute) // 15
+        ).astype(int)
+        df["LetterIndex"] -= df["LetterIndex"].min()
 
-    # Step 3: Build Market Profile by F_Bin
+        letters = string.ascii_uppercase
+        df["Letter"] = df["LetterIndex"].apply(
+            lambda n: letters[n] if n < 26
+            else letters[(n // 26) - 1] + letters[n % 26]
+        )
+
+    # 3️⃣ build Market-Profile dict ────────────────────────────────────────
     profile = {}
-    for f_bin in f_bins[:-1]:
-        f_bin_str = str(f_bin)
-        letters = df.loc[df['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
-        if len(letters) > 0:
-            profile[f_bin_str] = ''.join(sorted(letters))
+    for b in f_bins[:-1]:
+        key = str(b)
+        lets = df.loc[df["F_Bin"] == key, "Letter"].dropna().unique()
+        if len(lets):
+            profile[key] = "".join(sorted(lets))
 
-    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-    profile_df['F% Level'] = profile_df['F% Level'].astype(int)
-    profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
+    profile_df = (pd.DataFrame(profile.items(),
+                               columns=["F% Level", "Letters"])
+                    .astype({"F% Level": float}))
+    profile_df["Letter_Count"] = profile_df["Letters"].str.len().fillna(0)
 
-    # Step 4: Accumulate 70% of letter activity (time-based value area)
-    total_letters = profile_df["Letter_Count"].sum()
-    target_letters = total_letters * 0.7
-    profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
+    # 4️⃣ 70 % value-area calc ─────────────────────────────────────────────
+    tot = profile_df["Letter_Count"].sum()
+    target = tot * 0.7
+    poc_sorted = profile_df.sort_values("Letter_Count", ascending=False)
 
-    value_area_levels = []
-    cumulative = 0
-    for _, row in profile_sorted.iterrows():
+    cumulative, va_levels = 0, []
+    for _, row in poc_sorted.iterrows():
         cumulative += row["Letter_Count"]
-        value_area_levels.append(row["F% Level"])
-        if cumulative >= target_letters:
+        va_levels.append(row["F% Level"])
+        if cumulative >= target:
             break
 
-    va_min = min(value_area_levels)
-    va_max = max(value_area_levels)
+    va_min, va_max = min(va_levels), max(va_levels)
+
+    # (optional) flag collapse
+    if va_min == va_max:
+        st.warning("⚠️ Value area collapsed to one level – "
+                   "range too narrow, even after adaptive binning.")
 
     return va_min, va_max, profile_df
+
  
 # =================
 # Page Config
