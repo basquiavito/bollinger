@@ -3045,118 +3045,118 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it
                 intraday = detect_fortress_bee_clusters(intraday)
                
-                # def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
-                #     """
-                #     Enhanced Entry Alert System:
-                #     - ✅: Structure + volume confirmation at entry bar.
-                #     - ☑️: Structure confirmed, but volume came later.
-                #     """
-                
-                #     # Initialize columns
-                #     intraday["Entry_Alert_Long"] = False
-                #     intraday["Entry_Alert_Short"] = False
-                #     intraday["Entry_Emoji_Long"] = ""
-                #     intraday["Entry_Emoji_Short"] = ""
-                
-                #     pending_long = []   # store indices awaiting volume
-                #     pending_short = []
-                
-                #     for i in range(1, len(intraday) - 1):
-                #         prev_f = intraday.iloc[i-1]["F_numeric"]
-                #         prev_k = intraday.iloc[i-1]["Kijun_F"]
-                #         curr_f = intraday.iloc[i]["F_numeric"]
-                #         curr_k = intraday.iloc[i]["Kijun_F"]
-                #         next_f = intraday.iloc[i+1]["F_numeric"]
-                
-                #         # ➡️ LONG CROSS
-                #         if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
-                #             if next_f >= curr_f:
-                #                 # Check for recent RVOL
-                #                 start_idx = max(0, i - rvol_lookback + 1)
-                #                 rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-                #                 if (rvol_window > rvol_threshold).any():
-                #                     intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
-                #                     intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
-                #                 else:
-                #                     pending_long.append(i)  # store for later ☑️ tagging
-                
-                #         # ⬅️ SHORT CROSS
-                #         if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
-                #             if next_f <= curr_f:
-                #                 start_idx = max(0, i - rvol_lookback + 1)
-                #                 rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-                #                 if (rvol_window > rvol_threshold).any():
-                #                     intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
-                #                     intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
-                #                 else:
-                #                     pending_short.append(i)
-                
-                #     # 🔁 Second pass: look for volume spikes to validate pending entries
-                #     for i in range(len(intraday)):
-                #         rvol = intraday.iloc[i]["RVOL_5"]
-                
-                #         if rvol > rvol_threshold:
-                #             if pending_long:
-                #                 idx = pending_long.pop(0)
-                #                 intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
-                #                 intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
-                
-                #             if pending_short:
-                #                 idx = pending_short.pop(0)
-                #                 intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
-                #                 intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
-            
-                #     return intraday
-
-
-                # intraday = entryAlert(intraday, threshold=0.1)
-
-     
-
-                def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
+                def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
                     """
-                    Entry Alert System (Corrected):
-                    - Step 1: Detect clean cross of F% through Kijun_F with buffer threshold.
-                    - Step 2: Confirm with next bar continuation.
-                    - Step 3: Require at least one RVOL_5 > threshold in the last rvol_lookback bars.
+                    Enhanced Entry Alert System:
+                    - ✅: Structure + volume confirmation at entry bar.
+                    - ☑️: Structure confirmed, but volume came later.
                     """
-
+                
+                    # Initialize columns
+                    intraday["Entry_Alert_Long"] = False
                     intraday["Entry_Alert_Short"] = False
-                    intraday["Entry_Alert_Long"]  = False
-
+                    intraday["Entry_Emoji_Long"] = ""
+                    intraday["Entry_Emoji_Short"] = ""
+                
+                    pending_long = []   # store indices awaiting volume
+                    pending_short = []
+                
                     for i in range(1, len(intraday) - 1):
                         prev_f = intraday.iloc[i-1]["F_numeric"]
                         prev_k = intraday.iloc[i-1]["Kijun_F"]
                         curr_f = intraday.iloc[i]["F_numeric"]
                         curr_k = intraday.iloc[i]["Kijun_F"]
                         next_f = intraday.iloc[i+1]["F_numeric"]
-
+                
                         # ➡️ LONG CROSS
                         if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
                             if next_f >= curr_f:
-                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
-
+                                # Check for recent RVOL
+                                start_idx = max(0, i - rvol_lookback + 1)
+                                rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                                if (rvol_window > rvol_threshold).any():
+                                    intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+                                    intraday.at[intraday.index[i], "Entry_Emoji_Long"] = "✅"
+                                else:
+                                    pending_long.append(i)  # store for later ☑️ tagging
+                
                         # ⬅️ SHORT CROSS
                         if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
                             if next_f <= curr_f:
-                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
-
-                    # 🔍 Second pass: check if at least one high RVOL_5
-                    for i in range(1, len(intraday) - 1):
-                        if intraday.iloc[i]["Entry_Alert_Long"] or intraday.iloc[i]["Entry_Alert_Short"]:
-                            start_idx = max(0, i - rvol_lookback + 1)
-                            rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
-
-                            if (rvol_window > rvol_threshold).sum() == 0:
-                                # 🛑 No bars with RVOL > threshold → kill alert
-                                intraday.at[intraday.index[i], "Entry_Alert_Long"] = False
-                                intraday.at[intraday.index[i], "Entry_Alert_Short"] = False
-
+                                start_idx = max(0, i - rvol_lookback + 1)
+                                rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+                                if (rvol_window > rvol_threshold).any():
+                                    intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+                                    intraday.at[intraday.index[i], "Entry_Emoji_Short"] = "✅"
+                                else:
+                                    pending_short.append(i)
+                
+                    # 🔁 Second pass: look for volume spikes to validate pending entries
+                    for i in range(len(intraday)):
+                        rvol = intraday.iloc[i]["RVOL_5"]
+                
+                        if rvol > rvol_threshold:
+                            if pending_long:
+                                idx = pending_long.pop(0)
+                                intraday.at[intraday.index[idx], "Entry_Alert_Long"] = True
+                                intraday.at[intraday.index[idx], "Entry_Emoji_Long"] = "☑️"
+                
+                            if pending_short:
+                                idx = pending_short.pop(0)
+                                intraday.at[intraday.index[idx], "Entry_Alert_Short"] = True
+                                intraday.at[intraday.index[idx], "Entry_Emoji_Short"] = "☑️"
+            
                     return intraday
 
 
-
                 intraday = entryAlert(intraday, threshold=0.1)
+
+
+
+                #  def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
+                #     """
+                #     Entry Alert System (Corrected):
+                #     - Step 1: Detect clean cross of F% through Kijun_F with buffer threshold.
+                #     - Step 2: Confirm with next bar continuation.
+                #     - Step 3: Require at least one RVOL_5 > threshold in the last rvol_lookback bars.
+                #     """
+
+                #     intraday["Entry_Alert_Short"] = False
+                #     intraday["Entry_Alert_Long"]  = False
+
+                #     for i in range(1, len(intraday) - 1):
+                #         prev_f = intraday.iloc[i-1]["F_numeric"]
+                #         prev_k = intraday.iloc[i-1]["Kijun_F"]
+                #         curr_f = intraday.iloc[i]["F_numeric"]
+                #         curr_k = intraday.iloc[i]["Kijun_F"]
+                #         next_f = intraday.iloc[i+1]["F_numeric"]
+
+                #         # ➡️ LONG CROSS
+                #         if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold):
+                #             if next_f >= curr_f:
+                #                 intraday.at[intraday.index[i], "Entry_Alert_Long"] = True
+
+                #         # ⬅️ SHORT CROSS
+                #         if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold):
+                #             if next_f <= curr_f:
+                #                 intraday.at[intraday.index[i], "Entry_Alert_Short"] = True
+
+                #     # 🔍 Second pass: check if at least one high RVOL_5
+                #     for i in range(1, len(intraday) - 1):
+                #         if intraday.iloc[i]["Entry_Alert_Long"] or intraday.iloc[i]["Entry_Alert_Short"]:
+                #             start_idx = max(0, i - rvol_lookback + 1)
+                #             rvol_window = intraday.iloc[start_idx:i+1]["RVOL_5"]
+
+                #             if (rvol_window > rvol_threshold).sum() == 0:
+                #                 # 🛑 No bars with RVOL > threshold → kill alert
+                #                 intraday.at[intraday.index[i], "Entry_Alert_Long"] = False
+                #                 intraday.at[intraday.index[i], "Entry_Alert_Short"] = False
+
+                #     return intraday
+
+
+
+                # intraday = entryAlert(intraday, threshold=0.1)
                 
 
                 
@@ -3234,7 +3234,8 @@ if st.sidebar.button("Run Analysis"):
                 # for line in log_with_returns:
                 #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
              
-           
+  
+             
 
 
 
@@ -3267,43 +3268,6 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_horse_emoji(intraday)
-
-                
-                def delayedVolumeCheck(intraday, threshold=10.0, rvol_threshold=1.2, lookahead=5):
-                    """
-                    Independent logic to find ☑️ entries:
-                    - Valid Kijun cross (long/short),
-                    - NO RVOL at cross,
-                    - But RVOL appears in next 5 bars.
-                    """
-                    intraday["Gray_Long"] = False
-                    intraday["Gray_Short"] = False
-                
-                    for i in range(1, len(intraday) - lookahead - 1):
-                        prev_f = intraday.iloc[i - 1]["F_numeric"]
-                        curr_f = intraday.iloc[i]["F_numeric"]
-                        next_f = intraday.iloc[i + 1]["F_numeric"]
-                        prev_k = intraday.iloc[i - 1]["Kijun_F"]
-                        curr_k = intraday.iloc[i]["Kijun_F"]
-                        rvol_now = intraday.iloc[i]["RVOL_5"]
-                
-                        # ⬆️ Long Cross (structure-only)
-                        if (prev_f < prev_k - threshold) and (curr_f > curr_k + threshold) and (next_f >= curr_f):
-                            if rvol_now <= rvol_threshold:
-                                future_rvol = intraday.iloc[i+1:i+1+lookahead]["RVOL_5"]
-                                if (future_rvol > rvol_threshold).any():
-                                    intraday.at[intraday.index[i], "Gray_Long"] = True
-                
-                        # ⬇️ Short Cross (structure-only)
-                        if (prev_f > prev_k + threshold) and (curr_f < curr_k - threshold) and (next_f <= curr_f):
-                            if rvol_now <= rvol_threshold:
-                                future_rvol = intraday.iloc[i+1:i+1+lookahead]["RVOL_5"]
-                                if (future_rvol > rvol_threshold).any():
-                                    intraday.at[intraday.index[i], "Gray_Short"] = True
-                
-                    return intraday
-
-                intraday = delayedVolumeCheck(intraday)
 
                 def add_mike_kijun_bee_emoji(df):
                     """
@@ -3391,74 +3355,6 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(intraday[cols_to_show])
 
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
-
-
-                intraday["TimeIndex"] = pd.to_datetime(intraday["Time"], format="%I:%M %p", errors="coerce")
-                intraday = intraday[intraday["TimeIndex"].notna()]
-                intraday["Date"] = intraday["TimeIndex"].dt.date
-                
-
-                def build_market_profile(df, f_col="F_numeric"):
-                    # Bin F%
-                    f_bins = np.arange(-400, 401, 20)
-                    df = df.copy()
-                    df['F_Bin'] = pd.cut(df[f_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
-                    
-                    # Letter assignment
-                    df['LetterIndex'] = ((df['TimeIndex'].dt.hour * 60 + df['TimeIndex'].dt.minute) // 15).astype(int)
-                    df['LetterIndex'] -= df['LetterIndex'].min()
-                    
-                    def letter_code(n):
-                        import string
-                        letters = string.ascii_uppercase
-                        if n < 26:
-                            return letters[n]
-                        else:
-                            return letters[(n // 26) - 1] + letters[n % 26]
-                    
-                    df['Letter'] = df['LetterIndex'].apply(letter_code)
-                
-                    # Build profile
-                    profile = {}
-                    for f_bin in f_bins[:-1]:
-                        f_bin_str = str(f_bin)
-                        letters = df.loc[df['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
-                        if len(letters) > 0:
-                            profile[f_bin_str] = ''.join(sorted(letters))
-                    
-                    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-                    profile_df['F% Level'] = profile_df['F% Level'].astype(int)
-                    profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
-                    
-                    # Value area (70%)
-                    total_letters = profile_df["Letter_Count"].sum()
-                    target_count = total_letters * 0.7
-                    profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
-                    
-                    cumulative = 0
-                    value_area_levels = []
-                    for i, row in profile_sorted.iterrows():
-                        cumulative += row["Letter_Count"]
-                        value_area_levels.append(row["F% Level"])
-                        if cumulative >= target_count:
-                            break
-                    profile_df["✅ ValueArea"] = profile_df["F% Level"].apply(lambda x: "✅" if x in value_area_levels else "")
-                    
-                    return profile_df
-  
-               
-                def extract_value_area(profile_df):
-                    profile_df = profile_df.copy()
-                    profile_df["F% Level"] = profile_df["F% Level"].astype(int)
-                    
-                    poc_row = profile_df.loc[profile_df["Letter_Count"].idxmax()]
-                    poc = poc_row["F% Level"]
-                    
-                    va_rows = profile_df[profile_df["✅ ValueArea"] == "✅"]
-                    vah = va_rows["F% Level"].max()
-                    val = va_rows["F% Level"].min()
-                    
-                    return {"VAH": vah, "VAL": val, "POC": poc}
 
 
 
@@ -3624,30 +3520,30 @@ if st.sidebar.button("Run Analysis"):
                   current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
                   
                   # Step 3: Add a 🦻🏼 to any profile row that used to be the dominant %Vol level but is no longer the current Mike bin
-                  # def ear_marker(row):
-                  #     if row['F% Level'] == max_vol_level and current_mike_bin != max_vol_level:
-                  #         return "🦻🏼"  # Permanently add
-                  #     return row.get("🦻🏼", "")  # Preserve existing 🦻🏼 if already present
+                  def ear_marker(row):
+                      if row['F% Level'] == max_vol_level and current_mike_bin != max_vol_level:
+                          return "🦻🏼"  # Permanently add
+                      return row.get("🦻🏼", "")  # Preserve existing 🦻🏼 if already present
                   
-                  # # Apply the marker logic
-                  # if "🦻🏼" not in profile_df.columns:
-                  #     profile_df["🦻🏼"] = ""
+                  # Apply the marker logic
+                  if "🦻🏼" not in profile_df.columns:
+                      profile_df["🦻🏼"] = ""
                   
-                  # profile_df["🦻🏼"] = profile_df.apply(ear_marker, axis=1)
+                  profile_df["🦻🏼"] = profile_df.apply(ear_marker, axis=1)
                   
-                  # # Step 1: Identify F% level with most letters (most time spent)
-                  # max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+                  # Step 1: Identify F% level with most letters (most time spent)
+                  max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
                   
-                  # # Step 2: Find current Mike bin
-                  # current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
+                  # Step 2: Find current Mike bin
+                  current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
                   
-                  # # Step 3: If current Mike ≠ that time-dominant level, mark 👃🏽
-                  # def nose_marker(row):
-                  #     if row['F% Level'] == max_letter_level and current_mike_bin != max_letter_level:
-                  #         return "👃🏽"
-                  #     return ""
+                  # Step 3: If current Mike ≠ that time-dominant level, mark 👃🏽
+                  def nose_marker(row):
+                      if row['F% Level'] == max_letter_level and current_mike_bin != max_letter_level:
+                          return "👃🏽"
+                      return ""
                   
-                  # profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
+                  profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
 
                   
                                    # Add the Ear_Emoji column to intraday based on the profile logic
@@ -3690,8 +3586,7 @@ if st.sidebar.button("Run Analysis"):
  
 
                   # Show DataFrame
-                  # st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea"]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
 
 
@@ -3855,27 +3750,9 @@ if st.sidebar.button("Run Analysis"):
                       #     .reset_index(drop=True)
                       # )
                   
-             
-                      from datetime import timedelta
-                      
-                      daily_va = {}
-                      
-                      # Run profile logic for each day in your data
-                      for date, df_day in intraday.groupby("Date"):
-                          profile_df = build_market_profile(df_day)
-                          va_data = extract_value_area(profile_df)
-                          daily_va[date] = va_data
-                      
-                      # Get yesterday’s value area
-                      today = intraday["Date"].max()
-                      yesterday = today - timedelta(days=1)
-                      
-                      y_va = daily_va.get(yesterday, None)
-                      
-                      if y_va:
-                          st.markdown(f"**Yesterday's VAH:** {y_va['VAH']} — **VAL:** {y_va['VAL']} — **POC:** {y_va['POC']}")
-                    
-                    
+
+                
+
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
@@ -3885,11 +3762,11 @@ if st.sidebar.button("Run Analysis"):
                         vertical_spacing=0.03,
                         row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
                         subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS")
-                   
-                     
-                )
+                       
+                         
+                    )
 
-
+    
 #**************************************************************************************************************************************************************************
 
 
@@ -4578,32 +4455,6 @@ if st.sidebar.button("Run Analysis"):
                 )
                 fig.add_trace(long_entry_trace, row=1, col=1)
 
-                long_gray_trace = go.Scatter(
-                    x=intraday.loc[intraday["Gray_Long"], "Time"],
-                    y=intraday.loc[intraday["Gray_Long"], "F_numeric"] + 13,
-                    mode="text",
-                    text=[" ☑️"] * intraday["Gray_Long"].sum(),
-                    textposition="top right",
-                    textfont=dict(size=16, color="gray"),
-                    name="Long Entry (☑️)"
-                )
-                fig.add_trace(long_gray_trace, row=1, col=1)
-
-
-                short_gray_trace = go.Scatter(
-                    x=intraday.loc[intraday["Gray_Short"], "Time"],
-                    y=intraday.loc[intraday["Gray_Short"], "F_numeric"] - 13,
-                    mode="text",
-                    text=[" ☑️"] * intraday["Gray_Short"].sum(),
-                    textposition="bottom right",
-                    textfont=dict(size=16, color="gray"),
-                    name="Short Entry (☑️)"
-                )
-                fig.add_trace(short_gray_trace, row=1, col=1)
-
-
-
-
 
                 # 🔍 First Wake-Up Detection
                 first_call_eye_idx = intraday.index[intraday["Call_Wake_Emoji"] == "👁️"]
@@ -4796,26 +4647,26 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.5)))
                 fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.5)))
 
-                # # 🦻🏼 Add Ear line if it exists
-                # ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                # 🦻🏼 Add Ear line if it exists
+                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                 
-                # if not ear_row.empty:
-                #     ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
-                #     fig.add_hline(
-                #         y=ear_level,
-                #         line=dict(color="darkgray", dash="dot", width=1.5),
-                #         row=1, col=1,
-                #         showlegend=True,
-                #         annotation_text="🦻🏼 Ear Shift",
-                #         annotation_position="top left",
-                #         annotation_font=dict(color="black")
-                #     )
+                if not ear_row.empty:
+                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+                    fig.add_hline(
+                        y=ear_level,
+                        line=dict(color="darkgray", dash="dot", width=1.5),
+                        row=1, col=1,
+                        showlegend=True,
+                        annotation_text="🦻🏼 Ear Shift",
+                        annotation_position="top left",
+                        annotation_font=dict(color="black")
+                    )
 
                 
    
 
                     # Step 1: Get the F% Level marked with 🦻🏼
-                    # ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                     
                     # if not ear_row.empty:
                     #     ear_level = ear_row["F% Level"].values[0]  # numeric
@@ -5155,20 +5006,20 @@ if st.sidebar.button("Run Analysis"):
 
 
              
-               # # 🦻🏼 Add Ear line if it exists
-               #  ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+               # 🦻🏼 Add Ear line if it exists
+                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                 
-               #  if not ear_row.empty:
-               #      ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
-               #      fig.add_hline(
-               #          y=ear_level,
-               #          line=dict(color="darkgray", dash="dot", width=1.5),
-               #          row=1, col=1,
-               #          showlegend=True,
-               #          annotation_text="🦻🏼 Ear Shift",
-               #          annotation_position="top left",
-               #          annotation_font=dict(color="black")
-               #      )
+                if not ear_row.empty:
+                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+                    fig.add_hline(
+                        y=ear_level,
+                        line=dict(color="darkgray", dash="dot", width=1.5),
+                        row=1, col=1,
+                        showlegend=True,
+                        annotation_text="🦻🏼 Ear Shift",
+                        annotation_position="top left",
+                        annotation_font=dict(color="black")
+                    )
 
                 top_ears = profile_df.nlargest(3, "%Vol")
                 
@@ -5430,37 +5281,37 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
   
 
-     # # Mask for Tenkan-Kijun Crosses
-     #            mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
-     #            mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
+     # Mask for Tenkan-Kijun Crosses
+                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
+                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🌙"
 
-     #            # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-     #            scatter_tk_sun = go.Scatter(
-     #                x=intraday.loc[mask_tk_sun, "Time"],
-     #                y=intraday.loc[mask_tk_sun, "F_numeric"] + 26,  # Offset for visibility
-     #                mode="text",
-     #                text="🌞",
-     #                textposition="top center",
-     #                textfont=dict(size=34),
-     #                name="Tenkan-Kijun Bullish Cross",
-     #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-     #            )
+                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                scatter_tk_sun = go.Scatter(
+                    x=intraday.loc[mask_tk_sun, "Time"],
+                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 26,  # Offset for visibility
+                    mode="text",
+                    text="🌞",
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Tenkan-Kijun Bullish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                )
 
-     #            # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-     #            scatter_tk_moon = go.Scatter(
-     #                x=intraday.loc[mask_tk_moon, "Time"],
-     #                y=intraday.loc[mask_tk_moon, "F_numeric"] - 26,  # Offset for visibility
-     #                mode="text",
-     #                text="🌙",
-     #                textposition="bottom center",
-     #                textfont=dict(size=34),
-     #                name="Tenkan-Kijun Bearish Cross",
-     #                hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-     #            )
+                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                scatter_tk_moon = go.Scatter(
+                    x=intraday.loc[mask_tk_moon, "Time"],
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 26,  # Offset for visibility
+                    mode="text",
+                    text="🌙",
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="Tenkan-Kijun Bearish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                )
 
-                # # Add to the F% Plot
-                # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+                # Add to the F% Plot
+                fig.add_trace(scatter_tk_sun, row=1, col=1)
+                fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
