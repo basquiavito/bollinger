@@ -5695,30 +5695,30 @@ if st.sidebar.button("Run Analysis"):
                 #     )
 
 
-                    # Overlay dashed lines on today's F% chart
-                    fig.add_trace(
-                        go.Scatter(
-                            x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                            y=[yva_min_f, yva_min_f],  # Converted to F%
-                            mode="lines",
-                            name="YVA Min",
-                            line=dict(color="brown", dash="dot", width=3),
-                            hovertemplate="📘 YVA Min (F%): %{y:.1f}<extra></extra>"
-                        ),
-                        row=1, col=1
-                    )
-                    
-                    fig.add_trace(
-                        go.Scatter(
-                            x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                            y=[yva_max_f, yva_max_f],  # Converted to F%
-                            mode="lines",
-                            name="YVA Max",
-                            line=dict(color="brown", dash="dot", width=3),
-                            hovertemplate="📘 YVA Max (F%): %{y:.1f}<extra></extra>"
-                        ),
-                        row=1, col=1
-                    )
+                # Overlay dashed lines on today's F% chart
+                fig.add_trace(
+                    go.Scatter(
+                        x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                        y=[yva_min_f, yva_min_f],  # Converted to F%
+                        mode="lines",
+                        name="YVA Min",
+                        line=dict(color="brown", dash="dot", width=3),
+                        hovertemplate="📘 YVA Min (F%): %{y:.1f}<extra></extra>"
+                    ),
+                    row=1, col=1
+                )
+                
+                fig.add_trace(
+                    go.Scatter(
+                        x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                        y=[yva_max_f, yva_max_f],  # Converted to F%
+                        mode="lines",
+                        name="YVA Max",
+                        line=dict(color="brown", dash="dot", width=3),
+                        hovertemplate="📘 YVA Max (F%): %{y:.1f}<extra></extra>"
+                    ),
+                    row=1, col=1
+                )
 
      # Mask for Tenkan-Kijun Crosses
                 # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🌞"
