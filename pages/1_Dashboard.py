@@ -168,6 +168,58 @@ if st.sidebar.button("Run Analysis"):
                 intraday["Date"] = intraday["Date"].dt.tz_localize(None)
 
 
+
+
+                # ============================
+                # Value Area (Market Profile) from Yesterday
+                # ============================
+                
+                # Get yesterday's date based on the start_date
+                import datetime
+                yesterday = start_date - datetime.timedelta(days=1)
+                
+                # Fetch 5m bars for yesterday only
+                mp_data = yf.download(
+                    t,
+                    start=yesterday,
+                    end=start_date,
+                    interval="5m",
+                    progress=False
+                )
+                
+                # Continue only if we got intraday data
+                if not mp_data.empty:
+                    mp_data.reset_index(inplace=True)
+                    mp_data["Price"] = mp_data["Close"].round(2)  # Bin size = $0.01
+                    volume_by_price = mp_data.groupby("Price")["Volume"].sum().sort_values(ascending=False)
+                
+                    # Get total volume
+                    total_volume = volume_by_price.sum()
+                    target_volume = total_volume * 0.70
+                
+                    # Accumulate volume until we hit 70%
+                    cumulative_volume = 0
+                    value_area_prices = []
+                
+                    for price, volume in volume_by_price.items():
+                        cumulative_volume += volume
+                        value_area_prices.append(price)
+                        if cumulative_volume >= target_volume:
+                            break
+                
+                    # Calculate VAL, VAH, POC
+                    yesterday_val = min(value_area_prices)
+                    yesterday_vah = max(value_area_prices)
+                    yesterday_poc = volume_by_price.idxmax()
+                
+                    # ✅ Now you can plot these values later
+                    print("VAL:", yesterday_val, "VAH:", yesterday_vah, "POC:", yesterday_poc)
+                else:
+                    yesterday_val = yesterday_vah = yesterday_poc = None
+                    print("⚠️ No 5m data for yesterday to calculate Value Area.")
+
+              
+
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
                     Adjusts Y-axis positions dynamically to prevent symbol overlap.
