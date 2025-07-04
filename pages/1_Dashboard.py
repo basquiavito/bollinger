@@ -3707,6 +3707,23 @@ if st.sidebar.button("Run Analysis"):
                   
                       intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
 
+
+                      def extract_value_area(profile_df):
+                          profile_df = profile_df.copy()
+                          profile_df["F% Level"] = profile_df["F% Level"].astype(int)
+                          
+                          # Point of Control (POC) = Level with the most letters (i.e., time)
+                          poc_row = profile_df.loc[profile_df["Letter_Count"].idxmax()]
+                          poc = poc_row["F% Level"]
+                          
+                          # Value Area High (VAH) and Low (VAL) = range of F% levels covering 70% of letter activity
+                          va_rows = profile_df[profile_df["✅ ValueArea"] == "✅"]
+                          vah = va_rows["F% Level"].max()
+                          val = va_rows["F% Level"].min()
+                          
+                          return {"VAH": vah, "VAL": val, "POC": poc}
+
+
                       from datetime import timedelta
                       
                       daily_va = {}
