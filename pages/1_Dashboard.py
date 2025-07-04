@@ -5683,7 +5683,8 @@ if st.sidebar.button("Run Analysis"):
                 if prev_close:
                     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
                     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
-
+                if opened_inside_yva and (broke_above_yva or broke_below_yva):
+                    st.markdown("🚀 **Initiative Drive Out of Value!**")
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
                  
