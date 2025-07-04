@@ -3445,20 +3445,20 @@ if st.sidebar.button("Run Analysis"):
                     profile_df["✅ ValueArea"] = profile_df["F% Level"].apply(lambda x: "✅" if x in value_area_levels else "")
                     
                     return profile_df
-
-                def extract_value_area(profile_df):
-                    profile_df = profile_df.copy()
-                    profile_df["F% Level"] = profile_df["F% Level"].astype(int)
-                    
-                    poc_row = profile_df.loc[profile_df["Letter_Count"].idxmax()]
-                    poc = poc_row["F% Level"]
-                    
-                    va_rows = profile_df[profile_df["✅ ValueArea"] == "✅"]
-                    vah = va_rows["F% Level"].max()
-                    val = va_rows["F% Level"].min()
-                    
-                    return {"VAH": vah, "VAL": val, "POC": poc}
-
+  
+                  def extract_value_area(profile_df):
+                      profile_df = profile_df.copy()
+                      profile_df["F% Level"] = profile_df["F% Level"].astype(int)
+                      
+                      poc_row = profile_df.loc[profile_df["Letter_Count"].idxmax()]
+                      poc = poc_row["F% Level"]
+                      
+                      va_rows = profile_df[profile_df["✅ ValueArea"] == "✅"]
+                      vah = va_rows["F% Level"].max()
+                      val = va_rows["F% Level"].min()
+                      
+                      return {"VAH": vah, "VAL": val, "POC": poc}
+  
 
 
 
