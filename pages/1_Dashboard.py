@@ -5662,6 +5662,20 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_trace(scatter_swimmer, row=1, col=1)
 
+                # Opening F%
+                opening_f = intraday["F_numeric"].iloc[0]
+                
+                if yva_min_f < opening_f < yva_max_f:
+                    opened_inside_yva = True
+                else:
+                    opened_inside_yva = False
+                
+                # Breakout check (within first 6 bars = ~30 min on 5m)
+                first_6 = intraday.iloc[:6]
+                broke_above_yva = first_6["F_numeric"].max() > yva_max_f
+                broke_below_yva = first_6["F_numeric"].min() < yva_min_f
+                broke_above_prev_high = first_6["Close"].max() > prev_high
+                broke_below_prev_low = first_6["Close"].min() < prev_low
 
                 if yva_min is not None and yva_max is not None:
                     # Show in text
