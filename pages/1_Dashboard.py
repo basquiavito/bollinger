@@ -171,7 +171,36 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Date"] = intraday["Date"].dt.tz_convert("America/New_York")
                 intraday["Date"] = intraday["Date"].dt.tz_localize(None)
                 
-           
+                           # ================
+                # 1.5) Fetch Yesterday's Intraday Data for Value Area
+                # ================
+                from datetime import datetime, timedelta
+                
+                # Convert start_date if needed
+                if isinstance(start_date, str):
+                    start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+                else:
+                    start_dt = start_date
+                
+                yesterday_date = start_dt - timedelta(days=1)
+                day_after_yesterday = start_dt  # same as start_date
+                
+                intraday_yesterday = yf.download(
+                    t,
+                    start=yesterday_date.strftime("%Y-%m-%d"),
+                    end=day_after_yesterday.strftime("%Y-%m-%d"),
+                    interval=timeframe,  # match today’s interval (5m or 1m)
+                    progress=False
+                )
+                
+                # Run the value area engine
+                yva_min, yva_max = None, None
+                if not intraday_yesterday.empty:
+                    try:
+                        yva_min, yva_max, _ = compute_value_area(intraday_yesterday)
+                    except Exception as e:
+                        st.warning(f"Value Area error for {t}: {e}")
+
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
                     Adjusts Y-axis positions dynamically to prevent symbol overlap.
