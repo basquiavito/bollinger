@@ -272,7 +272,7 @@ if st.sidebar.button("Run Analysis"):
                     try:
                         yva_min, yva_max, y_profile_df = compute_value_area(
                             intraday_yesterday,
-                            mike_col=mike_col_va ,
+                            mike_col="F_numeric" ,
                   
                         )
                     except Exception as e:
