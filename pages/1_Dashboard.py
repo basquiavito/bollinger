@@ -3737,7 +3737,7 @@ if st.sidebar.button("Run Analysis"):
                       first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
 
 
-                  Call function and unpack
+               
  
                       # Display anchor info
                       st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
