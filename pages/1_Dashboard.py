@@ -127,38 +127,6 @@ gap_threshold = st.sidebar.slider(
 )
 
 
-# ======================================
-# Helper function to detect "40ish" + reversal
-# ======================================
-def detect_40ish_reversal(intraday_df):
-    """
-    Flags reversals when F% is between 44% to 55% (up) or -55% to -44% (down),
-    and the next row moves significantly in the opposite direction.
-    """
-    intraday_df["40ish"] = ""
-
-    for i in range(len(intraday_df) - 1):
-        current_val = intraday_df.loc[i, "F_numeric"]
-        next_val = intraday_df.loc[i + 1, "F_numeric"]
-
-        # 44% - 55% (Reversal Down) & -55% to -44% (Reversal Up)
-        if 44 <= current_val <= 55 and next_val < current_val:
-            intraday_df.loc[i, "40ish"] = "40ish UP & Reversed Down"
-        elif -55 <= current_val <= -44 and next_val > current_val:
-            intraday_df.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
-
-    return intraday_df
-
-# Momentum helper (for 2 and 7 periods)
-def add_momentum(df, price_col="Close"):
-    """
-    Adds Momentum_2 and Momentum_7 columns:
-      Momentum_2 = Close[t] - Close[t-2]
-      Momentum_7 = Close[t] - Close[t-7]
-    """
-    df["Momentum_2"] = df[price_col].diff(periods=7)
-    df["Momentum_7"] = df[price_col].diff(periods=14)
-    return df
 
 
 # ======================================
@@ -203,6 +171,39 @@ if st.sidebar.button("Run Analysis"):
                                # ➕ Add Yesterday's Range
                     yesterday_range = prev_high - prev_low
                     yesterday_range_str = f"{yesterday_range:.2f}"
+
+
+              # ─────────────────────────────────────────────────────────
+                #  Call compute_value_area() on yesterday's data
+                # ─────────────────────────────────────────────────────────
+                if not intraday_yesterday.empty:
+                
+                    # 1️⃣  Flatten index and build a Time column (09:35 AM, etc.)
+                    intraday_yesterday = intraday_yesterday.reset_index()            # brings Datetime out of index
+                    intraday_yesterday["Time"] = intraday_yesterday["Datetime"].dt.strftime("%I:%M %p")
+                
+                    # 2️⃣  Decide which column should be “Mike / F_numeric” for VA
+                    #     – If you already computed F_numeric in yesterday’s DF, keep that.
+                    #     – Otherwise just use Close so you still get a value-area shell.
+                    if "F_numeric" in intraday_yesterday.columns:
+                        mike_column_for_va = "F_numeric"
+                    elif "Mike" in intraday_yesterday.columns:
+                        mike_column_for_va = "Mike"
+                    else:
+                        mike_column_for_va = "Close"          # fallback
+                
+                    # 3️⃣  Compute yesterday’s Value Area
+                    try:
+                        yva_min, yva_max, y_profile_df = compute_value_area(
+                            intraday_yesterday,
+                            mike_col=mike_column_for_va
+                        )
+                    except Exception as e:
+                        st.warning(f"Could not compute yesterday VA for {t}: {e}")
+                        yva_min, yva_max = None, None
+                else:
+                    yva_min, yva_max = None, None
+                    st.warning(f"No intraday data for yesterday on {t}.")
 
                 # ================
                 # 2) Fetch Intraday Data
@@ -402,6 +403,38 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                # ======================================
+                # Helper function to detect "40ish" + reversal
+                # ======================================
+                def detect_40ish_reversal(intraday_df):
+                    """
+                    Flags reversals when F% is between 44% to 55% (up) or -55% to -44% (down),
+                    and the next row moves significantly in the opposite direction.
+                    """
+                    intraday_df["40ish"] = ""
+                
+                    for i in range(len(intraday_df) - 1):
+                        current_val = intraday_df.loc[i, "F_numeric"]
+                        next_val = intraday_df.loc[i + 1, "F_numeric"]
+                
+                        # 44% - 55% (Reversal Down) & -55% to -44% (Reversal Up)
+                        if 44 <= current_val <= 55 and next_val < current_val:
+                            intraday_df.loc[i, "40ish"] = "40ish UP & Reversed Down"
+                        elif -55 <= current_val <= -44 and next_val > current_val:
+                            intraday_df.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
+                
+                    return intraday_df
+                
+                # Momentum helper (for 2 and 7 periods)
+                def add_momentum(df, price_col="Close"):
+                    """
+                    Adds Momentum_2 and Momentum_7 columns:
+                      Momentum_2 = Close[t] - Close[t-2]
+                      Momentum_7 = Close[t] - Close[t-7]
+                    """
+                    df["Momentum_2"] = df[price_col].diff(periods=7)
+                    df["Momentum_7"] = df[price_col].diff(periods=14)
+                    return df
 
 
 
