@@ -2277,7 +2277,7 @@ if st.sidebar.button("Run Analysis"):
                     return df
   
   
-                intraday = ssign_dmi_emojis(intraday, period=14)
+                intraday = assign_dmi_emojis(intraday, period=14)
 
                 lookback_adx = 9  # or 4 for tighter sensitivity
                 intraday["ADX_Anchor"] = intraday["ADX_F%"].shift(lookback_adx)
