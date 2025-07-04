@@ -3808,7 +3808,15 @@ if st.sidebar.button("Run Analysis"):
                       
                           return va_min, va_max, profile_df
 
-               
+                               # After downloading intraday_yesterday
+                yva_min, yva_max, y_profile_df = compute_value_area(intraday_yesterday)
+                
+                st.markdown(f"""
+                **📘 Yesterday's Value Area**
+                - 🔽 VA Min: `{yva_min}`
+                - 🔼 VA Max: `{yva_max}`
+                """)
+
  
                 # Display anchor info
                 st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
