@@ -221,14 +221,7 @@ if st.sidebar.button("Run Analysis"):
 
                     # ───────── 1.5) Yesterday's intraday for Value Area ─────────
                 
-                    # previous day’s close (from daily_data)
-                prev_close_val = prev_close            # you already have this
-                
-                # add F_numeric column (same formula you use elsewhere)
-                intraday_yesterday["F_numeric"] = (
-                    (intraday_yesterday["Close"] - prev_close_val) / prev_close_val * 100 * 400
-                )
-
+        
                               # ───────── 1.5) Yesterday's intraday for Value Area ─────────
                 # Ensure start_date is a date object
                 if isinstance(start_date, str):
@@ -275,7 +268,7 @@ if st.sidebar.button("Run Analysis"):
                         yva_min, yva_max, y_profile_df = compute_value_area(
                             intraday_yesterday,
                             mike_col=mike_col_va ,
-                           target_bins=8     
+                  
                         )
                     except Exception as e:
                         st.warning(f"Could not compute yesterday VA for {t}: {e}")
