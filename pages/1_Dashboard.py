@@ -3356,6 +3356,58 @@ if st.sidebar.button("Run Analysis"):
 
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
+                intraday["TimeIndex"] = pd.to_datetime(intraday["Time"], format="%I:%M %p", errors="coerce")
+                intraday = intraday[intraday["TimeIndex"].notna()]
+                intraday["Date"] = intraday["TimeIndex"].dt.date
+
+                def build_market_profile(df, f_col="F_numeric"):
+                    # Bin F%
+                    f_bins = np.arange(-400, 401, 20)
+                    df = df.copy()
+                    df['F_Bin'] = pd.cut(df[f_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
+                    
+                    # Letter assignment
+                    df['LetterIndex'] = ((df['TimeIndex'].dt.hour * 60 + df['TimeIndex'].dt.minute) // 15).astype(int)
+                    df['LetterIndex'] -= df['LetterIndex'].min()
+                    
+                    def letter_code(n):
+                        import string
+                        letters = string.ascii_uppercase
+                        if n < 26:
+                            return letters[n]
+                        else:
+                            return letters[(n // 26) - 1] + letters[n % 26]
+                    
+                    df['Letter'] = df['LetterIndex'].apply(letter_code)
+                
+                    # Build profile
+                    profile = {}
+                    for f_bin in f_bins[:-1]:
+                        f_bin_str = str(f_bin)
+                        letters = df.loc[df['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
+                        if len(letters) > 0:
+                            profile[f_bin_str] = ''.join(sorted(letters))
+                    
+                    profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
+                    profile_df['F% Level'] = profile_df['F% Level'].astype(int)
+                    profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
+                    
+                    # Value area (70%)
+                    total_letters = profile_df["Letter_Count"].sum()
+                    target_count = total_letters * 0.7
+                    profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
+                    
+                    cumulative = 0
+                    value_area_levels = []
+                    for i, row in profile_sorted.iterrows():
+                        cumulative += row["Letter_Count"]
+                        value_area_levels.append(row["F% Level"])
+                        if cumulative >= target_count:
+                            break
+                    profile_df["✅ ValueArea"] = profile_df["F% Level"].apply(lambda x: "✅" if x in value_area_levels else "")
+                    
+                    return profile_df
+
 
 
                 with st.expander("Market Profile (F% Letters View)", expanded=False):
