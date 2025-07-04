@@ -170,7 +170,22 @@ if st.sidebar.button("Run Analysis"):
                 else:
                     intraday["Date"] = intraday["Date"].dt.tz_convert("America/New_York")
                 intraday["Date"] = intraday["Date"].dt.tz_localize(None)
-
+                
+                # ================
+                # 1.5) Fetch Yesterday's Intraday Data for Value Area
+                # ================
+                from datetime import datetime, timedelta
+                
+                yesterday_date = datetime.strptime(start_date, "%Y-%m-%d") - timedelta(days=1)
+                day_after_yesterday = datetime.strptime(start_date, "%Y-%m-%d")
+                
+                intraday_yesterday = yf.download(
+                    t,
+                    start=yesterday_date.strftime("%Y-%m-%d"),
+                    end=day_after_yesterday.strftime("%Y-%m-%d"),
+                    interval=timeframe,  # Use same 5m or 1m interval
+                    progress=False
+                )
 
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
