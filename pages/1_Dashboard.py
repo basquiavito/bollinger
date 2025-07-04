@@ -3624,30 +3624,30 @@ if st.sidebar.button("Run Analysis"):
                   current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
                   
                   # Step 3: Add a 🦻🏼 to any profile row that used to be the dominant %Vol level but is no longer the current Mike bin
-                  def ear_marker(row):
-                      if row['F% Level'] == max_vol_level and current_mike_bin != max_vol_level:
-                          return "🦻🏼"  # Permanently add
-                      return row.get("🦻🏼", "")  # Preserve existing 🦻🏼 if already present
+                  # def ear_marker(row):
+                  #     if row['F% Level'] == max_vol_level and current_mike_bin != max_vol_level:
+                  #         return "🦻🏼"  # Permanently add
+                  #     return row.get("🦻🏼", "")  # Preserve existing 🦻🏼 if already present
                   
-                  # Apply the marker logic
-                  if "🦻🏼" not in profile_df.columns:
-                      profile_df["🦻🏼"] = ""
+                  # # Apply the marker logic
+                  # if "🦻🏼" not in profile_df.columns:
+                  #     profile_df["🦻🏼"] = ""
                   
-                  profile_df["🦻🏼"] = profile_df.apply(ear_marker, axis=1)
+                  # profile_df["🦻🏼"] = profile_df.apply(ear_marker, axis=1)
                   
-                  # Step 1: Identify F% level with most letters (most time spent)
-                  max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+                  # # Step 1: Identify F% level with most letters (most time spent)
+                  # max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
                   
-                  # Step 2: Find current Mike bin
-                  current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
+                  # # Step 2: Find current Mike bin
+                  # current_mike_bin = f_bins[np.digitize(current_mike, f_bins) - 1]
                   
-                  # Step 3: If current Mike ≠ that time-dominant level, mark 👃🏽
-                  def nose_marker(row):
-                      if row['F% Level'] == max_letter_level and current_mike_bin != max_letter_level:
-                          return "👃🏽"
-                      return ""
+                  # # Step 3: If current Mike ≠ that time-dominant level, mark 👃🏽
+                  # def nose_marker(row):
+                  #     if row['F% Level'] == max_letter_level and current_mike_bin != max_letter_level:
+                  #         return "👃🏽"
+                  #     return ""
                   
-                  profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
+                  # profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
 
                   
                                    # Add the Ear_Emoji column to intraday based on the profile logic
@@ -5154,20 +5154,20 @@ if st.sidebar.button("Run Analysis"):
 
 
              
-               # 🦻🏼 Add Ear line if it exists
-                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+               # # 🦻🏼 Add Ear line if it exists
+               #  ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                 
-                if not ear_row.empty:
-                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
-                    fig.add_hline(
-                        y=ear_level,
-                        line=dict(color="darkgray", dash="dot", width=1.5),
-                        row=1, col=1,
-                        showlegend=True,
-                        annotation_text="🦻🏼 Ear Shift",
-                        annotation_position="top left",
-                        annotation_font=dict(color="black")
-                    )
+               #  if not ear_row.empty:
+               #      ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+               #      fig.add_hline(
+               #          y=ear_level,
+               #          line=dict(color="darkgray", dash="dot", width=1.5),
+               #          row=1, col=1,
+               #          showlegend=True,
+               #          annotation_text="🦻🏼 Ear Shift",
+               #          annotation_position="top left",
+               #          annotation_font=dict(color="black")
+               #      )
 
                 top_ears = profile_df.nlargest(3, "%Vol")
                 
