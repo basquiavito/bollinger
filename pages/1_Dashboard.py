@@ -5001,6 +5001,8 @@ if st.sidebar.button("Run Analysis"):
                         textfont=dict(size=20),
                         showlegend=False,
                         hoverinfo="skip",
+                        hovertemplate="🦵🏼 Bull MIDAS Wake<br>Time: %{x}<br>Price: %{y:.2f}<extra></extra>",
+
                         name="Bull MIDAS Wake (🦵🏼)"
                     ), row=1, col=1)
                 
@@ -5014,6 +5016,8 @@ if st.sidebar.button("Run Analysis"):
                         textfont=dict(size=30),
                         textposition="bottom center",
                         showlegend=False,
+                        hovertemplate="💥 Bear MIDAS Wake<br>Time: %{x}<br>Price: %{y:.2f}<extra></extra>",
+
                         hoverinfo="skip",
                         name="Bear MIDAS Wake (💥)"
                     ), row=1, col=1)
