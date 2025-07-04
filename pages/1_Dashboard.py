@@ -3453,7 +3453,7 @@ if st.sidebar.button("Run Analysis"):
                         val = va_rows["F% Level"].min()
                         
                         return {"VAH": vah, "VAL": val, "POC": poc}
-                  
+              
                   
                   
                   
