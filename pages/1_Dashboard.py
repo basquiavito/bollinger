@@ -3708,45 +3708,7 @@ if st.sidebar.button("Run Analysis"):
                       intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
 
 
-                      def extract_value_area(profile_df):
-                          profile_df = profile_df.copy()
-                          profile_df["F% Level"] = profile_df["F% Level"].astype(int)
-                          
-                          # Point of Control (POC) = Level with the most letters (i.e., time)
-                          poc_row = profile_df.loc[profile_df["Letter_Count"].idxmax()]
-                          poc = poc_row["F% Level"]
-                          
-                          # Value Area High (VAH) and Low (VAL) = range of F% levels covering 70% of letter activity
-                          va_rows = profile_df[profile_df["✅ ValueArea"] == "✅"]
-                          vah = va_rows["F% Level"].max()
-                          val = va_rows["F% Level"].min()
-                          
-                          return {"VAH": vah, "VAL": val, "POC": poc}
-
-
-                      from datetime import timedelta
-                      
-                      daily_va = {}
-                      
-                      # Run profile logic for each day in your data
-                      for date, df_day in intraday.groupby("Date"):
-                          profile_df = build_market_profile(df_day)
-                          va_data = extract_value_area(profile_df)
-                          daily_va[date] = va_data
-                      
-                      # Get yesterday’s value area
-                      today = intraday["Date"].max()
-                      yesterday = today - timedelta(days=1)
-                      
-                      y_va = daily_va.get(yesterday, None)
-                      
-                      if y_va:
-                          st.markdown(f"**Yesterday's VAH:** {y_va['VAH']} — **VAL:** {y_va['VAL']} — **POC:** {y_va['POC']}")
-                      
-                      
-
-
-                    
+ 
                   
                       # Add emojis
                       def add_mike_midas_cross_emojis(df, price_col):
