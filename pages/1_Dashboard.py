@@ -3657,27 +3657,7 @@ if st.sidebar.button("Run Analysis"):
                   
                   # ---- STEP: EXTRACT YESTERDAY VALUE AREA AND SAVE ----
                   
-                  # Assuming `profile_df` is your Market Profile DataFrame for a ticker like NVDA
-                  value_area_data = {}
-                  for ticker in tickers:
-                      profile_df = generate_market_profile(ticker)  # ← your function
-                      result = extract_value_area(profile_df)
-                      if result:
-                          vah, val, poc = result
-                          value_area_data[ticker] = {
-                              "date": today.strftime("%Y-%m-%d"),
-                              "VAH": vah,
-                              "VAL": val,
-                              "POC": poc,
-                          }
-
-                  
-                  # Save to CSV
-                  va_df = pd.DataFrame.from_dict(value_area_data, orient="index").reset_index()
-                  va_df.rename(columns={"index": "Ticker"}, inplace=True)
-                  va_df.to_csv("yesterday_value_area.csv", index=False)
-                  
-                  
+ 
                   
 
 
