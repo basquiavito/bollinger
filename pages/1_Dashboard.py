@@ -3733,58 +3733,58 @@ if st.sidebar.button("Run Analysis"):
 
                 
 
-                with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
-                
-                    # Detect price column
-                    if "Mike" in intraday.columns:
-                        price_col = "Mike"
-                    elif "F_numeric" in intraday.columns:
-                        price_col = "F_numeric"
-                    else:
-                        st.warning("Mike or F_numeric column not found.")
-                        st.stop()
-                
-                    if "Volume" not in intraday.columns:
-                        st.warning("Volume column not found.")
-                        st.stop()
-                
-                    # Defensive check for valid prices
-                    if intraday[price_col].dropna().empty:
-                        st.warning(f"No valid values in '{price_col}' for MIDAS anchor calculation.")
-                        st.stop()
-                
-                    # Convert time
-                    intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
-                
-                    ### 🐻 BEARISH MIDAS (anchor at max)
-                    anchor_idx_bear = intraday[price_col].idxmax()
-                    anchor_time_bear = intraday.loc[anchor_idx_bear, 'TimeIndex']
-                    anchor_price_bear = intraday.loc[anchor_idx_bear, price_col]
-                
-                    midas_curve_bear = []
-                    for i in range(anchor_idx_bear, len(intraday)):
-                        vol_window = intraday.loc[anchor_idx_bear:i, 'Volume']
-                        price_window = intraday.loc[anchor_idx_bear:i, price_col]
-                        weights = vol_window / vol_window.sum()
-                        midas_price = (price_window * weights).sum()
-                        midas_curve_bear.append(midas_price)
-                
-                    intraday["MIDAS_Bear"] = [np.nan] * anchor_idx_bear + midas_curve_bear
-                
-                    ### 🐂 BULLISH MIDAS (anchor at min)
-                    anchor_idx_bull = intraday[price_col].idxmin()
-                    anchor_time_bull = intraday.loc[anchor_idx_bull, 'TimeIndex']
-                    anchor_price_bull = intraday.loc[anchor_idx_bull, price_col]
-                
-                    midas_curve_bull = []
-                    for i in range(anchor_idx_bull, len(intraday)):
-                        vol_window = intraday.loc[anchor_idx_bull:i, 'Volume']
-                        price_window = intraday.loc[anchor_idx_bull:i, price_col]
-                        weights = vol_window / vol_window.sum()
-                        midas_price = (price_window * weights).sum()
-                        midas_curve_bull.append(midas_price)
-                
-                    intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
+              with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
+              
+                  # Detect price column
+                  if "Mike" in intraday.columns:
+                      price_col = "Mike"
+                  elif "F_numeric" in intraday.columns:
+                      price_col = "F_numeric"
+                  else:
+                      st.warning("Mike or F_numeric column not found.")
+                      st.stop()
+              
+                  if "Volume" not in intraday.columns:
+                      st.warning("Volume column not found.")
+                      st.stop()
+              
+                  # Defensive check for valid prices
+                  if intraday[price_col].dropna().empty:
+                      st.warning(f"No valid values in '{price_col}' for MIDAS anchor calculation.")
+                      st.stop()
+              
+                  # Convert time
+                  intraday['TimeIndex'] = pd.to_datetime(intraday['Time'], format="%I:%M %p")
+              
+                  ### 🐻 BEARISH MIDAS (anchor at max)
+                  anchor_idx_bear = intraday[price_col].idxmax()
+                  anchor_time_bear = intraday.loc[anchor_idx_bear, 'TimeIndex']
+                  anchor_price_bear = intraday.loc[anchor_idx_bear, price_col]
+              
+                  midas_curve_bear = []
+                  for i in range(anchor_idx_bear, len(intraday)):
+                      vol_window = intraday.loc[anchor_idx_bear:i, 'Volume']
+                      price_window = intraday.loc[anchor_idx_bear:i, price_col]
+                      weights = vol_window / vol_window.sum()
+                      midas_price = (price_window * weights).sum()
+                      midas_curve_bear.append(midas_price)
+              
+                  intraday["MIDAS_Bear"] = [np.nan] * anchor_idx_bear + midas_curve_bear
+              
+                  ### 🐂 BULLISH MIDAS (anchor at min)
+                  anchor_idx_bull = intraday[price_col].idxmin()
+                  anchor_time_bull = intraday.loc[anchor_idx_bull, 'TimeIndex']
+                  anchor_price_bull = intraday.loc[anchor_idx_bull, price_col]
+              
+                  midas_curve_bull = []
+                  for i in range(anchor_idx_bull, len(intraday)):
+                      vol_window = intraday.loc[anchor_idx_bull:i, 'Volume']
+                      price_window = intraday.loc[anchor_idx_bull:i, price_col]
+                      weights = vol_window / vol_window.sum()
+                      midas_price = (price_window * weights).sum()
+                      midas_curve_bull.append(midas_price)
+              
+                  intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
 
 
 
