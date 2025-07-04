@@ -4649,6 +4649,25 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
                 ), row=2, col=1)
                 
+                # 🔷 Value Area Min (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[va_min, va_min],
+                    mode='lines',
+                    line=dict(color="#0ff", dash="dot", width=0.5),
+                    name="VA Min",
+                    hovertemplate="Value Area Min: %{y:.2f}<extra></extra>"
+                ), row=1, col=1)
+                
+                # 🔷 Value Area Max (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[va_max, va_max],
+                    mode='lines',
+                    line=dict(color="#0ff", dash="dot", width=0.5),
+                    name="VA Max",
+                    hovertemplate="Value Area Max: %{y:.2f}<extra></extra>"
+                ), row=1, col=1)
 
 
      
@@ -4661,8 +4680,8 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=ib_upper_third, line=dict(color="gray", dash="dash", width=0.5), row=1, col=1)
                 
 
-                fig.add_hline(y=va_min,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
-                fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
+                # fig.add_hline(y=va_min,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
+                # fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
             
 
