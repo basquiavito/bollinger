@@ -5667,14 +5667,35 @@ if st.sidebar.button("Run Analysis"):
           
   
                               
+                # if yva_min is not None and yva_max is not None:
+                #     # Show in text
+                #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
+                # if prev_close:
+                #     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+                #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+                       
+                      # Show YVA and Yesterday Range
                 if yva_min is not None and yva_max is not None:
-                    # Show in text
-                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
+                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
                 if prev_close:
                     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
                     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
-       
-      
+                
+                # 🧭 Opening Position vs YVA
+                if yva_min is not None and yva_max is not None:
+                    opening_price = intraday["Close"].iloc[0]
+                
+                    if yva_min < opening_price < yva_max:
+                        yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
+                    elif opening_price >= yva_max:
+                        yva_position_msg = "⬆️ Opened **above** Yesterday's Value Area"
+                    elif opening_price <= yva_min:
+                        yva_position_msg = "⬇️ Opened **below** Yesterday's Value Area"
+                    else:
+                        yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
+                
+                    st.markdown(f"### {yva_position_msg}")
+
 
   
 
