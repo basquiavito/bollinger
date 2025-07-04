@@ -4629,6 +4629,7 @@ if st.sidebar.button("Run Analysis"):
 #                 fig.add_hline(y=call_ib_high, showlegend=True,     
 # line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 
+            # 🟡 Call IB High (hoverable)
                 fig.add_trace(go.Scatter(
                     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
                     y=[call_ib_high, call_ib_high],
@@ -4636,13 +4637,18 @@ if st.sidebar.button("Run Analysis"):
                     line=dict(color="gold", dash="dot", width=0.6),
                     name="Call IB High",
                     hovertemplate="Call IB High: %{y:.2f}<extra></extra>"
-                ))
+                ), row=2, col=1)
                 
-
-
-
-
-                fig.add_hline(y=call_ib_low,  line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
+                # 🟡 Call IB Low (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[call_ib_low, call_ib_low],
+                    mode='lines',
+                    line=dict(color="gold", dash="dot", width=0.6),
+                    name="Call IB Low",
+                    hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
+                ), row=2, col=1)
+                
 
 
      
