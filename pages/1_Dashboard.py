@@ -9,7 +9,7 @@ from plotly.subplots import make_subplots
 from datetime import date
 import io
                 
-=== Value Area Engine for Any Session (Today, Yesterday, Backtest) ===
+
 def compute_value_area(df: pd.DataFrame, mike_col: str = None, bin_size: int = 20):
     import numpy as np
     import pandas as pd
