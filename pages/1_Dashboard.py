@@ -3654,6 +3654,55 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                  
+                  # ---- STEP: EXTRACT YESTERDAY VALUE AREA AND SAVE ----
+                  
+                  # Assuming `profile_df` is your Market Profile DataFrame for a ticker like NVDA
+                  def extract_value_area(profile_df):
+                      va_zone = profile_df[profile_df["✅ ValueArea"] == "✅"]
+                      if va_zone.empty:
+                          return None
+                      vah = va_zone["F% Level"].max()
+                      val = va_zone["F% Level"].min()
+                      poc_row = profile_df.sort_values("Letter_Count", ascending=False).iloc[0]
+                      poc = poc_row["F% Level"]
+                      return vah, val, poc
+                  
+                  # Loop through tickers and save value areas
+                  value_area_data = {}
+                  for ticker in all_tickers:
+                      profile_df = generate_market_profile(ticker)  # your function
+                      result = extract_value_area(profile_df)
+                      if result:
+                          vah, val, poc = result
+                          value_area_data[ticker] = {
+                              "date": today.strftime("%Y-%m-%d"),
+                              "VAH": vah,
+                              "VAL": val,
+                              "POC": poc,
+                          }
+                  
+                  # Save to CSV
+                  va_df = pd.DataFrame.from_dict(value_area_data, orient="index").reset_index()
+                  va_df.rename(columns={"index": "Ticker"}, inplace=True)
+                  va_df.to_csv("yesterday_value_area.csv", index=False)
+                  
+                  
+                  
+
+
+
+
+
+
+
+
+
+
+
+
+                  
+
                   with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
                       # Detect price column
@@ -3826,7 +3875,25 @@ if st.sidebar.button("Run Analysis"):
                       # )
                   
 
+                import pandas as pd
+                from datetime import datetime, timedelta
                 
+                # Load yesterday's VAH/VAL/POC from file
+                va_df = pd.read_csv("yesterday_value_area.csv")
+                ticker = current_ticker  # whatever ticker you're plotting
+                yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+                
+                row = va_df[(va_df["Ticker"] == ticker) & (va_df["date"] == yesterday)]
+                if not row.empty:
+                    y_VAH = row["VAH"].values[0]
+                    y_VAL = row["VAL"].values[0]
+                    y_POC = row["POC"].values[0]
+                
+                    # Plot horizontal lines
+                    fig.add_hline(y=y_VAH, line_dash="dash", line_color="green", annotation_text="VAH (y-1)")
+                    fig.add_hline(y=y_VAL, line_dash="dash", line_color="red", annotation_text="VAL (y-1)")
+                    fig.add_hline(y=y_POC, line_dash="dot",  line_color="gray", annotation_text="POC (y-1)")
+
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
