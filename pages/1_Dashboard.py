@@ -3259,7 +3259,10 @@ if st.sidebar.button("Run Analysis"):
 
                 # Apply it
                 intraday = detect_fortress_bee_clusters(intraday)
-
+                
+                intraday["ATR_expansion"] = intraday["ATR_Exp_Alert"] == "☄️"
+                # Optional — if you're using BBW too:
+                intraday["BBW_expansion"] = intraday["BBW_Tight_Emoji"] == "🐝"
 
                 def heartSignal(intraday, rvol_threshold=1.5, lookback=5):
                     """
