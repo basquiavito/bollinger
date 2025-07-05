@@ -4111,8 +4111,22 @@ if st.sidebar.button("Run Analysis"):
                     )
                     fig.add_trace(scatter_f, row=1, col=1)
 
-
-#**************************************************************************************************************************************************************************
+                    # === Overlay Colored Top Dots ===
+                    colored_dots = go.Scatter(
+                        x=top_dots["Time"],
+                        y=top_dots["F_numeric"],
+                        mode="markers",
+                        marker=dict(
+                            size=8,
+                            color=top_dots["DotColor"],
+                            symbol="circle"
+                        ),
+                        name="15-min Directional Dot",
+                        hovertemplate="Time: %{x}<br>Top F%: %{y:.2f}<extra></extra>",
+                    )
+                    fig.add_trace(colored_dots, row=1, col=1)
+                    
+                    #**************************************************************************************************************************************************************************
 
 
                                                         # 🟢 40% RETRACEMENT
