@@ -5713,16 +5713,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(down_high_trace, row=1, col=1)
 
                 fig.add_trace(scatter_swimmer, row=1, col=1)
-
-                fig.add_trace(go.Scatter(
-                x=intraday["TimeIndex"],
-                y=intraday["F_numeric"],
-                mode="lines",
-                name="F_numeric (Mike)",
-                line=dict(width=2)
-            ),  row=1, col=1)
-            
-                                          # ➤ 🔦 Scout Emoji (DMI cross)
+             # ➤ 🔦 Scout Emoji (DMI cross)
                 scout_mask = intraday["scout_emoji"] == "🔦"
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[scout_mask, "TimeIndex"],
