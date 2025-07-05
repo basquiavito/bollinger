@@ -5713,9 +5713,82 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(down_high_trace, row=1, col=1)
 
                 fig.add_trace(scatter_swimmer, row=1, col=1)
-  
-           
-  
+
+                # Ensure emoji columns are assigned first
+                df = assign_dmi_emojis(df)
+                
+                # Create the subplot figure
+                fig = make_subplots(rows=1, cols=1, shared_xaxes=True)
+                
+                # ➤ Plot F_numeric (Mike)
+                fig.add_trace(go.Scatter(
+                    x=df["timestamp"],
+                    y=df["F_numeric"],
+                    mode="lines",
+                    name="F_numeric (Mike)",
+                    line=dict(width=2)
+                ), row=1, col=1)
+                
+                # ➤ Plot Kijun_F (dashed gray line)
+                fig.add_trace(go.Scatter(
+                    x=df["timestamp"],
+                    y=df["Kijun_F"],
+                    mode="lines",
+                    name="Kijun_F",
+                    line=dict(dash="dash", color="gray")
+                ), row=1, col=1)
+                
+                # ➤ 🔦 Scout Emoji (DMI cross)
+                scout_mask = df["scout_emoji"] == "🔦"
+                fig.add_trace(go.Scatter(
+                    x=df.loc[scout_mask, "timestamp"],
+                    y=df.loc[scout_mask, "F_numeric"] + 0.3,
+                    mode="text",
+                    text=df.loc[scout_mask, "scout_emoji"],
+                    textposition="top center",
+                    textfont=dict(size=26, color="black"),
+                    name="Scout 🔦",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Scout</extra>"
+                ), row=1, col=1)
+                
+                # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
+                wing_mask = df["wing_emoji"] == "🪽"
+                fig.add_trace(go.Scatter(
+                    x=df.loc[wing_mask, "timestamp"],
+                    y=df.loc[wing_mask, "F_numeric"] + 0.6,
+                    mode="text",
+                    text=df.loc[wing_mask, "wing_emoji"],
+                    textposition="top center",
+                    textfont=dict(size=30, color="green"),
+                    name="Wing 🪽",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
+                ), row=1, col=1)
+                
+                # ➤ 🦇 Bat Emoji (-DI near Kijun down-cross)
+                bat_mask = df["bat_emoji"] == "🦇"
+                fig.add_trace(go.Scatter(
+                    x=df.loc[bat_mask, "timestamp"],
+                    y=df.loc[bat_mask, "F_numeric"] - 0.6,
+                    mode="text",
+                    text=df.loc[bat_mask, "bat_emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=30, color="red"),
+                    name="Bat 🦇",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
+                ), row=1, col=1)
+                
+                # ➤ Final layout adjustments
+                fig.update_layout(
+                    title="F% vs Kijun_F with DMI-Based Emoji Signals",
+                    xaxis_title="Time",
+                    yaxis_title="F%",
+                    legend=dict(x=0.01, y=0.99),
+                    height=600,
+                    template="plotly_white"
+                )
+                
+                
+                  
           
   
                               
