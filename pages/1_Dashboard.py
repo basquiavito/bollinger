@@ -5715,7 +5715,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_swimmer, row=1, col=1)
 
                 fig.add_trace(go.Scatter(
-                x=intraday[""TimeIndex""],
+                x=intraday["TimeIndex"],
                 y=intraday["F_numeric"],
                 mode="lines",
                 name="F_numeric (Mike)",
