@@ -5739,19 +5739,19 @@ if st.sidebar.button("Run Analysis"):
                   hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bearish Scout</extra>"
               ), row=1, col=1)
 
-                            # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
-                wing_mask = intraday["wing_emoji"] == "🪽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[wing_mask, "TimeIndex"],
-                    y=intraday.loc[wing_mask, "F_numeric"] + 15,
-                    mode="text",
-                    text=intraday.loc[wing_mask, "wing_emoji"],
-                    textposition="top center",
-                    textfont=dict(size=16, color="green"),
-                    name="Wing 🪽",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
-                ), row=1, col=1)
-                # ➤ 🦇 Bat Emoji (-DI near Kijun down-cross)
+                          # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
+              wing_mask = intraday["wing_emoji"] == "🪽"
+              fig.add_trace(go.Scatter(
+                  x=intraday.loc[wing_mask, "TimeIndex"],
+                  y=intraday.loc[wing_mask, "F_numeric"] + 15,
+                  mode="text",
+                  text=intraday.loc[wing_mask, "wing_emoji"],
+                  textposition="top center",
+                  textfont=dict(size=16, color="green"),
+                  name="Wing 🪽",
+                  hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
+              ), row=1, col=1)
+              # ➤ 🦇 Bat Emoji (-DI near Kijun down-cross)
 
 
 
