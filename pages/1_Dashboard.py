@@ -5762,11 +5762,11 @@ if st.sidebar.button("Run Analysis"):
                 wing_mask = intraday["wing_emoji"] == "🪽"
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[wing_mask, "TimeIndex"],
-                    y=intraday.loc[wing_mask, "F_numeric"] + 15,
+                    y=intraday.loc[wing_mask, "F_numeric"] + 35,
                     mode="text",
                     text=intraday.loc[wing_mask, "wing_emoji"],
                     textposition="top center",
-                    textfont=dict(size=16, color="green"),
+                    textfont=dict(size=26, color="green"),
                     name="Wing 🪽",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
                 ), row=1, col=1)
@@ -5777,11 +5777,11 @@ if st.sidebar.button("Run Analysis"):
                 bat_mask = intraday["bat_emoji"] == "🦇"
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[bat_mask, "TimeIndex"],
-                    y=intraday.loc[bat_mask, "F_numeric"] - 15,
+                    y=intraday.loc[bat_mask, "F_numeric"] - 35,
                     mode="text",
                     text=intraday.loc[bat_mask, "bat_emoji"],
                     textposition="bottom center",
-                    textfont=dict(size=16, color="red"),
+                    textfont=dict(size=26, color="red"),
                     name="Bat 🦇",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
                 ), row=1, col=1)
