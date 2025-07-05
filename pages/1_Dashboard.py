@@ -5715,7 +5715,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[bullish_scout_mask, "TimeIndex"],
-                    y=intraday.loc[bullish_scout_mask, "scout_position"],
+                    y=intraday.loc[bullish_scout_mask, "scout_position"] + 16,
                     mode="text",
                     text=intraday.loc[bullish_scout_mask, "scout_emoji"],
                     textposition="top center",
@@ -5727,6 +5727,18 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                bearish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] < intraday["F_numeric"])
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[bearish_scout_mask, "TimeIndex"],
+                    y=intraday.loc[bearish_scout_mask, "scout_position"] - 16,
+                    mode="text",
+                    text=intraday.loc[bearish_scout_mask, "scout_emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=16, color="black"),
+                    name="Scout 🔦 (Bearish)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bearish Scout</extra>"
+                ), row=1, col=1)
 
 
 
