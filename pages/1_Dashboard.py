@@ -5727,17 +5727,17 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
                 # 🔦 Bearish Scout (−DI crosses above +DI)
-              bearish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] < intraday["F_numeric"])
-              fig.add_trace(go.Scatter(
-                  x=intraday.loc[bearish_scout_mask, "TimeIndex"],
-                  y=intraday.loc[bearish_scout_mask, "scout_position"] - 30,
-                  mode="text",
-                  text=intraday.loc[bearish_scout_mask, "scout_emoji"],
-                  textposition="bottom center",
-                  textfont=dict(size=16, color="black"),
-                  name="Scout 🔦 (Bearish)",
-                  hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bearish Scout</extra>"
-              ), row=1, col=1)
+                bearish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] < intraday["F_numeric"])
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[bearish_scout_mask, "TimeIndex"],
+                    y=intraday.loc[bearish_scout_mask, "scout_position"] - 30,
+                    mode="text",
+                    text=intraday.loc[bearish_scout_mask, "scout_emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=16, color="black"),
+                    name="Scout 🔦 (Bearish)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bearish Scout</extra>"
+                ), row=1, col=1)
 
                           # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
               wing_mask = intraday["wing_emoji"] == "🪽"
