@@ -4164,7 +4164,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="markers",
                         marker=dict(
                             color=top_dots["DotColor"],
-                            size=5,
+                            size=15,
                             symbol="circle-open",
                             opacity=0.4
                         ),
