@@ -2235,7 +2235,7 @@ if st.sidebar.button("Run Analysis"):
               
 
 
-                intraday = calculate_f_dmi(intraday, period=14)
+                intraday = calculate_f_dmi(intraday, period=14, z_window=9)
 
 
                 def assign_dmi_emojis(df):
