@@ -4143,7 +4143,8 @@ if st.sidebar.button("Run Analysis"):
                     #     hovertemplate="Time: %{x}<br>Top F%: %{y:.2f}<extra></extra>",
                     # )
                     # fig.add_trace(colored_dots, row=1, col=1)
-                    
+                                        
+                    fig.add_trace(main_dot, row=1, col=1)
 
                     main_dot = go.Scatter(
                         x=top_dots["Time"],
@@ -4157,6 +4158,11 @@ if st.sidebar.button("Run Analysis"):
                         name="15-min Top Dot",
                         hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
                                             )
+
+
+
+                    fig.add_trace(ghost_dot, row=1, col=1)
+
                     ghost_dot = go.Scatter(
                         x=top_dots["Time_HighMoment"],
                         y=top_dots["F_numeric"],
