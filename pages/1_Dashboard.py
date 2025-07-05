@@ -2228,11 +2228,6 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_f_dmi(intraday, period=14)
 
 
-
-
-
-
-          
                 def assign_dmi_emojis(df):
                     """
                     Adds three emoji signals based on DMI and Kijun_F% cross logic:
@@ -2242,6 +2237,7 @@ if st.sidebar.button("Run Analysis"):
                     """
                     df = df.copy()
                     df["scout_emoji"] = ""
+                    df["scout_position"] = np.nan  # <-- NEW: for visual offset
                     df["wing_emoji"] = ""
                     df["bat_emoji"] = ""
                 
@@ -2258,23 +2254,24 @@ if st.sidebar.button("Run Analysis"):
                     kijun_down_indices = set(df[kijun_down_cross].index)
                 
                     for i in range(1, len(df)):
-                        # Scout emoji logic
-                        if bullish_dmi_cross.iloc[i] or bearish_dmi_cross.iloc[i]:
-                            df.at[i, "scout_emoji"] = "🔦"
-                
-                        # Wing emoji: +DI cross AND Kijun_F up-cross within ±5 bars
                         if bullish_dmi_cross.iloc[i]:
-                            nearby_kijun_up = any((i - 5) <= j <= (i + 5) for j in kijun_up_indices)
-                            if nearby_kijun_up:
+                            df.at[i, "scout_emoji"] = "🔦"
+                            df.at[i, "scout_position"] = df.at[i, "F_numeric"] + 2  # ABOVE for bullish
+                
+                            # 🪽 Wing check
+                            if any((i - 5) <= j <= (i + 5) for j in kijun_up_indices):
                                 df.at[i, "wing_emoji"] = "🪽"
                 
-                        # Bat emoji: -DI cross AND Kijun_F down-cross within ±5 bars
-                        if bearish_dmi_cross.iloc[i]:
-                            nearby_kijun_down = any((i - 5) <= j <= (i + 5) for j in kijun_down_indices)
-                            if nearby_kijun_down:
+                        elif bearish_dmi_cross.iloc[i]:
+                            df.at[i, "scout_emoji"] = "🔦"
+                            df.at[i, "scout_position"] = df.at[i, "F_numeric"] - 2  # BELOW for bearish
+                
+                            # 🦇 Bat check
+                            if any((i - 5) <= j <= (i + 5) for j in kijun_down_indices):
                                 df.at[i, "bat_emoji"] = "🦇"
                 
                     return df
+
   
   
     
