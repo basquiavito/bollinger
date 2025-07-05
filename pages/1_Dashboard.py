@@ -2269,9 +2269,9 @@ if st.sidebar.button("Run Analysis"):
                             df.at[i, "scout_emoji"] = "🔦"
                             df.at[i, "scout_position"] = df.at[i, "F_numeric"] - 2  # BELOW for bearish
                 
-                            # 🦇 Bat check
+                            # 🐦‍⬛ Bat check
                             if any((i - 5) <= j <= (i + 5) for j in kijun_down_indices):
-                                df.at[i, "bat_emoji"] = "🦇"
+                                df.at[i, "bat_emoji"] = "🐦‍⬛"
                 
                     return df
 
