@@ -2221,21 +2221,14 @@ if st.sidebar.button("Run Analysis"):
 
 
                         
-                                          # 🎯 Signed Volatility
-                            df["signed_vol"] = df["+DM"] - df["-DM"]
-                        
-                            # 🧠 Z-score of Signed Volatility (standardized kinetic thrust)
-                            df["signed_vol_mean"] = df["signed_vol"].rolling(window=z_window).mean()
-                            df["signed_vol_std"] = df["signed_vol"].rolling(window=z_window).std()
-                            df["signed_vol_z"] = (df["signed_vol"] - df["signed_vol_mean"]) / df["signed_vol_std"]
-                            df["signed_vol_z"] = df["signed_vol_z"].replace([np.inf, -np.inf], np.nan).fillna(0)
+                         
                             return df
               
     
               
 
 
-                intraday = calculate_f_dmi(intraday, period=14, z_window=9)
+                intraday = calculate_f_dmi(intraday, period=14)
 
 
                 def assign_dmi_emojis(df):
