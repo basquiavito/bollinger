@@ -3812,12 +3812,17 @@ if st.sidebar.button("Run Analysis"):
 
                   
                                     # === Top Dot Logic by 15-Minute Block ===
+                  # top_dots = (
+                  #     intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
+                  #     .sort_values("LetterIndex")
+                  #     .reset_index(drop=True)
+                  # )
                   top_dots = (
-                      intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
-                      .sort_values("LetterIndex")
+                      intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
                       .reset_index(drop=True)
                   )
-                  
+                  top_dots["Time"] = intraday.groupby("LetterIndex")["Time"].max().values  # Force dot to close of bracket
+
                   # Compare each top with the previous group to decide direction
                   top_dots["Prev_High"] = top_dots["F_numeric"].shift(1)
                   
