@@ -5754,11 +5754,11 @@ if st.sidebar.button("Run Analysis"):
                 bat_mask = intraday["bat_emoji"] == "🦇"
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[bat_mask, "TimeIndex"],
-                    y=intraday.loc[bat_mask, "F_numeric"] - 0.6,
+                    y=intraday.loc[bat_mask, "F_numeric"] - 15,
                     mode="text",
                     text=intraday.loc[bat_mask, "bat_emoji"],
                     textposition="bottom center",
-                    textfont=dict(size=30, color="red"),
+                    textfont=dict(size=16, color="red"),
                     name="Bat 🦇",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
                 ), row=1, col=1)
