@@ -5747,6 +5747,21 @@ if st.sidebar.button("Run Analysis"):
                     name="Wing 🪽",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
                 ), row=1, col=1)
+                # ➤ 🦇 Bat Emoji (-DI near Kijun down-cross)
+
+
+
+                bat_mask = intraday["bat_emoji"] == "🦇"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[bat_mask, "timestamp"],
+                    y=intraday.loc[bat_mask, "F_numeric"] - 0.6,
+                    mode="text",
+                    text=intraday.loc[bat_mask, "bat_emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=30, color="red"),
+                    name="Bat 🦇",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
+                ), row=1, col=1)
 
   
                               
