@@ -2233,52 +2233,52 @@ if st.sidebar.button("Run Analysis"):
 
 
           
-               def assign_dmi_emojis(df):
-                    """
-                    Adds three emoji signals based on DMI and Kijun_F% cross logic:
-                    🔦 scout_emoji — any +DI or -DI cross
-                    🪽 wing_emoji — +DI cross within ±5 bars of Kijun_F up-cross
-                    🦇 bat_emoji  — -DI cross within ±5 bars of Kijun_F down-cross
-                    """
-                    df = df.copy()
-                    df["scout_emoji"] = ""
-                    df["wing_emoji"] = ""
-                    df["bat_emoji"] = ""
+               # def assign_dmi_emojis(df):
+               #      """
+               #      Adds three emoji signals based on DMI and Kijun_F% cross logic:
+               #      🔦 scout_emoji — any +DI or -DI cross
+               #      🪽 wing_emoji — +DI cross within ±5 bars of Kijun_F up-cross
+               #      🦇 bat_emoji  — -DI cross within ±5 bars of Kijun_F down-cross
+               #      """
+               #      df = df.copy()
+               #      df["scout_emoji"] = ""
+               #      df["wing_emoji"] = ""
+               #      df["bat_emoji"] = ""
                 
-                    # Identify DMI crossovers
-                    bullish_dmi_cross = (df["+DI_F%"] > df["-DI_F%"]) & (df["+DI_F%"].shift(1) <= df["-DI_F%"].shift(1))
-                    bearish_dmi_cross = (df["-DI_F%"] > df["+DI_F%"]) & (df["-DI_F%"].shift(1) <= df["+DI_F%"].shift(1))
+               #      # Identify DMI crossovers
+               #      bullish_dmi_cross = (df["+DI_F%"] > df["-DI_F%"]) & (df["+DI_F%"].shift(1) <= df["-DI_F%"].shift(1))
+               #      bearish_dmi_cross = (df["-DI_F%"] > df["+DI_F%"]) & (df["-DI_F%"].shift(1) <= df["+DI_F%"].shift(1))
                 
-                    # Identify Kijun_F crosses
-                    kijun_up_cross = (df["F_numeric"] > df["Kijun_F"]) & (df["F_numeric"].shift(1) <= df["Kijun_F"].shift(1))
-                    kijun_down_cross = (df["F_numeric"] < df["Kijun_F"]) & (df["F_numeric"].shift(1) >= df["Kijun_F"].shift(1))
+               #      # Identify Kijun_F crosses
+               #      kijun_up_cross = (df["F_numeric"] > df["Kijun_F"]) & (df["F_numeric"].shift(1) <= df["Kijun_F"].shift(1))
+               #      kijun_down_cross = (df["F_numeric"] < df["Kijun_F"]) & (df["F_numeric"].shift(1) >= df["Kijun_F"].shift(1))
                 
-                    # Get indices of Kijun_F crosses
-                    kijun_up_indices = set(df[kijun_up_cross].index)
-                    kijun_down_indices = set(df[kijun_down_cross].index)
+               #      # Get indices of Kijun_F crosses
+               #      kijun_up_indices = set(df[kijun_up_cross].index)
+               #      kijun_down_indices = set(df[kijun_down_cross].index)
                 
-                    for i in range(1, len(df)):
-                        # Scout emoji logic
-                        if bullish_dmi_cross.iloc[i] or bearish_dmi_cross.iloc[i]:
-                            df.at[i, "scout_emoji"] = "🔦"
+               #      for i in range(1, len(df)):
+               #          # Scout emoji logic
+               #          if bullish_dmi_cross.iloc[i] or bearish_dmi_cross.iloc[i]:
+               #              df.at[i, "scout_emoji"] = "🔦"
                 
-                        # Wing emoji: +DI cross AND Kijun_F up-cross within ±5 bars
-                        if bullish_dmi_cross.iloc[i]:
-                            nearby_kijun_up = any((i - 5) <= j <= (i + 5) for j in kijun_up_indices)
-                            if nearby_kijun_up:
-                                df.at[i, "wing_emoji"] = "🪽"
+               #          # Wing emoji: +DI cross AND Kijun_F up-cross within ±5 bars
+               #          if bullish_dmi_cross.iloc[i]:
+               #              nearby_kijun_up = any((i - 5) <= j <= (i + 5) for j in kijun_up_indices)
+               #              if nearby_kijun_up:
+               #                  df.at[i, "wing_emoji"] = "🪽"
                 
-                        # Bat emoji: -DI cross AND Kijun_F down-cross within ±5 bars
-                        if bearish_dmi_cross.iloc[i]:
-                            nearby_kijun_down = any((i - 5) <= j <= (i + 5) for j in kijun_down_indices)
-                            if nearby_kijun_down:
-                                df.at[i, "bat_emoji"] = "🦇"
+               #          # Bat emoji: -DI cross AND Kijun_F down-cross within ±5 bars
+               #          if bearish_dmi_cross.iloc[i]:
+               #              nearby_kijun_down = any((i - 5) <= j <= (i + 5) for j in kijun_down_indices)
+               #              if nearby_kijun_down:
+               #                  df.at[i, "bat_emoji"] = "🦇"
                 
-                    return df
+               #      return df
   
   
     
-                intraday = assign_dmi_emojis(intraday)
+               #  intraday = assign_dmi_emojis(intraday)
 
                 lookback_adx = 9  # or 4 for tighter sensitivity
                 intraday["ADX_Anchor"] = intraday["ADX_F%"].shift(lookback_adx)
