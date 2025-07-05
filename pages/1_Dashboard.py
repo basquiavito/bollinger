@@ -5714,16 +5714,17 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_trace(scatter_swimmer, row=1, col=1)
 
+                
                 # Ensure emoji columns are assigned first
-                df = assign_dmi_emojis(df)
+                intraday = assign_dmi_emojis(intraday)
                 
                 # Create the subplot figure
                 fig = make_subplots(rows=1, cols=1, shared_xaxes=True)
                 
                 # ➤ Plot F_numeric (Mike)
                 fig.add_trace(go.Scatter(
-                    x=df["timestamp"],
-                    y=df["F_numeric"],
+                    x=intraday["timestamp"],
+                    y=intraday["F_numeric"],
                     mode="lines",
                     name="F_numeric (Mike)",
                     line=dict(width=2)
@@ -5731,20 +5732,20 @@ if st.sidebar.button("Run Analysis"):
                 
                 # ➤ Plot Kijun_F (dashed gray line)
                 fig.add_trace(go.Scatter(
-                    x=df["timestamp"],
-                    y=df["Kijun_F"],
+                    x=intraday["timestamp"],
+                    y=intraday["Kijun_F"],
                     mode="lines",
                     name="Kijun_F",
                     line=dict(dash="dash", color="gray")
                 ), row=1, col=1)
                 
                 # ➤ 🔦 Scout Emoji (DMI cross)
-                scout_mask = df["scout_emoji"] == "🔦"
+                scout_mask = intraday["scout_emoji"] == "🔦"
                 fig.add_trace(go.Scatter(
-                    x=df.loc[scout_mask, "timestamp"],
-                    y=df.loc[scout_mask, "F_numeric"] + 0.3,
+                    x=intraday.loc[scout_mask, "timestamp"],
+                    y=intraday.loc[scout_mask, "F_numeric"] + 0.3,
                     mode="text",
-                    text=df.loc[scout_mask, "scout_emoji"],
+                    text=intraday.loc[scout_mask, "scout_emoji"],
                     textposition="top center",
                     textfont=dict(size=26, color="black"),
                     name="Scout 🔦",
@@ -5752,12 +5753,12 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
                 
                 # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
-                wing_mask = df["wing_emoji"] == "🪽"
+                wing_mask = intraday["wing_emoji"] == "🪽"
                 fig.add_trace(go.Scatter(
-                    x=df.loc[wing_mask, "timestamp"],
-                    y=df.loc[wing_mask, "F_numeric"] + 0.6,
+                    x=intraday.loc[wing_mask, "timestamp"],
+                    y=intraday.loc[wing_mask, "F_numeric"] + 0.6,
                     mode="text",
-                    text=df.loc[wing_mask, "wing_emoji"],
+                    text=intraday.loc[wing_mask, "wing_emoji"],
                     textposition="top center",
                     textfont=dict(size=30, color="green"),
                     name="Wing 🪽",
@@ -5765,12 +5766,12 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
                 
                 # ➤ 🦇 Bat Emoji (-DI near Kijun down-cross)
-                bat_mask = df["bat_emoji"] == "🦇"
+                bat_mask = intraday["bat_emoji"] == "🦇"
                 fig.add_trace(go.Scatter(
-                    x=df.loc[bat_mask, "timestamp"],
-                    y=df.loc[bat_mask, "F_numeric"] - 0.6,
+                    x=intraday.loc[bat_mask, "timestamp"],
+                    y=intraday.loc[bat_mask, "F_numeric"] - 0.6,
                     mode="text",
-                    text=df.loc[bat_mask, "bat_emoji"],
+                    text=intraday.loc[bat_mask, "bat_emoji"],
                     textposition="bottom center",
                     textfont=dict(size=30, color="red"),
                     name="Bat 🦇",
@@ -5788,6 +5789,7 @@ if st.sidebar.button("Run Analysis"):
                 )
                 
                 
+                                
                   
           
   
