@@ -5715,7 +5715,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[bullish_scout_mask, "TimeIndex"],
-                    y=intraday.loc[bullish_scout_mask, "scout_position"] + 8,
+                    y=intraday.loc[bullish_scout_mask, "scout_position"] + 5,
                     mode="text",
                     text=intraday.loc[bullish_scout_mask, "scout_emoji"],
                     textposition="top center",
@@ -5731,7 +5731,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[bearish_scout_mask, "TimeIndex"],
-                    y=intraday.loc[bearish_scout_mask, "scout_position"] - 8,
+                    y=intraday.loc[bearish_scout_mask, "scout_position"] - 5,
                     mode="text",
                     text=intraday.loc[bearish_scout_mask, "scout_emoji"],
                     textposition="bottom center",
