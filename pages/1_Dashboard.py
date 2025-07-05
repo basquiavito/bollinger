@@ -5710,20 +5710,27 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(down_high_trace, row=1, col=1)
 
                 fig.add_trace(scatter_swimmer, row=1, col=1)
-             # ➤ 🔦 Scout Emoji (DMI cross)
-                scout_mask = intraday["scout_emoji"] == "🔦"
+   
+                bullish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] > intraday["F_numeric"])
+                
                 fig.add_trace(go.Scatter(
-                    x=intraday.loc[scout_mask, "TimeIndex"],
-                    y=intraday.loc[scout_mask, "F_numeric"] + 5,
+                    x=intraday.loc[bullish_scout_mask, "TimeIndex"],
+                    y=intraday.loc[bullish_scout_mask, "scout_position"],
                     mode="text",
-                    text=intraday.loc[scout_mask, "scout_emoji"],
+                    text=intraday.loc[bullish_scout_mask, "scout_emoji"],
                     textposition="top center",
                     textfont=dict(size=16, color="black"),
-                    name="Scout 🔦",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Scout</extra>"
+                    name="Scout 🔦 (Bullish)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bullish Scout</extra>"
                 ), row=1, col=1)
 
-  
+
+
+
+
+
+
+              
 
                             # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
                 wing_mask = intraday["wing_emoji"] == "🪽"
