@@ -3259,7 +3259,64 @@ if st.sidebar.button("Run Analysis"):
 
                 # Apply it
                 intraday = detect_fortress_bee_clusters(intraday)
-               
+
+
+                def heartSignal(intraday, rvol_threshold=1.5, lookback=5):
+                    """
+                    Identifies 🫀 Heart signals when all key conditions occur within ±5 bars:
+                    - Kijun_F cross
+                    - Wing emoji present
+                    - RVOL > threshold
+                    - STD_expansion or ATR_expansion
+                    """
+                    intraday = intraday.copy()
+                    intraday["Heart_Alert"] = False
+                    intraday["Heart_Emoji"] = ""
+                    intraday["Heart_Position"] = np.nan
+                    intraday["Heart_Reason"] = ""
+                
+                    for i in range(len(intraday)):
+                        start = max(0, i - lookback)
+                        end = min(len(intraday) - 1, i + lookback)
+                        window = intraday.iloc[start:end + 1]
+                
+                        # Kijun cross detection in window
+                        kijun_crossed = False
+                        for j in range(1, len(window)):
+                            prev_f = window.iloc[j - 1]["F_numeric"]
+                            prev_k = window.iloc[j - 1]["Kijun_F"]
+                            curr_f = window.iloc[j]["F_numeric"]
+                            curr_k = window.iloc[j]["Kijun_F"]
+                            if ((prev_f < prev_k) and (curr_f > curr_k)) or ((prev_f > prev_k) and (curr_f < curr_k)):
+                                kijun_crossed = True
+                                break
+                
+                        # Wing detection
+                        wing_present = (window["wing_emoji"] == "🪽").any()
+                
+                        # RVOL check
+                        rvol_hit = (window["RVOL_5"] > rvol_threshold).any()
+                
+                        # Volatility check
+                        volatility_triggered = window["STD_expansion"].any() or window["ATR_expansion"].any()
+                
+                        # Final 🫀 condition
+                        if kijun_crossed and wing_present and rvol_hit and volatility_triggered:
+                            intraday.at[intraday.index[i], "Heart_Alert"] = True
+                            intraday.at[intraday.index[i], "Heart_Emoji"] = "🫀"
+                            intraday.at[intraday.index[i], "Heart_Position"] = intraday.at[intraday.index[i], "F_numeric"] + 3
+                            intraday.at[intraday.index[i], "Heart_Reason"] = "Room of Conviction: Kijun+Wing+RVOL+Volatility"
+                
+                    return intraday
+
+                intraday = heartSignal(intraday)
+
+
+
+
+
+
+              
                 def entryAlert(intraday, threshold=10.0, rvol_threshold=1.2, rvol_lookback=9):
                     """
                     Enhanced Entry Alert System:
@@ -3325,56 +3382,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                 intraday = entryAlert(intraday, threshold=0.1)
-                def heartSignal(intraday, rvol_threshold=1.5, lookback=5):
-                    """
-                    Identifies 🫀 Heart signals when all key conditions occur within ±5 bars:
-                    - Kijun_F cross
-                    - Wing emoji present
-                    - RVOL > threshold
-                    - STD_expansion or ATR_expansion
-                    """
-                    intraday = intraday.copy()
-                    intraday["Heart_Alert"] = False
-                    intraday["Heart_Emoji"] = ""
-                    intraday["Heart_Position"] = np.nan
-                    intraday["Heart_Reason"] = ""
-                
-                    for i in range(len(intraday)):
-                        start = max(0, i - lookback)
-                        end = min(len(intraday) - 1, i + lookback)
-                        window = intraday.iloc[start:end + 1]
-                
-                        # Kijun cross detection in window
-                        kijun_crossed = False
-                        for j in range(1, len(window)):
-                            prev_f = window.iloc[j - 1]["F_numeric"]
-                            prev_k = window.iloc[j - 1]["Kijun_F"]
-                            curr_f = window.iloc[j]["F_numeric"]
-                            curr_k = window.iloc[j]["Kijun_F"]
-                            if ((prev_f < prev_k) and (curr_f > curr_k)) or ((prev_f > prev_k) and (curr_f < curr_k)):
-                                kijun_crossed = True
-                                break
-                
-                        # Wing detection
-                        wing_present = (window["wing_emoji"] == "🪽").any()
-                
-                        # RVOL check
-                        rvol_hit = (window["RVOL_5"] > rvol_threshold).any()
-                
-                        # Volatility check
-                        volatility_triggered = window["STD_expansion"].any() or window["ATR_expansion"].any()
-                
-                        # Final 🫀 condition
-                        if kijun_crossed and wing_present and rvol_hit and volatility_triggered:
-                            intraday.at[intraday.index[i], "Heart_Alert"] = True
-                            intraday.at[intraday.index[i], "Heart_Emoji"] = "🫀"
-                            intraday.at[intraday.index[i], "Heart_Position"] = intraday.at[intraday.index[i], "F_numeric"] + 3
-                            intraday.at[intraday.index[i], "Heart_Reason"] = "Room of Conviction: Kijun+Wing+RVOL+Volatility"
-                
-                    return intraday
-
-                  intraday = heartSignal(intraday)
-
+              
 
                 #  def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
                 #     """
