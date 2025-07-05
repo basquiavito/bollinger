@@ -4156,7 +4156,20 @@ if st.sidebar.button("Run Analysis"):
                         ),
                         name="15-min Top Dot",
                         hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
-                        )
+                                            )
+                    ghost_dot = go.Scatter(
+                        x=top_dots["Time_HighMoment"],
+                        y=top_dots["F_numeric"],
+                        mode="markers",
+                        marker=dict(
+                            color=top_dots["DotColor"],  # or use "white"/"lightgray"
+                            size=5,
+                            symbol="circle-open",
+                            opacity=0.4
+                        ),
+                        name="Ghost Dot 🫥",
+                        hovertemplate="Auction Push: %{x}<br>F%: %{y}<extra></extra>"
+                    )
 
                     #**************************************************************************************************************************************************************************
 
