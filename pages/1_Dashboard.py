@@ -3810,9 +3810,30 @@ if st.sidebar.button("Run Analysis"):
                   )
                   intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
-
                   
- 
+                                    # === Top Dot Logic by 15-Minute Block ===
+                  top_dots = (
+                      intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
+                      .sort_values("LetterIndex")
+                      .reset_index(drop=True)
+                  )
+                  
+                  # Compare each top with the previous group to decide direction
+                  top_dots["Prev_High"] = top_dots["F_numeric"].shift(1)
+                  
+                  def assign_dot_color(row):
+                      if pd.isna(row["Prev_High"]):
+                          return "gray"
+                      elif row["F_numeric"] > row["Prev_High"]:
+                          return "green"
+                      elif row["F_numeric"] < row["Prev_High"]:
+                          return "red"
+                      else:
+                          return "gray"
+                  
+                  top_dots["DotColor"] = top_dots.apply(assign_dot_color, axis=1)
+                  
+                   
 
                   # Show DataFrame
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
