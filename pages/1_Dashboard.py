@@ -5720,22 +5720,22 @@ if st.sidebar.button("Run Analysis"):
                 mode="lines",
                 name="F_numeric (Mike)",
                 line=dict(width=2)
-            ), row=1, col=1)
+            ),  row=1, col=1)
             
                                           # ➤ 🔦 Scout Emoji (DMI cross)
-            scout_mask = intraday["scout_emoji"] == "🔦"
-            fig.add_trace(go.Scatter(
-                x=intraday.loc[scout_mask, "TimeIndex"],
-                y=intraday.loc[scout_mask, "F_numeric"] + 0.3,
-                mode="text",
-                text=intraday.loc[scout_mask, "scout_emoji"],
-                textposition="top center",
-                textfont=dict(size=26, color="black"),
-                name="Scout 🔦",
-                hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Scout</extra>"
-            ), row=1, col=1)
-
-          
+                scout_mask = intraday["scout_emoji"] == "🔦"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[scout_mask, "TimeIndex"],
+                    y=intraday.loc[scout_mask, "F_numeric"] + 0.3,
+                    mode="text",
+                    text=intraday.loc[scout_mask, "scout_emoji"],
+                    textposition="top center",
+                    textfont=dict(size=26, color="black"),
+                    name="Scout 🔦",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Scout</extra>"
+                ), row=1, col=1)
+  
+            
   
                               
                 # if yva_min is not None and yva_max is not None:
