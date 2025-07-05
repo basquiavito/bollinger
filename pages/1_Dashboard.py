@@ -3817,11 +3817,24 @@ if st.sidebar.button("Run Analysis"):
                   #     .sort_values("LetterIndex")
                   #     .reset_index(drop=True)
                   # )
+                  # top_dots = (
+                  #     intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
+                  #     .reset_index(drop=True)
+                  # )
+                  # top_dots["Time"] = intraday.groupby("LetterIndex")["Time"].max().values  # Force dot to close of bracket
+
+                  # Step 1: Get row of max F% per 15-min block (actual auction moment)
                   top_dots = (
                       intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
                       .reset_index(drop=True)
                   )
-                  top_dots["Time"] = intraday.groupby("LetterIndex")["Time"].max().values  # Force dot to close of bracket
+                  
+                  # Save actual time of high for ghost dot
+                  top_dots["Time_HighMoment"] = top_dots["Time"]
+                  
+                  # Replace main Time column with bracket end time for dot alignment
+                  top_dots["Time"] = intraday.groupby("LetterIndex")["Time"].max().values
+
 
                   # Compare each top with the previous group to decide direction
                   top_dots["Prev_High"] = top_dots["F_numeric"].shift(1)
@@ -4116,21 +4129,35 @@ if st.sidebar.button("Run Analysis"):
                     )
                     fig.add_trace(scatter_f, row=1, col=1)
 
-                    # === Overlay Colored Top Dots ===
-                    colored_dots = go.Scatter(
+                    # # === Overlay Colored Top Dots ===
+                    # colored_dots = go.Scatter(
+                    #     x=top_dots["Time"],
+                    #     y=top_dots["F_numeric"],
+                    #     mode="markers",
+                    #     marker=dict(
+                    #         size=8,
+                    #         color=top_dots["DotColor"],
+                    #         symbol="circle"
+                    #     ),
+                    #     name="15-min Directional Dot",
+                    #     hovertemplate="Time: %{x}<br>Top F%: %{y:.2f}<extra></extra>",
+                    # )
+                    # fig.add_trace(colored_dots, row=1, col=1)
+                    
+
+                    main_dot = go.Scatter(
                         x=top_dots["Time"],
                         y=top_dots["F_numeric"],
                         mode="markers",
                         marker=dict(
-                            size=8,
                             color=top_dots["DotColor"],
+                            size=8,
                             symbol="circle"
                         ),
-                        name="15-min Directional Dot",
-                        hovertemplate="Time: %{x}<br>Top F%: %{y:.2f}<extra></extra>",
-                    )
-                    fig.add_trace(colored_dots, row=1, col=1)
-                    
+                        name="15-min Top Dot",
+                        hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
+                        )
+
                     #**************************************************************************************************************************************************************************
 
 
