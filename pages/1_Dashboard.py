@@ -4962,19 +4962,19 @@ if st.sidebar.button("Run Analysis"):
                 # ), row=2, col=1)
                 
              # Filter for rows with the emoji
-                horse_df = intraday[intraday["Mike_Kijun_Horse_Emoji"] == "🏇🏽"]
+                # horse_df = intraday[intraday["Mike_Kijun_Horse_Emoji"] == "🏇🏽"]
                 
-                # Add trace to your figure
-                fig.add_trace(go.Scatter(
-                    x=horse_df["TimeIndex"],
-                    y=horse_df["F_numeric"] + 10,
-                    mode="text",
-                    text=horse_df["Mike_Kijun_Horse_Emoji"],
-                    textposition="bottom left",
-                    textfont=dict(size=30),
-                    name="Mike x Kijun + Horse",
-                    showlegend=True
-                ))
+                # # Add trace to your figure
+                # fig.add_trace(go.Scatter(
+                #     x=horse_df["TimeIndex"],
+                #     y=horse_df["F_numeric"] + 10,
+                #     mode="text",
+                #     text=horse_df["Mike_Kijun_Horse_Emoji"],
+                #     textposition="bottom left",
+                #     textfont=dict(size=30),
+                #     name="Mike x Kijun + Horse",
+                #     showlegend=True
+                # ))
 
                  
 
