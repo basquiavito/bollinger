@@ -4580,21 +4580,21 @@ if st.sidebar.button("Run Analysis"):
 
 
           # Mask for ADX Alerts (♨️, 🧨)
-                    mask_adx_alert = intraday["ADX_Alert"] != ""
+                    # mask_adx_alert = intraday["ADX_Alert"] != ""
 
-                    scatter_adx_alert = go.Scatter(
-                        x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 10,  # Offset for visibility
-                        mode="text",
-                        text=intraday.loc[mask_adx_alert, "ADX_Alert"],
-                        textposition="top center",
-                        textfont=dict(size=11),
-                        name="ADX Expansion Alert",
-                        hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
-                        customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
-                    )
+                    # scatter_adx_alert = go.Scatter(
+                    #     x=intraday.loc[mask_adx_alert, "Time"],
+                    #     y=intraday.loc[mask_adx_alert, "F_numeric"] + 10,  # Offset for visibility
+                    #     mode="text",
+                    #     text=intraday.loc[mask_adx_alert, "ADX_Alert"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=11),
+                    #     name="ADX Expansion Alert",
+                    #     hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
+                    #     customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
+                    # )
 
-                    fig.add_trace(scatter_adx_alert, row=1, col=1)
+                    # fig.add_trace(scatter_adx_alert, row=1, col=1)
 
 
 
@@ -5913,7 +5913,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["SpanA_F"],
                     mode="lines",
-                    line=dict(color="yellow", width=2),
+                    line=dict(color="yellow", width=0.9),
                     name="Span A (F%)"
                 )
                 fig.add_trace(span_a_line, row=1, col=1)
@@ -5923,7 +5923,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["SpanB_F"],
                     mode="lines",
-                    line=dict(color="blue", width=2),
+                    line=dict(color="blue", width=0.9),
                     name="Span B (F%)"
                 )
                 fig.add_trace(span_b_line, row=1, col=1)
