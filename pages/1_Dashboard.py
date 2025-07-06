@@ -5834,7 +5834,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="🌞",
                     textposition="top center",
-                    textfont=dict(size=55),
+                    textfont=dict(size=34),
                     name="Tenkan-Kijun Bullish Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
                 )
@@ -5846,7 +5846,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="🌙",
                     textposition="bottom center",
-                    textfont=dict(size=55),
+                    textfont=dict(size=34),
                     name="Tenkan-Kijun Bearish Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
                 )
