@@ -2269,9 +2269,9 @@ if st.sidebar.button("Run Analysis"):
                             df.at[i, "scout_emoji"] = "🔦"
                             df.at[i, "scout_position"] = df.at[i, "F_numeric"] - 2  # BELOW for bearish
                 
-                            # 🐦‍⬛ Bat check
+                            # 🪽 Bat check
                             if any((i - 5) <= j <= (i + 5) for j in kijun_down_indices):
-                                df.at[i, "bat_emoji"] = "🐦‍⬛"
+                                df.at[i, "bat_emoji"] = "🪽"
                 
                     return df
 
@@ -5858,7 +5858,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                bat_mask = intraday["bat_emoji"] == "🐦‍⬛"
+                bat_mask = intraday["bat_emoji"] == "🪽"
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[bat_mask, "TimeIndex"],
                     y=intraday.loc[bat_mask, "F_numeric"] - 35,
@@ -5866,7 +5866,7 @@ if st.sidebar.button("Run Analysis"):
                     text=intraday.loc[bat_mask, "bat_emoji"],
                     textposition="bottom center",
                     textfont=dict(size=26, color="red"),
-                    name="Bat 🐦‍⬛",
+                    name="Bat 🪽",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
                 ), row=1, col=1)
 
