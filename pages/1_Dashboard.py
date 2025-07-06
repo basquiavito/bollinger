@@ -5252,35 +5252,35 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
-                bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
-                fig.add_trace(go.Scatter(
-                    x=bullish_df["TimeIndex"] ,
-                    y=bullish_df["F_numeric"] + 14,
-                    mode="text",
-                    text=bullish_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="top right",
-                    textfont=dict(size=20),
-                    name="Bullish Mike x Kijun + ATR 🚀",
-                    showlegend=True
-                ))
+                # # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
+                # bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                # fig.add_trace(go.Scatter(
+                #     x=bullish_df["TimeIndex"] ,
+                #     y=bullish_df["F_numeric"] + 14,
+                #     mode="text",
+                #     text=bullish_df["Mike_Kijun_ATR_Emoji"],
+                #     textposition="top right",
+                #     textfont=dict(size=20),
+                #     name="Bullish Mike x Kijun + ATR 🚀",
+                #     showlegend=True
+                # ))
 
 
            
 
 
-                # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
-                bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
-                fig.add_trace(go.Scatter(
-                    x=bearish_df["TimeIndex"],
-                    y=bearish_df["F_numeric"] - 14,
-                    mode="text",
-                    text=bearish_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="bottom right",
-                    textfont=dict(size=24),
-                    name="Bearish Mike x Kijun + ATR ⚓️",
-                    showlegend=True
-                ))
+                # # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
+                # bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
+                # fig.add_trace(go.Scatter(
+                #     x=bearish_df["TimeIndex"],
+                #     y=bearish_df["F_numeric"] - 14,
+                #     mode="text",
+                #     text=bearish_df["Mike_Kijun_ATR_Emoji"],
+                #     textposition="bottom right",
+                #     textfont=dict(size=24),
+                #     name="Bearish Mike x Kijun + ATR ⚓️",
+                #     showlegend=True
+                # ))
 
                 emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
   
