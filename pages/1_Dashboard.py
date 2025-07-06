@@ -5894,7 +5894,60 @@ if st.sidebar.button("Run Analysis"):
                 # Add to the F% Plot
                 fig.add_trace(scatter_tk_sun, row=1, col=1)
                 fig.add_trace(scatter_tk_moon, row=1, col=1)
-                              
+
+
+
+
+ # 🟢   SPAN A & SPAN B
+
+
+
+  
+                intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
+                intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
+  
+  
+  
+                                    # Span A – Yellow Line
+                span_a_line = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanA_F"],
+                    mode="lines",
+                    line=dict(color="yellow", width=2),
+                    name="Span A (F%)"
+                )
+                fig.add_trace(span_a_line, row=1, col=1)
+  
+                # Span B – Blue Line
+                span_b_line = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanB_F"],
+                    mode="lines",
+                    line=dict(color="blue", width=2),
+                    name="Span B (F%)"
+                )
+                fig.add_trace(span_b_line, row=1, col=1)
+  
+                # Invisible SpanA for cloud base
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanA_F"],
+                    line=dict(width=0),
+                    mode='lines',
+                    showlegend=False
+                ), row=1, col=1)
+  
+                # SpanB with fill → grey Kumo
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanB_F"],
+                    fill='tonexty',
+                    fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                    line=dict(width=0),
+                    mode='lines',
+                    name='Kumo Cloud'
+                ), row=1, col=1)
+
                 # if yva_min is not None and yva_max is not None:
                 #     # Show in text
                 #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
