@@ -4546,7 +4546,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["🐝"] * mask_bbw_tight.sum(),  # ♗ as symbol
                         textposition="top center",
-                        textfont=dict(size=8, color="mediumvioletred"),  # 🎯 Pink / Purple shade
+                        textfont=dict(size=12, color="mediumvioletred"),  # 🎯 Pink / Purple shade
                         name="BBW Tight Bishop (♗🐝)",
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>BBW Tight Compression ♗🐝<extra></extra>"
                     )
@@ -4567,7 +4567,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=intraday.loc[mask_bbw_alert, "BBW Alert"],
                         textposition="bottom center",
-                        textfont=dict(size=8),
+                        textfont=dict(size=12),
                         name="BBW Expansion Alert",
                         hovertemplate="Time: %{x}<br>BBW Ratio: %{customdata:.2f}<extra></extra>",
                         customdata=intraday.loc[mask_bbw_alert, "BBW_Ratio"]
