@@ -3530,6 +3530,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = add_mike_kijun_bee_emoji(intraday)
 
 
+             
 
            
 
@@ -4162,6 +4163,17 @@ if st.sidebar.button("Run Analysis"):
                     # Add emoji marker 🫆 where cross happens
                     intraday["Tenkan_Midas_CrossUp"] = np.where(tenkan_cross_up, "🫆", "")
 
+
+
+                         # Detect Tenkan_F crossing down through MIDAS_Bear
+                   # Detect Tenkan_F crossing down through MIDAS_Bear
+                    tenkan_cross_down = (
+                        (intraday["Tenkan_F"].shift(1) > intraday["MIDAS_Bear"].shift(1)) &
+                        (intraday["Tenkan_F"] <= intraday["MIDAS_Bear"])
+                    )
+                    
+                    # Add emoji marker 🕸️ where cross happens
+                    intraday["Tenkan_Midas_CrossDown"] = np.where(tenkan_cross_down, "🕸️", "")
 
                    # Calculate Chikou (lagging span) using Close price shifted BACKWARD
                     intraday["Chikou"] = intraday["Close"].shift(-26)
@@ -5761,6 +5773,19 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
   
+                # Scatter plot for 🕸️ (slightly below F_numeric)
+                scatter_tenkan_cross_down = go.Scatter(
+                    x=intraday.loc[mask_tenkan_cross_down, "Time"],
+                    y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 12,
+                    mode="text",
+                    text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
+                    textposition="bottom right",
+                    textfont=dict(size=21, color="purple"),
+                    name="Tenkan Cross MIDAS Bear (🕸️)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
+                )
+                
+                fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
 
    
                 # bullish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] > intraday["F_numeric"])
