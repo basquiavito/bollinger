@@ -1494,27 +1494,36 @@ if st.sidebar.button("Run Analysis"):
                 # Apply function after calculating F_numeric
                 intraday = calculate_f_velocity_and_speed(intraday)
 
-
-                def calculate_f_theta_cot(df, scale_factor=100):
+    
+                 def calculate_f_theta_degrees(df, cot_scale=100):
                     """
-                    Computes tan(theta) and cot(theta) of F% to detect sharp movements.
-                    - tan(theta) = slope of F% movement
-                    - cot(theta) = inverse of tan(theta) (sensitive to small changes)
-                    - Results are scaled by `scale_factor` for readability.
+                    Computes F% angle in degrees and scaled cotangent.
+                    - Theta = arctangent of F% change, in degrees (bounded -90 to +90)
+                    - Cotangent = 1 / tan(theta), scaled by `cot_scale`
                     """
                     if "F_numeric" in df.columns:
-                        df["F% Theta"] = np.tan(np.radians(df["F_numeric"].diff())) * scale_factor
-
-                        # Avoid division by zero
-                        df["F% Cotangent"] = np.where(df["F% Theta"] != 0, 1 / df["F% Theta"], 0)
+                        # First derivative (F% slope)
+                        slope = df["F_numeric"].diff()
+                
+                        # Theta in degrees
+                        df["F% Theta"] = np.degrees(np.arctan(slope))
+                
+                        # Cotangent in radians, then scale
+                        df["F% Cotangent"] = np.where(
+                            df["F% Theta"] != 0,
+                            (1 / np.tan(np.radians(df["F% Theta"]))) * cot_scale,
+                            0
+                        )
                     else:
-                        df["F% Theta"] = 0  # Fallback
-                        df["F% Cotangent"] = 0  # Fallback
+                        df["F% Theta"] = 0
+                        df["F% Cotangent"] = 0
+                
                     return df
-
-                # Apply function after calculating F_numeric
-                intraday = calculate_f_theta_cot(intraday, scale_factor=100)
-
+                
+                # Apply the function
+                intraday = calculate_f_theta_degrees(intraday, cot_scale=100)  # or 10 if you prefer tighter scale
+  
+  
 
 
 
