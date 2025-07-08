@@ -6105,7 +6105,7 @@ if st.sidebar.button("Run Analysis"):
 
                 fig_daily.update_layout(
                     title=f"{t} – Daily Candlestick Chart (Past 60 Days)",
-                    height=2000,
+                    height=400,
                     xaxis_rangeslider_visible=False,
                     margin=dict(l=30, r=30, t=40, b=20)
                 )
