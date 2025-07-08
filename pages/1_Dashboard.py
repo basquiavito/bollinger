@@ -5150,42 +5150,42 @@ if st.sidebar.button("Run Analysis"):
                 )
                 
                 
-                fig.add_trace(go.Scatter(
-                    x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
-                    y=[poc_f_level],
-                    mode="markers+text",
-                    marker=dict(size=0, color="#ff1493"),
-                    text=["👃🏽 Nose (Most Price Acceptance)"],
-                    textposition="top right",
-                    name="👃🏽 Nose Line",
-                    showlegend=True,
-                    hovertemplate=(
-                          "👃🏽 Nose Line<br>"
-                          "F% Level: %{y}<br>"
-                          f"Time: {nose_time}<extra></extra>"
-                      )
-                ), row=1, col=1)
-                for _, row in profile_df.iterrows():
-                    if row["Tail"] == "🪶":
-                          # Get actual TimeIndex from intraday at this F% Level
-                        time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
-                        if not time_row.empty:
-                            time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
+                # fig.add_trace(go.Scatter(
+                #     x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
+                #     y=[poc_f_level],
+                #     mode="markers+text",
+                #     marker=dict(size=0, color="#ff1493"),
+                #     text=["👃🏽 Nose (Most Price Acceptance)"],
+                #     textposition="top right",
+                #     name="👃🏽 Nose Line",
+                #     showlegend=True,
+                #     hovertemplate=(
+                #           "👃🏽 Nose Line<br>"
+                #           "F% Level: %{y}<br>"
+                #           f"Time: {nose_time}<extra></extra>"
+                #       )
+                # ), row=1, col=1)
+                # for _, row in profile_df.iterrows():
+                #     if row["Tail"] == "🪶":
+                #           # Get actual TimeIndex from intraday at this F% Level
+                #         time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
+                #         if not time_row.empty:
+                #             time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
                 
-                            fig.add_trace(go.Scatter(
-                                x=[time_at_level],
-                                y=[row["F% Level"]],
-                                mode="text",
-                                text=["🪶"],
-                                textposition="middle right",
-                                textfont=dict(size=20),
-                                showlegend=True,
-                                hovertemplate=(
-                                    "🪶 Tail<br>"
-                                    f"F% Level: {row['F% Level']}<br>"
-                                    f"Time: {row['Time']}<extra></extra>"
-                                )
-                            ), row=1, col=1)
+                #             fig.add_trace(go.Scatter(
+                #                 x=[time_at_level],
+                #                 y=[row["F% Level"]],
+                #                 mode="text",
+                #                 text=["🪶"],
+                #                 textposition="middle right",
+                #                 textfont=dict(size=20),
+                #                 showlegend=True,
+                #                 hovertemplate=(
+                #                     "🪶 Tail<br>"
+                #                     f"F% Level: {row['F% Level']}<br>"
+                #                     f"Time: {row['Time']}<extra></extra>"
+                #                 )
+                #             ), row=1, col=1)
   
 
 
@@ -5447,173 +5447,173 @@ if st.sidebar.button("Run Analysis"):
                     )
 
 
-                    mask_green_king = intraday["King_Signal"] == "👑"
-                    scatter_green_king = go.Scatter(
-                        x=intraday.loc[mask_green_king, "Time"],
-                        y=intraday.loc[mask_green_king, "F_numeric"] + 48,
-                        mode="text",
-                        text=["♔"] * mask_green_king.sum(),
-                        textfont=dict(size=55, color="green"),
-                        name="Green King Signal (♔)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>👑 Green Kingdom Crowned ♔<extra></extra>"
-                    )
+                    # mask_green_king = intraday["King_Signal"] == "👑"
+                    # scatter_green_king = go.Scatter(
+                    #     x=intraday.loc[mask_green_king, "Time"],
+                    #     y=intraday.loc[mask_green_king, "F_numeric"] + 48,
+                    #     mode="text",
+                    #     text=["♔"] * mask_green_king.sum(),
+                    #     textfont=dict(size=55, color="green"),
+                    #     name="Green King Signal (♔)",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>👑 Green Kingdom Crowned ♔<extra></extra>"
+                    # )
 
 
-                    mask_red_king = intraday["King_Signal"] == "🔻👑"
-                    scatter_red_king = go.Scatter(
-                        x=intraday.loc[mask_red_king, "Time"],
-                        y=intraday.loc[mask_red_king, "F_numeric"] - 48,
-                        mode="text",
-                        text=["♔"] * mask_red_king.sum(),
-                        textfont=dict(size=55, color="red"),
-                        name="Red King Signal (♔)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🔻👑 Red Kingdom Crowned ♔<extra></extra>"
-                    )
+                    # mask_red_king = intraday["King_Signal"] == "🔻👑"
+                    # scatter_red_king = go.Scatter(
+                    #     x=intraday.loc[mask_red_king, "Time"],
+                    #     y=intraday.loc[mask_red_king, "F_numeric"] - 48,
+                    #     mode="text",
+                    #     text=["♔"] * mask_red_king.sum(),
+                    #     textfont=dict(size=55, color="red"),
+                    #     name="Red King Signal (♔)",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🔻👑 Red Kingdom Crowned ♔<extra></extra>"
+                    # )
 
 
-                    fig.add_trace(scatter_green_king, row=1, col=1)
-                    fig.add_trace(scatter_red_king, row=1, col=1)
+                    # fig.add_trace(scatter_green_king, row=1, col=1)
+                    # fig.add_trace(scatter_red_king, row=1, col=1)
 
 
-                    threshold = 0.5  # or even 1.0 depending on your scaling
-                    intraday["Kijun_F_Cross_Emoji"] = np.where(
-                        (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
-                        "♕",
-                        np.where(
-                            (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
-                            "♛",
-                            ""
-                        )
-                    )
+                    # threshold = 0.5  # or even 1.0 depending on your scaling
+                    # intraday["Kijun_F_Cross_Emoji"] = np.where(
+                    #     (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
+                    #     "♕",
+                    #     np.where(
+                    #         (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
+                    #         "♛",
+                    #         ""
+                    #     )
+                    # )
 
 
 
                  # # Create separate masks for upward and downward crosses:
-                    mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
-                    mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
+                    # mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
+                    # mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
 
-                    # Upward Cross Trace (♕)
-                    up_cross_trace = go.Scatter(
-                        x=intraday.loc[mask_kijun_up, "Time"],
-                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 40,  # Offset upward (adjust as needed)
-                        mode="text",
-                        text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
-                        textposition="top center",  # Positioned above the point
-                        textfont=dict(size=34, color="green"),
-                        name="Kijun Cross Up (♕)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
-                    )
+                    # # Upward Cross Trace (♕)
+                    # up_cross_trace = go.Scatter(
+                    #     x=intraday.loc[mask_kijun_up, "Time"],
+                    #     y=intraday.loc[mask_kijun_up, "F_numeric"] + 40,  # Offset upward (adjust as needed)
+                    #     mode="text",
+                    #     text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
+                    #     textposition="top center",  # Positioned above the point
+                    #     textfont=dict(size=34, color="green"),
+                    #     name="Kijun Cross Up (♕)",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
+                    # )
 
-                    # Downward Cross Trace (♛)
-                    down_cross_trace = go.Scatter(
-                        x=intraday.loc[mask_kijun_down, "Time"],
-                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 40,  # Offset downward
-                        mode="text",
-                        text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
-                        textposition="bottom center",  # Positioned below the point
-                        textfont=dict(size=34, color="red"),
-                        name="Kijun Cross Down (♛)",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
-                    )
+                    # # Downward Cross Trace (♛)
+                    # down_cross_trace = go.Scatter(
+                    #     x=intraday.loc[mask_kijun_down, "Time"],
+                    #     y=intraday.loc[mask_kijun_down, "F_numeric"] - 40,  # Offset downward
+                    #     mode="text",
+                    #     text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
+                    #     textposition="bottom center",  # Positioned below the point
+                    #     textfont=dict(size=34, color="red"),
+                    #     name="Kijun Cross Down (♛)",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
+                    # )
 
 
-                    fig.add_trace(up_cross_trace,   row=1, col=1)
-                    fig.add_trace(down_cross_trace, row=1, col=1)
+                    # fig.add_trace(up_cross_trace,   row=1, col=1)
+                    # fig.add_trace(down_cross_trace, row=1, col=1)
 
 
  # Mask for each horse
-                mask_horse_buy = intraday["Kijun_Cross_Horse"] == "♘"
-                mask_horse_sell = intraday["Kijun_Cross_Horse"] == "♞"
+                # mask_horse_buy = intraday["Kijun_Cross_Horse"] == "♘"
+                # mask_horse_sell = intraday["Kijun_Cross_Horse"] == "♞"
 
-                # Buy Horse (♘) → normal above
-                scatter_horse_buy = go.Scatter(
-                    x=intraday.loc[mask_horse_buy, "Time"],
-                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 32,
-                    mode="text",
-                    text=["♘"] * mask_horse_buy.sum(),
-                    textposition="top left",
-                    textfont=dict(size=34, color="green"),  # You can make it white if you want
-                    name="Horse After Buy Kijun Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>♘ Horse after Buy<extra></extra>"
-                )
+                # # Buy Horse (♘) → normal above
+                # scatter_horse_buy = go.Scatter(
+                #     x=intraday.loc[mask_horse_buy, "Time"],
+                #     y=intraday.loc[mask_horse_buy, "F_numeric"] + 32,
+                #     mode="text",
+                #     text=["♘"] * mask_horse_buy.sum(),
+                #     textposition="top left",
+                #     textfont=dict(size=34, color="green"),  # You can make it white if you want
+                #     name="Horse After Buy Kijun Cross",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>♘ Horse after Buy<extra></extra>"
+                # )
 
-                # Sell Horse (♞) → below and red
-                scatter_horse_sell = go.Scatter(
-                    x=intraday.loc[mask_horse_sell, "Time"],
-                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 32,
-                    mode="text",
-                    text=["♞"] * mask_horse_sell.sum(),
-                    textposition="bottom left",
-                    textfont=dict(size=34, color="red"),
-                    name="Horse After Sell Kijun Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>♞ Horse after Sell<extra></extra>"
-                )
+                # # Sell Horse (♞) → below and red
+                # scatter_horse_sell = go.Scatter(
+                #     x=intraday.loc[mask_horse_sell, "Time"],
+                #     y=intraday.loc[mask_horse_sell, "F_numeric"] - 32,
+                #     mode="text",
+                #     text=["♞"] * mask_horse_sell.sum(),
+                #     textposition="bottom left",
+                #     textfont=dict(size=34, color="red"),
+                #     name="Horse After Sell Kijun Cross",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>♞ Horse after Sell<extra></extra>"
+                # )
 
-                fig.add_trace(scatter_horse_buy, row=1, col=1)
-                fig.add_trace(scatter_horse_sell, row=1, col=1)
+                # fig.add_trace(scatter_horse_buy, row=1, col=1)
+                # fig.add_trace(scatter_horse_sell, row=1, col=1)
 
 
-                mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
-                mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
+                # mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
+                # mask_bishop_down = intraday["Kijun_Cross_Bishop"] == "♝"
 
-                # Bishop Up (♗)
-                scatter_bishop_up = go.Scatter(
-                    x=intraday.loc[mask_bishop_up, "Time"],
-                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 24,
-                    mode="text",
-                    text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
-                    textposition="top center",
-                    textfont=dict(size=34, color="green"),
-                    name="Kijun Cross Bishop (Buy ♗)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
-                )
+                # # Bishop Up (♗)
+                # scatter_bishop_up = go.Scatter(
+                #     x=intraday.loc[mask_bishop_up, "Time"],
+                #     y=intraday.loc[mask_bishop_up, "F_numeric"] + 24,
+                #     mode="text",
+                #     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
+                #     textposition="top center",
+                #     textfont=dict(size=34, color="green"),
+                #     name="Kijun Cross Bishop (Buy ♗)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Support ♗<extra></extra>"
+                # )
 
-                # Bishop Down (♝)
-                scatter_bishop_down = go.Scatter(
-                    x=intraday.loc[mask_bishop_down, "Time"],
-                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 24,
-                    mode="text",
-                    text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
-                    textposition="bottom center",
-                    textfont=dict(size=34, color="red"),
-                    name="Kijun Cross Bishop (Sell ♝)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
-                )
+                # # Bishop Down (♝)
+                # scatter_bishop_down = go.Scatter(
+                #     x=intraday.loc[mask_bishop_down, "Time"],
+                #     y=intraday.loc[mask_bishop_down, "F_numeric"] - 24,
+                #     mode="text",
+                #     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
+                #     textposition="bottom center",
+                #     textfont=dict(size=34, color="red"),
+                #     name="Kijun Cross Bishop (Sell ♝)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Volatility Resistance ♝<extra></extra>"
+                # )
 
-                fig.add_trace(scatter_bishop_up, row=1, col=1)
-                fig.add_trace(scatter_bishop_down, row=1, col=1)
+                # fig.add_trace(scatter_bishop_up, row=1, col=1)
+                # fig.add_trace(scatter_bishop_down, row=1, col=1)
          
                                 # Mask the rook crosses
-                mask_rook_up = intraday["TD_Supply_Rook"] == "♖"
-                mask_rook_down = intraday["TD_Supply_Rook"] == "♜"
+                # mask_rook_up = intraday["TD_Supply_Rook"] == "♖"
+                # mask_rook_down = intraday["TD_Supply_Rook"] == "♜"
 
-                # White rook (up cross)
-                scatter_rook_up = go.Scatter(
-                    x=intraday.loc[mask_rook_up, "Time"],
-                    y=intraday.loc[mask_rook_up, "F_numeric"] + 16,  # Offset upward
-                    mode="text",
-                    text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
-                    textposition="top left",
-                    textfont=dict(size=21,  color="green"),
-                    name="TD Supply Cross Up (♖)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Up ♖<extra></extra>"
-                )
+                # # White rook (up cross)
+                # scatter_rook_up = go.Scatter(
+                #     x=intraday.loc[mask_rook_up, "Time"],
+                #     y=intraday.loc[mask_rook_up, "F_numeric"] + 16,  # Offset upward
+                #     mode="text",
+                #     text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
+                #     textposition="top left",
+                #     textfont=dict(size=21,  color="green"),
+                #     name="TD Supply Cross Up (♖)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Up ♖<extra></extra>"
+                # )
 
-                # Black rook (down cross)
-                scatter_rook_down = go.Scatter(
-                    x=intraday.loc[mask_rook_down, "Time"],
-                    y=intraday.loc[mask_rook_down, "F_numeric"] - 16,  # Offset downward
-                    mode="text",
-                    text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
-                    textposition="bottom left",
-                    textfont=dict(size=21,  color="red"),
-                    name="TD Supply Cross Down (♜)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
-                )
+                # # Black rook (down cross)
+                # scatter_rook_down = go.Scatter(
+                #     x=intraday.loc[mask_rook_down, "Time"],
+                #     y=intraday.loc[mask_rook_down, "F_numeric"] - 16,  # Offset downward
+                #     mode="text",
+                #     text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
+                #     textposition="bottom left",
+                #     textfont=dict(size=21,  color="red"),
+                #     name="TD Supply Cross Down (♜)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
+                # )
 
-                # Add both to figure
-                fig.add_trace(scatter_rook_up, row=1, col=1)
-                fig.add_trace(scatter_rook_down, row=1, col=1)
+                # # Add both to figure
+                # fig.add_trace(scatter_rook_up, row=1, col=1)
+                # fig.add_trace(scatter_rook_down, row=1, col=1)
 
                 # Mask for Tenkan_F crossing up through MIDAS_Bull
                 mask_tenkan_cross_up = (
@@ -5631,7 +5631,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
                     textposition="top right",
-                    textfont=dict(size=50, color="orange"),
+                    textfont=dict(size=20, color="orange"),
                     name="Tenkan Cross MIDAS Bull (🧲)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
                 )
