@@ -5644,7 +5644,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
                     textposition="top right",
-                    textfont=dict(size=8, color="orange"),
+                    textfont=dict(size=24, color="orange"),
                     name="Tenkan Cross MIDAS Bull (🧲)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
                 )
@@ -5789,7 +5789,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
                     textposition="bottom right",
-                    textfont=dict(size=21, color="black"),
+                    textfont=dict(size=24, color="black"),
                     name="Tenkan Cross MIDAS Bear (🕸️)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
                 )
