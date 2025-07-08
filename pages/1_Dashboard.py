@@ -4969,25 +4969,25 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
                 ), row=2, col=1)
                 
-                # 🔷 Value Area Min (hoverable)
-                fig.add_trace(go.Scatter(
-                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                    y=[va_min, va_min],
-                    mode='lines',
-                    line=dict(color="#0ff", dash="dot", width=0.5),
-                    name="VA Min",
-                    hovertemplate="Value Area Min: %{y:.2f}<extra></extra>"
-                ), row=1, col=1)
+                # # 🔷 Value Area Min (hoverable)
+                # fig.add_trace(go.Scatter(
+                #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                #     y=[va_min, va_min],
+                #     mode='lines',
+                #     line=dict(color="#0ff", dash="dot", width=0.5),
+                #     name="VA Min",
+                #     hovertemplate="Value Area Min: %{y:.2f}<extra></extra>"
+                # ), row=1, col=1)
                 
-                # 🔷 Value Area Max (hoverable)
-                fig.add_trace(go.Scatter(
-                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                    y=[va_max, va_max],
-                    mode='lines',
-                    line=dict(color="#0ff", dash="dot", width=0.5),
-                    name="VA Max",
-                    hovertemplate="Value Area Max: %{y:.2f}<extra></extra>"
-                ), row=1, col=1)
+                # # 🔷 Value Area Max (hoverable)
+                # fig.add_trace(go.Scatter(
+                #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                #     y=[va_max, va_max],
+                #     mode='lines',
+                #     line=dict(color="#0ff", dash="dot", width=0.5),
+                #     name="VA Max",
+                #     hovertemplate="Value Area Max: %{y:.2f}<extra></extra>"
+                # ), row=1, col=1)
 
 
      
@@ -5641,35 +5641,35 @@ if st.sidebar.button("Run Analysis"):
 
 
   # correct masks
-                mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
-                mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
+                # mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
+                # mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
 
-                # ♙ Upward pawn
-                pawn_up = go.Scatter(
-                    x=intraday.loc[mask_pawn_up, "Time"],
-                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 8,
-                    mode="text",
-                    text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
-                    textposition="top center",
-                    textfont=dict(size=21, color="green"),            # green for up
-                    name="Pawn Up (Tenkan Cross)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♙ Upward Tenkan Cross<extra></extra>"
-                )
+                # # ♙ Upward pawn
+                # pawn_up = go.Scatter(
+                #     x=intraday.loc[mask_pawn_up, "Time"],
+                #     y=intraday.loc[mask_pawn_up, "F_numeric"] + 8,
+                #     mode="text",
+                #     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
+                #     textposition="top center",
+                #     textfont=dict(size=21, color="green"),            # green for up
+                #     name="Pawn Up (Tenkan Cross)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♙ Upward Tenkan Cross<extra></extra>"
+                # )
 
-                # ♟️ Downward pawn
-                pawn_down = go.Scatter(
-                    x=intraday.loc[mask_pawn_down, "Time"],
-                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 8,
-                    mode="text",
-                    text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
-                    textposition="bottom center",
-                    textfont=dict(size=21, color="red"),             # red for down
-                    name="Pawn Down (Tenkan Cross)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♟️ Downward Tenkan Cross<extra></extra>"
-                )
+                # # ♟️ Downward pawn
+                # pawn_down = go.Scatter(
+                #     x=intraday.loc[mask_pawn_down, "Time"],
+                #     y=intraday.loc[mask_pawn_down, "F_numeric"] - 8,
+                #     mode="text",
+                #     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
+                #     textposition="bottom center",
+                #     textfont=dict(size=21, color="red"),             # red for down
+                #     name="Pawn Down (Tenkan Cross)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♟️ Downward Tenkan Cross<extra></extra>"
+                # )
 
-                fig.add_trace(pawn_up,   row=1, col=1)
-                fig.add_trace(pawn_down, row=1, col=1)
+                # fig.add_trace(pawn_up,   row=1, col=1)
+                # fig.add_trace(pawn_down, row=1, col=1)
 
                             # Calculate Chikou relation to current price
                 intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
@@ -5833,7 +5833,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday.loc[mask_tk_sun, "Time"],
                     y=intraday.loc[mask_tk_sun, "F_numeric"] + 56,  # Offset for visibility
                     mode="text",
-                    text="🦅",
+                    text="🌞",
                     textposition="top center",
                     textfont=dict(size=34),
                     name="Tenkan-Kijun Bullish Cross",
@@ -5845,7 +5845,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday.loc[mask_tk_moon, "Time"],
                     y=intraday.loc[mask_tk_moon, "F_numeric"] + 56,  # Offset for visibility
                     mode="text",
-                    text="🐦‍⬛",
+                    text="🌙",
                     textposition="bottom center",
                     textfont=dict(size=34),
                     name="Tenkan-Kijun Bearish Cross",
