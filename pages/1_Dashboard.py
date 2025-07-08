@@ -4004,77 +4004,7 @@ if st.sidebar.button("Run Analysis"):
                       bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "💥"]
                       first_bear_midas_idx = bear_wake_matches.min() if not bear_wake_matches.empty else None
 
-                      # === Value Area Engine for Any Session (Today, Yesterday, Backtest) ===
-                #       def compute_value_area(df: pd.DataFrame, mike_col: str = None, bin_size: int = 20):
-                #           import numpy as np
-                #           import pandas as pd
-                #           import string
-                      
-                #           # Step 0: Detect Mike column
-                #           if mike_col is None:
-                #               if "Mike" in df.columns:
-                #                   mike_col = "Mike"
-                #               elif "F_numeric" in df.columns:
-                #                   mike_col = "F_numeric"
-                #               else:
-                #                   raise ValueError("No 'Mike' or 'F_numeric' column found in DataFrame.")
-                      
-                #           # Step 1: Clean and bin
-                #           df = df.copy()
-                #           f_bins = np.arange(-400, 401, bin_size)
-                #           df['F_Bin'] = pd.cut(df[mike_col], bins=f_bins, labels=[str(x) for x in f_bins[:-1]])
-                      
-                #           # Step 2: Assign letters if time is available
-                #           if "Time" in df.columns:
-                #               df = df[df["Time"].notna()]
-                #               df['TimeIndex'] = pd.to_datetime(df['Time'], format="%I:%M %p", errors='coerce')
-                #               df = df[df['TimeIndex'].notna()]
-                #               df['LetterIndex'] = ((df['TimeIndex'].dt.hour * 60 + df['TimeIndex'].dt.minute) // 15).astype(int)
-                #               df['LetterIndex'] -= df['LetterIndex'].min()
-                      
-                #               def letter_code(n: int) -> str:
-                #                   letters = string.ascii_uppercase
-                #                   if n < 26:
-                #                       return letters[n]
-                #                   return letters[(n // 26) - 1] + letters[n % 26]
-                      
-                #               df['Letter'] = df['LetterIndex'].apply(letter_code)
-                #           else:
-                #               df['Letter'] = "X"  # Fallback if no time info exists
-                      
-                #           # Step 3: Build Market Profile by F_Bin
-                #           profile = {}
-                #           for f_bin in f_bins[:-1]:
-                #               f_bin_str = str(f_bin)
-                #               letters = df.loc[df['F_Bin'] == f_bin_str, 'Letter'].dropna().unique()
-                #               if len(letters) > 0:
-                #                   profile[f_bin_str] = ''.join(sorted(letters))
-                      
-                #           profile_df = pd.DataFrame(list(profile.items()), columns=['F% Level', 'Letters'])
-                #           profile_df['F% Level'] = profile_df['F% Level'].astype(int)
-                #           profile_df["Letter_Count"] = profile_df["Letters"].apply(lambda x: len(str(x)) if pd.notna(x) else 0)
-                      
-                #           # Step 4: Accumulate 70% of letter activity (time-based value area)
-                #           total_letters = profile_df["Letter_Count"].sum()
-                #           target_letters = total_letters * 0.7
-                #           profile_sorted = profile_df.sort_values(by="Letter_Count", ascending=False).reset_index(drop=True)
-                      
-                #           value_area_levels = []
-                #           cumulative = 0
-                #           for _, row in profile_sorted.iterrows():
-                #               cumulative += row["Letter_Count"]
-                #               value_area_levels.append(row["F% Level"])
-                #               if cumulative >= target_letters:
-                #                   break
-                      
-                #           va_min = min(value_area_levels)
-                #           va_max = max(value_area_levels)
-                      
-                #           return va_min, va_max, profile_df
-                # yva_min, yva_max, y_profile_df = compute_value_area(intraday_yesterday)
-
-                               # After downloading intraday_yesterday
-           
+                
  
                 # Display anchor info
                 st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
@@ -4222,6 +4152,14 @@ if st.sidebar.button("Run Analysis"):
                     chikou_below_mask = (intraday["Chikou"] < intraday["Close"]).shift(26)
                     chikou_below = intraday[chikou_below_mask.fillna(False)]
 
+                    # Detect Tenkan_F crossing up through MIDAS_Bull
+                    tenkan_cross_up = (
+                        (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
+                        (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
+                    )
+                    
+                    # Add emoji marker 🫆 where cross happens
+                    intraday["Tenkan_Midas_CrossUp"] = np.where(tenkan_cross_up, "🫆", "")
 
 
                    # Calculate Chikou (lagging span) using Close price shifted BACKWARD
@@ -5677,6 +5615,29 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_rook_up, row=1, col=1)
                 fig.add_trace(scatter_rook_down, row=1, col=1)
 
+                # Mask for Tenkan_F crossing up through MIDAS_Bull
+                mask_tenkan_cross_up = (
+                    (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
+                    (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
+                )
+                
+                # Create a new column with the emoji (optional but clean)
+                intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🫆", "")
+                
+                # Scatter plot for 🫆 (slightly above F_numeric)
+                scatter_tenkan_cross_up = go.Scatter(
+                    x=intraday.loc[mask_tenkan_cross_up, "Time"],
+                    y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 12,
+                    mode="text",
+                    text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
+                    textposition="top right",
+                    textfont=dict(size=21, color="orange"),
+                    name="Tenkan Cross MIDAS Bull (🫆)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🫆<extra></extra>"
+                )
+                
+                # Add to figure
+                fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
 
 
   # correct masks
