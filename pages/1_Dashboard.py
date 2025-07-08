@@ -1495,7 +1495,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_f_velocity_and_speed(intraday)
 
     
-                 def calculate_f_theta_degrees(df, cot_scale=100):
+                def calculate_f_theta_degrees(df, cot_scale=100):
                     """
                     Computes F% angle in degrees and scaled cotangent.
                     - Theta = arctangent of F% change, in degrees (bounded -90 to +90)
