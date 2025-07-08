@@ -6073,52 +6073,52 @@ if st.sidebar.button("Run Analysis"):
                 # ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
-                with st.expander("📆 Daily Chart Overview", expanded=True):
-                    try:
-                        daily_chart_data = yf.download(t, period="60d", interval="1d", progress=False)
+                # with st.expander("📆 Daily Chart Overview", expanded=True):
+                #     try:
+                #         daily_chart_data = yf.download(t, period="60d", interval="1d", progress=False)
             
-                        if not daily_chart_data.empty:
-                            # Reset index and ensure proper column names
-                            daily_chart_data.reset_index(inplace=True)
-                            if isinstance(daily_chart_data.columns, pd.MultiIndex):
-                                daily_chart_data.columns = [col[0] if isinstance(col, tuple) else col for col in daily_chart_data.columns]
+                #         if not daily_chart_data.empty:
+                #             # Reset index and ensure proper column names
+                #             daily_chart_data.reset_index(inplace=True)
+                #             if isinstance(daily_chart_data.columns, pd.MultiIndex):
+                #                 daily_chart_data.columns = [col[0] if isinstance(col, tuple) else col for col in daily_chart_data.columns]
             
-                            # Rename 'index' to 'Date' if needed
-                            if "Date" not in daily_chart_data.columns:
-                                if "index" in daily_chart_data.columns:
-                                    daily_chart_data.rename(columns={"index": "Date"}, inplace=True)
-                                else:
-                                    daily_chart_data["Date"] = daily_chart_data.index
+                #             # Rename 'index' to 'Date' if needed
+                #             if "Date" not in daily_chart_data.columns:
+                #                 if "index" in daily_chart_data.columns:
+                #                     daily_chart_data.rename(columns={"index": "Date"}, inplace=True)
+                #                 else:
+                #                     daily_chart_data["Date"] = daily_chart_data.index
             
-                            # Ensure datetime format
-                            daily_chart_data["Date"] = pd.to_datetime(daily_chart_data["Date"])
+                #             # Ensure datetime format
+                #             daily_chart_data["Date"] = pd.to_datetime(daily_chart_data["Date"])
             
-                            # Build Plotly Candlestick chart
-                            fig_daily = go.Figure(data=[go.Candlestick(
-                                x=daily_chart_data["Date"],
-                                open=daily_chart_data["Open"],
-                                high=daily_chart_data["High"],
-                                low=daily_chart_data["Low"],
-                                close=daily_chart_data["Close"],
-                                name="Daily"
-                            )])
+                #             # Build Plotly Candlestick chart
+                #             fig_daily = go.Figure(data=[go.Candlestick(
+                #                 x=daily_chart_data["Date"],
+                #                 open=daily_chart_data["Open"],
+                #                 high=daily_chart_data["High"],
+                #                 low=daily_chart_data["Low"],
+                #                 close=daily_chart_data["Close"],
+                #                 name="Daily"
+                #             )])
             
-                            fig_daily.update_layout(
-                                title=f"{t} – Daily Candlestick Chart (Past 60 Days)",
-                                height=400,
-                                xaxis_rangeslider_visible=False,
-                                margin=dict(l=30, r=30, t=40, b=20)
-                            )
-            
-            
+                #             fig_daily.update_layout(
+                #                 title=f"{t} – Daily Candlestick Chart (Past 60 Days)",
+                #                 height=400,
+                #                 xaxis_rangeslider_visible=False,
+                #                 margin=dict(l=30, r=30, t=40, b=20)
+                #             )
             
             
             
-                            st.plotly_chart(fig_daily, use_container_width=True)
-                        else:
-                            st.warning("No daily data available.")
-                    except Exception as e:
-                        st.error(f"Failed to load daily chart for {t}: {e}")
+            
+            
+                #             st.plotly_chart(fig_daily, use_container_width=True)
+                #         else:
+                #             st.warning("No daily data available.")
+                #     except Exception as e:
+                #         st.error(f"Failed to load daily chart for {t}: {e}")
             
             
             
@@ -6180,4 +6180,4 @@ if st.sidebar.button("Run Analysis"):
                 )
 
                 st.plotly_chart(fig_ichimoku, use_container_width=True)
-        st.write("✅ Ichimoku Expander Rendered")
+ 
