@@ -4222,14 +4222,14 @@ if st.sidebar.button("Run Analysis"):
                     # Detect changes in Chikou relation
                     intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
 
-                    # Filter first occurrence and changes
-                    chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
+                    # # Filter first occurrence and changes
+                    # chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
 
-                    # Assign emojis for only these changes
-                    intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
-                                                np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+                    # # Assign emojis for only these changes
+                    # intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
+                    #                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-                    mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                    # mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
 
                     kijun_line = go.Scatter(
