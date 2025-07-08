@@ -2124,13 +2124,13 @@ if st.sidebar.button("Run Analysis"):
                     prev_tenkan, prev_kijun = intraday.loc[i - 1, "Tenkan_F"], intraday.loc[i - 1, "Kijun_F"]
                     curr_tenkan, curr_kijun = intraday.loc[i, "Tenkan_F"], intraday.loc[i, "Kijun_F"]
 
-                    # Bullish Cross (🌞)
+                    # Bullish Cross (🦅🐦‍⬛)
                     if prev_tenkan < prev_kijun and curr_tenkan >= curr_kijun:
-                        intraday.loc[i, "Tenkan_Kijun_Cross"] = "🌞"
+                        intraday.loc[i, "Tenkan_Kijun_Cross"] = "🦅"
 
-                    # Bearish Cross (🌙)
+                    # Bearish Cross (🐦‍⬛)
                     elif prev_tenkan > prev_kijun and curr_tenkan <= curr_kijun:
-                        intraday.loc[i, "Tenkan_Kijun_Cross"] = "🌙"
+                        intraday.loc[i, "Tenkan_Kijun_Cross"] = "🐦‍⬛"
 
 
 
