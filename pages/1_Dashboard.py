@@ -4171,17 +4171,17 @@ if st.sidebar.button("Run Analysis"):
                     # Drop rows where Chikou_F is NaN (due to shifting)
                     chikou_plot = intraday.dropna(subset=["Chikou_F"])
 
-                    # Plot without shifting time
-                    chikou_line = go.Scatter(
-                        x=chikou_plot["Time"],
-                        y=chikou_plot["Chikou_F"],
-                        mode="lines",
-                        name="Chikou (F%)",
-                        line=dict(color="purple", dash="dash")
-                    )
-                    fig.add_trace(chikou_line, row=1, col=1)
+                    # # Plot without shifting time
+                    # chikou_line = go.Scatter(
+                    #     x=chikou_plot["Time"],
+                    #     y=chikou_plot["Chikou_F"],
+                    #     mode="lines",
+                    #     name="Chikou (F%)",
+                    #     line=dict(color="purple", dash="dash")
+                    # )
+                    # fig.add_trace(chikou_line, row=1, col=1)
 
-                    intraday["Chikou"] = intraday["Close"].shift(-26)
+                    # intraday["Chikou"] = intraday["Close"].shift(-26)
 
 
                     # Chikou moved ABOVE price (🕵🏻‍♂️) — signal at time when it actually happened
@@ -5627,11 +5627,11 @@ if st.sidebar.button("Run Analysis"):
                 # Scatter plot for 🫆 (slightly above F_numeric)
                 scatter_tenkan_cross_up = go.Scatter(
                     x=intraday.loc[mask_tenkan_cross_up, "Time"],
-                    y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 12,
+                    y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
                     mode="text",
                     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
                     textposition="top right",
-                    textfont=dict(size=20, color="orange"),
+                    textfont=dict(size=8, color="orange"),
                     name="Tenkan Cross MIDAS Bull (🧲)",
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
                 )
@@ -5762,34 +5762,34 @@ if st.sidebar.button("Run Analysis"):
   
 
    
-                bullish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] > intraday["F_numeric"])
+                # bullish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] > intraday["F_numeric"])
                 
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[bullish_scout_mask, "TimeIndex"],
-                    y=intraday.loc[bullish_scout_mask, "scout_position"] + 5,
-                    mode="text",
-                    text=intraday.loc[bullish_scout_mask, "scout_emoji"],
-                    textposition="top center",
-                    textfont=dict(size=16, color="black"),
-                    name="Scout 🔦 (Bullish)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bullish Scout</extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[bullish_scout_mask, "TimeIndex"],
+                #     y=intraday.loc[bullish_scout_mask, "scout_position"] + 5,
+                #     mode="text",
+                #     text=intraday.loc[bullish_scout_mask, "scout_emoji"],
+                #     textposition="top center",
+                #     textfont=dict(size=16, color="black"),
+                #     name="Scout 🔦 (Bullish)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bullish Scout</extra>"
+                # ), row=1, col=1)
 
 
 
 
-                bearish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] < intraday["F_numeric"])
+                # bearish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] < intraday["F_numeric"])
                 
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[bearish_scout_mask, "TimeIndex"],
-                    y=intraday.loc[bearish_scout_mask, "scout_position"] - 5,
-                    mode="text",
-                    text=intraday.loc[bearish_scout_mask, "scout_emoji"],
-                    textposition="bottom center",
-                    textfont=dict(size=16, color="black"),
-                    name="Scout 🔦 (Bearish)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bearish Scout</extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[bearish_scout_mask, "TimeIndex"],
+                #     y=intraday.loc[bearish_scout_mask, "scout_position"] - 5,
+                #     mode="text",
+                #     text=intraday.loc[bearish_scout_mask, "scout_emoji"],
+                #     textposition="bottom center",
+                #     textfont=dict(size=16, color="black"),
+                #     name="Scout 🔦 (Bearish)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bearish Scout</extra>"
+                # ), row=1, col=1)
 
 
 
