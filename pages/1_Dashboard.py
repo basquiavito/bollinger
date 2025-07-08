@@ -4331,7 +4331,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[mask_rvol_extreme, "Time"],
                         y=intraday.loc[mask_rvol_extreme, "F_numeric"] + 3,
                         mode="markers",
-                        marker=dict(symbol="triangle-up", size=8, color="red"),
+                        marker=dict(symbol="triangle-up", size=10, color="red"),
                         name="RVOL > 1.8 (Extreme Surge)",
                         text="Extreme Volume",
 
@@ -4343,7 +4343,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[mask_rvol_strong, "Time"],
                         y=intraday.loc[mask_rvol_strong, "F_numeric"] + 3,
                         mode="markers",
-                        marker=dict(symbol="triangle-up", size=8, color="orange"),
+                        marker=dict(symbol="triangle-up", size=10, color="orange"),
                         name="RVOL 1.5-1.79 (Strong Surge)",
                         text="Strong Volume",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
@@ -4354,7 +4354,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[mask_rvol_moderate, "Time"],
                         y=intraday.loc[mask_rvol_moderate, "F_numeric"] + 3,
                         mode="markers",
-                        marker=dict(symbol="triangle-up", size=8, color="pink"),
+                        marker=dict(symbol="triangle-up", size=10, color="pink"),
                         name="RVOL 1.2-1.49 (Moderate Surge)",
                         text="Moderate Volume",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
