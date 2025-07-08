@@ -3650,7 +3650,6 @@ if st.sidebar.button("Run Analysis"):
                               )
               
                               st.plotly_chart(fig_ichimoku, use_container_width=True)
-                      st.write("✅ Ichimoku Expander Rendered")
 
 
 
