@@ -5622,7 +5622,7 @@ if st.sidebar.button("Run Analysis"):
                 )
                 
                 # Create a new column with the emoji (optional but clean)
-                intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🫆", "")
+                intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🌬️", "")
                 
                 # Scatter plot for 🫆 (slightly above F_numeric)
                 scatter_tenkan_cross_up = go.Scatter(
@@ -5631,9 +5631,9 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
                     textposition="top right",
-                    textfont=dict(size=21, color="orange"),
-                    name="Tenkan Cross MIDAS Bull (🫆)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🫆<extra></extra>"
+                    textfont=dict(size=28, color="orange"),
+                    name="Tenkan Cross MIDAS Bull (🌬️)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🌬️<extra></extra>"
                 )
                 
                 # Add to figure
