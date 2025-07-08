@@ -6076,7 +6076,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-               with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+                with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
                   fig_ichimoku = go.Figure()
 
                   fig_ichimoku.add_trace(go.Candlestick(
