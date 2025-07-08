@@ -3997,8 +3997,11 @@ if st.sidebar.button("Run Analysis"):
                           return df, bull_cross, bear_cross
                   
                       intraday, bull_cross, bear_cross = add_mike_midas_cross_emojis(intraday, price_col=price_col)
-                      bull_wake_matches = intraday.index[intraday["Bull_Midas_Wake"] == "🦵🏼"]
-                      first_bull_midas_idx = bull_wake_matches.min() if not bull_wake_matches.empty else None
+                      if not bull_wake_matches.empty:
+                          first_bull_midas_idx = bull_wake_matches.min()
+                      else:
+                          first_bull_midas_idx = None
+
                       
                       # Detect first Bear MIDAS Wake-Up (💥)
                       bear_wake_matches = intraday.index[intraday["Bear_Midas_Wake"] == "💥"]
