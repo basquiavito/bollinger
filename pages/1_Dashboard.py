@@ -140,50 +140,7 @@ timeframe = st.sidebar.selectbox(
 # # 🔥 Candlestick Chart Toggle (Place this here)
 # show_candlestick = st.sidebar.checkbox("Show Candlestick Chart", value=False)
 
-  with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
-                    fig_ichimoku = go.Figure()
-    
-                    fig_ichimoku.add_trace(go.Candlestick(
-                        x=intraday['Time'],
-                        open=intraday['Open'],
-                        high=intraday['High'],
-                        low=intraday['Low'],
-                        close=intraday['Close'],
-                        name='Candles'
-                    ))
-    
-                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'), name='Tenkan-sen'))
-                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'], line=dict(color='green'), name='Kijun-sen'))
-                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
-                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
-                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
-    
-                    fig_ichimoku.add_trace(go.Scatter(
-                        x=intraday['Time'],
-                        y=intraday['SpanA'],
-                        line=dict(width=0),
-                        showlegend=False
-                    ))
-    
-                    fig_ichimoku.add_trace(go.Scatter(
-                        x=intraday['Time'],
-                        y=intraday['SpanB'],
-                        fill='tonexty',
-                        fillcolor='rgba(128, 128, 128, 0.2)',
-                        line=dict(width=0),
-                        showlegend=False
-                    ))
-    
-                    fig_ichimoku.update_layout(
-                        title="Ichimoku Candlestick Chart",
-                        height=450,
-                        width=450,
-                        xaxis_rangeslider_visible=False,
-                        margin=dict(l=30, r=30, t=40, b=20)
-                    )
-    
-                    st.plotly_chart(fig_ichimoku, use_container_width=True)
-
+ 
 # Gap threshold slider
 gap_threshold = st.sidebar.slider(
     "Gap Threshold (%)",
@@ -6117,60 +6074,51 @@ if st.sidebar.button("Run Analysis"):
                 # ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
-                # with st.expander("📆 Daily Chart Overview", expanded=True):
-                #     try:
-                #         daily_chart_data = yf.download(t, period="60d", interval="1d", progress=False)
-            
-                #         if not daily_chart_data.empty:
-                #             # Reset index and ensure proper column names
-                #             daily_chart_data.reset_index(inplace=True)
-                #             if isinstance(daily_chart_data.columns, pd.MultiIndex):
-                #                 daily_chart_data.columns = [col[0] if isinstance(col, tuple) else col for col in daily_chart_data.columns]
-            
-                #             # Rename 'index' to 'Date' if needed
-                #             if "Date" not in daily_chart_data.columns:
-                #                 if "index" in daily_chart_data.columns:
-                #                     daily_chart_data.rename(columns={"index": "Date"}, inplace=True)
-                #                 else:
-                #                     daily_chart_data["Date"] = daily_chart_data.index
-            
-                #             # Ensure datetime format
-                #             daily_chart_data["Date"] = pd.to_datetime(daily_chart_data["Date"])
-            
-                #             # Build Plotly Candlestick chart
-                #             fig_daily = go.Figure(data=[go.Candlestick(
-                #                 x=daily_chart_data["Date"],
-                #                 open=daily_chart_data["Open"],
-                #                 high=daily_chart_data["High"],
-                #                 low=daily_chart_data["Low"],
-                #                 close=daily_chart_data["Close"],
-                #                 name="Daily"
-                #             )])
-            
-                #             fig_daily.update_layout(
-                #                 title=f"{t} – Daily Candlestick Chart (Past 60 Days)",
-                #                 height=400,
-                #                 xaxis_rangeslider_visible=False,
-                #                 margin=dict(l=30, r=30, t=40, b=20)
-                #             )
-            
-            
-            
-            
-            
-                #             st.plotly_chart(fig_daily, use_container_width=True)
-                #         else:
-                #             st.warning("No daily data available.")
-                #     except Exception as e:
-                #         st.error(f"Failed to load daily chart for {t}: {e}")
-            
-            
-            
 
 
-
-
-
+               with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+                    fig_ichimoku = go.Figure()
+    
+                    fig_ichimoku.add_trace(go.Candlestick(
+                        x=intraday['Time'],
+                        open=intraday['Open'],
+                        high=intraday['High'],
+                        low=intraday['Low'],
+                        close=intraday['Close'],
+                        name='Candles'
+                    ))
+    
+                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'), name='Tenkan-sen'))
+                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'], line=dict(color='green'), name='Kijun-sen'))
+                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
+                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
+                    fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
+    
+                    fig_ichimoku.add_trace(go.Scatter(
+                        x=intraday['Time'],
+                        y=intraday['SpanA'],
+                        line=dict(width=0),
+                        showlegend=False
+                    ))
+    
+                    fig_ichimoku.add_trace(go.Scatter(
+                        x=intraday['Time'],
+                        y=intraday['SpanB'],
+                        fill='tonexty',
+                        fillcolor='rgba(128, 128, 128, 0.2)',
+                        line=dict(width=0),
+                        showlegend=False
+                    ))
+    
+                    fig_ichimoku.update_layout(
+                        title="Ichimoku Candlestick Chart",
+                        height=450,
+                        width=450,
+                        xaxis_rangeslider_visible=False,
+                        margin=dict(l=30, r=30, t=40, b=20)
+                    )
+    
+                    st.plotly_chart(fig_ichimoku, use_container_width=True)
 
 
 
