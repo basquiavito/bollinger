@@ -5482,7 +5482,25 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
                 ), row=1, col=1)
-                
+
+
+                                # Filter rows where the 🎹 emoji is triggered
+              ear_pierce_df = intraday[intraday["🎹"] == "🎹"]
+              
+              # Plot the 🎹 emoji
+              fig.add_trace(go.Scatter(
+                  x=ear_pierce_df["TimeIndex"],
+                  y=ear_pierce_df["F_numeric"] + 30,  # Offset above current value
+                  mode="text",
+                  text=ear_pierce_df["🎹"],
+                  textposition="top right",
+                  textfont=dict(size=24),
+                  name="Ear-Piercing 🎹",
+                  showlegend=True,
+                  hovertemplate="Time: %{x}<br>🎹 Mike crosses Nose Line"
+              ), row=1, col=1)
+
+              
                                # 🦻🏼 Top 3 Ear Lines based on %Vol
                
                 #              # Step 1: Filter Ear-marked rows
@@ -5558,23 +5576,7 @@ if st.sidebar.button("Run Analysis"):
                         ax=0, ay=0
                     )
 
-                                  # Filter rows where the 🎹 emoji is triggered
-                    ear_pierce_df = intraday[intraday["🎹"] == "🎹"]
-                    
-                    # Plot the 🎹 emoji
-                    fig.add_trace(go.Scatter(
-                        x=ear_pierce_df["TimeIndex"],
-                        y=ear_pierce_df["F_numeric"] + 30,  # Offset above current value
-                        mode="text",
-                        text=ear_pierce_df["🎹"],
-                        textposition="top right",
-                        textfont=dict(size=24),
-                        name="Ear-Piercing 🎹",
-                        showlegend=True,
-                        hovertemplate="Time: %{x}<br>🎹 Mike crosses Nose Line"
-                    ), row=1, col=1)
-
-              
+                
 
                     # mask_green_king = intraday["King_Signal"] == "👑"
                     # scatter_green_king = go.Scatter(
