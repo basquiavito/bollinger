@@ -3958,7 +3958,14 @@ if st.sidebar.button("Run Analysis"):
                               df["Midas_Cross_IB_High"] = np.where(bull_ib_cross, "🎷", "")
                           else:
                               df["Midas_Cross_IB_High"] = ""
-
+                          def add_midas_bear_ib_cross(df):
+                              if "IB_Low" in df.columns and "MIDAS_Bear" in df.columns:
+                                  bear_ib_cross = (df["MIDAS_Bear"].shift(1) > df["IB_Low"].shift(1)) & (df["MIDAS_Bear"] <= df["IB_Low"])
+                                  df["Midas_Bear_Cross_IB_Low"] = np.where(bear_ib_cross, "🎻", "")
+                              else:
+                                  df["Midas_Bear_Cross_IB_Low"] = ""
+                              return df
+                          
 
                   # Compute option premium displacement from MIDAS anchors
                           intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
@@ -5977,7 +5984,17 @@ if st.sidebar.button("Run Analysis"):
                     textposition="top center",
                     showlegend=False
                 ))
-
+                
+                # 🎻 plot for Bear MIDAS crossing IB Low
+                bear_cross_points = intraday[intraday["Midas_Bear_Cross_IB_Low"] == "🎻"]
+                fig.add_trace(go.Scatter(
+                    x=bear_cross_points["Time"],
+                    y=bear_cross_points[price_col] - 20,
+                    mode="text",
+                    text=bear_cross_points["Midas_Bear_Cross_IB_Low"],
+                    textposition="bottom center",
+                    showlegend=False
+                ))
 
 
  # 🟢   SPAN A & SPAN B
