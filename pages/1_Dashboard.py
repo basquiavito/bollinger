@@ -5971,6 +5971,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(go.Scatter(
                     x=cross_points["Time"],
                     y=cross_points[price_col] + 20,
+                    textfont=dict(size=34),
                     mode="text",
                     text=cross_points["Midas_Cross_IB_High"],
                     textposition="top center",
