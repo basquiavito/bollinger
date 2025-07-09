@@ -3958,13 +3958,15 @@ if st.sidebar.button("Run Analysis"):
                               df["Midas_Cross_IB_High"] = np.where(bull_ib_cross, "🎷", "")
                           else:
                               df["Midas_Cross_IB_High"] = ""
-                          def add_midas_bear_ib_cross(df):
+
+                        
+                        
                               if "IB_Low" in df.columns and "MIDAS_Bear" in df.columns:
                                   bear_ib_cross = (df["MIDAS_Bear"].shift(1) > df["IB_Low"].shift(1)) & (df["MIDAS_Bear"] <= df["IB_Low"])
                                   df["Midas_Bear_Cross_IB_Low"] = np.where(bear_ib_cross, "🎻", "")
                               else:
                                   df["Midas_Bear_Cross_IB_Low"] = ""
-                              return df
+                        
                           
 
                   # Compute option premium displacement from MIDAS anchors
