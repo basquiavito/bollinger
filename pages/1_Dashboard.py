@@ -5926,33 +5926,33 @@ if st.sidebar.button("Run Analysis"):
 
               
 
-                            # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
-                wing_mask = intraday["wing_emoji"] == "🪽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[wing_mask, "TimeIndex"],
-                    y=intraday.loc[wing_mask, "F_numeric"] + 35,
-                    mode="text",
-                    text=intraday.loc[wing_mask, "wing_emoji"],
-                    textposition="top center",
-                    textfont=dict(size=26, color="green"),
-                    name="Wing 🪽",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
-                ), row=1, col=1)
-              # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
+              #               # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
+              #   wing_mask = intraday["wing_emoji"] == "🪽"
+              #   fig.add_trace(go.Scatter(
+              #       x=intraday.loc[wing_mask, "TimeIndex"],
+              #       y=intraday.loc[wing_mask, "F_numeric"] + 35,
+              #       mode="text",
+              #       text=intraday.loc[wing_mask, "wing_emoji"],
+              #       textposition="top center",
+              #       textfont=dict(size=26, color="green"),
+              #       name="Wing 🪽",
+              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
+              #   ), row=1, col=1)
+              # # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
 
 
 
-                bat_mask = intraday["bat_emoji"] == "🪽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[bat_mask, "TimeIndex"],
-                    y=intraday.loc[bat_mask, "F_numeric"] - 35,
-                    mode="text",
-                    text=intraday.loc[bat_mask, "bat_emoji"],
-                    textposition="bottom center",
-                    textfont=dict(size=26, color="red"),
-                    name="Bat 🪽",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
-                ), row=1, col=1)
+              #   bat_mask = intraday["bat_emoji"] == "🪽"
+              #   fig.add_trace(go.Scatter(
+              #       x=intraday.loc[bat_mask, "TimeIndex"],
+              #       y=intraday.loc[bat_mask, "F_numeric"] - 35,
+              #       mode="text",
+              #       text=intraday.loc[bat_mask, "bat_emoji"],
+              #       textposition="bottom center",
+              #       textfont=dict(size=26, color="red"),
+              #       name="Bat 🪽",
+              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
+              #   ), row=1, col=1)
 
   
                 # Mask for Tenkan-Kijun Crosses
@@ -5962,11 +5962,11 @@ if st.sidebar.button("Run Analysis"):
                 # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
                 scatter_tk_sun = go.Scatter(
                     x=intraday.loc[mask_tk_sun, "Time"],
-                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 56,  # Offset for visibility
+                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 40,  # Offset for visibility
                     mode="text",
                     text="🌞",
                     textposition="top center",
-                    textfont=dict(size=34),
+                    textfont=dict(size=24),
                     name="Tenkan-Kijun Bullish Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
                 )
@@ -5974,11 +5974,11 @@ if st.sidebar.button("Run Analysis"):
                 # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
                 scatter_tk_moon = go.Scatter(
                     x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] + 56,  # Offset for visibility
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] + 40,  # Offset for visibility
                     mode="text",
                     text="🌙",
                     textposition="bottom center",
-                    textfont=dict(size=34),
+                    textfont=dict(size=24),
                     name="Tenkan-Kijun Bearish Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
                 )
