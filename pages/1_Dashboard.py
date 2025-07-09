@@ -3832,6 +3832,22 @@ if st.sidebar.button("Run Analysis"):
                   )
                   intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
+
+
+                  nose_line <- profile_df %>%
+                    filter(`👃🏽` == "👃🏽") %>%
+                    pull(`F% Level`) %>%
+                    unique()
+                  
+                  # Optional: fallback if no nose line found
+                  if (length(nose_line) == 0) {
+                    nose_line <- NA
+                  }
+
+
+
+
+
                   
                                     # === Top Dot Logic by 15-Minute Block ===
                   # top_dots = (
@@ -5542,6 +5558,23 @@ if st.sidebar.button("Run Analysis"):
                         ax=0, ay=0
                     )
 
+                                  # Filter rows where the 🎹 emoji is triggered
+                    ear_pierce_df = intraday[intraday["🎹"] == "🎹"]
+                    
+                    # Plot the 🎹 emoji
+                    fig.add_trace(go.Scatter(
+                        x=ear_pierce_df["TimeIndex"],
+                        y=ear_pierce_df["F_numeric"] + 30,  # Offset above current value
+                        mode="text",
+                        text=ear_pierce_df["🎹"],
+                        textposition="top right",
+                        textfont=dict(size=24),
+                        name="Ear-Piercing 🎹",
+                        showlegend=True,
+                        hovertemplate="Time: %{x}<br>🎹 Mike crosses Nose Line"
+                    ), row=1, col=1)
+
+              
 
                     # mask_green_king = intraday["King_Signal"] == "👑"
                     # scatter_green_king = go.Scatter(
