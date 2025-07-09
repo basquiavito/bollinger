@@ -5019,7 +5019,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_high] * len(intraday),
                     mode="lines",
-                    line=dict(color="#FFD700", dash="dot", width=0.7),
+                    line=dict(color="#FFD700", dash="dot", width=1),
                     name="IB High",
                     showlegend=True
                 ), row=1, col=1)
@@ -5029,7 +5029,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_low] * len(intraday),
                     mode="lines",
-                    line=dict(color="#FFD700", dash="dot", width=0.7),
+                    line=dict(color="#FFD700", dash="dot", width=1),
                     name="IB Low",
                     showlegend=True
                 ), row=1, col=1)
