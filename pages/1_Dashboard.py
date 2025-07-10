@@ -5621,7 +5621,6 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(down_cross_trace, row=1, col=1)
 
 
- Mask for each horse
                 mask_horse_buy = intraday["Kijun_Cross_Horse"] == "♘"
                 mask_horse_sell = intraday["Kijun_Cross_Horse"] == "♞"
 
