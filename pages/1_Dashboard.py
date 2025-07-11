@@ -3885,21 +3885,15 @@ if st.sidebar.button("Run Analysis"):
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
                 
-                       
-                                   # Assume ear_level and nose_level are already defined
-                  ear_level = max_vol_level
-                  nose_level = max_letter_level
-                  
+                                         # Initialize columns
                   intraday["🪘"] = ""
-                  
-                  # Track last state to avoid repeated triggers
+                  intraday["Drum_Y"] = np.nan
                   above = False
                   
                   for i in range(1, len(intraday)):
                       now = intraday.iloc[i]
                       prev = intraday.iloc[i - 1]
                   
-                      # Check if previous was below both, and now is crossing above either
                       crossed_up = (
                           not above and (
                               (prev["F_numeric"] <= ear_level and now["F_numeric"] > ear_level) or
@@ -3907,18 +3901,21 @@ if st.sidebar.button("Run Analysis"):
                           )
                       )
                   
-                      # Check if back below both
                       reset_state = (
                           above and
-                          (now["F_numeric"] <= ear_level and now["F_numeric"] <= nose_level)
+                          (now["F_numeric"] < ear_level and now["F_numeric"] < nose_level)
                       )
                   
                       if crossed_up:
                           intraday.at[intraday.index[i], "🪘"] = "🪘"
-                          above = True  # lock state
+                          intraday.at[intraday.index[i], "Drum_Y"] = now["F_numeric"] + 16
+                          above = True
                   
                       elif reset_state:
-                          above = False  # allow future triggers
+                          intraday.at[intraday.index[i], "🪘"] = "🪘"
+                          intraday.at[intraday.index[i], "Drum_Y"] = now["F_numeric"] - 16
+                          above = False
+
 
                   
                   
@@ -4611,21 +4608,19 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(y_low_f_line, row=1, col=1)
                     fig.add_trace(y_close_f_line, row=1, col=1)
 
-                  # === Plot 🪘 Drum Marker ===
-                    mask_drum = intraday["🪘"] != ""
-                    
                     scatter_drum = go.Scatter(
-                        x=intraday.loc[mask_drum, "Time"],
-                        y=intraday.loc[mask_drum, "F_numeric"] - 28,  # Lower than STD marker
-                        mode="text",
-                        text=intraday.loc[mask_drum, "🪘"],
-                        textposition="bottom center",
-                        textfont=dict(size=50),
-                        name="F% Ear/Nose Crossover 🪘",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>🪘 Trigger<extra></extra>"
+                    x=intraday.loc[intraday["🪘"] != "", "Time"],
+                    y=intraday.loc[intraday["🪘"] != "", "Drum_Y"],
+                    mode="text",
+                    text=intraday.loc[intraday["🪘"] != "", "🪘"],
+                    textposition="middle center",
+                    textfont=dict(size=14),
+                    name="Drum Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
                     )
-                    
+                
                     fig.add_trace(scatter_drum, row=1, col=1)
+
 
 
                              # BBW Tight → Pink Bishops ♗
