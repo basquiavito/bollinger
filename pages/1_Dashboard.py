@@ -4599,7 +4599,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=intraday.loc[mask_drum, "🪘"],
                         textposition="bottom center",
-                        textfont=dict(size=14),
+                        textfont=dict(size=50),
                         name="F% Ear/Nose Crossover 🪘",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>🪘 Trigger<extra></extra>"
                     )
