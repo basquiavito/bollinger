@@ -3833,9 +3833,22 @@ if st.sidebar.button("Run Analysis"):
                   )
                   intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
-
-
-   
+                  # === 🪘 Marker: Mike crosses Ear or Nose level ===
+                  
+                  # Identify the F% levels tagged with Ear 🦻🏼 or Nose 👃🏽
+                  ear_levels = profile_df.loc[profile_df["🦻🏼"] == "🦻🏼", "F% Level"].tolist()
+                  nose_levels = profile_df.loc[profile_df["👃🏽"] == "👃🏽", "F% Level"].tolist()
+                  
+                  # Create 🪘 column in intraday
+                  def drum_marker(row):
+                      crossed_ear = any(row["F_numeric"] > level for level in ear_levels)
+                      crossed_nose = any(row["F_numeric"] > level for level in nose_levels)
+                      return "🪘" if crossed_ear or crossed_nose else ""
+                  
+                  intraday["🪘"] = intraday.apply(drum_marker, axis=1)
+                  
+                  
+                     
 
 
 
@@ -3884,7 +3897,7 @@ if st.sidebar.button("Run Analysis"):
                    
 
                   # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽","🪘"]])
 
                 
      
