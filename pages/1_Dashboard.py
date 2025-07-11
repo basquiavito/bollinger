@@ -3889,7 +3889,9 @@ if st.sidebar.button("Run Analysis"):
                   intraday["🪘"] = ""
                   intraday["Drum_Y"] = np.nan
                   above = False
-                  
+                  ear_level = profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level']
+                  nose_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+
                   for i in range(1, len(intraday)):
                       now = intraday.iloc[i]
                       prev = intraday.iloc[i - 1]
