@@ -3140,23 +3140,6 @@ if st.sidebar.button("Run Analysis"):
                 intraday = detect_theta_spikes(intraday)
 
 
-                # Step: Add 🪘 marker when Mike crosses above Ear or Price level
-                latest_mike = intraday["F_numeric"].iloc[-1]
-                
-                # Define your Ear or Price reference levels (in F% scale)
-                ear_level = your_defined_ear_level  # e.g., 100
-                price_level = your_defined_price_level  # e.g., 120
-                
-                def drum_marker(row):
-                    if latest_mike > ear_level and row["F% Level"] == ear_level:
-                        return "🪘"
-                    if latest_mike > price_level and row["F% Level"] == price_level:
-                        return "🪘"
-                    return ""
-                
-                profile_df["🪘"] = profile_df.apply(drum_marker, axis=1)
-
-
 
 
                 def detect_new_lows_below_yesterday_low(intraday):
@@ -3617,7 +3600,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","F% Theta","F% Cotangent","RVOL_Alert","🪘","BBW_Tight_Emoji","BBW Alert","wing_emoji","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
