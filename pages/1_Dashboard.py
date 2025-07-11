@@ -3885,20 +3885,41 @@ if st.sidebar.button("Run Analysis"):
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
                 
-     
-                  # === 🪘 Marker: Mike crosses Ear or Nose level ===
+                       
+                                   # Assume ear_level and nose_level are already defined
+                  ear_level = max_vol_level
+                  nose_level = max_letter_level
                   
-                  # Identify the F% levels tagged with Ear 🦻🏼 or Nose 👃🏽
-                  ear_levels = profile_df.loc[profile_df["🦻🏼"] == "🦻🏼", "F% Level"].tolist()
-                  nose_levels = profile_df.loc[profile_df["👃🏽"] == "👃🏽", "F% Level"].tolist()
+                  intraday["🪘"] = ""
                   
-                  # Create 🪘 column in intraday
-                  def drum_marker(row):
-                      crossed_ear = any(row["F_numeric"] > level for level in ear_levels)
-                      crossed_nose = any(row["F_numeric"] > level for level in nose_levels)
-                      return "🪘" if crossed_ear or crossed_nose else ""
+                  # Track last state to avoid repeated triggers
+                  above = False
                   
-                  intraday["🪘"] = intraday.apply(drum_marker, axis=1)
+                  for i in range(1, len(intraday)):
+                      now = intraday.iloc[i]
+                      prev = intraday.iloc[i - 1]
+                  
+                      # Check if previous was below both, and now is crossing above either
+                      crossed_up = (
+                          not above and (
+                              (prev["F_numeric"] <= ear_level and now["F_numeric"] > ear_level) or
+                              (prev["F_numeric"] <= nose_level and now["F_numeric"] > nose_level)
+                          )
+                      )
+                  
+                      # Check if back below both
+                      reset_state = (
+                          above and
+                          (now["F_numeric"] <= ear_level and now["F_numeric"] <= nose_level)
+                      )
+                  
+                      if crossed_up:
+                          intraday.at[intraday.index[i], "🪘"] = "🪘"
+                          above = True  # lock state
+                  
+                      elif reset_state:
+                          above = False  # allow future triggers
+
                   
                   
 
