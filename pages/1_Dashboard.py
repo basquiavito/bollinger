@@ -3141,7 +3141,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                 # Step: Add 🪘 marker when Mike crosses above Ear or Price level
-                latest_mike = intraday[mike_col].iloc[-1]
+                latest_mike = intraday["F_numeric"].iloc[-1]
                 
                 # Define your Ear or Price reference levels (in F% scale)
                 ear_level = your_defined_ear_level  # e.g., 100
