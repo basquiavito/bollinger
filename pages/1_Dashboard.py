@@ -4616,7 +4616,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[intraday["🪘"] != "", "🪘"],
                     textposition="middle center",
-                    textfont=dict(size=14),
+                    textfont=dict(size=20),
                     name="Drum Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
                     )
