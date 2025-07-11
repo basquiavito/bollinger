@@ -5246,42 +5246,42 @@ if st.sidebar.button("Run Analysis"):
                 )
                 
                 
-                # fig.add_trace(go.Scatter(
-                #     x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
-                #     y=[poc_f_level],
-                #     mode="markers+text",
-                #     marker=dict(size=0, color="#ff1493"),
-                #     text=["👃🏽 Nose (Most Price Acceptance)"],
-                #     textposition="top right",
-                #     name="👃🏽 Nose Line",
-                #     showlegend=True,
-                #     hovertemplate=(
-                #           "👃🏽 Nose Line<br>"
-                #           "F% Level: %{y}<br>"
-                #           f"Time: {nose_time}<extra></extra>"
-                #       )
-                # ), row=1, col=1)
-                # for _, row in profile_df.iterrows():
-                #     if row["Tail"] == "🪶":
-                #           # Get actual TimeIndex from intraday at this F% Level
-                #         time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
-                #         if not time_row.empty:
-                #             time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
+                fig.add_trace(go.Scatter(
+                    x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
+                    y=[poc_f_level],
+                    mode="markers+text",
+                    marker=dict(size=0, color="#ff1493"),
+                    text=["👃🏽 Nose (Most Price Acceptance)"],
+                    textposition="top right",
+                    name="👃🏽 Nose Line",
+                    showlegend=True,
+                    hovertemplate=(
+                          "👃🏽 Nose Line<br>"
+                          "F% Level: %{y}<br>"
+                          f"Time: {nose_time}<extra></extra>"
+                      )
+                ), row=1, col=1)
+                for _, row in profile_df.iterrows():
+                    if row["Tail"] == "🪶":
+                          # Get actual TimeIndex from intraday at this F% Level
+                        time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
+                        if not time_row.empty:
+                            time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
                 
-                #             fig.add_trace(go.Scatter(
-                #                 x=[time_at_level],
-                #                 y=[row["F% Level"]],
-                #                 mode="text",
-                #                 text=["🪶"],
-                #                 textposition="middle right",
-                #                 textfont=dict(size=20),
-                #                 showlegend=True,
-                #                 hovertemplate=(
-                #                     "🪶 Tail<br>"
-                #                     f"F% Level: {row['F% Level']}<br>"
-                #                     f"Time: {row['Time']}<extra></extra>"
-                #                 )
-                #             ), row=1, col=1)
+                            fig.add_trace(go.Scatter(
+                                x=[time_at_level],
+                                y=[row["F% Level"]],
+                                mode="text",
+                                text=["🪶"],
+                                textposition="middle right",
+                                textfont=dict(size=20),
+                                showlegend=True,
+                                hovertemplate=(
+                                    "🪶 Tail<br>"
+                                    f"F% Level: {row['F% Level']}<br>"
+                                    f"Time: {row['Time']}<extra></extra>"
+                                )
+                            ), row=1, col=1)
   
 
 
@@ -5330,39 +5330,39 @@ if st.sidebar.button("Run Analysis"):
                 ))
           
                 
-                #                 # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
-                # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                # fig.add_trace(go.Scatter(
-                #     x=bull_hand_rows["TimeIndex"],
-                #     y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
-                #     mode="text",
-                #     text=["👋🏽"] * len(bull_hand_rows),
-                #     textposition="top right",
-                #     textfont=dict(size=16),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "👋🏽 Bull MIDAS Breakout<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         f"Bear MIDAS: {{y:.2f}}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                                # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
+                bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                fig.add_trace(go.Scatter(
+                    x=bull_hand_rows["TimeIndex"],
+                    y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
+                    mode="text",
+                    text=["👋🏽"] * len(bull_hand_rows),
+                    textposition="top right",
+                    textfont=dict(size=16),
+                    showlegend=False,
+                    hovertemplate=(
+                        "👋🏽 Bull MIDAS Breakout<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        f"Bear MIDAS: {{y:.2f}}<extra></extra>"
+                    )
+                ), row=1, col=1)
                 
-                # # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
-                # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_glove_rows["TimeIndex"],
-                #     y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
-                #     mode="text",
-                #     text=["🧤"] * len(bear_glove_rows),
-                #     textposition="bottom right",
-                #     textfont=dict(size=16),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🧤 Bear MIDAS Breakdown<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
+                bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                fig.add_trace(go.Scatter(
+                    x=bear_glove_rows["TimeIndex"],
+                    y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
+                    mode="text",
+                    text=["🧤"] * len(bear_glove_rows),
+                    textposition="bottom right",
+                    textfont=dict(size=16),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🧤 Bear MIDAS Breakdown<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        f"Bull MIDAS: {{y:.2f}}<extra></extra>"
+                    )
+                ), row=1, col=1)
                 
                 # Wake-up Emojis 📈
                 fig.add_trace(go.Scatter(
