@@ -5827,7 +5827,6 @@ if st.sidebar.button("Run Analysis"):
                 # Filter first occurrence and changes
                 chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
 
-                Assign emojis for only these changes
                 intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
                                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
