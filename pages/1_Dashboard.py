@@ -5786,7 +5786,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
 
 
-  correct masks
+ 
                 mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
                 mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
 
