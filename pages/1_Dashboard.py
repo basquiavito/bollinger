@@ -5786,36 +5786,36 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
 
 
-  # correct masks
-                # mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
-                # mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
+  correct masks
+                mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
+                mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
 
-                # # ♙ Upward pawn
-                # pawn_up = go.Scatter(
-                #     x=intraday.loc[mask_pawn_up, "Time"],
-                #     y=intraday.loc[mask_pawn_up, "F_numeric"] + 8,
-                #     mode="text",
-                #     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
-                #     textposition="top center",
-                #     textfont=dict(size=21, color="green"),            # green for up
-                #     name="Pawn Up (Tenkan Cross)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♙ Upward Tenkan Cross<extra></extra>"
-                # )
+                # ♙ Upward pawn
+                pawn_up = go.Scatter(
+                    x=intraday.loc[mask_pawn_up, "Time"],
+                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 8,
+                    mode="text",
+                    text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
+                    textposition="top center",
+                    textfont=dict(size=11, color="green"),            # green for up
+                    name="Pawn Up (Tenkan Cross)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♙ Upward Tenkan Cross<extra></extra>"
+                )
 
-                # # ♟️ Downward pawn
-                # pawn_down = go.Scatter(
-                #     x=intraday.loc[mask_pawn_down, "Time"],
-                #     y=intraday.loc[mask_pawn_down, "F_numeric"] - 8,
-                #     mode="text",
-                #     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
-                #     textposition="bottom center",
-                #     textfont=dict(size=21, color="red"),             # red for down
-                #     name="Pawn Down (Tenkan Cross)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♟️ Downward Tenkan Cross<extra></extra>"
-                # )
+                # ♟️ Downward pawn
+                pawn_down = go.Scatter(
+                    x=intraday.loc[mask_pawn_down, "Time"],
+                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 8,
+                    mode="text",
+                    text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
+                    textposition="bottom center",
+                    textfont=dict(size=11, color="red"),             # red for down
+                    name="Pawn Down (Tenkan Cross)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>♟️ Downward Tenkan Cross<extra></extra>"
+                )
 
-                # fig.add_trace(pawn_up,   row=1, col=1)
-                # fig.add_trace(pawn_down, row=1, col=1)
+                fig.add_trace(pawn_up,   row=1, col=1)
+                fig.add_trace(pawn_down, row=1, col=1)
 
                             # Calculate Chikou relation to current price
                 intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
