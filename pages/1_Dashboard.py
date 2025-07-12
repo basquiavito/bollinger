@@ -4359,14 +4359,14 @@ if st.sidebar.button("Run Analysis"):
                     # Detect changes in Chikou relation
                     intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
 
-                    # # Filter first occurrence and changes
-                    # chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
+                    # Filter first occurrence and changes
+                    chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
 
-                    # # Assign emojis for only these changes
-                    # intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
-                    #                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+                    # Assign emojis for only these changes
+                    intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
+                                                np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-                    # mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                    mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
 
                     kijun_line = go.Scatter(
@@ -4393,45 +4393,45 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    #                     # Span A – Yellow Line
-                    # span_a_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanA_F"],
-                    #     mode="lines",
-                    #     line=dict(color="yellow", width=0.4),
-                    #     name="Span A (F%)"
-                    # )
-                    # fig.add_trace(span_a_line, row=1, col=1)
+                                        # Span A – Yellow Line
+                    span_a_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanA_F"],
+                        mode="lines",
+                        line=dict(color="yellow", width=0.4),
+                        name="Span A (F%)"
+                    )
+                    fig.add_trace(span_a_line, row=1, col=1)
 
-                    # # Span B – Blue Line
-                    # span_b_line = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanB_F"],
-                    #     mode="lines",
-                    #     line=dict(color="blue", width=0.4),
-                    #     name="Span B (F%)"
-                    # )
-                    # fig.add_trace(span_b_line, row=1, col=1)
+                    # Span B – Blue Line
+                    span_b_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanB_F"],
+                        mode="lines",
+                        line=dict(color="blue", width=0.4),
+                        name="Span B (F%)"
+                    )
+                    fig.add_trace(span_b_line, row=1, col=1)
 
-                    # # Invisible SpanA for cloud base
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanA_F"],
-                    #     line=dict(width=0),
-                    #     mode='lines',
-                    #     showlegend=False
-                    # ), row=1, col=1)
+                    # Invisible SpanA for cloud base
+                    fig.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanA_F"],
+                        line=dict(width=0),
+                        mode='lines',
+                        showlegend=False
+                    ), row=1, col=1)
 
-                    # # SpanB with fill → grey Kumo
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["SpanB_F"],
-                    #     fill='tonexty',
-                    #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                    #     line=dict(width=0),
-                    #     mode='lines',
-                    #     name='Kumo Cloud'
-                    # ), row=1, col=1)
+                    # SpanB with fill → grey Kumo
+                    fig.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanB_F"],
+                        fill='tonexty',
+                        fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                        line=dict(width=0),
+                        mode='lines',
+                        name='Kumo Cloud'
+                    ), row=1, col=1)
 
 
                  
@@ -4667,7 +4667,6 @@ if st.sidebar.button("Run Analysis"):
   #🟢 ADX Expansion
 
 
-          Mask for ADX Alerts (♨️, 🧨)
                     mask_adx_alert = intraday["ADX_Alert"] != ""
 
                     scatter_adx_alert = go.Scatter(
@@ -5828,35 +5827,35 @@ if st.sidebar.button("Run Analysis"):
                 # Filter first occurrence and changes
                 chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
 
-                # Assign emojis for only these changes
-                # intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
-                #                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+                Assign emojis for only these changes
+                intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
+                                            np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-                # mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[mask_chikou_above, "Time"],
-                #     y=intraday.loc[mask_chikou_above, "F_numeric"] + 64,
-                #     mode="text",
-                #     text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
-                #     textposition="top center",
-                #     textfont=dict(size=34),
-                #     name="Chikou Above Price",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
-                # ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[mask_chikou_above, "Time"],
+                    y=intraday.loc[mask_chikou_above, "F_numeric"] + 64,
+                    mode="text",
+                    text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Chikou Above Price",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
+                ), row=1, col=1)
 
-                # mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
+                mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[mask_chikou_below, "Time"],
-                #     y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
-                #     mode="text",
-                #     text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
-                #     textposition="bottom center",
-                #     textfont=dict(size=34),
-                #     name="Chikou Below Price",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
-                # ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[mask_chikou_below, "Time"],
+                    y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
+                    mode="text",
+                    text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="Chikou Below Price",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                ), row=1, col=1)
 
 
 
@@ -6061,45 +6060,45 @@ if st.sidebar.button("Run Analysis"):
   
   
   
-                #                     # Span A – Yellow Line
-                # span_a_line = go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanA_F"],
-                #     mode="lines",
-                #     line=dict(color="yellow", width=0.9),
-                #     name="Span A (F%)"
-                # )
-                # fig.add_trace(span_a_line, row=1, col=1)
+                                    # Span A – Yellow Line
+                span_a_line = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanA_F"],
+                    mode="lines",
+                    line=dict(color="yellow", width=0.9),
+                    name="Span A (F%)"
+                )
+                fig.add_trace(span_a_line, row=1, col=1)
   
-                # # Span B – Blue Line
-                # span_b_line = go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanB_F"],
-                #     mode="lines",
-                #     line=dict(color="blue", width=0.9),
-                #     name="Span B (F%)"
-                # )
-                # fig.add_trace(span_b_line, row=1, col=1)
+                # Span B – Blue Line
+                span_b_line = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanB_F"],
+                    mode="lines",
+                    line=dict(color="blue", width=0.9),
+                    name="Span B (F%)"
+                )
+                fig.add_trace(span_b_line, row=1, col=1)
   
-                # # Invisible SpanA for cloud base
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanA_F"],
-                #     line=dict(width=0),
-                #     mode='lines',
-                #     showlegend=False
-                # ), row=1, col=1)
+                # Invisible SpanA for cloud base
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanA_F"],
+                    line=dict(width=0),
+                    mode='lines',
+                    showlegend=False
+                ), row=1, col=1)
   
-                # # SpanB with fill → grey Kumo
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanB_F"],
-                #     fill='tonexty',
-                #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                #     line=dict(width=0),
-                #     mode='lines',
-                #     name='Kumo Cloud'
-                # ), row=1, col=1)
+                # SpanB with fill → grey Kumo
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanB_F"],
+                    fill='tonexty',
+                    fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                    line=dict(width=0),
+                    mode='lines',
+                    name='Kumo Cloud'
+                ), row=1, col=1)
 
                 # # if yva_min is not None and yva_max is not None:
                 #     # Show in text
