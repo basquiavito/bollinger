@@ -6240,7 +6240,6 @@ if st.sidebar.button("Run Analysis"):
 
 
               
-                fig.update_yaxes(title_text="Option Value", row=2, col=1)
    
                  
 
