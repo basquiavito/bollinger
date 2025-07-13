@@ -6246,7 +6246,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=1800,  # Increase overall figure height (default ~450-600)
+                    height=1000,  # Increase overall figure height (default ~450-600)
 
                      
                 )
