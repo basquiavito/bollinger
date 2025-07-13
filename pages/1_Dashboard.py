@@ -3830,38 +3830,38 @@ if st.sidebar.button("Run Analysis"):
                   
                                    # Add the Ear_Emoji column to intraday based on the profile logic
  
-                   # Define Initial Balance from first 12 candles
-                  ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
+                  #  # Define Initial Balance from first 12 candles
+                  # ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
                   
-                  ib_high = ib_data["F_numeric"].max()
-                  ib_low = ib_data["F_numeric"].min()
+                  # ib_high = ib_data["F_numeric"].max()
+                  # ib_low = ib_data["F_numeric"].min()
                   
-                  # Add to intraday as constant columns
-                  intraday["IB_High"] = ib_high
-                  intraday["IB_Low"] = ib_low
+                  # # Add to intraday as constant columns
+                  # intraday["IB_High"] = ib_high
+                  # intraday["IB_Low"] = ib_low
                   
                                 
-                                    # Initialize IB breakout emojis
-                  intraday["IB_High_Break"] = ""
-                  intraday["IB_Low_Break"] = ""
+                  #                   # Initialize IB breakout emojis
+                  # intraday["IB_High_Break"] = ""
+                  # intraday["IB_Low_Break"] = ""
                   
-                  # Track prior state (inside/outside IB)
-                  intraday["Inside_IB"] = (intraday["F_numeric"] >= intraday["IB_Low"]) & (intraday["F_numeric"] <= intraday["IB_High"])
-                  intraday["Prior_Inside_IB"] = intraday["Inside_IB"].shift(1)
+                  # # Track prior state (inside/outside IB)
+                  # intraday["Inside_IB"] = (intraday["F_numeric"] >= intraday["IB_Low"]) & (intraday["F_numeric"] <= intraday["IB_High"])
+                  # intraday["Prior_Inside_IB"] = intraday["Inside_IB"].shift(1)
                   
-                  # 💸 Breakout above IB High
-                  ib_high_break = (
-                      (intraday["F_numeric"] > intraday["IB_High"]) &  # now above
-                      (intraday["Prior_Inside_IB"] == True)            # came from inside
-                  )
-                  intraday.loc[ib_high_break, "IB_High_Break"] = "💸"
+                  # # 💸 Breakout above IB High
+                  # ib_high_break = (
+                  #     (intraday["F_numeric"] > intraday["IB_High"]) &  # now above
+                  #     (intraday["Prior_Inside_IB"] == True)            # came from inside
+                  # )
+                  # intraday.loc[ib_high_break, "IB_High_Break"] = "💸"
                   
-                  # 🧧 Breakdown below IB Low
-                  ib_low_break = (
-                      (intraday["F_numeric"] < intraday["IB_Low"]) &   # now below
-                      (intraday["Prior_Inside_IB"] == True)            # came from inside
-                  )
-                  intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
+                  # # 🧧 Breakdown below IB Low
+                  # ib_low_break = (
+                  #     (intraday["F_numeric"] < intraday["IB_Low"]) &   # now below
+                  #     (intraday["Prior_Inside_IB"] == True)            # came from inside
+                  # )
+                  # intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
                      
 
