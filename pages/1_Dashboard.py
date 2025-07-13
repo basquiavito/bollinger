@@ -4205,7 +4205,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["F_numeric"],
                         mode="lines+markers",
                         customdata=intraday["Close"],
-                        line=dict(color="#cfcfcf", width=2),  # Dodger Blue
+                        line=dict(color="#57c7ff", width=2),  # Dodger Blue
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
 
                         name="F% (scaled)",
@@ -4522,7 +4522,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="solid", color="#2e2e2e",width=1),
+                        line=dict(dash="solid", color="#cfcfcf",width=1),
                         name="Upper Band"
                     )
 
@@ -4531,7 +4531,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Lower"],
                         mode="lines",
-                        line=dict(dash="solid", color="#2e2e2e",width=1),
+                        line=dict(dash="solid", color="#cfcfcf",width=1),
                         name="Lower Band"
                     )
 
@@ -4540,7 +4540,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% MA"],
                         mode="lines",
-                        line=dict(dash="dash",color="#4a4a4a",width=1),  # Set dash style
+                        line=dict(dash="dash",color="#f8f8f8",width=1),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
 
