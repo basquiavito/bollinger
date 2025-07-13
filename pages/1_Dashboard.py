@@ -5993,7 +5993,7 @@ if st.sidebar.button("Run Analysis"):
               #   ), row=1, col=1)
 
   
-                Mask for Tenkan-Kijun Crosses
+        
                 mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
                 mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
