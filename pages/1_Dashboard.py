@@ -4411,7 +4411,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["Tenkan_F"],
                         mode="lines",
-                        line=dict(color="#E63946", width=0.7, dash="solid"),
+                        line=dict(color="#E63946", width=0.6, dash="solid"),
                         name="Tenkan (F%)"
                     )
                     fig.add_trace(tenkan_line, row=1, col=1)
@@ -4561,7 +4561,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[marengo_mask, "Time"],
                         y=intraday.loc[marengo_mask, "F% Upper"] + offset,
                         mode="text",
-                        textfont=dict(size=34),
+                        textfont=dict(size=24),
                         text=["🐎"] * marengo_mask.sum(),
                         textposition="top center",
                         name="Marengo",
@@ -4584,7 +4584,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday.loc[south_mask, "F% Lower"] - offset_south,
                         mode="text",
                         text=["🐎"] * south_mask.sum(),
-                        textfont=dict(size=34),
+                        textfont=dict(size=24),
                         textposition="bottom center",
                         name="South Marengo",
                         showlegend=True
@@ -4602,7 +4602,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
                         mode="lines",
-                        line=dict(color="green", dash="dash",width=0.5),
+                        line=dict(color="green", dash="dash",width=0.3),
                         name="Yesterday High (F%)",
                         yaxis="y2",              # << ✅ this is key
                         showlegend=False,
@@ -4614,7 +4614,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
                         mode="lines",
-                        line=dict(color="red", dash="dash", width=0.5),
+                        line=dict(color="red", dash="dash", width=0.3),
                         name="Yesterday Low (F%)",
                         yaxis="y2",              # << ✅ this is key
                         showlegend=False,
@@ -4626,7 +4626,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[0] * len(intraday),
                         mode="lines",
-                        line=dict(color="blue", dash="dash", width=0.5),
+                        line=dict(color="blue", dash="dash", width=0.3),
                         name="Yesterday Close (F%)",
                         yaxis="y2",              # << ✅ this is key
                         showlegend=False,
@@ -4760,7 +4760,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Supply Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#8A2BE2", dash='dot'),
+                            line=dict(width=0.5, color="#8A2BE2", dash='dot'),
                             name='TD Supply F%',
                             hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
                         ),
@@ -4775,7 +4775,7 @@ if st.sidebar.button("Run Analysis"):
                             x=intraday['Time'],
                             y=intraday['TD Demand Line F'],
                             mode='lines',
-                            line=dict(width=1, color="#5DADE2", dash='dot'),
+                            line=dict(width=0.5, color="#5DADE2", dash='dot'),
                             name='TD Demand F%',
                             hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
                         ),
@@ -4901,7 +4901,7 @@ if st.sidebar.button("Run Analysis"):
                                     x=[intraday.at[ghost_idx, "Time"]],
                                     y=[intraday.at[ghost_idx, "F_numeric"] - 8],
                                     mode="text",
-                                    text=["🕳️"],
+                                    text=["👻"],
                                     textposition="middle center",
                                     textfont=dict(size=20, color="purple"),
                                     name="Confirmed Sell TDST Breakdown",
@@ -5094,7 +5094,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_high] * len(intraday),
                     mode="lines",
-                    line=dict(color="#FFD700", dash="dot", width=1),
+                    line=dict(color="#FFD700", dash="dot", width=0.7),
                     name="IB High",
                     showlegend=True
                 ), row=1, col=1)
@@ -5104,7 +5104,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=[ib_low] * len(intraday),
                     mode="lines",
-                    line=dict(color="#FFD700", dash="dot", width=1),
+                    line=dict(color="#FFD700", dash="dot", width=0.7),
                     name="IB Low",
                     showlegend=True
                 ), row=1, col=1)
@@ -5210,7 +5210,7 @@ if st.sidebar.button("Run Analysis"):
                     ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
                     fig.add_hline(
                         y=ear_level,
-                        line=dict(color="darkgray", dash="dot", width=0.7),
+                        line=dict(color="darkgray", dash="dot", width=0.3),
                         row=1, col=1,
                         showlegend=True,
                         annotation_text="🦻🏼 Ear Shift",
