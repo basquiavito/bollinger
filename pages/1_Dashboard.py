@@ -6064,7 +6064,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="👼🏻",
                     textposition="bottom center",
-                    textfont=dict(size=22),
+                    textfont=dict(size=82),
                     name="Sanyaku Kouten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
                 )
@@ -6076,7 +6076,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="👺",
                     textposition="top center",
-                    textfont=dict(size=22),
+                    textfont=dict(size=82),
                     name="Sanyaku Gyakuten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
                 )
