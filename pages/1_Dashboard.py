@@ -3538,8 +3538,38 @@ if st.sidebar.button("Run Analysis"):
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_bee_emoji(intraday)
 
+                
+                             # --- CROSS CONDITIONS ---
+                tenkan_above_kijun = (
+                    (intraday["Tenkan"].shift(1) < intraday["Kijun"].shift(1)) &
+                    (intraday["Tenkan"] >= intraday["Kijun"])
+                )
+                
+                tenkan_below_kijun = (
+                    (intraday["Tenkan"].shift(1) > intraday["Kijun"].shift(1)) &
+                    (intraday["Tenkan"] <= intraday["Kijun"])
+                )
+                
+                # --- CLOUD POSITION ---
+                price_above_cloud = (intraday["Close"] > intraday["SpanA"]) & (intraday["Close"] > intraday["SpanB"])
+                price_below_cloud = (intraday["Close"] < intraday["SpanA"]) & (intraday["Close"] < intraday["SpanB"])
+                
+                # --- CHIKOU POSITION (shifted back into present) ---
+                chikou_above_price = (intraday["Chikou"].shift(26) > intraday["Close"].shift(26))
+                chikou_below_price = (intraday["Chikou"].shift(26) < intraday["Close"].shift(26))
+                
+                # === FINAL COMBINED SIGNALS ===
+                
+                # 🟩 Sanyaku Kouten
+                intraday["Sanyaku_Kouten"] = np.where(
+                    tenkan_above_kijun & price_above_cloud & chikou_above_price,
+                    "🟩", "")
+                
+                # 🟥 Sanyaku Gyakuten
+                intraday["Sanyaku_Gyakuten"] = np.where(
+                    tenkan_below_kijun & price_below_cloud & chikou_below_price,
+                    "🟥", "")
 
-             
 
            
 
@@ -3600,7 +3630,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
