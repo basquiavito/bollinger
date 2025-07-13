@@ -4205,7 +4205,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["F_numeric"],
                         mode="lines+markers",
                         customdata=intraday["Close"],
-                        line=dict(color="#57c7ff", width=2),  # Dodger Blue
+                        line=dict(color="#57c7ff", width=1),  # Dodger Blue
                         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Close: $%{customdata:.2f}<extra></extra>",
 
                         name="F% (scaled)",
@@ -4341,8 +4341,9 @@ if st.sidebar.button("Run Analysis"):
                         x=chikou_plot["Time"],
                         y=chikou_plot["Chikou_F"],
                         mode="lines",
+                      
                         name="Chikou (F%)",
-                        line=dict(color="purple", dash="dash")
+                        line=dict(color="purple", dash="dash", width=0.7)
                     )
                     fig.add_trace(chikou_line, row=1, col=1)
 
@@ -4401,7 +4402,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["Kijun_F"],
                     mode="lines",
-                    line=dict(color="#2ECC71", width=2),
+                    line=dict(color="#2ECC71", width=1),
                     name="Kijun (F% scale)"
                 )
                     fig.add_trace(kijun_line, row=1, col=1)
@@ -4410,10 +4411,10 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["Tenkan_F"],
                         mode="lines",
-                        line=dict(color="#E63946", width=1.5, dash="solid"),
+                        line=dict(color="#E63946", width=1, dash="solid"),
                         name="Tenkan (F%)"
                     )
-                    fig.add_trace(tenkan_line, row=1, col=1)
+                    fig.add_trace(tenkan_line, row=0.7, col=1)
 
 
                     intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
