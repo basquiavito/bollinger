@@ -4994,64 +4994,64 @@ if st.sidebar.button("Run Analysis"):
 
 
              
-                # Smooth first if needed
-                intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
-                intraday["Put_Option_Smooth"]  = intraday["Put_Option_Value"].rolling(3).mean()
+                # # Smooth first if needed
+                # intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
+                # intraday["Put_Option_Smooth"]  = intraday["Put_Option_Value"].rolling(3).mean()
                 
-                # 🎯 Call Flow
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Call_Option_Smooth"],
-                    mode="lines",
-                    name="Call Option Value",
-                    line=dict(color="darkviolet", width=1.5),
-                    showlegend=True,
-                    hovertemplate=
-                    "<b>Time:</b> %{x}<br>" +
-                    "<b>Call Option:</b> %{y:.2f}<br>" +
-                    "<b>%{text}</b><extra></extra>"
+                # # 🎯 Call Flow
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Call_Option_Smooth"],
+                #     mode="lines",
+                #     name="Call Option Value",
+                #     line=dict(color="darkviolet", width=1.5),
+                #     showlegend=True,
+                #     hovertemplate=
+                #     "<b>Time:</b> %{x}<br>" +
+                #     "<b>Call Option:</b> %{y:.2f}<br>" +
+                #     "<b>%{text}</b><extra></extra>"
               
 
-                ), row=2, col=1)
+                # ), row=2, col=1)
                 
-                # 🎯 Put Flow
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Put_Option_Smooth"],
-                    mode="lines",
-                    name="Put Option Value",
-                    line=dict(color="darkcyan", width=1.5),
-                    showlegend=True,
-                    hovertemplate=
-                    "<b>Time:</b> %{x}<br>" +
-                    "<b>Put Option:</b> %{y:.2f}<br>" +
-                    "<b>%{text}</b><extra></extra>"
+                # # 🎯 Put Flow
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Put_Option_Smooth"],
+                #     mode="lines",
+                #     name="Put Option Value",
+                #     line=dict(color="darkcyan", width=1.5),
+                #     showlegend=True,
+                #     hovertemplate=
+                #     "<b>Time:</b> %{x}<br>" +
+                #     "<b>Put Option:</b> %{y:.2f}<br>" +
+                #     "<b>%{text}</b><extra></extra>"
             
 
-                ), row=2, col=1)
+                # ), row=2, col=1)
                 
-                # Compute displacement from MIDAS curves
-                intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
-                intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+                # # Compute displacement from MIDAS curves
+                # intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                # intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
                 
-                # Plot them in Row 3
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Call_vs_Bull"],
-                    mode="lines",
-                    name="Call vs Midas Bull",
-                    line=dict(color="darkviolet", width=1.5, dash="dot"),
-                    showlegend=True
-                ), row=3, col=1)
+                # # Plot them in Row 3
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Call_vs_Bull"],
+                #     mode="lines",
+                #     name="Call vs Midas Bull",
+                #     line=dict(color="darkviolet", width=1.5, dash="dot"),
+                #     showlegend=True
+                # ), row=3, col=1)
                 
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Put_vs_Bear"],
-                    mode="lines",
-                    name="Put vs Midas Bear",
-                    line=dict(color="darkcyan", width=1.5, dash="dot"),
-                    showlegend=True
-                ), row=3, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Put_vs_Bear"],
+                #     mode="lines",
+                #     name="Put vs Midas Bear",
+                #     line=dict(color="darkcyan", width=1.5, dash="dot"),
+                #     showlegend=True
+                # ), row=3, col=1)
 
 
 
