@@ -4804,7 +4804,7 @@ if st.sidebar.button("Run Analysis"):
                             mode="text",
                             text=["⎯"] * tdst_buy_mask.sum(),
                             textposition="middle center",
-                            textfont=dict(size=55, color="green"),
+                            textfont=dict(size=24, color="green"),
                             name="Buy TDST",
                             hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                         ),
@@ -4819,7 +4819,7 @@ if st.sidebar.button("Run Analysis"):
                             mode="text",
                             text=["⎯"] * tdst_sell_mask.sum(),
                             textposition="middle center",
-                            textfont=dict(size=55, color="red"),
+                            textfont=dict(size=24, color="red"),
                             name="Sell TDST",
                             hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                         ),
@@ -4924,32 +4924,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                short_entry_trace = go.Scatter(
-                    x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
-                    mode="text",
-                    text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
-                    textposition="bottom left",
-                    textfont=dict(size=16, color="lime"),
-                    name="Short Entry (✅)"
-                )
-                fig.add_trace(short_entry_trace, row=1, col=1)
+                # short_entry_trace = go.Scatter(
+                #     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
+                #     y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
+                #     mode="text",
+                #     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
+                #     textposition="bottom left",
+                #     textfont=dict(size=16, color="lime"),
+                #     name="Short Entry (✅)"
+                # )
+                # fig.add_trace(short_entry_trace, row=1, col=1)
 
 
 
 
 
 
-                long_entry_trace = go.Scatter(
-                    x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
-                    mode="text",
-                    text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
-                    textposition="top left",
-                    textfont=dict(size=16, color="lime"),
-                    name="Long Entry (✅)"
-                )
-                fig.add_trace(long_entry_trace, row=1, col=1)
+                # long_entry_trace = go.Scatter(
+                #     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
+                #     y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
+                #     mode="text",
+                #     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
+                #     textposition="top left",
+                #     textfont=dict(size=16, color="lime"),
+                #     name="Long Entry (✅)"
+                # )
+                # fig.add_trace(long_entry_trace, row=1, col=1)
 
 
                 # # 🔍 First Wake-Up Detection
@@ -5315,7 +5315,7 @@ if st.sidebar.button("Run Analysis"):
                     y=poc_f_level,
                     showlegend=True,
 
-                    line=dict(color="#ff1493", dash="dot", width=0.6),
+                    line=dict(color="#ff1493", dash="dot", width=0.3),
                     row=1, col=1
                 )
                 
