@@ -5441,46 +5441,46 @@ if st.sidebar.button("Run Analysis"):
                 #     )
                 # ), row=1, col=1)
                 
-                # Wake-up Emojis 📈
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Call_Option_Smooth"] ,
-                    mode="text",
-                    text=intraday["Call_Wake_Emoji"],
-                    textposition="top center",
-                    showlegend=False
-                ), row=2, col=1)
+                # # Wake-up Emojis 📈
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Call_Option_Smooth"] ,
+                #     mode="text",
+                #     text=intraday["Call_Wake_Emoji"],
+                #     textposition="top center",
+                #     showlegend=False
+                # ), row=2, col=1)
                 
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Put_Option_Smooth"],
-                    mode="text",
-                    text=intraday["Put_Wake_Emoji"] ,
-                    textposition="bottom center",
-                    showlegend=False
-                ), row=2, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Put_Option_Smooth"],
+                #     mode="text",
+                #     text=intraday["Put_Wake_Emoji"] ,
+                #     textposition="bottom center",
+                #     showlegend=False
+                # ), row=2, col=1)
 
            
-                fig.add_trace(go.Scatter(
-                   x=intraday["Time"],
-                   y=intraday["Call_vs_Bull"],
-                   mode="text",
-                   text=intraday["Bull_Midas_Wake"],
-                   textposition="top center",
-                   showlegend=False,
-                   hoverinfo="skip"
-                ), row=3, col=1)
+                # fig.add_trace(go.Scatter(
+                #    x=intraday["Time"],
+                #    y=intraday["Call_vs_Bull"],
+                #    mode="text",
+                #    text=intraday["Bull_Midas_Wake"],
+                #    textposition="top center",
+                #    showlegend=False,
+                #    hoverinfo="skip"
+                # ), row=3, col=1)
         
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Put_vs_Bear"],
-                    mode="text",
-                    textfont=dict(size=20),
-                    text=intraday["Bear_Midas_Wake"],
-                    textposition="bottom center",
-                    showlegend=False,
-                    hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
-                ), row=3, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Put_vs_Bear"],
+                #     mode="text",
+                #     textfont=dict(size=20),
+                #     text=intraday["Bear_Midas_Wake"],
+                #     textposition="bottom center",
+                #     showlegend=False,
+                #     hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
+                # ), row=3, col=1)
 
                                
                 #                # 🦵🏼 Bull MIDAS Wake
