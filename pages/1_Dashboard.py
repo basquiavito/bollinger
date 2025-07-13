@@ -4186,11 +4186,11 @@ if st.sidebar.button("Run Analysis"):
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
                         rows=1,
-                        cols=1,
+        
                         shared_xaxes=True,
                         vertical_spacing=0.03,
 
-                        subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS")
+                        subplot_titles=("F% Structure")
                        
                          
                     )
