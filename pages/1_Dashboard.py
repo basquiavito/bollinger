@@ -5515,33 +5515,33 @@ if st.sidebar.button("Run Analysis"):
                     ), row=1, col=1)
 
                                 
-                                   # Plot 💸 for breakout above IB High
-                high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
-                fig.add_trace(go.Scatter(
-                    x=high_break_df["TimeIndex"],
-                    y=high_break_df["F_numeric"] + 30,
-                    mode="text",
-                    text=high_break_df["IB_High_Break"],
-                    textposition="top left",
-                    textfont=dict(size=24),
-                    name="Breakout Above IB 💸",
-                    showlegend=True,
-                    hovertemplate="Time: %{x}<br>💸 IB High Breakout"
-                ), row=1, col=1)
+                #                    # Plot 💸 for breakout above IB High
+                # high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
+                # fig.add_trace(go.Scatter(
+                #     x=high_break_df["TimeIndex"],
+                #     y=high_break_df["F_numeric"] + 30,
+                #     mode="text",
+                #     text=high_break_df["IB_High_Break"],
+                #     textposition="top left",
+                #     textfont=dict(size=24),
+                #     name="Breakout Above IB 💸",
+                #     showlegend=True,
+                #     hovertemplate="Time: %{x}<br>💸 IB High Breakout"
+                # ), row=1, col=1)
                 
-                # Plot 🧧 for breakdown below IB Low
-                low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
-                fig.add_trace(go.Scatter(
-                    x=low_break_df["TimeIndex"],
-                    y=low_break_df["F_numeric"] - 30,
-                    mode="text",
-                    text=low_break_df["IB_Low_Break"],
-                    textposition="bottom left",
-                    textfont=dict(size=24),
-                    name="Breakdown Below IB 🧧",
-                    showlegend=True,
-                    hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
-                ), row=1, col=1)
+                # # Plot 🧧 for breakdown below IB Low
+                # low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
+                # fig.add_trace(go.Scatter(
+                #     x=low_break_df["TimeIndex"],
+                #     y=low_break_df["F_numeric"] - 30,
+                #     mode="text",
+                #     text=low_break_df["IB_Low_Break"],
+                #     textposition="bottom left",
+                #     textfont=dict(size=24),
+                #     name="Breakdown Below IB 🧧",
+                #     showlegend=True,
+                #     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
+                # ), row=1, col=1)
 
 
 
