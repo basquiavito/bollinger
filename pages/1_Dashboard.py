@@ -6299,7 +6299,7 @@ if st.sidebar.button("Run Analysis"):
         #             x=intraday['Time'],
         #             y=intraday['SpanB'],
         #             fill='tonexty',
-                      fillcolor='rgba(128, 128, 128, 0.05)'  # 5% opacity (very faint)
+        #             fillcolor='rgba(128, 128, 128, 0.05)'  # 5% opacity (very faint)
         #             line=dict(width=0),
         #             showlegend=False
         #         ))
