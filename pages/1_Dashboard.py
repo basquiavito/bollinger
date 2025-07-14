@@ -5191,7 +5191,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday['MIDAS_Bear'],
                     mode="lines",
                     name="MIDAS Bear",
-                    line=dict(color="pink", dash="solid", width=0.3),
+                    line=dict(color="#AA3A3A", dash="dot", width=1),
                     hovertemplate="Time: %{x}<br>MIDAS Bear: %{y:.2f}<extra></extra>"
                 ))
                 
@@ -5200,7 +5200,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday['MIDAS_Bull'],
                     mode="lines",
                     name="MIDAS Bull",
-                    line=dict(color="pink", dash="solid", width=0.3),
+                    line=dict(color="2c8a4d", dash="dash", width=1),
                     hovertemplate="Time: %{x}<br>MIDAS Bull: %{y:.2f}<extra></extra>"
                 ))
                 # 🦻🏼 Add Ear line if it exists
