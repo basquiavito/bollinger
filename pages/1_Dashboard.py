@@ -5790,7 +5790,6 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_rook_up, row=1, col=1)
                 fig.add_trace(scatter_rook_down, row=1, col=1)
 
-                Mask for Tenkan_F crossing up through MIDAS_Bull
                 mask_tenkan_cross_up = (
                     (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
                     (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
