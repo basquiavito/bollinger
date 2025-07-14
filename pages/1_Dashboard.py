@@ -5191,7 +5191,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday['MIDAS_Bear'],
                     mode="lines",
                     name="MIDAS Bear",
-                    line=dict(color="#aa3a3a", dash="dot", width=1),
+                    line=dict(color="#aa3a3a", dash="dot", width=1.5),
                     hovertemplate="Time: %{x}<br>MIDAS Bear: %{y:.2f}<extra></extra>"
                 ))
                 
