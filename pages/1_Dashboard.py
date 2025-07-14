@@ -6141,7 +6141,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["SpanB_F"],
                     mode="lines",
-                    line=dict(color="blue", width=0.4),
+                    line=dict(color="rgba(0, 150, 255, 0.4)", width=0.5),                    
                     name="Span B (F%)"
                 )
                 fig.add_trace(span_b_line, row=1, col=1)
@@ -6160,7 +6160,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["SpanB_F"],
                     fill='tonexty',
-                    fillcolor='rgba(128, 128, 128, 0.5)',  # transparent grey
+                    fillcolor='rgba(20, 20, 30, 0.10)',  # transparent grey
                     line=dict(width=0),
                     mode='lines',
                     name='Kumo Cloud'
