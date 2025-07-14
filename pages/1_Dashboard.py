@@ -4925,32 +4925,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # short_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
-                #     textposition="bottom left",
-                #     textfont=dict(size=16, color="lime"),
-                #     name="Short Entry (✅)"
-                # )
-                # fig.add_trace(short_entry_trace, row=1, col=1)
+                short_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
+                    textposition="bottom left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Short Entry (✅)"
+                )
+                fig.add_trace(short_entry_trace, row=1, col=1)
 
 
 
 
 
 
-                # long_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
-                #     textposition="top left",
-                #     textfont=dict(size=16, color="lime"),
-                #     name="Long Entry (✅)"
-                # )
-                # fig.add_trace(long_entry_trace, row=1, col=1)
+                long_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
+                    textposition="top left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Long Entry (✅)"
+                )
+                fig.add_trace(long_entry_trace, row=1, col=1)
 
 
                 # # 🔍 First Wake-Up Detection
@@ -6126,45 +6126,45 @@ if st.sidebar.button("Run Analysis"):
   
   
   
-                #                     # Span A – Yellow Line
-                # span_a_line = go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanA_F"],
-                #     mode="lines",
-                #     line=dict(color="yellow", width=0.9),
-                #     name="Span A (F%)"
-                # )
-                # fig.add_trace(span_a_line, row=1, col=1)
+                                    # Span A – Yellow Line
+                span_a_line = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanA_F"],
+                    mode="lines",
+                    line=dict(color="yellow", width=0.4),
+                    name="Span A (F%)"
+                )
+                fig.add_trace(span_a_line, row=1, col=1)
   
-                # # Span B – Blue Line
-                # span_b_line = go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanB_F"],
-                #     mode="lines",
-                #     line=dict(color="blue", width=0.9),
-                #     name="Span B (F%)"
-                # )
-                # fig.add_trace(span_b_line, row=1, col=1)
+                # Span B – Blue Line
+                span_b_line = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanB_F"],
+                    mode="lines",
+                    line=dict(color="blue", width=0.4),
+                    name="Span B (F%)"
+                )
+                fig.add_trace(span_b_line, row=1, col=1)
   
-                # # Invisible SpanA for cloud base
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanA_F"],
-                #     line=dict(width=0),
-                #     mode='lines',
-                #     showlegend=False
-                # ), row=1, col=1)
+                # Invisible SpanA for cloud base
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanA_F"],
+                    line=dict(width=0),
+                    mode='lines',
+                    showlegend=False
+                ), row=1, col=1)
   
-                # # SpanB with fill → grey Kumo
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanB_F"],
-                #     fill='tonexty',
-                #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                #     line=dict(width=0),
-                #     mode='lines',
-                #     name='Kumo Cloud'
-                # ), row=1, col=1)
+                # SpanB with fill → grey Kumo
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["SpanB_F"],
+                    fill='tonexty',
+                    fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                    line=dict(width=0),
+                    mode='lines',
+                    name='Kumo Cloud'
+                ), row=1, col=1)
 
                 # # if yva_min is not None and yva_max is not None:
                 #     # Show in text
