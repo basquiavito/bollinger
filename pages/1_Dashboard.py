@@ -6160,7 +6160,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["SpanB_F"],
                     fill='tonexty',
-                    fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                    fillcolor='rgba(128, 128, 128, 0.5)',  # transparent grey
                     line=dict(width=0),
                     mode='lines',
                     name='Kumo Cloud'
@@ -6299,7 +6299,7 @@ if st.sidebar.button("Run Analysis"):
         #             x=intraday['Time'],
         #             y=intraday['SpanB'],
         #             fill='tonexty',
-        #             fillcolor='rgba(128, 128, 128, 0.2)',
+                      fillcolor='rgba(128, 128, 128, 0.05)'  # 5% opacity (very faint)
         #             line=dict(width=0),
         #             showlegend=False
         #         ))
