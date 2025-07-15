@@ -3595,7 +3595,7 @@ if st.sidebar.button("Run Analysis"):
                         score += 1
                     if row["Close"] < row["Tenkan"]:
                         score += 1
-                    if row["Close"] < row["TD Demand"]:
+                    if row["Close"] < row["TD Demand Line F"]:
                         score += 1
                     if row["Close"] < row["Midas Bull"]:
                         score += 1
