@@ -3468,9 +3468,9 @@ if st.sidebar.button("Run Analysis"):
 
                 log_with_returns = get_kijun_streak_log_with_dollar(intraday)
 
-                # st.markdown("### 📘 Full Kijun Streak Log with $ Returns:")
-                # for line in log_with_returns:
-                #     st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
+                st.markdown("### 📘 Full Kijun Streak Log with $ Returns:")
+                for line in log_with_returns:
+                    st.markdown(f"<div style='font-size:20px'>{line}</div>", unsafe_allow_html=True)
              
   
              
