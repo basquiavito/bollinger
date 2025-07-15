@@ -4146,8 +4146,12 @@ if st.sidebar.button("Run Analysis"):
                                             score += 1
 
                     return score + 1  # avoid division by zero
-                intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
-                intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
+                  ib_data = intraday.iloc[:12]  # First hour = 12 bars (5-min chart)
+                  intraday["IB_High"] = ib_data["F_numeric"].max()
+                  intraday["IB_Low"] = ib_data["F_numeric"].min()
+
+                  intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
+                  intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
 
 
 
