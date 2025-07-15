@@ -4123,31 +4123,96 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
-                intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
 
-                def calculate_resistance(row):
-                    score = 0
-                    if row["Close"] < row["Tenkan_F"]:
-                        score += 1
-                    if row["Close"] < row["Kijun_F"]:
-                        score += 1
+
+
+
+
+              
+                # intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
+
+                # def calculate_resistance(row):
+                #     score = 0
+                #     if row["Close"] < row["Tenkan_F"]:
+                #         score += 1
+                #     if row["Close"] < row["Kijun_F"]:
+                #         score += 1
                    
-                    if row["Close"] < row["TD Demand Line F"]:
-                        score += 1
+                #     if row["Close"] < row["TD Demand Line F"]:
+                #         score += 1
                 
-                    if row["Close"] < row["TD Supply Line F"]:
-                        score += 1
-                    if row["Close"] < row["MIDAS_Bull"]:
-                                            score += 1
-                    if row["Close"] < row["MIDAS_Bear"]:
-                                            score += 1
+                #     if row["Close"] < row["TD Supply Line F"]:
+                #         score += 1
+                #     if row["Close"] < row["MIDAS_Bull"]:
+                #                             score += 1
+                #     if row["Close"] < row["MIDAS_Bear"]:
+                #                             score += 1
 
-                    return score + 1  # avoid division by zero
+                #     return score + 1  # avoid division by zero
   
-                intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
-                intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
+                # intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
+                # intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
 
-
+                
+                def compute_bfi_and_resistance(intraday):
+                    # ✅ Step 1: Calculate Initial Balance High (first 12 bars = 1 hour)
+                    if len(intraday) >= 12:
+                        ib_data = intraday.iloc[:12]
+                        ib_high = ib_data["F_numeric"].max()
+                        intraday["IB_High"] = ib_high
+                    else:
+                        intraday["IB_High"] = np.nan
+                
+                    # ✅ Step 2: Calculate Delta F% (absolute difference in F_numeric)
+                    intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
+                
+                    # ✅ Step 3: Define Resistance Scoring Function
+                    def calculate_resistance(row):
+                        close = row.get("Close", np.nan)
+                        if np.isnan(close):
+                            return np.nan  # skip invalid rows
+                
+                        resistance_levels = {
+                            "Tenkan": row.get("Tenkan_F"),
+                            "Kijun": row.get("Kijun_F"),
+                            "TD_Demand": row.get("TD Demand Line F"),
+                            "TD_Supply": row.get("TD Supply Line F"),
+                            "MIDAS_Bull": row.get("MIDAS_Bull"),
+                            "MIDAS_Bear": row.get("MIDAS_Bear"),
+                            "IB_High": row.get("IB_High")
+                        }
+                
+                        # Count levels above price
+                        score = sum(1 for val in resistance_levels.values() if not np.isnan(val) and close < val)
+                        return score + 1  # prevent divide-by-zero
+                
+                    # ✅ Step 4: Apply Resistance Score
+                    intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
+                
+                    # ✅ Step 5: Compute BFI (Breakout Force Index)
+                    intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
+                
+                    # ✅ Step 6: Diagnostic – List which levels are blocking
+                    def resistance_factors(row):
+                        close = row.get("Close", np.nan)
+                        if np.isnan(close):
+                            return ""
+                
+                        levels = {
+                            "Tenkan": row.get("Tenkan_F"),
+                            "Kijun": row.get("Kijun_F"),
+                            "TD_Demand": row.get("TD Demand Line F"),
+                            "TD_Supply": row.get("TD Supply Line F"),
+                            "MIDAS_Bull": row.get("MIDAS_Bull"),
+                            "MIDAS_Bear": row.get("MIDAS_Bear"),
+                            "IB_High": row.get("IB_High")
+                        }
+                
+                        return ",".join([name for name, val in levels.items() if not np.isnan(val) and close < val])
+                
+                    intraday["Resistance_Factors"] = intraday.apply(resistance_factors, axis=1)
+                
+                    return intraday
 
                     
                 with st.expander("Show/Hide Data Table",  expanded=False):
