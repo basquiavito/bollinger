@@ -4139,11 +4139,11 @@ if st.sidebar.button("Run Analysis"):
                         score += 1
 
                   
-                    if row["Close"] < row["IB Low"]:
+                    if row["Close"] < row["IB_Low"]:
                         score += 1
 
 
-                    if row["Close"] < row["IB High"]:
+                    if row["Close"] < row["IB_High"]:
                         score += 1
                     return score + 1  # avoid division by zero
                 intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
