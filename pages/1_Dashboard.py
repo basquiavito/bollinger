@@ -3586,7 +3586,8 @@ if st.sidebar.button("Run Analysis"):
                         intraday["Theta_spike"] & (intraday["F_theta"].diff() > 0), "🚡",
                         np.where(intraday["Theta_spike"] & (intraday["F_theta"].diff() < 0), "⚓️", "")
                 )
-
+                
+                intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
 
 
                 # Find the last swimmer (new low) row
