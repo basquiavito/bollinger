@@ -4165,31 +4165,31 @@ if st.sidebar.button("Run Analysis"):
             
                 # ✅ Step 2: Calculate Delta F% (absolute difference in F_numeric)
                 intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
-            
-               def compute_resistance(intraday, ref_col="F_numeric"):
-                """
-                Adds Resistance, Resistance_Flags and Delta_F columns.
-                ref_col: 'F_numeric' if all *_F levels are in F%; 
-                         use 'Close' if levels are in price units.
-                """
-                # ➤ Make sure ref_col exists
-                if ref_col not in intraday.columns:
-                    raise KeyError(f"{ref_col} column not found in intraday")
-            
-                # -----------------------------
-                # 1️⃣  Delta_F
-                # -----------------------------
-                intraday["Delta_F"] = intraday[ref_col].diff().abs()
-            
-                # -----------------------------
-                # 2️⃣  Resistance & Flags
-                # -----------------------------
-                STRUCTURE_COLS = [
-                    "Tenkan_F", "Kijun_F",
-                    "TD Demand Line F", "TD Supply Line F",
-                    "MIDAS_Bull", "MIDAS_Bear",
-                    "IB_High"         # add "IB_Low" later for support logic
-                ]
+              
+                 def compute_resistance(intraday, ref_col="F_numeric"):
+                  """
+                  Adds Resistance, Resistance_Flags and Delta_F columns.
+                  ref_col: 'F_numeric' if all *_F levels are in F%; 
+                           use 'Close' if levels are in price units.
+                  """
+                  # ➤ Make sure ref_col exists
+                  if ref_col not in intraday.columns:
+                      raise KeyError(f"{ref_col} column not found in intraday")
+              
+                  # -----------------------------
+                  # 1️⃣  Delta_F
+                  # -----------------------------
+                  intraday["Delta_F"] = intraday[ref_col].diff().abs()
+              
+                  # -----------------------------
+                  # 2️⃣  Resistance & Flags
+                  # -----------------------------
+                  STRUCTURE_COLS = [
+                      "Tenkan_F", "Kijun_F",
+                      "TD Demand Line F", "TD Supply Line F",
+                      "MIDAS_Bull", "MIDAS_Bear",
+                      "IB_High"         # add "IB_Low" later for support logic
+                  ]
             
                 def res_and_flags(row):
                     ref_val = row[ref_col]
