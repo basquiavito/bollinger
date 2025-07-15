@@ -3591,12 +3591,16 @@ if st.sidebar.button("Run Analysis"):
 
                 def calculate_resistance(row):
                     score = 0
-                    if row["Close"] < row["Kijun_F"]:
+                   if row["Close"] < row["Tenkan_F"]:
+                        score += 1
+                   if row["Close"] < row["Kijun_F"]:
                         score += 1
                    
-                    if row["Close"] < row["TD Demand Line F"]:
+                   if row["Close"] < row["TD Demand Line F"]:
                         score += 1
                 
+                   if row["Close"] < row["TD Supply Line F"]:
+                        score += 1
                     return score + 1  # avoid division by zero
                 intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
                 intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
