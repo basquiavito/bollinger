@@ -4213,6 +4213,7 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Resistance_Factors"] = intraday.apply(resistance_factors, axis=1)
                 
                     return intraday
+                intraday = compute_bfi_and_resistance(intraday)
 
                     
                 with st.expander("Show/Hide Data Table",  expanded=False):
