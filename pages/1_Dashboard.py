@@ -4179,7 +4179,6 @@ if st.sidebar.button("Run Analysis"):
                     # -----------------------------
                     # 1️⃣  Delta_F
                     # -----------------------------
-                    intraday["Delta_F"] = intraday[ref_col].diff().abs()
                 
                     # -----------------------------
                     # 2️⃣  Resistance & Flags
@@ -4190,7 +4189,8 @@ if st.sidebar.button("Run Analysis"):
                         "MIDAS_Bull", "MIDAS_Bear",
                         "IB_High"         # add "IB_Low" later for support logic
                     ]
-              
+                    intraday["Delta_F"] = intraday[ref_col].diff().abs()
+
                     def res_and_flags(row):
                         ref_val = row[ref_col]
                         score   = 0
