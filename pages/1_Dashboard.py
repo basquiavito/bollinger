@@ -3586,8 +3586,8 @@ if st.sidebar.button("Run Analysis"):
                         intraday["Theta_spike"] & (intraday["F_theta"].diff() > 0), "🚡",
                         np.where(intraday["Theta_spike"] & (intraday["F_theta"].diff() < 0), "⚓️", "")
                 )
-                
-         
+
+
 
                 # Find the last swimmer (new low) row
                 last_swimmer_idx = intraday[intraday["Swimmer_Emoji"] == "🏊🏽‍♂️"].index.max()
@@ -3622,6 +3622,17 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+
+
+
+
+                    
+                with st.expander("Show/Hide Data Table",  expanded=False):
+                                # Show data table, including new columns
+                    cols_to_show = [
+                                    "Time","Volume","F_numeric","RVOL_5",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+
+                    st.dataframe(intraday[cols_to_show])
 
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
@@ -4123,137 +4134,6 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
-
-
-
-
-
-              
-                # intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
-
-                # def calculate_resistance(row):
-                #     score = 0
-                #     if row["Close"] < row["Tenkan_F"]:
-                #         score += 1
-                #     if row["Close"] < row["Kijun_F"]:
-                #         score += 1
-                   
-                #     if row["Close"] < row["TD Demand Line F"]:
-                #         score += 1
-                
-                #     if row["Close"] < row["TD Supply Line F"]:
-                #         score += 1
-                #     if row["Close"] < row["MIDAS_Bull"]:
-                #                             score += 1
-                #     if row["Close"] < row["MIDAS_Bear"]:
-                #                             score += 1
-
-                #     return score + 1  # avoid division by zero
-  
-                # intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
-                # intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
-
-            
-                def compute_bfi_and_resistance(intraday):
-                    # ✅ Step 1: Calculate Initial Balance High (first 12 bars = 1 hour)
-                    if len(intraday) >= 12:
-                        ib_data = intraday.iloc[:12]
-                        ib_high = ib_data["F_numeric"].max()
-                        intraday["IB_High"] = ib_high
-                    else:
-                          intraday["IB_High"] = np.nan
-              
-                  # ✅ Step 2: Calculate Delta F% (absolute difference in F_numeric)
-                   intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
-                
-                   def compute_resistance(intraday, ref_col="F_numeric"):
-                    """
-                    Adds Resistance, Resistance_Flags and Delta_F columns.
-                    ref_col: 'F_numeric' if all *_F levels are in F%; 
-                             use 'Close' if levels are in price units.
-                    """
-                    # ➤ Make sure ref_col exists
-                    if ref_col not in intraday.columns:
-                        raise KeyError(f"{ref_col} column not found in intraday")
-                
-                    # -----------------------------
-                    # 1️⃣  Delta_F
-                    # -----------------------------
-                
-                    # -----------------------------
-                    # 2️⃣  Resistance & Flags
-                    # -----------------------------
-                    STRUCTURE_COLS = [
-                        "Tenkan_F", "Kijun_F",
-                        "TD Demand Line F", "TD Supply Line F",
-                        "MIDAS_Bull", "MIDAS_Bear",
-                        "IB_High"         # add "IB_Low" later for support logic
-                    ]
-                    intraday["Delta_F"] = intraday[ref_col].diff().abs()
-
-                    def res_and_flags(row):
-                        ref_val = row[ref_col]
-                        score   = 0
-                        flags   = []      # keep names of levels above ref_val
-                
-                        for col in STRUCTURE_COLS:
-                            lvl = row.get(col, np.nan)
-                            if np.isnan(lvl):         # ← missing or NaN
-                                flags.append(f"{col}:NaN")
-                            elif ref_val < lvl:       # ← level is acting as resistance
-                                score  += 1
-                                flags.append(col)
-                
-                        return pd.Series({
-                            "Resistance": score + 1,        # +1 avoids /0
-                            "Resistance_Flags": ",".join(flags) if flags else "None"
-                        })
-                
-                    intraday[["Resistance", "Resistance_Flags"]] = intraday.apply(res_and_flags, axis=1)
-                
-                    # -----------------------------
-                    # 3️⃣  Breakout‑Force Index
-                    # -----------------------------
-                    intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
-                
-                    return intraday
-  
-                  # ✅ Step 4: Apply Resistance Score
-                  intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
-              
-                  # ✅ Step 5: Compute BFI (Breakout Force Index)
-                  intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
-              
-                  # ✅ Step 6: Diagnostic – List which levels are blocking
-                  def resistance_factors(row):
-                      close = row.get("Close", np.nan)
-                      if np.isnan(close):
-                          return ""
-              
-                      levels = {
-                          "Tenkan": row.get("Tenkan_F"),
-                          "Kijun": row.get("Kijun_F"),
-                          "TD_Demand": row.get("TD Demand Line F"),
-                          "TD_Supply": row.get("TD Supply Line F"),
-                          "MIDAS_Bull": row.get("MIDAS_Bull"),
-                          "MIDAS_Bear": row.get("MIDAS_Bear"),
-                          "IB_High": row.get("IB_High")
-                      }
-              
-                      return ",".join([name for name, val in levels.items() if not np.isnan(val) and close < val])
-            
-                intraday["Resistance_Factors"] = intraday.apply(resistance_factors, axis=1)
-                
-                    return intraday
-                intraday = compute_bfi_and_resistance(intraday)
-
-                    
-                with st.expander("Show/Hide Data Table",  expanded=False):
-                                # Show data table, including new columns
-                    cols_to_show = [
-                                    "Time","Volume","F_numeric","Resistance","BFI","RVOL_5",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
-
-                    st.dataframe(intraday[cols_to_show])
 
              
                 # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
