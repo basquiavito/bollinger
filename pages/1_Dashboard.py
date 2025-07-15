@@ -4137,6 +4137,8 @@ if st.sidebar.button("Run Analysis"):
                 
                     if row["Close"] < row["TD Supply Line F"]:
                         score += 1
+                    if row["Close"] < row["MIDAS_Bull"]:
+                                            score += 1
 
                   
                         score += 1
