@@ -4144,8 +4144,8 @@ if st.sidebar.button("Run Analysis"):
 
                     return score + 1  # avoid division by zero
   
-              intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
-              intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
+                intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
+                intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
 
 
 
