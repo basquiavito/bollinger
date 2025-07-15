@@ -3587,23 +3587,7 @@ if st.sidebar.button("Run Analysis"):
                         np.where(intraday["Theta_spike"] & (intraday["F_theta"].diff() < 0), "⚓️", "")
                 )
                 
-                intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
-
-                def calculate_resistance(row):
-                    score = 0
-                    if row["Close"] < row["Tenkan_F"]:
-                        score += 1
-                    if row["Close"] < row["Kijun_F"]:
-                        score += 1
-                   
-                    if row["Close"] < row["TD Demand Line F"]:
-                        score += 1
-                
-                    if row["Close"] < row["TD Supply Line F"]:
-                        score += 1
-                    return score + 1  # avoid division by zero
-                intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
-                intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
+         
 
                 # Find the last swimmer (new low) row
                 last_swimmer_idx = intraday[intraday["Swimmer_Emoji"] == "🏊🏽‍♂️"].index.max()
@@ -3638,17 +3622,6 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-
-
-
-                    
-                with st.expander("Show/Hide Data Table",  expanded=False):
-                                # Show data table, including new columns
-                    cols_to_show = [
-                                    "Time","Volume","F_numeric","BFI","RVOL_5",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
-
-                    st.dataframe(intraday[cols_to_show])
 
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
@@ -4150,6 +4123,33 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
+                intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
+
+                def calculate_resistance(row):
+                    score = 0
+                    if row["Close"] < row["Tenkan_F"]:
+                        score += 1
+                    if row["Close"] < row["Kijun_F"]:
+                        score += 1
+                   
+                    if row["Close"] < row["TD Demand Line F"]:
+                        score += 1
+                
+                    if row["Close"] < row["TD Supply Line F"]:
+                        score += 1
+                    return score + 1  # avoid division by zero
+                intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
+                intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
+
+
+
+                    
+                with st.expander("Show/Hide Data Table",  expanded=False):
+                                # Show data table, including new columns
+                    cols_to_show = [
+                                    "Time","Volume","F_numeric","BFI","RVOL_5",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+
+                    st.dataframe(intraday[cols_to_show])
 
              
                 # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
