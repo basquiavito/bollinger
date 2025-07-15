@@ -4191,32 +4191,32 @@ if st.sidebar.button("Run Analysis"):
                         "IB_High"         # add "IB_Low" later for support logic
                     ]
               
-                  def res_and_flags(row):
-                      ref_val = row[ref_col]
-                      score   = 0
-                      flags   = []      # keep names of levels above ref_val
-              
-                      for col in STRUCTURE_COLS:
-                          lvl = row.get(col, np.nan)
-                          if np.isnan(lvl):         # ← missing or NaN
-                              flags.append(f"{col}:NaN")
-                          elif ref_val < lvl:       # ← level is acting as resistance
-                              score  += 1
-                              flags.append(col)
-              
-                      return pd.Series({
-                          "Resistance": score + 1,        # +1 avoids /0
-                          "Resistance_Flags": ",".join(flags) if flags else "None"
-                      })
-              
-                  intraday[["Resistance", "Resistance_Flags"]] = intraday.apply(res_and_flags, axis=1)
-              
-                  # -----------------------------
-                  # 3️⃣  Breakout‑Force Index
-                  # -----------------------------
-                  intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
-              
-                  return intraday
+                    def res_and_flags(row):
+                        ref_val = row[ref_col]
+                        score   = 0
+                        flags   = []      # keep names of levels above ref_val
+                
+                        for col in STRUCTURE_COLS:
+                            lvl = row.get(col, np.nan)
+                            if np.isnan(lvl):         # ← missing or NaN
+                                flags.append(f"{col}:NaN")
+                            elif ref_val < lvl:       # ← level is acting as resistance
+                                score  += 1
+                                flags.append(col)
+                
+                        return pd.Series({
+                            "Resistance": score + 1,        # +1 avoids /0
+                            "Resistance_Flags": ",".join(flags) if flags else "None"
+                        })
+                
+                    intraday[["Resistance", "Resistance_Flags"]] = intraday.apply(res_and_flags, axis=1)
+                
+                    # -----------------------------
+                    # 3️⃣  Breakout‑Force Index
+                    # -----------------------------
+                    intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
+                
+                    return intraday
   
                   # ✅ Step 4: Apply Resistance Score
                   intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
