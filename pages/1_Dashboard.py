@@ -4155,13 +4155,13 @@ if st.sidebar.button("Run Analysis"):
 
             
                 def compute_bfi_and_resistance(intraday):
-                # ✅ Step 1: Calculate Initial Balance High (first 12 bars = 1 hour)
-                if len(intraday) >= 12:
-                    ib_data = intraday.iloc[:12]
-                    ib_high = ib_data["F_numeric"].max()
-                    intraday["IB_High"] = ib_high
-                else:
-                    intraday["IB_High"] = np.nan
+                    # ✅ Step 1: Calculate Initial Balance High (first 12 bars = 1 hour)
+                    if len(intraday) >= 12:
+                        ib_data = intraday.iloc[:12]
+                        ib_high = ib_data["F_numeric"].max()
+                        intraday["IB_High"] = ib_high
+                    else:
+                        intraday["IB_High"] = np.nan
             
                 # ✅ Step 2: Calculate Delta F% (absolute difference in F_numeric)
                 intraday["Delta_F"] = intraday["F_numeric"].diff().abs()
