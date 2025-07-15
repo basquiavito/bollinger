@@ -4139,6 +4139,8 @@ if st.sidebar.button("Run Analysis"):
                         score += 1
                     if row["Close"] < row["MIDAS_Bull"]:
                                             score += 1
+                    if row["Close"] < row["MIDAS_Bear"]:
+                                            score += 1
 
                   
                   
