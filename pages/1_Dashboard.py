@@ -4142,8 +4142,9 @@ if st.sidebar.button("Run Analysis"):
                     if row["Close"] < row["MIDAS_Bear"]:
                                             score += 1
 
-                  
-                  
+                    if row["Close"] < row["IB_High"]:
+                                            score += 1
+
                     return score + 1  # avoid division by zero
                 intraday["Resistance"] = intraday.apply(calculate_resistance, axis=1)
                 intraday["BFI"] = (intraday["RVOL_5"] * intraday["Delta_F"]) / intraday["Resistance"]
