@@ -5042,7 +5042,6 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    print("🦉 candidate times:", intraday[intraday["Put_Eye_Solo"] == "🦉"][["Time", "Put_Slope_4", "Call_Slope_4"]])
 
                     if not first_put_solo_eye_idx.empty:
                         first_idx = first_put_solo_eye_idx[0]
