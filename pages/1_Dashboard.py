@@ -3560,7 +3560,52 @@ if st.sidebar.button("Run Analysis"):
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_bee_emoji(intraday)
 
+
+
+                def add_mike_kijun_atr_emoji(df, atr_col="ATR"):
+                    """
+                    Adds 🌋 emoji at the point Mike (F_numeric) crosses Kijun_F,
+                    but only if an ATR expansion (1.5x previous 10 bars max) is detected
+                    within ±3 bars of the cross.
+                    """
                 
+                    crosses_up = (df["F_numeric"].shift(1) < df["Kijun_F"].shift(1)) & (df["F_numeric"] >= df["Kijun_F"])
+                    crosses_down = (df["F_numeric"].shift(1) > df["Kijun_F"].shift(1)) & (df["F_numeric"] <= df["Kijun_F"])
+                    
+                    emoji_flags = []
+                
+                    # Precompute ATR expansions
+                    atr_expansion = []
+                    for i in range(len(df)):
+                        if i < 10:
+                            atr_expansion.append(False)
+                            continue
+                        prior_max = df[atr_col].iloc[i-10:i].max()
+                        atr_expansion.append(df[atr_col].iloc[i] > 1.5 * prior_max)
+                    df["ATR_Expansion_Flag"] = atr_expansion
+                
+                    for i in range(len(df)):
+                        if not (crosses_up.iloc[i] or crosses_down.iloc[i]):
+                            emoji_flags.append("")
+                            continue
+                
+                        # Look ±3 bars around this index for ATR expansion
+                        start = max(0, i - 3)
+                        end = min(len(df), i + 4)
+                        window = df["ATR_Expansion_Flag"].iloc[start:end]
+                
+                        if window.any():
+                            emoji_flags.append("🌋")
+                        else:
+                            emoji_flags.append("")
+                
+                    df["Mike_Kijun_ATR_Emoji"] = emoji_flags
+                    return df
+                intraday = add_mike_kijun_atr_emoji(intraday)
+
+
+
+              
                              # --- CROSS CONDITIONS ---
                 tenkan_above_kijun = (
                     (intraday["Tenkan"].shift(1) < intraday["Kijun"].shift(1)) &
