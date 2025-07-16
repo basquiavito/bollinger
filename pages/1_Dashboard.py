@@ -4982,7 +4982,7 @@ if st.sidebar.button("Run Analysis"):
                         text=["👁️"],
                         textposition="top center",
                         textfont=dict(size=28),
-                        showlegend=False,
+                        showlegend=True,
                         hoverinfo="text",
                         hovertemplate="<b>Call Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
 
@@ -4999,7 +4999,7 @@ if st.sidebar.button("Run Analysis"):
                         text=["🦉"],
                         textposition="bottom right",
                         textfont=dict(size=28),
-                        showlegend=False,
+                        showlegend=True,
                         hoverinfo="text",
                         hovertemplate="<b>Put Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
 
@@ -5018,7 +5018,7 @@ if st.sidebar.button("Run Analysis"):
                         text=["👁️"],
                         textposition="top center",
                         textfont=dict(size=24),
-                        showlegend=False,
+                        showlegend=True,
                         hoverinfo="text",
                         hovertemplate="<b>Call Rising (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
                         name="Call Solo Eye"
