@@ -745,7 +745,20 @@ if st.sidebar.button("Run Analysis"):
                     # 🔥 Use flame emoji for strong rise without needing a cross
                     df["Call_Flame_Emoji"] = np.where((df["Call_Pure_Gain"] >= 12) & (~df["Call_Tracking"].notna()), "🔥", "")
                     df["Put_Flame_Emoji"]  = np.where((df["Put_Pure_Gain"]  >= 12) & (~df["Put_Tracking"].notna()), "🔥", "")
+
+                                      # 👁️ Nueva lógica: "Ojo sin cruce"
+                    # Detecta cuando Call sube con fuerza aunque no haya cruce de líneas
                     
+                    df["Call_Slope_4"] = df["Call_Option_Smooth"].diff(4) / 4
+                    df["Put_Slope_4"] = df["Put_Option_Smooth"].diff(4) / 4
+                    
+                    df["Call_Eye_Solo"] = np.where(
+                        (df["Call_Slope_4"] > 1.0) &        # Call subiendo
+                        (df["Put_Slope_4"] < 0.5) &         # Put plano o bajando
+                        (~df["Call_Smooth_Cross"]),         # No cruce
+                        "👁️", ""
+                    )
+
                              
                     return df
 
@@ -4993,6 +5006,23 @@ if st.sidebar.button("Run Analysis"):
                         name="Put Wake-Up"
                     ), row=1, col=1)
 
+                # ✅ Plot Call Solo Eye 👁️ (No Cross but strong rise)
+                first_call_solo_eye_idx = intraday.index[intraday["Call_Eye_Solo"] == "👁️"]
+                
+                if not first_call_solo_eye_idx.empty:
+                    first_idx = first_call_solo_eye_idx[0]
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_idx, "Time"]],
+                        y=[intraday.loc[first_idx, price_col] + 15],  # Slightly below Wake-Up 👁️
+                        mode="text",
+                        text=["👁️"],
+                        textposition="top center",
+                        textfont=dict(size=24),
+                        showlegend=False,
+                        hoverinfo="text",
+                        hovertemplate="<b>Call Rising (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                        name="Call Solo Eye"
+                    ), row=1, col=1)
 
              
                 # Smooth first if needed
