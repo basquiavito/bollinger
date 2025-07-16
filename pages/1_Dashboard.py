@@ -4188,8 +4188,8 @@ if st.sidebar.button("Run Analysis"):
                         rows=3,
                         cols=1,
                         vertical_spacing=0.03,
-                        row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
-                        subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS")
+                        row_heights=[0.60, 0.20, 0.20],  
+                        subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS"),
                         shared_xaxes=True,
                         row_heights=[30] 
                        
