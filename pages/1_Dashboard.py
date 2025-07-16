@@ -759,7 +759,14 @@ if st.sidebar.button("Run Analysis"):
                         "👁️", ""
                     )
 
-                             
+                                           # Detecta cuando Put sube con fuerza aunque no haya cruce de líneas (recuerda: sube = opción bajista)
+                    df["Put_Eye_Solo"] = np.where(
+                        (df["Put_Slope_4"] < -1.0) &        # Put subiendo (negativo porque bajista)
+                        (df["Call_Slope_4"] > -0.5) &       # Call plano o bajando suave
+                        (~df["Put_Smooth_Cross"]),          # No cruce
+                        "🦉", ""
+                    )
+      
                     return df
 
 
@@ -5023,6 +5030,27 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate="<b>Call Rising (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
                         name="Call Solo Eye"
                     ), row=1, col=1)
+                    # ✅ Plot Put Solo Eye 🦉 (No Cross but strong drop)
+                    first_put_solo_eye_idx = intraday.index[intraday["Put_Eye_Solo"] == "🦉"]
+
+
+
+
+                  
+                    if not first_put_solo_eye_idx.empty:
+                        first_idx = first_put_solo_eye_idx[0]
+                        fig.add_trace(go.Scatter(
+                            x=[intraday.loc[first_idx, "Time"]],
+                            y=[intraday.loc[first_idx, price_col] - 15],  # Slightly above Put Wake 🦉
+                            mode="text",
+                            text=["🦉"],
+                            textposition="bottom center",
+                            textfont=dict(size=24),
+                            showlegend=False,
+                            hoverinfo="text",
+                            hovertemplate="<b>Put Falling (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                            name="Put Solo Eye"
+                        ), row=1, col=1)
 
              
                 # Smooth first if needed
