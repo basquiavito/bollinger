@@ -747,26 +747,28 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_Flame_Emoji"]  = np.where((df["Put_Pure_Gain"]  >= 12) & (~df["Put_Tracking"].notna()), "🔥", "")
 
                                       # 👁️ Nueva lógica: "Ojo sin cruce"
-                    # Detecta cuando Call sube con fuerza aunque no haya cruce de líneas
+                                  # Avance en F% (ej. 12 F% = 0.12 si tu escala es decimal, o 12.0 si ya es en F_numeric)
+                    f_advance_threshold = 12.0  # o ajusta según tu escala
                     
-                    df["Call_Slope_4"] = df["Call_Option_Smooth"].diff(4) / 4
-                    df["Put_Slope_4"] = df["Put_Option_Smooth"].diff(4) / 4
+                    # Lógica 👁️ Call Eye Solo (sin cruce pero avanza 12 F%)
+                    df["Call_Change_4"] = df["Call_Option_Smooth"] - df["Call_Option_Smooth"].shift(4)
+                    df["Put_Change_4"]  = df["Put_Option_Smooth"]  - df["Put_Option_Smooth"].shift(4)
                     
                     df["Call_Eye_Solo"] = np.where(
-                        (df["Call_Slope_4"] > 1.0) &        # Call subiendo
-                        (df["Put_Slope_4"] < 0.5) &         # Put plano o bajando
-                        (~df["Call_Smooth_Cross"]),         # No cruce
+                        (df["Call_Change_4"] > f_advance_threshold) &    # Avanza 12+ F%
+                        (df["Put_Change_4"] < f_advance_threshold / 2) & # Put no acompaña
+                        (~df["Call_Smooth_Cross"]),                      # Sin cruce
                         "👁️", ""
                     )
-
-                                           # Detecta cuando Put sube con fuerza aunque no haya cruce de líneas (recuerda: sube = opción bajista)
+                    
+                    # Lógica 🦉 Put Eye Solo (sin cruce pero avanza 12 F%)
                     df["Put_Eye_Solo"] = np.where(
-                        (df["Put_Slope_4"] < -1.0) &        # Put subiendo (negativo porque bajista)
-                        (df["Call_Slope_4"] > -0.5) &       # Call plano o bajando suave
-                        (~df["Put_Smooth_Cross"]),          # No cruce
+                        (df["Put_Change_4"] < -f_advance_threshold) &     # Avanza put hacia abajo (es decir, sube en valor)
+                        (df["Call_Change_4"] > -f_advance_threshold / 2) & # Call no acompaña hacia arriba
+                        (~df["Put_Smooth_Cross"]),                        # Sin cruce
                         "🦉", ""
                     )
-      
+
                     return df
 
 
