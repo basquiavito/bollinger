@@ -5517,7 +5517,21 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
           
+                # 🌋 Magma Pass Plot (Mike x Kijun + ATR Expansion)
+
+                volcano_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🌋"]
                 
+                fig.add_trace(go.Scatter(
+                    x=volcano_df["TimeIndex"],
+                    y=volcano_df["F_numeric"] - 32,  # Slightly lower to avoid overlap with 🍯
+                    mode="text",
+                    text=volcano_df["Mike_Kijun_ATR_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Mike x Kijun + ATR Expansion",
+                    showlegend=True
+                ))
+
                                 # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
                 bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
                 fig.add_trace(go.Scatter(
