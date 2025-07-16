@@ -4779,32 +4779,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday['Time'],
-                            y=intraday['TD Supply Line F'],
-                            mode='lines',
-                            line=dict(width=0.5, color="#8A2BE2", dash='dot'),
-                            name='TD Supply F%',
-                            hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
-                        ),
-                        row=1, col=1
-                    )
+                    # fig.add_trace(
+                    #     go.Scatter(
+                    #         x=intraday['Time'],
+                    #         y=intraday['TD Supply Line F'],
+                    #         mode='lines',
+                    #         line=dict(width=0.5, color="#8A2BE2", dash='dot'),
+                    #         name='TD Supply F%',
+                    #         hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
+                    #     ),
+                    #     row=1, col=1
+                    # )
 
 
 
  
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday['Time'],
-                            y=intraday['TD Demand Line F'],
-                            mode='lines',
-                            line=dict(width=0.5, color="#5DADE2", dash='dot'),
-                            name='TD Demand F%',
-                            hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
-                        ),
-                        row=1, col=1
-                    )
+                    # fig.add_trace(
+                    #     go.Scatter(
+                    #         x=intraday['Time'],
+                    #         y=intraday['TD Demand Line F'],
+                    #         mode='lines',
+                    #         line=dict(width=0.5, color="#5DADE2", dash='dot'),
+                    #         name='TD Demand F%',
+                    #         hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
+                    #     ),
+                    #     row=1, col=1
+                    # )
             
             
 
