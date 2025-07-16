@@ -5417,7 +5417,8 @@ if st.sidebar.button("Run Analysis"):
                                 textposition="middle right",
                                 textfont=dict(size=20),
                                 showlegend=True,
-                              
+                                name="🪶 Tail",  # <-- Add this line
+
                                 hovertemplate=(
                                     "🪶 Tail<br>"
                                     f"F% Level: {row['F% Level']}<br>"
