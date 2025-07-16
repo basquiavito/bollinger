@@ -5046,7 +5046,7 @@ if st.sidebar.button("Run Analysis"):
                             text=["🦉"],
                             textposition="bottom center",
                             textfont=dict(size=24),
-                            showlegend=False,
+                            showlegend=True,
                             hoverinfo="text",
                             hovertemplate="<b>Put Falling (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
                             name="Put Solo Eye"
