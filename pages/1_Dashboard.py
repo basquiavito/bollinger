@@ -5181,7 +5181,6 @@ if st.sidebar.button("Run Analysis"):
                 #     name="Tiger"
                 # ), row=2, col=1)
                 
-             Filter for rows with the emoji
                 horse_df = intraday[intraday["Mike_Kijun_Horse_Emoji"] == "🏇🏽"]
                 
                 # Add trace to your figure
