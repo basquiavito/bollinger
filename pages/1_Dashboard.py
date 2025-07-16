@@ -4955,104 +4955,104 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(long_entry_trace, row=1, col=1)
 
 
-                # # 🔍 First Wake-Up Detection
-                # first_call_eye_idx = intraday.index[intraday["Call_Wake_Emoji"] == "👁️"]
-                # first_put_eye_idx  = intraday.index[intraday["Put_Wake_Emoji"]  == "🦉"]
+                # 🔍 First Wake-Up Detection
+                first_call_eye_idx = intraday.index[intraday["Call_Wake_Emoji"] == "👁️"]
+                first_put_eye_idx  = intraday.index[intraday["Put_Wake_Emoji"]  == "🦉"]
                 
-                # # ✅ Plot Call Wake 👁️ once
-                # if not first_call_eye_idx.empty:
-                #     first_idx = first_call_eye_idx[0]
-                #     fig.add_trace(go.Scatter(
-                #         x=[intraday.loc[first_idx, "Time"]],
-                #         y=[intraday.loc[first_idx, price_col] + 30],  # position above
-                #         mode="text",
-                #         text=["👁️"],
-                #         textposition="top center",
-                #         textfont=dict(size=28),
-                #         showlegend=False,
-                #         hoverinfo="text",
-                #         hovertemplate="<b>Call Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                # ✅ Plot Call Wake 👁️ once
+                if not first_call_eye_idx.empty:
+                    first_idx = first_call_eye_idx[0]
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_idx, "Time"]],
+                        y=[intraday.loc[first_idx, price_col] + 30],  # position above
+                        mode="text",
+                        text=["👁️"],
+                        textposition="top center",
+                        textfont=dict(size=28),
+                        showlegend=False,
+                        hoverinfo="text",
+                        hovertemplate="<b>Call Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
 
-                #         name="Call Wake-Up"
-                #     ), row=1, col=1)
+                        name="Call Wake-Up"
+                    ), row=1, col=1)
                 
-                # # ✅ Plot Put Wake 🦉 once
-                # if not first_put_eye_idx.empty:
-                #     first_idx = first_put_eye_idx[0]
-                #     fig.add_trace(go.Scatter(
-                #         x=[intraday.loc[first_idx, "Time"]],
-                #         y=[intraday.loc[first_idx, price_col] - 0],  # position below
-                #         mode="text",
-                #         text=["🦉"],
-                #         textposition="bottom right",
-                #         textfont=dict(size=28),
-                #         showlegend=False,
-                #         hoverinfo="text",
-                #         hovertemplate="<b>Put Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                # ✅ Plot Put Wake 🦉 once
+                if not first_put_eye_idx.empty:
+                    first_idx = first_put_eye_idx[0]
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_idx, "Time"]],
+                        y=[intraday.loc[first_idx, price_col] - 0],  # position below
+                        mode="text",
+                        text=["🦉"],
+                        textposition="bottom right",
+                        textfont=dict(size=28),
+                        showlegend=False,
+                        hoverinfo="text",
+                        hovertemplate="<b>Put Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
 
-                #         name="Put Wake-Up"
-                #     ), row=1, col=1)
+                        name="Put Wake-Up"
+                    ), row=1, col=1)
 
 
              
-                # # Smooth first if needed
-                # intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
-                # intraday["Put_Option_Smooth"]  = intraday["Put_Option_Value"].rolling(3).mean()
+                # Smooth first if needed
+                intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
+                intraday["Put_Option_Smooth"]  = intraday["Put_Option_Value"].rolling(3).mean()
                 
-                # # 🎯 Call Flow
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Call_Option_Smooth"],
-                #     mode="lines",
-                #     name="Call Option Value",
-                #     line=dict(color="darkviolet", width=1.5),
-                #     showlegend=True,
-                #     hovertemplate=
-                #     "<b>Time:</b> %{x}<br>" +
-                #     "<b>Call Option:</b> %{y:.2f}<br>" +
-                #     "<b>%{text}</b><extra></extra>"
+                # 🎯 Call Flow
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Smooth"],
+                    mode="lines",
+                    name="Call Option Value",
+                    line=dict(color="darkviolet", width=1.5),
+                    showlegend=True,
+                    hovertemplate=
+                    "<b>Time:</b> %{x}<br>" +
+                    "<b>Call Option:</b> %{y:.2f}<br>" +
+                    "<b>%{text}</b><extra></extra>"
               
 
-                # ), row=2, col=1)
+                ), row=2, col=1)
                 
-                # # 🎯 Put Flow
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Put_Option_Smooth"],
-                #     mode="lines",
-                #     name="Put Option Value",
-                #     line=dict(color="darkcyan", width=1.5),
-                #     showlegend=True,
-                #     hovertemplate=
-                #     "<b>Time:</b> %{x}<br>" +
-                #     "<b>Put Option:</b> %{y:.2f}<br>" +
-                #     "<b>%{text}</b><extra></extra>"
+                # 🎯 Put Flow
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
+                    mode="lines",
+                    name="Put Option Value",
+                    line=dict(color="darkcyan", width=1.5),
+                    showlegend=True,
+                    hovertemplate=
+                    "<b>Time:</b> %{x}<br>" +
+                    "<b>Put Option:</b> %{y:.2f}<br>" +
+                    "<b>%{text}</b><extra></extra>"
             
 
-                # ), row=2, col=1)
+                ), row=2, col=1)
                 
-                # # Compute displacement from MIDAS curves
-                # intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
-                # intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+                # Compute displacement from MIDAS curves
+                intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
                 
-                # # Plot them in Row 3
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Call_vs_Bull"],
-                #     mode="lines",
-                #     name="Call vs Midas Bull",
-                #     line=dict(color="darkviolet", width=1.5, dash="dot"),
-                #     showlegend=True
-                # ), row=3, col=1)
+                # Plot them in Row 3
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_vs_Bull"],
+                    mode="lines",
+                    name="Call vs Midas Bull",
+                    line=dict(color="darkviolet", width=1.5, dash="dot"),
+                    showlegend=True
+                ), row=3, col=1)
                 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Put_vs_Bear"],
-                #     mode="lines",
-                #     name="Put vs Midas Bear",
-                #     line=dict(color="darkcyan", width=1.5, dash="dot"),
-                #     showlegend=True
-                # ), row=3, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_vs_Bear"],
+                    mode="lines",
+                    name="Put vs Midas Bear",
+                    line=dict(color="darkcyan", width=1.5, dash="dot"),
+                    showlegend=True
+                ), row=3, col=1)
 
 
 
@@ -5122,25 +5122,25 @@ if st.sidebar.button("Run Analysis"):
 #                 fig.add_hline(y=call_ib_high, showlegend=True,     
 # line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 
-            # # 🟡 Call IB High (hoverable)
-            #     fig.add_trace(go.Scatter(
-            #         x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-            #         y=[call_ib_high, call_ib_high],
-            #         mode='lines',
-            #         line=dict(color="gold", dash="dot", width=0.6),
-            #         name="Call IB High",
-            #         hovertemplate="Call IB High: %{y:.2f}<extra></extra>"
-            #     ), row=2, col=1)
+            # 🟡 Call IB High (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[call_ib_high, call_ib_high],
+                    mode='lines',
+                    line=dict(color="gold", dash="dot", width=0.6),
+                    name="Call IB High",
+                    hovertemplate="Call IB High: %{y:.2f}<extra></extra>"
+                ), row=2, col=1)
                 
-                # # 🟡 Call IB Low (hoverable)
-                # fig.add_trace(go.Scatter(
-                #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                #     y=[call_ib_low, call_ib_low],
-                #     mode='lines',
-                #     line=dict(color="gold", dash="dot", width=0.6),
-                #     name="Call IB Low",
-                #     hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
-                # ), row=2, col=1)
+                # 🟡 Call IB Low (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[call_ib_low, call_ib_low],
+                    mode='lines',
+                    line=dict(color="gold", dash="dot", width=0.6),
+                    name="Call IB Low",
+                    hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
+                ), row=2, col=1)
                 
                 # # 🔷 Value Area Min (hoverable)
                 # fig.add_trace(go.Scatter(
@@ -5442,63 +5442,63 @@ if st.sidebar.button("Run Analysis"):
                     )
                 ), row=1, col=1)
                 
-                # # Wake-up Emojis 📈
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Call_Option_Smooth"] ,
-                #     mode="text",
-                #     text=intraday["Call_Wake_Emoji"],
-                #     textposition="top center",
-                #     showlegend=False
-                # ), row=2, col=1)
+                # Wake-up Emojis 📈
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Smooth"] ,
+                    mode="text",
+                    text=intraday["Call_Wake_Emoji"],
+                    textposition="top center",
+                    showlegend=False
+                ), row=2, col=1)
                 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Put_Option_Smooth"],
-                #     mode="text",
-                #     text=intraday["Put_Wake_Emoji"] ,
-                #     textposition="bottom center",
-                #     showlegend=False
-                # ), row=2, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
+                    mode="text",
+                    text=intraday["Put_Wake_Emoji"] ,
+                    textposition="bottom center",
+                    showlegend=False
+                ), row=2, col=1)
 
            
-                # fig.add_trace(go.Scatter(
-                #    x=intraday["Time"],
-                #    y=intraday["Call_vs_Bull"],
-                #    mode="text",
-                #    text=intraday["Bull_Midas_Wake"],
-                #    textposition="top center",
-                #    showlegend=False,
-                #    hoverinfo="skip"
-                # ), row=3, col=1)
+                fig.add_trace(go.Scatter(
+                   x=intraday["Time"],
+                   y=intraday["Call_vs_Bull"],
+                   mode="text",
+                   text=intraday["Bull_Midas_Wake"],
+                   textposition="top center",
+                   showlegend=False,
+                   hoverinfo="skip"
+                ), row=3, col=1)
         
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Put_vs_Bear"],
-                #     mode="text",
-                #     textfont=dict(size=20),
-                #     text=intraday["Bear_Midas_Wake"],
-                #     textposition="bottom center",
-                #     showlegend=False,
-                #     hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
-                # ), row=3, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_vs_Bear"],
+                    mode="text",
+                    textfont=dict(size=20),
+                    text=intraday["Bear_Midas_Wake"],
+                    textposition="bottom center",
+                    showlegend=False,
+                    hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
+                ), row=3, col=1)
 
                                
-                #                # 🦵🏼 Bull MIDAS Wake
-                # if pd.notna(first_bull_midas_idx):
-                #     fig.add_trace(go.Scatter(
-                #         x=[intraday.loc[first_bull_midas_idx, "Time"]],
-                #         y=[intraday.loc[first_bull_midas_idx, price_col]],  # <- no quotes
-                #         mode="text",
-                #         text=["🦵🏼"],
-                #         textposition="top center",
-                #         textfont=dict(size=28),
-                #         showlegend=False,
-                #         hoverinfo="skip",
-                #         hovertemplate="🦵🏼 Bull MIDAS Wake<br>Time: %{x}<br>Price: %{y:.2f}<extra></extra>",
+                               # 🦵🏼 Bull MIDAS Wake
+                if pd.notna(first_bull_midas_idx):
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_bull_midas_idx, "Time"]],
+                        y=[intraday.loc[first_bull_midas_idx, price_col]],  # <- no quotes
+                        mode="text",
+                        text=["🦵🏼"],
+                        textposition="top center",
+                        textfont=dict(size=28),
+                        showlegend=False,
+                        hoverinfo="skip",
+                        hovertemplate="🦵🏼 Bull MIDAS Wake<br>Time: %{x}<br>Price: %{y:.2f}<extra></extra>",
 
-                #         name="Bull MIDAS Wake (🦵🏼)"
-                #     ), row=1, col=1)
+                        name="Bull MIDAS Wake (🦵🏼)"
+                    ), row=1, col=1)
                 
                 # 🦶🏼 Bear MIDAS Wake
                 if pd.notna(first_bear_midas_idx):
