@@ -1010,7 +1010,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = detect_compliance_shift(intraday)
 
 
-              def detect_compliance_expansion(df):
+                def detect_compliance_expansion(df):
                   df["Compliance Anchor"] = np.nan
                   df["Compliance Surge"] = ""
                   
