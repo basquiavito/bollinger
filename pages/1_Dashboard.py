@@ -4320,7 +4320,8 @@ if st.sidebar.button("Run Analysis"):
               
                 #               st.plotly_chart(fig_ichimoku, use_container_width=True)
 
-                
+                print(intraday[intraday["Compliance Surge"] != ""][["Time", "F%", "Compliance", "Compliance Anchor", "Compliance Surge"]])
+
                 with st.expander("📏 Compliance vs Stretch"):
                   import plotly.graph_objects as go
 
