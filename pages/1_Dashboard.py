@@ -4732,7 +4732,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
                         mode="markers",
-                        marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                        marker=dict(size=30, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
                         name="🫧 Compliance Shift",
                         hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                     )
