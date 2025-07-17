@@ -4291,44 +4291,44 @@ if st.sidebar.button("Run Analysis"):
 
 
   
-                 with st.expander("📏 Compliance vs Stretch"):
-                     
-                    # 1) Copy & ensure datetime index
-                    df = intraday.copy()
-                    df.index = pd.to_datetime(df.index)  # if it’s already datetime this is a no‑op
-                
-                    # 2) Compute 1st/99th percentile to clip extremes
-                    low, high = df["Compliance"].quantile([0.01, 0.99])
-                
-                    # 3) Build the figure
-                    fig = go.Figure(go.Scatter(
-                        x=df.index,
-                        y=df["Compliance"],
-                        mode="lines",
-                        name="Compliance",
-                        line=dict(width=2, color="#00ccff"),
-                        hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{y:.1f}"
-                    ))
-                
-                    # 4) Format axes
-                    fig.update_layout(
-                        title="Compliance Over Time",
-                        xaxis=dict(
-                            title="Time",
-                            tickformat="%H:%M",
-                            showgrid=True
-                        ),
-                        yaxis=dict(
-                            title="Compliance",
-                            range=[low, high],
-                            showgrid=True
-                        ),
-                        plot_bgcolor="rgba(0,0,0,0)",
-                        paper_bgcolor="rgba(0,0,0,0)",
-                        font=dict(color="white")
-                    )
-                
-                  st.plotly_chart(fig, use_container_width=True)
+                with st.expander("📏 Compliance vs Stretch"):
+                   
+                  # 1) Copy & ensure datetime index
+                  df = intraday.copy()
+                  df.index = pd.to_datetime(df.index)  # if it’s already datetime this is a no‑op
+              
+                  # 2) Compute 1st/99th percentile to clip extremes
+                  low, high = df["Compliance"].quantile([0.01, 0.99])
+              
+                  # 3) Build the figure
+                  fig = go.Figure(go.Scatter(
+                      x=df.index,
+                      y=df["Compliance"],
+                      mode="lines",
+                      name="Compliance",
+                      line=dict(width=2, color="#00ccff"),
+                      hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{y:.1f}"
+                  ))
+              
+                  # 4) Format axes
+                  fig.update_layout(
+                      title="Compliance Over Time",
+                      xaxis=dict(
+                          title="Time",
+                          tickformat="%H:%M",
+                          showgrid=True
+                      ),
+                      yaxis=dict(
+                          title="Compliance",
+                          range=[low, high],
+                          showgrid=True
+                      ),
+                      plot_bgcolor="rgba(0,0,0,0)",
+                      paper_bgcolor="rgba(0,0,0,0)",
+                      font=dict(color="white")
+                  )
+              
+                st.plotly_chart(fig, use_container_width=True)
 
 
                 with ticker_tabs[0]:
