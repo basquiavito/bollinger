@@ -3791,7 +3791,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Compliance Surge","Distensibility",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Distensibility",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
@@ -4748,19 +4748,7 @@ if st.sidebar.button("Run Analysis"):
 
                    
 
-                    mask = intraday["Compliance Surge"] != ""
-                    if mask.any():                                   # only add trace if we have at least 1 emoji
-                        surge_emojis = go.Scatter(
-                            x=intraday.loc[mask, "Time"],
-                            y=pd.to_numeric(intraday.loc[mask, "F%"], errors="coerce") + 50,
-                            text=intraday.loc[mask, "Compliance Surge"],
-                            mode="text",
-                            textfont=dict(size=18),
-                            name="Compliance Surge",
-                            showlegend=False,
-                            hovertemplate="Time: %{x|%H:%M}<br>Compliance Surge: %{text}<extra></extra>"
-                        )
-                    fig.add_trace(surge_emojis, row=1, col=1)
+            
 
 
 
