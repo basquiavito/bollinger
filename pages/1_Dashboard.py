@@ -4726,6 +4726,20 @@ if st.sidebar.button("Run Analysis"):
                         name="Middle Band (14-MA)"
                     )
 
+
+                                      # (E) Compliance Shift Bubbles on Main Plot
+                    shift_bubbles = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
+                        mode="markers",
+                        marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                        name="🫧 Compliance Shift",
+                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                    )
+                    
+                    fig.add_trace(shift_bubbles, row=1, col=1)
+
+
                     # Add all traces
 
                     fig.add_trace(upper_band, row=1, col=1)
