@@ -1017,7 +1017,7 @@ if st.sidebar.button("Run Analysis"):
                     """
                     df["Compliance Anchor"] = np.nan
                     df["Compliance Surge"] = ""
-                    
+                
                     anchor = None
                     tracking = False
                 
@@ -1026,15 +1026,12 @@ if st.sidebar.button("Run Analysis"):
                         curr = df["Compliance"].iloc[i]
                 
                         if pd.notna(prev) and pd.notna(curr):
-                
                             # Detect shift from negative to positive
                             if prev < 0 and curr >= 0:
-                                anchor = curr
+                                anchor = curr if curr != 0 else 0.001
                                 df.at[df.index[i], "Compliance Anchor"] = anchor
-                                tracking = True
-                                continue
+                                tracking = True  # ← Don't skip the current bar
                 
-                            # If tracking an uptrend, check multiplier
                             if tracking and curr >= 0 and anchor is not None:
                                 ratio = curr / anchor if anchor != 0 else 0
                 
@@ -1055,14 +1052,13 @@ if st.sidebar.button("Run Analysis"):
                 
                                 df.at[df.index[i], "Compliance Surge"] = emoji
                 
-                            # Stop tracking if compliance drops again
                             if curr < 0:
                                 tracking = False
                                 anchor = None
-                
+            
                     return df
-                
                 intraday = detect_compliance_expansion(intraday)
+
 
                 def detect_marengo(df):
                     """
@@ -4750,19 +4746,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig.add_trace(shift_bubbles, row=1, col=1)
 
-                    # # (F) Compliance Surge Emojis on Main Plot
-                    # surge_emojis = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=pd.to_numeric(intraday["F%"], errors="coerce").where(intraday["Compliance Surge"] != ""),
-                    #     text=intraday["Compliance Surge"].where(intraday["Compliance Surge"] != ""),
-                    #     mode="text",
-                    #     textfont=dict(size=40),
-                    #     name="Compliance Surge",
-                    #     showlegend=False,
-                    #     hovertemplate="Time: %{x|%H:%M}<br>Compliance Surge: %{text}<extra></extra>"
-                    # )
-                    
-                    # fig.add_trace(surge_emojis, row=1, col=1)
+                   
 
                     # (F) Compliance Surge Emojis on Main Plot
                     mask = intraday["Compliance Surge"].notna() & (intraday["Compliance Surge"] != "")
