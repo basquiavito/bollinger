@@ -4756,7 +4756,7 @@ if st.sidebar.button("Run Analysis"):
                         y=pd.to_numeric(intraday["F%"], errors="coerce").where(intraday["Compliance Surge"] != ""),
                         text=intraday["Compliance Surge"].where(intraday["Compliance Surge"] != ""),
                         mode="text",
-                        textfont=dict(size=16),
+                        textfont=dict(size=40),
                         name="Compliance Surge",
                         showlegend=False,
                         hovertemplate="Time: %{x|%H:%M}<br>Compliance Surge: %{text}<extra></extra>"
