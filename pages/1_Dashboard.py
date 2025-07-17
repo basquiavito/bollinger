@@ -4412,7 +4412,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="lines",
                       
                         name="Chikou (F%)",
-                        line=dict(color="purple", dash="dash", width=0.7)
+                        line=dict(color="purple", dash="dash", width=1)
                     )
                     fig.add_trace(chikou_line, row=1, col=1)
 
