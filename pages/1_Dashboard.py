@@ -4750,20 +4750,38 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig.add_trace(shift_bubbles, row=1, col=1)
 
+                    # # (F) Compliance Surge Emojis on Main Plot
+                    # surge_emojis = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=pd.to_numeric(intraday["F%"], errors="coerce").where(intraday["Compliance Surge"] != ""),
+                    #     text=intraday["Compliance Surge"].where(intraday["Compliance Surge"] != ""),
+                    #     mode="text",
+                    #     textfont=dict(size=40),
+                    #     name="Compliance Surge",
+                    #     showlegend=False,
+                    #     hovertemplate="Time: %{x|%H:%M}<br>Compliance Surge: %{text}<extra></extra>"
+                    # )
+                    
+                    # fig.add_trace(surge_emojis, row=1, col=1)
+
                     # (F) Compliance Surge Emojis on Main Plot
+                    mask = intraday["Compliance Surge"].notna() & (intraday["Compliance Surge"] != "")
+                    x_vals = intraday["Time"][mask]
+                    y_vals = pd.to_numeric(intraday["F%"], errors="coerce")[mask] + 50
+                    text_vals = intraday["Compliance Surge"][mask]
+                    
                     surge_emojis = go.Scatter(
-                        x=intraday["Time"],
-                        y=pd.to_numeric(intraday["F%"], errors="coerce").where(intraday["Compliance Surge"] != ""),
-                        text=intraday["Compliance Surge"].where(intraday["Compliance Surge"] != ""),
+                        x=x_vals,
+                        y=y_vals,
+                        text=text_vals,
                         mode="text",
-                        textfont=dict(size=40),
+                        textfont=dict(size=18),
                         name="Compliance Surge",
                         showlegend=False,
-                        hovertemplate="Time: %{x|%H:%M}<br>Compliance Surge: %{text}<extra></extra>"
+                        hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{text}<extra></extra>"
                     )
                     
                     fig.add_trace(surge_emojis, row=1, col=1)
-
 
 
                   
