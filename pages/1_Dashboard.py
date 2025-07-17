@@ -4573,19 +4573,6 @@ if st.sidebar.button("Run Analysis"):
                         name='Kumo Cloud'
                     ), row=1, col=1)
 
-                    # --- New: Compliance on the secondary y-axis ---
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday["Time"],
-                            y=intraday["Compliance"],
-                            mode="lines",
-                            line=dict(color="#F3CA28", width=1, dash="dot"),
-                            name="Compliance"
-                        ),
-                        row=1, col=1, secondary_y=True
-                    )
-
-                 
 
                                     # Mask for different RVOL thresholds
                     mask_rvol_extreme = intraday["RVOL_5"] > 1.8
