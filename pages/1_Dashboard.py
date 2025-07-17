@@ -4273,7 +4273,9 @@ if st.sidebar.button("Run Analysis"):
               
                 #               st.plotly_chart(fig_ichimoku, use_container_width=True)
 
-
+                
+                with st.expander("📏 Compliance vs Stretch"):
+                    st.line_chart(intraday[["Compliance", "F_numeric", "F% BBW"]])
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
