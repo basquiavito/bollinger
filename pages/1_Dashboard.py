@@ -4728,29 +4728,28 @@ if st.sidebar.button("Run Analysis"):
 
 
                     #                   # (E) Compliance Shift Bubbles on Main Plot
-                    # shift_bubbles = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     showlegend=False,
-
-                    #     y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧") + 50,
-                    #     mode="markers",
-                    #     marker=dict(size=30, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
-                    #     name="🫧 Compliance Shift",
-                    #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                    # )
-                    
-                    # (E) Compliance Shift Bubbles on Main Plot
                     shift_bubbles = go.Scatter(
                         x=intraday["Time"],
-                        y=pd.to_numeric(intraday["F%"], errors="coerce").where(intraday["Compliance Shift"] == "🫧") + 50,
-                        mode="markers",
                         showlegend=False,
+
+                        y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧") + 50,
+                        mode="markers",
                         marker=dict(size=30, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
                         name="🫧 Compliance Shift",
-                        hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{y:.2f}<extra></extra>"
                     )
                     
-                    fig.add_trace(shift_bubbles, row=1, col=1)
+                    # (E) Compliance Shift Bubbles on Main Plot
+                    # shift_bubbles = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=pd.to_numeric(intraday["F%"], errors="coerce").where(intraday["Compliance Shift"] == "🫧") + 50,
+                    #     mode="markers",
+                    #     showlegend=False,
+                    #     marker=dict(size=30, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                    #     name="🫧 Compliance Shift",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{y:.2f}<extra></extra>"
+                    # )
+                    
+                    # fig.add_trace(shift_bubbles, row=1, col=1)
 
                     # Add all traces
 
