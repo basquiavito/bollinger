@@ -4275,7 +4275,7 @@ if st.sidebar.button("Run Analysis"):
 
                 
                 with st.expander("📏 Compliance vs Stretch"):
-                    st.line_chart(intraday[["Compliance", "F_numeric", "F% BBW"]])
+                    st.line_chart(intraday[["Compliance"]])
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
