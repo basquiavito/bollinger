@@ -4403,7 +4403,7 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Chikou_F"] = ((intraday["Chikou"] - prev_close) / prev_close) * 10000
 
                     # # Drop rows where Chikou_F is NaN (due to shifting)
-                    # chikou_plot = intraday.dropna(subset=["Chikou_F"])
+                    chikou_plot = intraday.dropna(subset=["Chikou_F"])
 
                     # Plot without shifting time
                     chikou_line = go.Scatter(
