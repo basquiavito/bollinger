@@ -5473,35 +5473,35 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
-                # bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
-                # fig.add_trace(go.Scatter(
-                #     x=bullish_df["TimeIndex"] ,
-                #     y=bullish_df["F_numeric"] + 14,
-                #     mode="text",
-                #     text=bullish_df["Mike_Kijun_ATR_Emoji"],
-                #     textposition="top right",
-                #     textfont=dict(size=20),
-                #     name="Bullish Mike x Kijun + ATR 🚀",
-                #     showlegend=True
-                # ))
+                # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
+                bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                fig.add_trace(go.Scatter(
+                    x=bullish_df["TimeIndex"] ,
+                    y=bullish_df["F_numeric"] + 14,
+                    mode="text",
+                    text=bullish_df["Mike_Kijun_ATR_Emoji"],
+                    textposition="top right",
+                    textfont=dict(size=20),
+                    name="Bullish Mike x Kijun + ATR 🚀",
+                    showlegend=True
+                ))
 
 
            
 
 
-                # # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
-                # bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
-                # fig.add_trace(go.Scatter(
-                #     x=bearish_df["TimeIndex"],
-                #     y=bearish_df["F_numeric"] - 14,
-                #     mode="text",
-                #     text=bearish_df["Mike_Kijun_ATR_Emoji"],
-                #     textposition="bottom right",
-                #     textfont=dict(size=24),
-                #     name="Bearish Mike x Kijun + ATR ⚓️",
-                #     showlegend=True
-                # ))
+                # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
+                bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
+                fig.add_trace(go.Scatter(
+                    x=bearish_df["TimeIndex"],
+                    y=bearish_df["F_numeric"] - 14,
+                    mode="text",
+                    text=bearish_df["Mike_Kijun_ATR_Emoji"],
+                    textposition="bottom right",
+                    textfont=dict(size=24),
+                    name="Bearish Mike x Kijun + ATR ⚓️",
+                    showlegend=True
+                ))
 
                 emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
   
@@ -5915,28 +5915,28 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_rook_up, row=1, col=1)
                 fig.add_trace(scatter_rook_down, row=1, col=1)
 
-                # mask_tenkan_cross_up = (
-                #     (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
-                #     (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
-                # )
+                mask_tenkan_cross_up = (
+                    (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
+                    (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
+                )
                 
-                # # Create a new column with the emoji (optional but clean)
-                # intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
+                # Create a new column with the emoji (optional but clean)
+                intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
                 
-                # # Scatter plot for 🫆 (slightly above F_numeric)
-                # scatter_tenkan_cross_up = go.Scatter(
-                #     x=intraday.loc[mask_tenkan_cross_up, "Time"],
-                #     y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
-                #     mode="text",
-                #     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
-                #     textposition="top right",
-                #     textfont=dict(size=24, color="orange"),
-                #     name="Tenkan Cross MIDAS Bull (🧲)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
-                # )
+                # Scatter plot for 🫆 (slightly above F_numeric)
+                scatter_tenkan_cross_up = go.Scatter(
+                    x=intraday.loc[mask_tenkan_cross_up, "Time"],
+                    y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
+                    mode="text",
+                    text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
+                    textposition="top right",
+                    textfont=dict(size=24, color="orange"),
+                    name="Tenkan Cross MIDAS Bull (🧲)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
+                )
                 
-                # # Add to figure
-                # fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
+                # Add to figure
+                fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
 
 
  
@@ -6064,23 +6064,23 @@ if st.sidebar.button("Run Analysis"):
                     (intraday["Tenkan_F"] <= intraday["MIDAS_Bear"])
                 )
                 
-                # # Create a new column with the emoji (optional but clean)
-                # intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
+                # Create a new column with the emoji (optional but clean)
+                intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
                 
-                # # Scatter plot for 🕸️ (slightly below F_numeric)
-                # scatter_tenkan_cross_down = go.Scatter(
-                #     x=intraday.loc[mask_tenkan_cross_down, "Time"],
-                #     y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 12,
-                #     mode="text",
-                #     text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
-                #     textposition="bottom right",
-                #     textfont=dict(size=28, color="black"),
-                #     name="Tenkan Cross MIDAS Bear (🕸️)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
-                # )
+                # Scatter plot for 🕸️ (slightly below F_numeric)
+                scatter_tenkan_cross_down = go.Scatter(
+                    x=intraday.loc[mask_tenkan_cross_down, "Time"],
+                    y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 12,
+                    mode="text",
+                    text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
+                    textposition="bottom right",
+                    textfont=dict(size=28, color="black"),
+                    name="Tenkan Cross MIDAS Bear (🕸️)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
+                )
                 
-                # # Add to figure
-                # fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
+                # Add to figure
+                fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
 
 
    
@@ -6212,32 +6212,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # # Add to the F% Plot
-                # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+                # Add to the F% Plot
+                fig.add_trace(scatter_tk_sun, row=1, col=1)
+                fig.add_trace(scatter_tk_moon, row=1, col=1)
 
-                # cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
-                # fig.add_trace(go.Scatter(
-                #     x=cross_points["Time"],
-                #     y=cross_points[price_col] + 20,
-                #     textfont=dict(size=34),
-                #     mode="text",
-                #     text=cross_points["Midas_Cross_IB_High"],
-                #     textposition="top center",
-                #     showlegend=False
-                # ))
+                cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
+                fig.add_trace(go.Scatter(
+                    x=cross_points["Time"],
+                    y=cross_points[price_col] + 20,
+                    textfont=dict(size=34),
+                    mode="text",
+                    text=cross_points["Midas_Cross_IB_High"],
+                    textposition="top center",
+                    showlegend=True
+                ))
                 
-                # # 🎻 plot for Bear MIDAS crossing IB Low
-                # bear_cross_points = intraday[intraday["Midas_Bear_Cross_IB_Low"] == "🎻"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_cross_points["Time"],
-                #     y=bear_cross_points[price_col] - 20,
-                #     textfont=dict(size=34),
-                #     mode="text",
-                #     text=bear_cross_points["Midas_Bear_Cross_IB_Low"],
-                #     textposition="bottom center",
-                #     showlegend=False
-                # ))
+                # 🎻 plot for Bear MIDAS crossing IB Low
+                bear_cross_points = intraday[intraday["Midas_Bear_Cross_IB_Low"] == "🎻"]
+                fig.add_trace(go.Scatter(
+                    x=bear_cross_points["Time"],
+                    y=bear_cross_points[price_col] - 20,
+                    textfont=dict(size=34),
+                    mode="text",
+                    text=bear_cross_points["Midas_Bear_Cross_IB_Low"],
+                    textposition="bottom center",
+                    showlegend=True
+                ))
 
 
  # 🟢   SPAN A & SPAN B
