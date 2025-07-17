@@ -4750,6 +4750,24 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig.add_trace(shift_bubbles, row=1, col=1)
 
+                    # (F) Compliance Surge Emojis on Main Plot
+                    surge_emojis = go.Scatter(
+                        x=intraday["Time"],
+                        y=pd.to_numeric(intraday["F%"], errors="coerce").where(intraday["Compliance Surge"] != ""),
+                        text=intraday["Compliance Surge"].where(intraday["Compliance Surge"] != ""),
+                        mode="text",
+                        textfont=dict(size=16),
+                        name="Compliance Surge",
+                        showlegend=False,
+                        hovertemplate="Time: %{x|%H:%M}<br>Compliance Surge: %{text}<extra></extra>"
+                    )
+                    
+                    fig.add_trace(surge_emojis, row=1, col=1)
+
+
+
+                  
+
                     fig.add_trace(upper_band, row=1, col=1)
                     fig.add_trace(lower_band, row=1, col=1)
                     fig.add_trace(middle_band, row=1, col=1)
