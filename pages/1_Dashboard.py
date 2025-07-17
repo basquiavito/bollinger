@@ -4748,24 +4748,20 @@ if st.sidebar.button("Run Analysis"):
 
                    
 
-                    # (F) Compliance Surge Emojis on Main Plot
-                    mask = intraday["Compliance Surge"].notna() & (intraday["Compliance Surge"] != "")
-                    x_vals = intraday["Time"][mask]
-                    y_vals = pd.to_numeric(intraday["F%"], errors="coerce")[mask] + 50
-                    text_vals = intraday["Compliance Surge"][mask]
-                    
-                    surge_emojis = go.Scatter(
-                        x=x_vals,
-                        y=y_vals,
-                        text=text_vals,
-                        mode="text",
-                        textfont=dict(size=18),
-                        name="Compliance Surge",
-                        showlegend=False,
-                        hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{text}<extra></extra>"
-                    )
-                    
+                    mask = intraday["Compliance Surge"] != ""
+                    if mask.any():                                   # only add trace if we have at least 1 emoji
+                        surge_emojis = go.Scatter(
+                            x=intraday.loc[mask, "Time"],
+                            y=pd.to_numeric(intraday.loc[mask, "F%"], errors="coerce") + 50,
+                            text=intraday.loc[mask, "Compliance Surge"],
+                            mode="text",
+                            textfont=dict(size=18),
+                            name="Compliance Surge",
+                            showlegend=False,
+                            hovertemplate="Time: %{x|%H:%M}<br>Compliance Surge: %{text}<extra></extra>"
+                        )
                     fig.add_trace(surge_emojis, row=1, col=1)
+
 
 
                   
