@@ -4328,7 +4328,7 @@ if st.sidebar.button("Run Analysis"):
                       font=dict(color="white")
                   )
               
-                  st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
 
 
                 with ticker_tabs[0]:
