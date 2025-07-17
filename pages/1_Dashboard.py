@@ -6212,9 +6212,9 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # Add to the F% Plot
-                fig.add_trace(scatter_tk_sun, row=1, col=1)
-                fig.add_trace(scatter_tk_moon, row=1, col=1)
+                # # Add to the F% Plot
+                # fig.add_trace(scatter_tk_sun, row=1, col=1)
+                # fig.add_trace(scatter_tk_moon, row=1, col=1)
 
                 cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
                 fig.add_trace(go.Scatter(
