@@ -1009,6 +1009,61 @@ if st.sidebar.button("Run Analysis"):
   
                 intraday = detect_compliance_shift(intraday)
 
+
+                def detect_compliance_expansion(df):
+                    """
+                    Tracks expansion after compliance turns positive.
+                    Adds emojis as it multiplies beyond the initial shift value.
+                    """
+                    df["Compliance Anchor"] = np.nan
+                    df["Compliance Surge"] = ""
+                    
+                    anchor = None
+                    tracking = False
+                
+                    for i in range(1, len(df)):
+                        prev = df["Compliance"].iloc[i - 1]
+                        curr = df["Compliance"].iloc[i]
+                
+                        if pd.notna(prev) and pd.notna(curr):
+                
+                            # Detect shift from negative to positive
+                            if prev < 0 and curr >= 0:
+                                anchor = curr
+                                df.at[df.index[i], "Compliance Anchor"] = anchor
+                                tracking = True
+                                continue
+                
+                            # If tracking an uptrend, check multiplier
+                            if tracking and curr >= 0 and anchor is not None:
+                                ratio = curr / anchor if anchor != 0 else 0
+                
+                                if ratio >= 1000:
+                                    emoji = "🚀"
+                                elif ratio >= 100:
+                                    emoji = "💥💥"
+                                elif ratio >= 50:
+                                    emoji = "💥"
+                                elif ratio >= 10:
+                                    emoji = "⚡⚡⚡"
+                                elif ratio >= 5:
+                                    emoji = "⚡⚡"
+                                elif ratio >= 2:
+                                    emoji = "⚡"
+                                else:
+                                    emoji = ""
+                
+                                df.at[df.index[i], "Compliance Surge"] = emoji
+                
+                            # Stop tracking if compliance drops again
+                            if curr < 0:
+                                tracking = False
+                                anchor = None
+                
+                    return df
+                
+                intraday = detect_compliance_expansion(intraday)
+
                 def detect_marengo(df):
                     """
                     Detects North Marengo:
@@ -3740,7 +3795,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Distensibility",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Compliance Surge","Distensibility",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
