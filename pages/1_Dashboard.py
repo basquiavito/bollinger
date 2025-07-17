@@ -4727,35 +4727,37 @@ if st.sidebar.button("Run Analysis"):
                     )
 
 
-                    #                   # (E) Compliance Shift Bubbles on Main Plot
-                    # shift_bubbles = go.Scatter(
-                    #     x=intraday["Time"],
-                    #     y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
-                    #     mode="markers",
-                    #     marker=dict(size=30, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
-                    #     name="🫧 Compliance Shift",
-                    #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                    # )
-                    
-                    # fig.add_trace(shift_bubbles, row=1, col=1)
+                                      # (E) Compliance Shift Bubbles on Main Plot
                     shift_bubbles = go.Scatter(
                         x=intraday["Time"],
-                        y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧") + 50,  # Y-offset by +50
+                        showlegend=False,
+
+                        y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧") + 50,
                         mode="markers",
-                        marker=dict(
-                            size=30,
-                            symbol="circle",
-                            color="#00ccff",
-                            line=dict(color="white", width=1)
-                        ),
+                        marker=dict(size=30, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
                         name="🫧 Compliance Shift",
-                        hovertemplate=(
-                            "🫧 Compliance Shift<br>" +
-                            "Time: %{x|%H:%M}<br>" +
-                            "Compliance: %{customdata[0]:.2f}<extra></extra>"
-                        ),
-                        customdata=intraday[["Compliance"]].where(intraday["Compliance Shift"] == "🫧")
+                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                     )
+                    
+                    # # fig.add_trace(shift_bubbles, row=1, col=1)
+                    # shift_bubbles = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧") + 50,  # Y-offset by +50
+                    #     mode="markers",
+                    #     marker=dict(
+                    #         size=30,
+                    #         symbol="circle",
+                    #         color="#00ccff",
+                    #         line=dict(color="white", width=1)
+                    #     ),
+                    #     name="🫧 Compliance Shift",
+                    #     hovertemplate=(
+                    #         "🫧 Compliance Shift<br>" +
+                    #         "Time: %{x|%H:%M}<br>" +
+                    #         "Compliance: %{customdata[0]:.2f}<extra></extra>"
+                    #     ),
+                    #     customdata=intraday[["Compliance"]].where(intraday["Compliance Shift"] == "🫧")
+                    # )
 
 
                     # Add all traces
