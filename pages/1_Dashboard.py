@@ -4711,25 +4711,23 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(shift_bubbles, row=1, col=1)
 
                    
-
-                                # (F) Compliance Surge Emojis on Main Plot
-                    mask = intraday["Compliance Surge"] != ""
-                    x_vals = intraday["Time"][mask]
-                    y_vals = pd.to_numeric(intraday["F%"], errors="coerce")[mask] - 50  # ⬅️ Push surge emojis *below* the shift bubbles
-                    text_vals = intraday["Compliance Surge"][mask]
+                    # Create a Boolean mask for rows with surge emojis
+                    mask_compliance_surge = intraday["Compliance Surge"] != ""
                     
-                    surge_emojis = go.Scatter(
-                        x=x_vals,
-                        y=y_vals,
-                        text=text_vals,
+                    # Plot Surge Emojis using same structure as BBW Alert
+                    scatter_compliance_surge = go.Scatter(
+                        x=intraday.loc[mask_compliance_surge, "Time"],
+                        y=intraday.loc[mask_compliance_surge, "F_numeric"] - 8,  # Offset slightly below F%
                         mode="text",
-                        textfont=dict(size=18),
+                        text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
+                        textposition="top center",
+                        textfont=dict(size=14),
                         name="Compliance Surge",
-                        showlegend=False,
-                        hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{text}<extra></extra>"
+                        hovertemplate="Time: %{x}<br>Surge: %{text}<extra></extra>"
                     )
                     
-                    fig.add_trace(surge_emojis, row=1, col=1)
+                    fig.add_trace(scatter_compliance_surge, row=1, col=1)
+
 
 
 
