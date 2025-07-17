@@ -965,7 +965,33 @@ if st.sidebar.button("Run Analysis"):
                 intraday["BBW Alert"] = intraday.apply(bbw_alert, axis=1)
 
 
-                
+
+                def calculate_distensibility(df):
+                    """
+                    Distensibility = (BBW - BBW_Anchor) / (RVOL_5 * BBW_Anchor)
+                    """
+                    df["Distensibility"] = np.nan
+                    if {"F% BBW", "BBW_Anchor", "RVOL_5"}.issubset(df.columns):
+                        delta_volume = df["F% BBW"] - df["BBW_Anchor"]
+                        pressure = df["RVOL_5"].replace(0, np.nan)
+                        original_volume = df["BBW_Anchor"]
+                        df["Distensibility"] = delta_volume / (pressure * original_volume)
+                    return df
+                intraday = calculate_distensibility(intraday)
+
+                def calculate_compliance(df):
+                    """
+                    Compliance = (BBW - BBW_Anchor) / RVOL_5
+                    """
+                    df["Compliance"] = np.nan
+                    if {"F% BBW", "BBW_Anchor", "RVOL_5"}.issubset(df.columns):
+                        delta_volume = df["F% BBW"] - df["BBW_Anchor"]
+                        pressure = df["RVOL_5"].replace(0, np.nan)
+                        df["Compliance"] = delta_volume / pressure
+                    return df
+
+                intraday = calculate_compliance(intraday)
+
                 def detect_marengo(df):
                     """
                     Detects North Marengo:
@@ -3697,7 +3723,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Distensibility",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
