@@ -4298,18 +4298,18 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(colored_dots, row=1, col=1)
                                         
                                 # === Define Dots ===
-                    # main_dot = go.Scatter(
-                    #     x=top_dots["Time"],
-                    #     y=top_dots["F_numeric"],
-                    #     mode="markers",
-                    #     marker=dict(
-                    #         color=top_dots["DotColor"],
-                    #         size=8,
-                    #         symbol="circle"
-                    #     ),
-                    #     name="15-min Top Dot",
-                    #     hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
-                    # )
+                    main_dot = go.Scatter(
+                        x=top_dots["Time"],
+                        y=top_dots["F_numeric"],
+                        mode="markers",
+                        marker=dict(
+                            color=top_dots["DotColor"],
+                            size=8,
+                            symbol="circle"
+                        ),
+                        name="15-min Top Dot",
+                        hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
+                    )
                     
                     # ghost_dot = go.Scatter(
                     #     x=top_dots["Time_HighMoment"],
@@ -4326,7 +4326,7 @@ if st.sidebar.button("Run Analysis"):
                     # )
                     
                     # === Now Add to Plot ===
-                    # fig.add_trace(main_dot, row=1, col=1)
+                    fig.add_trace(main_dot, row=1, col=1)
                     # fig.add_trace(ghost_dot, row=1, col=1)
                     #**************************************************************************************************************************************************************************
 
