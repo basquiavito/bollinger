@@ -4274,84 +4274,24 @@ if st.sidebar.button("Run Analysis"):
                 #               st.plotly_chart(fig_ichimoku, use_container_width=True)
 
                 
-                # with st.expander("📏 Compliance vs Stretch"):
-                #   import plotly.graph_objects as go
-
-                #   fig = go.Figure()
-                #   fig.add_trace(go.Scatter(
-                #       x=intraday.index,
-                #       y=intraday["Compliance"],
-                #       mode="lines",
-                #       name="Compliance",
-                #       hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{y:.2f}"
-                #   ))
-                  
-                #   fig.update_layout(title="Compliance Over Time", xaxis_title="Time", yaxis_title="Compliance")
-                #   st.plotly_chart(fig, use_container_width=True)
-
-
-
                 with st.expander("📏 Compliance vs Stretch"):
-                    import pandas as pd
-                    import plotly.graph_objects as go
-                
-                    # 1) Copy and ensure datetime + timezone
-                    df = intraday.copy()
-                    df.index = pd.to_datetime(df.index)
-                    if df.index.tzinfo is None:
-                        # adjust to your local zone (e.g. US/Eastern)
-                        df.index = df.index.tz_localize('UTC').tz_convert('US/Eastern')
-                
-                    # 2) Smooth Compliance to reduce noise
-                    df["Compliance_smooth"] = (
-                        df["Compliance"]
-                        .rolling(window=5, min_periods=1)
-                        .mean()
-                    )
-                
-                    # 3) Compute dynamic y‑range (1st–99th percentiles)
-                    low, high = df["Compliance_smooth"].quantile([0.01, 0.99])
-                
-                    # 4) Build the figure with both raw & smooth
-                    fig = go.Figure()
-                    fig.add_trace(go.Scatter(
-                        x=df.index,
-                        y=df["Compliance"],
-                        mode="lines",
-                        name="Raw Compliance",
-                        line=dict(width=1, color="rgba(0,200,255,0.3)"),
-                        hovertemplate="Time: %{x|%H:%M}<br>Raw C: %{y:.0f}"
-                    ))
-                    fig.add_trace(go.Scatter(
-                        x=df.index,
-                        y=df["Compliance_smooth"],
-                        mode="lines",
-                        name="Smoothed Compliance",
-                        line=dict(width=2, color="#00ccff"),
-                        hovertemplate="Time: %{x|%H:%M}<br>Smthd C: %{y:.1f}"
-                    ))
-                
-                    # 5) Add rangeslider & format axes
-                    fig.update_layout(
-                        title="Compliance Over Time",
-                        xaxis=dict(
-                            title="Time",
-                            tickformat="%H:%M",
-                            rangeslider=dict(visible=True),
-                            showgrid=True
-                        ),
-                        yaxis=dict(
-                            title="Compliance",
-                            range=[low, high],
-                            showgrid=True
-                        ),
-                        plot_bgcolor="rgba(0,0,0,0)",
-                        paper_bgcolor="rgba(0,0,0,0)",
-                        font=dict(color="white")
-                    )
-                
-                    st.plotly_chart(fig, use_container_width=True)
+                  import plotly.graph_objects as go
 
+                  fig = go.Figure()
+                  fig.add_trace(go.Scatter(
+                      x=intraday.index,
+                      y=intraday["Compliance"],
+                      mode="lines",
+                      name="Compliance",
+                      hovertemplate="Time: %{x|%H:%M}<br>Compliance: %{y:.2f}"
+                  ))
+                  
+                  fig.update_layout(title="Compliance Over Time", xaxis_title="Time", yaxis_title="Compliance")
+                  st.plotly_chart(fig, use_container_width=True)
+
+
+
+               
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
