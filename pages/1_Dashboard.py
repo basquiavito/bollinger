@@ -4289,7 +4289,32 @@ if st.sidebar.button("Run Analysis"):
                   fig.update_layout(title="Compliance Over Time", xaxis_title="Time", yaxis_title="Compliance")
                   st.plotly_chart(fig, use_container_width=True)
  
-
+                
+                with st.expander("📏 Compliance vs Stretch"):
+                    import plotly.graph_objects as go
+                
+                    # If needed: ensure index is datetime
+                    intraday.index = pd.to_datetime(intraday.index)
+                
+                    fig = go.Figure()
+                
+                    fig.add_trace(go.Scatter(
+                        x=intraday.index,
+                        y=intraday["Compliance"],
+                        mode="lines",
+                        name="Compliance",
+                        line=dict(color="#F3CA28", width=1),
+                        hovertemplate="Time: %{x|%Y-%m-%d %H:%M:%S}<br>Compliance: %{y:.2f}<extra></extra>"
+                    ))
+                
+                    fig.update_layout(
+                        title="Compliance Over Time",
+                        xaxis_title="Time",
+                        yaxis_title="Compliance",
+                        hovermode="x unified"
+                    )
+                
+                    st.plotly_chart(fig, use_container_width=True)
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
