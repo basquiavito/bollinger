@@ -4717,7 +4717,7 @@ if st.sidebar.button("Run Analysis"):
                     # Plot Surge Emojis using same structure as BBW Alert
                     scatter_compliance_surge = go.Scatter(
                         x=intraday.loc[mask_compliance_surge, "Time"],
-                        y=intraday.loc[mask_compliance_surge, "F_numeric"] - 20,  # Offset slightly below F%
+                        y=intraday.loc[mask_compliance_surge, "F_numeric"] - 24,  # Offset slightly below F%
                         mode="text",
                         text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
                         textposition="top center",
