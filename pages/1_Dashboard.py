@@ -1232,7 +1232,7 @@ if st.sidebar.button("Run Analysis"):
                     return df
 
 
-                intraday = calculate_osmotic_pressure(intraday)
+                intraday = compute_osmotic_pressure_by_floor(intraday)
 
                 
                      
