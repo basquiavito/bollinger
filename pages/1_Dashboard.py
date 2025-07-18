@@ -1148,18 +1148,39 @@ if st.sidebar.button("Run Analysis"):
 
 
                 intraday["O2 Quality"] = ""
-  
-                def mark_oxygen_quality(df, min_oxygen=1.5, high_oxygen=3.0):
-                    for i in df.index:
-                        rng = df.at[i, "Range"]
-                        if rng < min_oxygen:
-                            df.at[i, "O2 Quality"] = "😮‍💨 low"
-                        elif rng > high_oxygen:
-                            df.at[i, "O2 Quality"] = "🫁 rich"
-                        else:
-                            df.at[i, "O2 Quality"] = "😐 normal"
-                    return df
-                intraday =  mark_oxygen_quality(intraday)
+                def define_oxygen_quality(df, range_column="Range", output_column="O2 Quality", window=20):
+                  """
+                  Assigns oxygen quality based on how each bar's range compares to its rolling average.
+                  
+                  Parameters:
+                      df (pd.DataFrame): The intraday data with 'Range' column.
+                      range_column (str): The name of the column containing range values.
+                      output_column (str): The name of the new column to assign oxygen emojis.
+                      window (int): Rolling window size for average range.
+              
+                  Returns:
+                      pd.DataFrame: Original dataframe with new column for O2 Quality.
+                  """
+                  df[output_column] = ""
+                  atr = df[range_column].rolling(window).mean()
+              
+                  for i in range(len(df)):
+                      bar_range = df.loc[i, range_column]
+                      avg_range = atr[i]
+              
+                      if pd.isna(avg_range):
+                          continue
+              
+                      if bar_range < 0.5 * avg_range:
+                          df.loc[i, output_column] = "😮‍💨"  # low oxygen
+                      elif bar_range > 1.5 * avg_range:
+                          df.loc[i, output_column] = "🫁"    # rich oxygen
+                      else:
+                          df.loc[i, output_column] = "😐"    # normal oxygen
+              
+                  return df
+
+                intraday = define_oxygen_quality(intraday)
 
 
 
