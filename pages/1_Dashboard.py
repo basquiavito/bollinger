@@ -1184,55 +1184,6 @@ if st.sidebar.button("Run Analysis"):
 
              
                 
-                def compute_osmotic_pressure_by_floor(df, f_col="F_numeric", rvol_col="RVOL_5", std_col="F% STD Expansion"):
-                    """
-                    Adds columns for:
-                    - IB third width
-                    - IB floor assignment (L/M/U)
-                    - Osmotic Pressure (OP) per bar
-                    
-                    Parameters:
-                        df (pd.DataFrame): Intraday DataFrame with at least F_numeric, RVOL_5, F% STD Expansion
-                        
-                    Returns:
-                        pd.DataFrame with new columns:
-                            - 'IB Floor': L / M / U
-                            - 'OsmoticPressure': per-bar OP
-                    """
-                
-                    if len(df) < 12:
-                        df["IB Floor"] = np.nan
-                        df["OsmoticPressure"] = np.nan
-                        return df
-                
-                    # Step 1: Compute IB range and thirds
-                    ib_low = df[f_col].iloc[:12].min()
-                    ib_high = df[f_col].iloc[:12].max()
-                    ib_third_width = (ib_high - ib_low) / 3
-                
-                    if ib_third_width == 0:
-                        df["IB Floor"] = np.nan
-                        df["OsmoticPressure"] = np.nan
-                        return df
-                
-                    # Step 2: Assign IB floor
-                    def assign_floor(f):
-                        if f < ib_low + ib_third_width:
-                            return "L"
-                        elif f < ib_low + 2 * ib_third_width:
-                            return "M"
-                        else:
-                            return "U"
-                
-                    df["IB Floor"] = df[f_col].apply(assign_floor)
-                
-                    # Step 3: Calculate Osmotic Pressure
-                    df["OsmoticPressure"] = (df[rvol_col] / ib_third_width) * df[std_col]
-                
-                    return df
-
-
-                intraday = compute_osmotic_pressure_by_floor(intraday)
 
                 
                      
@@ -3970,7 +3921,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","OsmoticPressure","Range","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","Range","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
