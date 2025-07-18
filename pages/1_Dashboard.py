@@ -4753,11 +4753,11 @@ if st.sidebar.button("Run Analysis"):
                     # Plot emoji above price (or F_numeric)
                     scatter_distensibility = go.Scatter(
                         x=intraday.loc[mask_distensibility, "Time"],
-                        y=intraday.loc[mask_distensibility, "F_numeric"] + 8,  # Slight offset upward
+                        y=intraday.loc[mask_distensibility, "F_numeric"] + 40,  # Slight offset upward
                         mode="text",
                         text=intraday.loc[mask_distensibility, "Distensibility Alert"],
                         textposition="top center",
-                        textfont=dict(size=18),
+                        textfont=dict(size=24),
                         name="Distensibility 🪟",
                         hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
                         customdata=intraday.loc[mask_distensibility, "Distensibility"]
