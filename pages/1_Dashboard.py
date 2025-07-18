@@ -1143,7 +1143,7 @@ if st.sidebar.button("Run Analysis"):
                         else:
                             i += 1
                     return df
-                intraday = mark_star_growth(intraday, lookahead=10)
+                intraday = mark_star_growth(intraday)
 
 
 
