@@ -1214,14 +1214,13 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_osmotic_pressure(intraday)
 
                 
-                
+                     
                 def compute_osmotic_pressure_by_floor(df, f_col="F_numeric", rvol_col="RVOL_5", std_col="F% STD Expansion"):
                     """
                     Adds columns for:
                     - IB third width
                     - IB floor assignment (L/M/U)
                     - Osmotic Pressure (OP) per bar
-                    - Optional: mean OP per floor
                     
                     Parameters:
                         df (pd.DataFrame): Intraday DataFrame with at least F_numeric, RVOL_5, F% STD Expansion
@@ -1232,7 +1231,6 @@ if st.sidebar.button("Run Analysis"):
                             - 'OsmoticPressure': per-bar OP
                     """
                 
-                    # Ensure we have at least 12 bars for IB
                     if len(df) < 12:
                         df["IB Floor"] = np.nan
                         df["OsmoticPressure"] = np.nan
@@ -1259,11 +1257,11 @@ if st.sidebar.button("Run Analysis"):
                 
                     df["IB Floor"] = df[f_col].apply(assign_floor)
                 
-                    # Step 3: Calculate Osmotic Pressure per bar
+                    # Step 3: Calculate Osmotic Pressure
                     df["OsmoticPressure"] = (df[rvol_col] / ib_third_width) * df[std_col]
                 
                     return df
-                
+
                 intraday = compute_osmotic_pressure_by_floor(intraday)
 
 
