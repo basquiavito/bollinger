@@ -5589,11 +5589,11 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_lungs = go.Scatter(
                 x=lungs_only["Time"],
-                y=lungs_only["F_numeric"] - 3,
+                y=lungs_only["F_numeric"] - 6,
                 mode="text",
                 text=lungs_only["O2 Quality"],  # Will just be 🫁
                 textposition="middle center",
-                textfont=dict(size=6),
+                textfont=dict(size=8),
                 name="Lungs Only",
                 hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
                   )
