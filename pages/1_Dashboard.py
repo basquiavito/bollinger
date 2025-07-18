@@ -1182,8 +1182,93 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = define_oxygen_quality(intraday)
 
+                def calculate_osmotic_pressure(df, f_col="F_numeric", rvol_col="RVOL_5", std_col="STD_5", output_col="OsmoticPressure"):
+                    """
+                    Calculates osmotic pressure based on volume and volatility per IB third width in F%.
+                
+                    Parameters:
+                        df (pd.DataFrame): DataFrame with intraday data.
+                        f_col (str): Column name containing F% values.
+                        rvol_col (str): Column for 5-bar relative volume.
+                        std_col (str): Column for standard deviation (in F% units).
+                        output_col (str): Name of new column to store osmotic pressure.
+                
+                    Returns:
+                        pd.DataFrame: Modified DataFrame with new osmotic pressure column.
+                    """
+                    df[output_col] = np.nan
+                
+                    # Calculate IB high and low in F%
+                    ib_f_low = df[f_col].iloc[:12].min()   # First hour = 12 x 5min bars
+                    ib_f_high = df[f_col].iloc[:12].max()
+                    ib_third_width = (ib_f_high - ib_f_low) / 3
+                
+                    # Avoid division by zero
+                    if ib_third_width == 0:
+                        return df
+                
+                    # Osmotic Pressure formula
+                    df[output_col] = (df[rvol_col] / ib_third_width) * df[std_col]
+                    return df
+
+                intraday = calculate_osmotic_pressure(intraday)
+
+                
+                
+                def compute_osmotic_pressure_by_floor(df, f_col="F_numeric", rvol_col="RVOL_5", std_col="STD_5"):
+                    """
+                    Adds columns for:
+                    - IB third width
+                    - IB floor assignment (L/M/U)
+                    - Osmotic Pressure (OP) per bar
+                    - Optional: mean OP per floor
+                    
+                    Parameters:
+                        df (pd.DataFrame): Intraday DataFrame with at least F_numeric, RVOL_5, STD_5
+                        
+                    Returns:
+                        pd.DataFrame with new columns:
+                            - 'IB Floor': L / M / U
+                            - 'OsmoticPressure': per-bar OP
+                    """
+                
+                    # Ensure we have at least 12 bars for IB
+                    if len(df) < 12:
+                        df["IB Floor"] = np.nan
+                        df["OsmoticPressure"] = np.nan
+                        return df
+                
+                    # Step 1: Compute IB range and thirds
+                    ib_low = df[f_col].iloc[:12].min()
+                    ib_high = df[f_col].iloc[:12].max()
+                    ib_third_width = (ib_high - ib_low) / 3
+                
+                    if ib_third_width == 0:
+                        df["IB Floor"] = np.nan
+                        df["OsmoticPressure"] = np.nan
+                        return df
+                
+                    # Step 2: Assign IB floor
+                    def assign_floor(f):
+                        if f < ib_low + ib_third_width:
+                            return "L"
+                        elif f < ib_low + 2 * ib_third_width:
+                            return "M"
+                        else:
+                            return "U"
+                
+                    df["IB Floor"] = df[f_col].apply(assign_floor)
+                
+                    # Step 3: Calculate Osmotic Pressure per bar
+                    df["OsmoticPressure"] = (df[rvol_col] / ib_third_width) * df[std_col]
+                
+                    return df
+                
+                intraday = compute_osmotic_pressure_by_floor(intraday)
 
 
+
+              
                 def detect_marengo(df):
                     """
                     Detects North Marengo:
@@ -3915,7 +4000,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Range","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","OsmoticPressure","Range","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
