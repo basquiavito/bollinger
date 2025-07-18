@@ -1148,7 +1148,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                 intraday["O2 Quality"] = ""
-                def define_oxygen_quality(df, range_column="Range", output_column="O2 Quality", window=20):
+                def define_oxygen_quality(df, range_column="Range", output_column="O2 Quality", window=5):
                   """
                   Assigns oxygen quality based on how each bar's range compares to its rolling average.
                   
