@@ -4745,6 +4745,25 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(scatter_compliance_surge, row=1, col=1)
 
 
+                    # (G) Distensibility Alert on Main Plot
+                    
+                    # Mask bars that triggered the 🪟 emoji
+                    mask_distensibility = intraday["Distensibility Alert"] != ""
+                    
+                    # Plot emoji above price (or F_numeric)
+                    scatter_distensibility = go.Scatter(
+                        x=intraday.loc[mask_distensibility, "Time"],
+                        y=intraday.loc[mask_distensibility, "F_numeric"] + 8,  # Slight offset upward
+                        mode="text",
+                        text=intraday.loc[mask_distensibility, "Distensibility Alert"],
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="Distensibility 🪟",
+                        hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_distensibility, "Distensibility"]
+                    )
+                    
+                    fig.add_trace(scatter_distensibility, row=1, col=1)
 
 
 
