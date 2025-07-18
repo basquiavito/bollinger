@@ -1182,39 +1182,8 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = define_oxygen_quality(intraday)
 
-                def calculate_osmotic_pressure(df, f_col="F_numeric", rvol_col="RVOL_5", std_col="STD_5", output_col="OsmoticPressure"):
-                    """
-                    Calculates osmotic pressure based on volume and volatility per IB third width in F%.
+             
                 
-                    Parameters:
-                        df (pd.DataFrame): DataFrame with intraday data.
-                        f_col (str): Column name containing F% values.
-                        rvol_col (str): Column for 5-bar relative volume.
-                        std_col (str): Column for standard deviation (in F% units).
-                        output_col (str): Name of new column to store osmotic pressure.
-                
-                    Returns:
-                        pd.DataFrame: Modified DataFrame with new osmotic pressure column.
-                    """
-                    df[output_col] = np.nan
-                
-                    # Calculate IB high and low in F%
-                    ib_f_low = df[f_col].iloc[:12].min()   # First hour = 12 x 5min bars
-                    ib_f_high = df[f_col].iloc[:12].max()
-                    ib_third_width = (ib_f_high - ib_f_low) / 3
-                
-                    # Avoid division by zero
-                    if ib_third_width == 0:
-                        return df
-                
-                    # Osmotic Pressure formula
-                    df[output_col] = (df[rvol_col] / ib_third_width) * df[std_col]
-                    return df
-
-                intraday = calculate_osmotic_pressure(intraday)
-
-                
-                     
                 def compute_osmotic_pressure_by_floor(df, f_col="F_numeric", rvol_col="RVOL_5", std_col="F% STD Expansion"):
                     """
                     Adds columns for:
@@ -1262,8 +1231,11 @@ if st.sidebar.button("Run Analysis"):
                 
                     return df
 
-                intraday = compute_osmotic_pressure_by_floor(intraday)
 
+                intraday = calculate_osmotic_pressure(intraday)
+
+                
+                     
 
 
               
