@@ -1113,7 +1113,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_stroke_metrics_continuous(intraday, lookahead=10)
 
               
-               def mark_star_growth(df, lookahead=10, threshold=10):
+                def mark_star_growth(df, lookahead=10, threshold=10):
                   df["Stroke Growth ⭐"] = ""
               
                   for i in range(len(df)):
