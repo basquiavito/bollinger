@@ -1056,27 +1056,27 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
                 def calculate_stroke_metrics(df, lookahead=10):
                     df["Stroke Volume"] = np.nan
                     df["Stroke Efficiency"] = np.nan
                 
                     for i in range(len(df)):
                         if df["Compliance Shift"].iloc[i] == "🫧":
-                            f_shift = df["F%"].iloc[i]
-                            compliance = df["Compliance"].iloc[i]
+                            f_shift = pd.to_numeric(df["F%"].iloc[i], errors="coerce")
+                            compliance = pd.to_numeric(df["Compliance"].iloc[i], errors="coerce")
                             
-                            # Define lookahead window for peak detection
                             end = min(i + lookahead, len(df))
-                            f_peak = df["F%"].iloc[i:end].max()
-                
-                            stroke_volume = f_peak - f_shift
-                            stroke_efficiency = stroke_volume / compliance if compliance != 0 else np.nan
-                
-                            df.at[df.index[i], "Stroke Volume"] = stroke_volume
-                            df.at[df.index[i], "Stroke Efficiency"] = stroke_efficiency
+                            f_peak = pd.to_numeric(df["F%"].iloc[i:end].max(), errors="coerce")
+                            
+                            if pd.notnull(f_shift) and pd.notnull(f_peak):
+                                stroke_volume = f_peak - f_shift
+                                stroke_efficiency = stroke_volume / compliance if compliance != 0 else np.nan
+                                
+                                df.at[df.index[i], "Stroke Volume"] = stroke_volume
+                                df.at[df.index[i], "Stroke Efficiency"] = stroke_efficiency
                 
                     return df
+
                 intraday =  calculate_stroke_metrics(intraday)
 
                 def detect_marengo(df):
