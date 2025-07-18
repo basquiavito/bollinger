@@ -1113,36 +1113,33 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_stroke_metrics_continuous(intraday, lookahead=10)
 
               
-                def mark_star_growth(df, threshold=10):
-                    df["Stroke Growth ⭐"] = ""
-                    i = 0
-                    while i < len(df):
-                        if df["Compliance Shift"].iloc[i] == "🫧":
-                            retrace_count = 0
-                            last_sv = df["Stroke Volume"].iloc[i]
-                            j = i + 1
-                            while j < len(df):
-                                # Detect retrace in F%
-                                if df["F%"].iloc[j] < df["F%"].iloc[j - 1]:
-                                    retrace_count += 1
-                                else:
-                                    retrace_count = 0
-                
-                                # Add ⭐ if stroke volume increases by more than threshold
-                                current_sv = df["Stroke Volume"].iloc[j]
-                                if pd.notnull(current_sv) and pd.notnull(last_sv):
-                                    if current_sv - last_sv > threshold:
-                                        df.at[df.index[j], "Stroke Growth ⭐"] = "⭐"
-                                        last_sv = current_sv  # update for next comparison
-                
-                                if retrace_count >= 2:
-                                    break
-                
-                                j += 1
-                            i = j
-                        else:
-                            i += 1
-                    return df
+               def mark_star_growth(df, lookahead=10, threshold=10):
+                  df["Stroke Growth ⭐"] = ""
+              
+                  for i in range(len(df)):
+                      if df["Compliance Shift"].iloc[i] == "🫧":
+                          f_shift = pd.to_numeric(df["F%"].iloc[i], errors="coerce")
+                          if pd.isnull(f_shift): continue
+              
+                          star_count = 0
+                          last_star = 0
+              
+                          for j in range(i+1, min(i + lookahead, len(df))):
+                              f_now = pd.to_numeric(df["F%"].iloc[j], errors="coerce")
+                              if pd.isnull(f_now): break
+              
+                              delta = f_now - f_shift
+                              if delta >= (last_star + threshold):
+                                  star_count += 1
+                                  last_star += threshold
+                                  df.at[df.index[j], "Stroke Growth ⭐"] = "⭐" * star_count
+              
+                              # Optional: stop if Stroke Volume collapses (e.g., 2 red bars)
+                              if j >= i+2 and df["F%"].iloc[j] < df["F%"].iloc[j-1] < df["F%"].iloc[j-2]:
+                                  break
+              
+                  return df
+
                 intraday = mark_star_growth(intraday)
 
 
