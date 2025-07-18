@@ -1054,30 +1054,42 @@ if st.sidebar.button("Run Analysis"):
                   return df
                 intraday = detect_compliance_expansion(intraday)
 
-
-
+                
                 def calculate_stroke_metrics(df, lookahead=10):
-                    df["Stroke Volume"] = np.nan
+                    # Ensure we’re working with real numbers
+                    df["F_numeric"]   = pd.to_numeric(df["F_numeric"],   errors="coerce")
+                    df["Compliance"]  = pd.to_numeric(df["Compliance"],  errors="coerce")
+                    df["Stroke Volume"]     = np.nan
                     df["Stroke Efficiency"] = np.nan
                 
-                    for i in range(len(df)):
-                        if df["Compliance Shift"].iloc[i] == "🫧":
-                            f_shift = pd.to_numeric(df["F%"].iloc[i], errors="coerce")
-                            compliance = pd.to_numeric(df["Compliance"].iloc[i], errors="coerce")
-                            
-                            end = min(i + lookahead, len(df))
-                            f_peak = pd.to_numeric(df["F%"].iloc[i:end].max(), errors="coerce")
-                            
-                            if pd.notnull(f_shift) and pd.notnull(f_peak):
-                                stroke_volume = f_peak - f_shift
-                                stroke_efficiency = stroke_volume / compliance if compliance != 0 else np.nan
-                                
-                                df.at[df.index[i], "Stroke Volume"] = stroke_volume
-                                df.at[df.index[i], "Stroke Efficiency"] = stroke_efficiency
+                    # Find every row where you marked a 🫧 shift
+                    shift_locs = df.index[df["Compliance Shift"] == "🫧"]
+                
+                    for ts in shift_locs:
+                        i = df.index.get_loc(ts)
+                        f_shift = df.at[ts, "F_numeric"]
+                        comp    = df.at[ts, "Compliance"]
+                
+                        # Skip if either is missing
+                        if pd.isna(f_shift) or pd.isna(comp) or comp == 0:
+                            continue
+                
+                        # Look ahead for the peak F_numeric
+                        end_i = min(i + lookahead, len(df) - 1)
+                        f_peak = df["F_numeric"].iloc[i : end_i + 1].max()
+                
+                        # Compute
+                        sv = f_peak - f_shift
+                        se = sv / comp
+                
+                        df.at[ts, "Stroke Volume"]     = sv
+                        df.at[ts, "Stroke Efficiency"] = se
                 
                     return df
+                
+                # Apply it
+                intraday = calculate_stroke_metrics(intraday)
 
-                intraday =  calculate_stroke_metrics(intraday)
 
                 def detect_marengo(df):
                     """
