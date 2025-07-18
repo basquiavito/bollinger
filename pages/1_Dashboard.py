@@ -1111,6 +1111,37 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply to your intraday DataFrame:
                 intraday = calculate_stroke_metrics_continuous(intraday, lookahead=10)
+                def mark_star_growth(df, threshold=10):
+                    df["Stroke Growth ⭐"] = ""
+                    i = 0
+                    while i < len(df):
+                        if df["Compliance Shift"].iloc[i] == "🫧":
+                            retrace_count = 0
+                            last_sv = df["Stroke Volume"].iloc[i]
+                            j = i + 1
+                            while j < len(df):
+                                # Detect retrace in F%
+                                if df["F%"].iloc[j] < df["F%"].iloc[j - 1]:
+                                    retrace_count += 1
+                                else:
+                                    retrace_count = 0
+                
+                                # Add ⭐ if stroke volume increases by more than threshold
+                                current_sv = df["Stroke Volume"].iloc[j]
+                                if pd.notnull(current_sv) and pd.notnull(last_sv):
+                                    if current_sv - last_sv > threshold:
+                                        df.at[df.index[j], "Stroke Growth ⭐"] = "⭐"
+                                        last_sv = current_sv  # update for next comparison
+                
+                                if retrace_count >= 2:
+                                    break
+                
+                                j += 1
+                            i = j
+                        else:
+                            i += 1
+                    return df
+                    intraday = mark_star_growth(intraday, lookahead=10)
 
 
 
@@ -3845,7 +3876,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
