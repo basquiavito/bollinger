@@ -980,14 +980,19 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_distensibility(intraday)
 
 
-                # Initialize the column
+                # Initialize column
                 intraday["Distensibility Alert"] = ""
                 
-                # Get top 3 bars by Distensibility (non-NaN)
-                top_distensible = intraday["Distensibility"].nlargest(3)
+                # Skip first 6 bars and apply threshold
+                distensible_subset = intraday.iloc[6:].copy()
+                valid = distensible_subset[distensible_subset["Distensibility"] > 0.05]
                 
-                # Mark those bars with an emoji
+                # Get top 3 high-distensibility bars (if any)
+                top_distensible = valid["Distensibility"].nlargest(3)
+                
+                # Mark them with the window emoji
                 intraday.loc[top_distensible.index, "Distensibility Alert"] = "🪟"
+
 
               
                 def calculate_compliance(df):
