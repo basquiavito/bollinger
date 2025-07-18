@@ -5583,19 +5583,22 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
             
+                # Filter only rows where oxygen quality is rich
+                lungs_only = intraday[intraday["O2 Quality"] == "🫁"]
 
 
-                scatter_oxygen = go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["F_numeric"] + 80,
-                    mode="text",
-                    text=intraday["O2 Quality"],
-                    textposition="top center",
-                    textfont=dict(size=13),
-                    name="Oxygen Quality",
-                    hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
-                )
-                fig.add_trace(scatter_oxygen, row=1, col=1)
+                scatter_lungs = go.Scatter(
+                x=lungs_only["Time"],
+                y=lungs_only["F_numeric"] + 80,
+                mode="text",
+                text=lungs_only["O2 Quality"],  # Will just be 🫁
+                textposition="top center",
+                textfont=dict(size=13),
+                name="Lungs Only",
+                hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
+                  )
+
+                fig.add_trace(scatter_lungs, row=1, col=1)
 
              
 
