@@ -4509,7 +4509,7 @@ if st.sidebar.button("Run Analysis"):
                     # )
                     
                     # === Now Add to Plot ===
-                    fig.add_trace(main_dot, row=1, col=1)
+                    # fig.add_trace(main_dot, row=1, col=1)
                     # fig.add_trace(ghost_dot, row=1, col=1)
                     #**************************************************************************************************************************************************************************
 
