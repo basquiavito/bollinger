@@ -5593,7 +5593,7 @@ if st.sidebar.button("Run Analysis"):
                 mode="text",
                 text=lungs_only["O2 Quality"],  # Will just be 🫁
                 textposition="middle center",
-                textfont=dict(size=3),
+                textfont=dict(size=6),
                 name="Lungs Only",
                 hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
                   )
