@@ -4480,19 +4480,19 @@ if st.sidebar.button("Run Analysis"):
                     # )
                     # fig.add_trace(colored_dots, row=1, col=1)
                                         
-                                # === Define Dots ===
-                    main_dot = go.Scatter(
-                        x=top_dots["Time"],
-                        y=top_dots["F_numeric"],
-                        mode="markers",
-                        marker=dict(
-                            color=top_dots["DotColor"],
-                            size=8,
-                            symbol="circle"
-                        ),
-                        name="15-min Top Dot",
-                        hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
-                    )
+                    #             # === Define Dots ===
+                    # main_dot = go.Scatter(
+                    #     x=top_dots["Time"],
+                    #     y=top_dots["F_numeric"],
+                    #     mode="markers",
+                    #     marker=dict(
+                    #         color=top_dots["DotColor"],
+                    #         size=8,
+                    #         symbol="circle"
+                    #     ),
+                    #     name="15-min Top Dot",
+                    #     hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
+                    # )
                     
                     # ghost_dot = go.Scatter(
                     #     x=top_dots["Time_HighMoment"],
@@ -4846,7 +4846,7 @@ if st.sidebar.button("Run Analysis"):
                     # Plot emoji above price (or F_numeric)
                     scatter_distensibility = go.Scatter(
                         x=intraday.loc[mask_distensibility, "Time"],
-                        y=intraday.loc[mask_distensibility, "F_numeric"] + 40,  # Slight offset upward
+                        y=intraday.loc[mask_distensibility, "F_numeric"] + 70,  # Slight offset upward
                         mode="text",
                         text=intraday.loc[mask_distensibility, "Distensibility Alert"],
                         textposition="top center",
