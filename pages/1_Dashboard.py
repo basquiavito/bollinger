@@ -1173,7 +1173,7 @@ if st.sidebar.button("Run Analysis"):
               
                       if bar_range < 0.5 * avg_range:
                           df.loc[i, output_column] = "😮‍💨"  # low oxygen
-                      elif bar_range > 1.5 * avg_range:
+                      elif bar_range > 1.1 * avg_range:
                           df.loc[i, output_column] = "🫁"    # rich oxygen
                       else:
                           df.loc[i, output_column] = "😐"    # normal oxygen
