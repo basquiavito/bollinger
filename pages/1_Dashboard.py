@@ -1147,6 +1147,21 @@ if st.sidebar.button("Run Analysis"):
                 intraday = mark_star_growth(intraday)
 
 
+                intraday["O2 Quality"] = ""
+  
+                def mark_oxygen_quality(df, min_oxygen=1.5, high_oxygen=3.0):
+                    for i in df.index:
+                        rng = df.at[i, "Range"]
+                        if rng < min_oxygen:
+                            df.at[i, "O2 Quality"] = "😮‍💨 low"
+                        elif rng > high_oxygen:
+                            df.at[i, "O2 Quality"] = "🫁 rich"
+                        else:
+                            df.at[i, "O2 Quality"] = "😐 normal"
+                    return df
+                intraday =  mark_oxygen_quality(intraday)
+
+
 
                 def detect_marengo(df):
                     """
@@ -3879,7 +3894,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
@@ -4843,7 +4858,7 @@ if st.sidebar.button("Run Analysis"):
                     # Mask bars that triggered the 🪟 emoji
                     mask_distensibility = intraday["Distensibility Alert"] != ""
                     
-                    # Plot emoji above price (or F_numeric)
+                    # Plot emoji above price (or F_numeric)but rangebut range
                     scatter_distensibility = go.Scatter(
                         x=intraday.loc[mask_distensibility, "Time"],
                         y=intraday.loc[mask_distensibility, "F_numeric"] + 70,  # Slight offset upward
