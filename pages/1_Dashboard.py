@@ -1057,27 +1057,27 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # def calculate_stroke_metrics(df, lookahead=10):
-                #     df["Stroke Volume"] = np.nan
-                #     df["Stroke Efficiency"] = np.nan
+                def calculate_stroke_metrics(df, lookahead=10):
+                    df["Stroke Volume"] = np.nan
+                    df["Stroke Efficiency"] = np.nan
                 
-                #     for i in range(len(df)):
-                #         if df["Compliance Shift"].iloc[i] == "🫧":
-                #             f_shift = df["F%"].iloc[i]
-                #             compliance = df["Compliance"].iloc[i]
+                    for i in range(len(df)):
+                        if df["Compliance Shift"].iloc[i] == "🫧":
+                            f_shift = df["F%"].iloc[i]
+                            compliance = df["Compliance"].iloc[i]
                             
-                #             # Define lookahead window for peak detection
-                #             end = min(i + lookahead, len(df))
-                #             f_peak = df["F%"].iloc[i:end].max()
+                            # Define lookahead window for peak detection
+                            end = min(i + lookahead, len(df))
+                            f_peak = df["F%"].iloc[i:end].max()
                 
-                #             stroke_volume = f_peak - f_shift
-                #             stroke_efficiency = stroke_volume / compliance if compliance != 0 else np.nan
+                            stroke_volume = f_peak - f_shift
+                            stroke_efficiency = stroke_volume / compliance if compliance != 0 else np.nan
                 
-                #             df.at[df.index[i], "Stroke Volume"] = stroke_volume
-                #             df.at[df.index[i], "Stroke Efficiency"] = stroke_efficiency
+                            df.at[df.index[i], "Stroke Volume"] = stroke_volume
+                            df.at[df.index[i], "Stroke Efficiency"] = stroke_efficiency
                 
-                #     return df
-                # intraday =  calculate_stroke_metrics(intraday)
+                    return df
+                intraday =  calculate_stroke_metrics(intraday)
 
                 def detect_marengo(df):
                     """
@@ -3810,7 +3810,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Efficiency",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
