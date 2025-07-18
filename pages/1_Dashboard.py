@@ -5585,6 +5585,17 @@ if st.sidebar.button("Run Analysis"):
             
 
 
+                scatter_oxygen = go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["F_numeric"] - 34,
+                    mode="text",
+                    text=intraday["O2 Quality"],
+                    textposition="top center",
+                    textfont=dict(size=13),
+                    name="Oxygen Quality",
+                    hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
+                )
+                fig.add_trace(scatter_oxygen, row=1, col=1)
 
              
 
