@@ -1215,7 +1215,7 @@ if st.sidebar.button("Run Analysis"):
 
                 
                 
-                def compute_osmotic_pressure_by_floor(df, f_col="F_numeric", rvol_col="RVOL_5", std_col="STD_5"):
+                def compute_osmotic_pressure_by_floor(df, f_col="F_numeric", rvol_col="RVOL_5", std_col="F% STD Expansion"):
                     """
                     Adds columns for:
                     - IB third width
@@ -1224,7 +1224,7 @@ if st.sidebar.button("Run Analysis"):
                     - Optional: mean OP per floor
                     
                     Parameters:
-                        df (pd.DataFrame): Intraday DataFrame with at least F_numeric, RVOL_5, STD_5
+                        df (pd.DataFrame): Intraday DataFrame with at least F_numeric, RVOL_5, F% STD Expansion
                         
                     Returns:
                         pd.DataFrame with new columns:
