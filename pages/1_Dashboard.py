@@ -5587,7 +5587,7 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_oxygen = go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["F_numeric"] - 34,
+                    y=intraday["F_numeric"] + 80,
                     mode="text",
                     text=intraday["O2 Quality"],
                     textposition="top center",
