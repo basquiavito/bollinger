@@ -4312,15 +4312,15 @@ if st.sidebar.button("Run Analysis"):
                               if curr >= 2 * prev:
                                   intraday.at[intraday.index[i], "Bear_Displacement_Double"] = "💀"
 
-                    intraday["Bull_Displacement_Double"] = ""
-
-                    for i in range(1, len(intraday)):
-                        prev = intraday["Bull_Displacement"].iloc[i - 1]
-                        curr = intraday["Bull_Displacement"].iloc[i]
-                        
-                        if pd.notna(prev) and prev > 0 and pd.notna(curr):
-                            if curr >= 2 * prev:
-                                intraday.at[intraday.index[i], "Bull_Displacement_Double"] = "👑"
+                      intraday["Bull_Displacement_Double"] = ""
+  
+                      for i in range(1, len(intraday)):
+                          prev = intraday["Bull_Displacement"].iloc[i - 1]
+                          curr = intraday["Bull_Displacement"].iloc[i]
+                          
+                          if pd.notna(prev) and prev > 0 and pd.notna(curr):
+                              if curr >= 2 * prev:
+                                  intraday.at[intraday.index[i], "Bull_Displacement_Double"] = "👑"
 
                       # Add emojis
                       def add_mike_midas_cross_emojis(df, price_col):
