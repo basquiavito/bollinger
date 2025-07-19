@@ -4198,7 +4198,38 @@ if st.sidebar.button("Run Analysis"):
                   
                   top_dots["DotColor"] = top_dots.apply(assign_dot_color, axis=1)
                   
-                   
+               
+                    
+                  def mark_ib_ninja_cross(df):
+                      """
+                      Assigns 🥷🏽 emoji each time F_numeric crosses IB_High or IB_Low from inside the IB zone.
+                      Re-triggers if price returns to the IB zone and exits again.
+                      """
+                      emoji_flags = ["" for _ in range(len(df))]
+                      was_inside_ib = True  # Start pre-market assumed inside
+                  
+                      for i in range(1, len(df)):
+                          curr_f = df["F_numeric"].iloc[i]
+                          ib_high = df["IB_High"].iloc[i]
+                          ib_low = df["IB_Low"].iloc[i]
+                  
+                          inside_ib = ib_low <= curr_f <= ib_high
+                  
+                          # If just transitioned from inside to outside → assign 🥷🏽
+                          if was_inside_ib and not inside_ib:
+                              emoji_flags[i] = "🥷🏽"
+                  
+                          was_inside_ib = inside_ib  # update state
+                  
+                      df["IB_Ninja_Cross"] = emoji_flags
+                      return df
+                intraday = mark_ib_ninja_cross(intraday)
+
+
+
+                  
+                  
+
 
                   # Show DataFrame
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
@@ -4236,37 +4267,6 @@ if st.sidebar.button("Run Analysis"):
                           intraday.at[intraday.index[i], "🪘"] = "🪘"
                           intraday.at[intraday.index[i], "Drum_Y"] = now["F_numeric"] - 16
                           above = False
-
-                        
-                      def mark_ib_ninja_cross(df):
-                          """
-                          Assigns 🥷🏽 emoji each time F_numeric crosses IB_High or IB_Low from inside the IB zone.
-                          Re-triggers if price returns to the IB zone and exits again.
-                          """
-                          emoji_flags = ["" for _ in range(len(df))]
-                          was_inside_ib = True  # Start pre-market assumed inside
-                      
-                          for i in range(1, len(df)):
-                              curr_f = df["F_numeric"].iloc[i]
-                              ib_high = df["IB_High"].iloc[i]
-                              ib_low = df["IB_Low"].iloc[i]
-                      
-                              inside_ib = ib_low <= curr_f <= ib_high
-                      
-                              # If just transitioned from inside to outside → assign 🥷🏽
-                              if was_inside_ib and not inside_ib:
-                                  emoji_flags[i] = "🥷🏽"
-                      
-                              was_inside_ib = inside_ib  # update state
-                      
-                          df["IB_Ninja_Cross"] = emoji_flags
-                          return df
-                    intraday = mark_ib_ninja_cross(intraday)
-
-
-
-                  
-                  
 
                   with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
