@@ -6583,10 +6583,10 @@ if st.sidebar.button("Run Analysis"):
                 bear_double_points = intraday[intraday["Bear_Displacement_Double"] == "💀"]
                 fig.add_trace(go.Scatter(
                     x=bear_double_points["Time"],
-                    y=bear_double_points[price_col] - 30,  # Lower than 🎻 to avoid overlap
+                    y=bear_double_points[price_col] - 12,  # Lower than 🎻 to avoid overlap
                     text=bear_double_points["Bear_Displacement_Double"],
                     mode="text",
-                    textfont=dict(size=34),
+                    textfont=dict(size=12),
                     textposition="bottom center",
                     showlegend=False
                 ))
