@@ -4297,6 +4297,7 @@ if st.sidebar.button("Run Analysis"):
                   
                       intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
                       intraday["Bear_Displacement"] = intraday["MIDAS_Bear"] - intraday["F_numeric"]
+                      intraday["Bull_Displacement"] = intraday["Mike"] - intraday["MIDAS_Bull"]
 
                       # Add emojis
                       def add_mike_midas_cross_emojis(df, price_col):
@@ -4419,7 +4420,7 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(
                         intraday[[
                             'Time', price_col, 'Volume',
-                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement",
+                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement",
                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',
                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
                         ]]
