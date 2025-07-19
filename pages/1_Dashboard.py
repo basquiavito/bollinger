@@ -4299,7 +4299,18 @@ if st.sidebar.button("Run Analysis"):
                       intraday["Bear_Displacement"] = intraday["MIDAS_Bear"] - intraday["F_numeric"]
                       intraday["Bull_Displacement"] = intraday["F_numeric"] - intraday["MIDAS_Bull"]
 
+                      intraday["Bear_Displacement_Change"] = intraday["Bear_Displacement"].diff()
+                      intraday["Bull_Displacement_Change"] = intraday["Bull_Displacement"].diff()
 
+                      intraday["Hold_Put"] = (
+                          (intraday["Bear_Displacement_Change"] > 0) |
+                          (intraday["Bear_Displacement"].rolling(3).min() > 20)  # stays deep
+                      )
+                      
+                      intraday["Hold_Call"] = (
+                          (intraday["Bull_Displacement_Change"] > 0) |
+                          (intraday["Bull_Displacement"].rolling(3).min() > 20)
+                      )
 
 
                       intraday["Bear_Displacement_Double"] = ""
@@ -4443,8 +4454,8 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(
                         intraday[[
                             'Time', price_col, 'Volume',
-                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement","Bear_Displacement_Double",
-                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',
+                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put"
                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
                         ]]
                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
