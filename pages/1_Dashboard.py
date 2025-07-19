@@ -6608,7 +6608,7 @@ if st.sidebar.button("Run Analysis"):
                     y=bull_double_points[price_col] + 12,  # Lower than 💀 and 🎻 to avoid clutter
                     text=bull_double_points["Bull_Displacement_Double"],
                     mode="text",
-                    textfont=dict(size=18),
+                    textfont=dict(size=10),
                     textposition="bottom center",
                     showlegend=False
                 ))
