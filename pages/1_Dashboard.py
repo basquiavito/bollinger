@@ -4261,7 +4261,7 @@ if st.sidebar.button("Run Analysis"):
                       
                           df["IB_Ninja_Cross"] = emoji_flags
                           return df
-                      intraday = mark_ib_ninja_cross(intraday)
+                    intraday = mark_ib_ninja_cross(intraday)
 
 
 
