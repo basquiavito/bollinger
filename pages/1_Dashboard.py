@@ -4299,6 +4299,19 @@ if st.sidebar.button("Run Analysis"):
                       intraday["Bear_Displacement"] = intraday["MIDAS_Bear"] - intraday["F_numeric"]
                       intraday["Bull_Displacement"] = intraday["F_numeric"] - intraday["MIDAS_Bull"]
 
+
+
+
+                    intraday["Bear_Displacement_Double"] = ""
+                    
+                    for i in range(1, len(intraday)):
+                        prev = intraday["Bear_Displacement"].iloc[i - 1]
+                        curr = intraday["Bear_Displacement"].iloc[i]
+                        
+                        if pd.notna(prev) and prev > 0 and pd.notna(curr):
+                            if curr >= 2 * prev:
+                                intraday.at[intraday.index[i], "Bear_Displacement_Double"] = "💀"
+
                       # Add emojis
                       def add_mike_midas_cross_emojis(df, price_col):
                           if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
@@ -4420,7 +4433,7 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(
                         intraday[[
                             'Time', price_col, 'Volume',
-                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement",
+                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement","Bear_Displacement_Double",
                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',
                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
                         ]]
