@@ -4790,8 +4790,7 @@ if st.sidebar.button("Run Analysis"):
                         yaxis=dict(
                             title="Price",
                             side="left",
-                            titlefont=dict(color="white"),
-                         ),
+                          ),
                         yaxis2=dict(
                             title="Bear Δ",
                             overlaying="y",
