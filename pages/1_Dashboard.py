@@ -6586,7 +6586,7 @@ if st.sidebar.button("Run Analysis"):
                     y=bear_double_points[price_col] - 12,  # Lower than 🎻 to avoid overlap
                     text=bear_double_points["Bear_Displacement_Double"],
                     mode="text",
-                    textfont=dict(size=12),
+                    textfont=dict(size=18),
                     textposition="bottom center",
                     showlegend=False
                 ))
