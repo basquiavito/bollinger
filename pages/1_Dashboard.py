@@ -4584,7 +4584,7 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Bull_Displacement_Change"] = intraday["Bull_Displacement"].diff()
                     intraday["Bull_Displacement_Change_Smooth"] = intraday["Bull_Displacement_Change"].rolling(3).mean()
 
-                    window = 10
+                    window = 7
                     intraday["BDC_Mean"] = intraday["Bear_Displacement_Change"].rolling(window).mean()
                     intraday["BDC_STD"] = intraday["Bear_Displacement_Change"].rolling(window).std()
                     
@@ -4714,7 +4714,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["BDC_Upper"],
                         mode="lines",
                         name="Bear Δ Upper Band",
-                        line=dict(color="orangered", width=1, dash="dash"),
+                        line=dict(color="gray", width=1, dash="dash"),
                         yaxis="y2",
                         showlegend=True
                     ))
@@ -4724,7 +4724,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday["BDC_Lower"],
                         mode="lines",
                         name="Bear Δ Lower Band",
-                        line=dict(color="orangered", width=1, dash="dash"),
+                        line=dict(color="gray", width=1, dash="dash"),
                         yaxis="y2",
                         showlegend=True
                     ))
