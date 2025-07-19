@@ -6266,23 +6266,23 @@ if st.sidebar.button("Run Analysis"):
                     (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
                 )
                 
-                # Create a new column with the emoji (optional but clean)
-                intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
+                # # Create a new column with the emoji (optional but clean)
+                # intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
                 
-                # Scatter plot for 🫆 (slightly above F_numeric)
-                scatter_tenkan_cross_up = go.Scatter(
-                    x=intraday.loc[mask_tenkan_cross_up, "Time"],
-                    y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
-                    mode="text",
-                    text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
-                    textposition="top right",
-                    textfont=dict(size=24, color="orange"),
-                    name="Tenkan Cross MIDAS Bull (🧲)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
-                )
+                # # Scatter plot for 🫆 (slightly above F_numeric)
+                # scatter_tenkan_cross_up = go.Scatter(
+                #     x=intraday.loc[mask_tenkan_cross_up, "Time"],
+                #     y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
+                #     mode="text",
+                #     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
+                #     textposition="top right",
+                #     textfont=dict(size=24, color="orange"),
+                #     name="Tenkan Cross MIDAS Bull (🧲)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
+                # )
                 
-                # Add to figure
-                fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
+                # # Add to figure
+                # fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
 
 
  
