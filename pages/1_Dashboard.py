@@ -4660,7 +4660,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     # === FULL LAYOUT ===
                     fig_midas.update_layout(
-                        height=1000,
+                        height=600,
                         plot_bgcolor="black",
                         paper_bgcolor="black",
                         font=dict(color="white"),
