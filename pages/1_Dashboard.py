@@ -4791,8 +4791,7 @@ if st.sidebar.button("Run Analysis"):
                             title="Price",
                             side="left",
                             titlefont=dict(color="white"),
-                            tickfont=dict(color="white")
-                        ),
+                         ),
                         yaxis2=dict(
                             title="Bear Δ",
                             overlaying="y",
@@ -4801,8 +4800,7 @@ if st.sidebar.button("Run Analysis"):
                             anchor="x",
                             showgrid=False,
                             titlefont=dict(color="orangered"),
-                            tickfont=dict(color="orangered")
-                        ),
+                         ),
                         yaxis3=dict(
                             title="Bull Δ",
                             overlaying="y",
@@ -4810,9 +4808,8 @@ if st.sidebar.button("Run Analysis"):
                             position=0.95,  # Slight shift left of y2
                             anchor="free",
                             showgrid=False,
-                            titlefont=dict(color="deepskyblue"),
-                            tickfont=dict(color="deepskyblue")
-                        )
+                            title=dict(color="deepskyblue"),
+                         )
                     )
                 
                     st.plotly_chart(fig_midas, use_container_width=True)
