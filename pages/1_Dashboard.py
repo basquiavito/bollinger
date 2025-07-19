@@ -4673,12 +4673,12 @@ if st.sidebar.button("Run Analysis"):
                         yaxis=dict(
                             title="Price",
                             side="left",
-                            domain=[0.25, 1]  # Top 75% for main plot
+                            domain=[0.4, 1]  # Top 75% for main plot
                         ),
                         yaxis2=dict(
                             title="Displacement Δ",
                             side="left",
-                            domain=[0, 0.2],  # Bottom 20% for displacement plot
+                            domain=[0, 0.35],  # Bottom 20% for displacement plot
                             showgrid=False
                         ),
                         legend=dict(
