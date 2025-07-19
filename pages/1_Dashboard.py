@@ -4691,14 +4691,14 @@ if st.sidebar.button("Run Analysis"):
                         margin=dict(t=60, b=40)
                     )
 
-                        fig_midas.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Bull_Displacement_Change_Smooth"],
-                        mode="lines",
-                        name="Bull Displacement Δ (Smooth)",
-                        line=dict(color="lightgreen", width=2, dash="dot"),
-                        yaxis="y2"
-                        ))
+                    fig_midas.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Bull_Displacement_Change_Smooth"],
+                    mode="lines",
+                    name="Bull Displacement Δ (Smooth)",
+                    line=dict(color="lightgreen", width=2, dash="dot"),
+                    yaxis="y2"
+                    ))
 
                     st.plotly_chart(fig_midas, use_container_width=True)
 
