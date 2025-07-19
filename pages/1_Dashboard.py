@@ -4547,6 +4547,24 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
               
+                    fig_midas.update_layout(
+                        height=450,
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        title="MIDAS Anchors vs Mike + Displacement Momentum",
+                        xaxis_title="Time",
+                        yaxis=dict(
+                            title="Price",
+                            side="left"
+                        ),
+                        yaxis2=dict(
+                            title="Displacement Δ",
+                            overlaying="y",     # Share the same x-axis
+                            side="right",
+                            showgrid=False
+                        )
+                    )
 
 
                     st.plotly_chart(fig_midas, use_container_width=True)
