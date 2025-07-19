@@ -3826,7 +3826,31 @@ if st.sidebar.button("Run Analysis"):
                     df["Mike_Kijun_ATR_Emoji"] = emoji_flags
                     return df
                 intraday = add_mike_kijun_atr_emoji(intraday)
-
+                
+                def mark_ib_ninja_cross(df):
+                    """
+                    Assigns 🥷🏽 emoji each time F_numeric crosses IB_High or IB_Low from inside the IB zone.
+                    Re-triggers if price returns to the IB zone and exits again.
+                    """
+                    emoji_flags = ["" for _ in range(len(df))]
+                    was_inside_ib = True  # Start pre-market assumed inside
+                
+                    for i in range(1, len(df)):
+                        curr_f = df["F_numeric"].iloc[i]
+                        ib_high = df["IB_High"].iloc[i]
+                        ib_low = df["IB_Low"].iloc[i]
+                
+                        inside_ib = ib_low <= curr_f <= ib_high
+                
+                        # If just transitioned from inside to outside → assign 🥷🏽
+                        if was_inside_ib and not inside_ib:
+                            emoji_flags[i] = "🥷🏽"
+                
+                        was_inside_ib = inside_ib  # update state
+                
+                    df["IB_Ninja_Cross"] = emoji_flags
+                    return df
+                intraday = mark_ib_ninja_cross(intraday)
 
 
               
@@ -6556,7 +6580,19 @@ if st.sidebar.button("Run Analysis"):
                     textposition="bottom center",
                     showlegend=True
                 ))
-
+                
+                ninja_df = intraday[intraday["IB_Ninja_Cross"] == "🥷🏽"]
+                
+                fig.add_trace(go.Scatter(
+                    x=ninja_df["TimeIndex"],
+                    y=ninja_df["F_numeric"] + 20,
+                    mode="text",
+                    text=ninja_df["IB_Ninja_Cross"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="IB Ninja Cross",
+                    showlegend=True
+                ))
 
  # 🟢   SPAN A & SPAN B
 
