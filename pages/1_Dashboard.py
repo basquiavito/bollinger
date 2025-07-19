@@ -4498,7 +4498,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["👋🏽"] * len(bull_hand_rows),
                         textposition="top right",
-                        textfont=dict(size=22),
+                        textfont=dict(size=13),
                         showlegend=False,
                         hovertemplate=(
                             "👋🏽 Bull MIDAS Breakout<br>"
@@ -4514,7 +4514,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["🧤"] * len(bear_glove_rows),
                         textposition="bottom right",
-                        textfont=dict(size=22),
+                        textfont=dict(size=13),
                         showlegend=False,
                         hovertemplate=(
                             "🧤 Bear MIDAS Breakdown<br>"
