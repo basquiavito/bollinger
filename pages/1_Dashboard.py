@@ -4473,7 +4473,50 @@ if st.sidebar.button("Run Analysis"):
                 #               st.plotly_chart(fig_ichimoku, use_container_width=True)
 
 
-           
+                           
+                def generate_kijun_range_extension_report(df):
+                    report = []
+                
+                    for i in range(3, len(df) - 3):
+                        # Detect Kijun cross
+                        crossed_up = df["F_numeric"].iloc[i-1] < df["Kijun_F"].iloc[i-1] and df["F_numeric"].iloc[i] >= df["Kijun_F"].iloc[i]
+                        crossed_down = df["F_numeric"].iloc[i-1] > df["Kijun_F"].iloc[i-1] and df["F_numeric"].iloc[i] <= df["Kijun_F"].iloc[i]
+                        
+                        if not (crossed_up or crossed_down):
+                            continue
+                        
+                        direction = "Up" if crossed_up else "Down"
+                        cross_time = df["TimeIndex"].iloc[i]
+                        
+                        # Check if range extension happened within ±3 bars
+                        sub = df.iloc[i-3:i+4]
+                        extension_up = (sub["F_numeric"] > sub["IB_High"]).any()
+                        extension_down = (sub["F_numeric"] < sub["IB_Low"]).any()
+                
+                        if extension_up or extension_down:
+                            range_direction = "Above IB High" if extension_up else "Below IB Low"
+                            result = {
+                                "Time": cross_time,
+                                "Kijun Cross": direction,
+                                "Range Extension": range_direction,
+                                "Mike": df["F_numeric"].iloc[i],
+                                "Kijun": df["Kijun_F"].iloc[i]
+                            }
+                            report.append(result)
+                
+                    return pd.DataFrame(report)
+                
+                df_report = generate_kijun_range_extension_report(intraday)
+                
+                with st.expander("📊 Range Extension + Kijun Cross Report"):
+                    if df_report.empty:
+                        st.write("No range extension + Kijun crosses found today.")
+                    else:
+                        st.dataframe(df_report, use_container_width=True)
+                
+
+
+
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
