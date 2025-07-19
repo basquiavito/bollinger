@@ -5260,20 +5260,20 @@ if st.sidebar.button("Run Analysis"):
                         if two_bar_hold.any():
                             ghost_idx = two_bar_hold[two_bar_hold].index[0]  # first valid bar
 
-                            # Plot 👻 emoji on the first bar
-                            fig.add_trace(
-                                go.Scatter(
-                                    x=[intraday.at[ghost_idx, "Time"]],
-                                    y=[intraday.at[ghost_idx, "F_numeric"] + 8],
-                                    mode="text",
-                                    text=["🔑"],
-                                    textposition="middle center",
-                                    textfont=dict(size=20, color="purple"),
-                                    name="Confirmed Buy TDST Breakout",
-                                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                                ),
-                                row=1, col=1
-                            )
+                            # # Plot 👻 emoji on the first bar
+                            # fig.add_trace(
+                            #     go.Scatter(
+                            #         x=[intraday.at[ghost_idx, "Time"]],
+                            #         y=[intraday.at[ghost_idx, "F_numeric"] + 8],
+                            #         mode="text",
+                            #         text=["🔑"],
+                            #         textposition="middle center",
+                            #         textfont=dict(size=20, color="purple"),
+                            #         name="Confirmed Buy TDST Breakout",
+                            #         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                            #     ),
+                            #     row=1, col=1
+                            # )
 
 
                     # Step 1: Get all Sell TDST points (each defines its own world)
@@ -5297,19 +5297,19 @@ if st.sidebar.button("Run Analysis"):
 
                         if confirmed.any():
                             ghost_idx = confirmed[confirmed].index[0]
-                            fig.add_trace(
-                                go.Scatter(
-                                    x=[intraday.at[ghost_idx, "Time"]],
-                                    y=[intraday.at[ghost_idx, "F_numeric"] - 8],
-                                    mode="text",
-                                    text=["👻"],
-                                    textposition="middle center",
-                                    textfont=dict(size=20, color="purple"),
-                                    name="Confirmed Sell TDST Breakdown",
-                                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                                ),
-                                row=1, col=1
-                            )
+                            # fig.add_trace(
+                            #     go.Scatter(
+                            #         x=[intraday.at[ghost_idx, "Time"]],
+                            #         y=[intraday.at[ghost_idx, "F_numeric"] - 8],
+                            #         mode="text",
+                            #         text=["👻"],
+                            #         textposition="middle center",
+                            #         textfont=dict(size=20, color="purple"),
+                            #         name="Confirmed Sell TDST Breakdown",
+                            #         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                            #     ),
+                            #     row=1, col=1
+                            # )
 
 
 
@@ -5617,22 +5617,22 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
             
-                # Filter only rows where oxygen quality is rich
-                lungs_only = intraday[intraday["O2 Quality"] == "🫁"]
+                # # Filter only rows where oxygen quality is rich
+                # lungs_only = intraday[intraday["O2 Quality"] == "🫁"]
 
 
-                scatter_lungs = go.Scatter(
-                x=lungs_only["Time"],
-                y=lungs_only["F_numeric"] - 8,
-                mode="text",
-                text=lungs_only["O2 Quality"],  # Will just be 🫁
-                textposition="middle center",
-                textfont=dict(size=9),
-                name="Lungs Only",
-                hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
-                  )
+                # scatter_lungs = go.Scatter(
+                # x=lungs_only["Time"],
+                # y=lungs_only["F_numeric"] - 8,
+                # mode="text",
+                # text=lungs_only["O2 Quality"],  # Will just be 🫁
+                # textposition="middle center",
+                # textfont=dict(size=9),
+                # name="Lungs Only",
+                # hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
+                #   )
 
-                fig.add_trace(scatter_lungs, row=1, col=1)
+                # fig.add_trace(scatter_lungs, row=1, col=1)
 
              
 
@@ -5819,18 +5819,18 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
-                bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
-                fig.add_trace(go.Scatter(
-                    x=bullish_df["TimeIndex"] ,
-                    y=bullish_df["F_numeric"] + 14,
-                    mode="text",
-                    text=bullish_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="top right",
-                    textfont=dict(size=20),
-                    name="Bullish Mike x Kijun + ATR 🚀",
-                    showlegend=True
-                ))
+                # # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
+                # bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                # fig.add_trace(go.Scatter(
+                #     x=bullish_df["TimeIndex"] ,
+                #     y=bullish_df["F_numeric"] + 14,
+                #     mode="text",
+                #     text=bullish_df["Mike_Kijun_ATR_Emoji"],
+                #     textposition="top right",
+                #     textfont=dict(size=20),
+                #     name="Bullish Mike x Kijun + ATR 🚀",
+                #     showlegend=True
+                # ))
 
 
            
