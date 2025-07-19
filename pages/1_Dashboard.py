@@ -4451,7 +4451,7 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
-                with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=False):
+                with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
                     fig_midas = go.Figure()
                 
                     # Mike / F_numeric Line
