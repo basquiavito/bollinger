@@ -4451,6 +4451,47 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
+                with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=False):
+                    fig_midas = go.Figure()
+                
+                    # Mike / F_numeric Line
+                    fig_midas.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F_numeric"],
+                        mode="lines",
+                        name="Mike (F_numeric)",
+                        line=dict(color="white", width=2)
+                    ))
+                
+                    # MIDAS_Bear Line
+                    fig_midas.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["MIDAS_Bear"],
+                        mode="lines",
+                        name="MIDAS_Bear",
+                        line=dict(color="red", dash="dash")
+                    ))
+                
+                    # MIDAS_Bull Line
+                    fig_midas.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["MIDAS_Bull"],
+                        mode="lines",
+                        name="MIDAS_Bull",
+                        line=dict(color="green", dash="dot")
+                    ))
+                
+                    fig_midas.update_layout(
+                        height=400,
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        title="MIDAS Anchors vs Mike",
+                        xaxis_title="Time",
+                        yaxis_title="Price"
+                    )
+                
+                    st.plotly_chart(fig_midas, use_container_width=True)
 
              
                 # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
