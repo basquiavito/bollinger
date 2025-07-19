@@ -4312,6 +4312,16 @@ if st.sidebar.button("Run Analysis"):
                               if curr >= 2 * prev:
                                   intraday.at[intraday.index[i], "Bear_Displacement_Double"] = "💀"
 
+                    intraday["Bull_Displacement_Double"] = ""
+
+                    for i in range(1, len(intraday)):
+                        prev = intraday["Bull_Displacement"].iloc[i - 1]
+                        curr = intraday["Bull_Displacement"].iloc[i]
+                        
+                        if pd.notna(prev) and prev > 0 and pd.notna(curr):
+                            if curr >= 2 * prev:
+                                intraday.at[intraday.index[i], "Bull_Displacement_Double"] = "👑"
+
                       # Add emojis
                       def add_mike_midas_cross_emojis(df, price_col):
                           if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
@@ -6590,6 +6600,17 @@ if st.sidebar.button("Run Analysis"):
                     textposition="bottom center",
                     showlegend=True,
                     hovertemplate="Time: %{x}<br>Bear_Displacement_Double: %{y}<br>💀 Bear_Displacement_Double<extra></extra>"
+                ))
+                # 👑 plot for Bull Displacement Doubling
+                bull_double_points = intraday[intraday["Bull_Displacement_Double"] == "👑"]
+                fig.add_trace(go.Scatter(
+                    x=bull_double_points["Time"],
+                    y=bull_double_points[price_col] - 40,  # Lower than 💀 and 🎻 to avoid clutter
+                    text=bull_double_points["Bull_Displacement_Double"],
+                    mode="text",
+                    textfont=dict(size=34),
+                    textposition="bottom center",
+                    showlegend=False
                 ))
 
  # 🟢   SPAN A & SPAN B
