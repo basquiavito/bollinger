@@ -4490,7 +4490,40 @@ if st.sidebar.button("Run Analysis"):
                         xaxis_title="Time",
                         yaxis_title="Price"
                     )
-                
+
+                    bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                    fig_midas.add_trace(go.Scatter(
+                        x=bull_hand_rows["Time"],
+                        y=bull_hand_rows["MIDAS_Bear"] + 3,  # Position above Bear line
+                        mode="text",
+                        text=["👋🏽"] * len(bull_hand_rows),
+                        textposition="top right",
+                        textfont=dict(size=22),
+                        showlegend=False,
+                        hovertemplate=(
+                            "👋🏽 Bull MIDAS Breakout<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Above MIDAS_Bear: %{y:.2f}<extra></extra>"
+                        )
+                      ))
+  
+                    bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                    fig_midas.add_trace(go.Scatter(
+                        x=bear_glove_rows["Time"],
+                        y=bear_glove_rows["MIDAS_Bull"] - 3,  # Position below Bull line
+                        mode="text",
+                        text=["🧤"] * len(bear_glove_rows),
+                        textposition="bottom right",
+                        textfont=dict(size=22),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🧤 Bear MIDAS Breakdown<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Below MIDAS_Bull: %{y:.2f}<extra></extra>"
+                        )
+                    ))
+
+
                     st.plotly_chart(fig_midas, use_container_width=True)
 
              
