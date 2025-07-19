@@ -4464,7 +4464,10 @@ if st.sidebar.button("Run Analysis"):
 
                 with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
                     fig_midas = go.Figure()
-                
+
+                    intraday["Bear_Displacement_Change"] = intraday["Bear_Displacement"].diff()
+                    intraday["Bear_Displacement_Change_Smooth"] = intraday["Bear_Displacement_Change"].rolling(3).mean()
+
                     # Mike / F_numeric Line
                     fig_midas.add_trace(go.Scatter(
                         x=intraday["Time"],
@@ -4533,6 +4536,31 @@ if st.sidebar.button("Run Analysis"):
                             "Below MIDAS_Bull: %{y:.2f}<extra></extra>"
                         )
                     ))
+
+                    fig_midas.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Bear_Displacement_Change_Smooth"],
+                    mode="lines",
+                    name="Bear Displacement Change (Smooth)",
+                    line=dict(color="orangered", width=2, dash="dot"),
+                    yaxis="y2"  # Secondary axis so it doesn't distort the price view
+                    ))
+
+                    fig_midas.update_layout(
+                        height=450,
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        title="MIDAS Anchors vs Mike + Displacement Momentum",
+                        xaxis_title="Time",
+                        yaxis=dict(title="Price"),
+                        yaxis2=dict(
+                            title="Bear Displacement Change",
+                            overlaying="y",
+                            side="right",
+                            showgrid=False
+                        )
+                    )
 
 
                     st.plotly_chart(fig_midas, use_container_width=True)
