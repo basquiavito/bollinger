@@ -6588,7 +6588,8 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     textfont=dict(size=18),
                     textposition="bottom center",
-                    showlegend=False
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>Bear_Displacement_Double: %{y}<br>💀 Bear_Displacement_Double<extra></extra>"
                 ))
 
  # 🟢   SPAN A & SPAN B
