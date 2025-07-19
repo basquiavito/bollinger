@@ -6605,10 +6605,10 @@ if st.sidebar.button("Run Analysis"):
                 bull_double_points = intraday[intraday["Bull_Displacement_Double"] == "👑"]
                 fig.add_trace(go.Scatter(
                     x=bull_double_points["Time"],
-                    y=bull_double_points[price_col] - 40,  # Lower than 💀 and 🎻 to avoid clutter
+                    y=bull_double_points[price_col] + 12,  # Lower than 💀 and 🎻 to avoid clutter
                     text=bull_double_points["Bull_Displacement_Double"],
                     mode="text",
-                    textfont=dict(size=34),
+                    textfont=dict(size=18),
                     textposition="bottom center",
                     showlegend=False
                 ))
