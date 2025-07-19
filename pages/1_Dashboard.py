@@ -4546,21 +4546,7 @@ if st.sidebar.button("Run Analysis"):
                     yaxis="y2"  # Secondary axis so it doesn't distort the price view
                     ))
 
-                    fig_midas.update_layout(
-                        height=450,
-                        plot_bgcolor="black",
-                        paper_bgcolor="black",
-                        font=dict(color="white"),
-                        title="MIDAS Anchors vs Mike + Displacement Momentum",
-                        xaxis_title="Time",
-                        yaxis=dict(title="Price"),
-                        yaxis2=dict(
-                            title="Bear Displacement Change",
-                            overlaying="y",
-                            side="right",
-                            showgrid=False
-                        )
-                    )
+              
 
 
                     st.plotly_chart(fig_midas, use_container_width=True)
