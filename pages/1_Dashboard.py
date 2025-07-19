@@ -4579,6 +4579,11 @@ if st.sidebar.button("Run Analysis"):
                     # === PREP: Calculate Smoothed Displacement Change ===
                     intraday["Bear_Displacement_Change"] = intraday["Bear_Displacement"].diff()
                     intraday["Bear_Displacement_Change_Smooth"] = intraday["Bear_Displacement_Change"].rolling(3).mean()
+
+
+                    intraday["Bull_Displacement_Change"] = intraday["Bull_Displacement"].diff()
+                    intraday["Bull_Displacement_Change_Smooth"] = intraday["Bull_Displacement_Change"].rolling(3).mean()
+
                 
                     # === LAYER 1: Main Price Lines ===
                     fig_midas.add_trace(go.Scatter(
@@ -4685,7 +4690,16 @@ if st.sidebar.button("Run Analysis"):
                         ),
                         margin=dict(t=60, b=40)
                     )
-                
+
+                        fig_midas.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Bull_Displacement_Change_Smooth"],
+                        mode="lines",
+                        name="Bull Displacement Δ (Smooth)",
+                        line=dict(color="lightgreen", width=2, dash="dot"),
+                        yaxis="y2"
+                        ))
+
                     st.plotly_chart(fig_midas, use_container_width=True)
 
 
