@@ -4890,43 +4890,43 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(shift_bubbles, row=1, col=1)
 
                    
-                    # Create a Boolean mask for rows with surge emojis
-                    mask_compliance_surge = intraday["Compliance Surge"] != ""
+                    # # Create a Boolean mask for rows with surge emojis
+                    # mask_compliance_surge = intraday["Compliance Surge"] != ""
                     
-                    # Plot Surge Emojis using same structure as BBW Alert
-                    scatter_compliance_surge = go.Scatter(
-                        x=intraday.loc[mask_compliance_surge, "Time"],
-                        y=intraday.loc[mask_compliance_surge, "F_numeric"] - 24,  # Offset slightly below F%
-                        mode="text",
-                        text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
-                        textposition="top center",
-                        textfont=dict(size=14),
-                        name="Compliance Surge",
-                        hovertemplate="Time: %{x}<br>Surge: %{text}<extra></extra>"
-                    )
+                    # # Plot Surge Emojis using same structure as BBW Alert
+                    # scatter_compliance_surge = go.Scatter(
+                    #     x=intraday.loc[mask_compliance_surge, "Time"],
+                    #     y=intraday.loc[mask_compliance_surge, "F_numeric"] - 24,  # Offset slightly below F%
+                    #     mode="text",
+                    #     text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=14),
+                    #     name="Compliance Surge",
+                    #     hovertemplate="Time: %{x}<br>Surge: %{text}<extra></extra>"
+                    # )
                     
-                    fig.add_trace(scatter_compliance_surge, row=1, col=1)
+                    # fig.add_trace(scatter_compliance_surge, row=1, col=1)
 
 
                     # (G) Distensibility Alert on Main Plot
                     
-                    # Mask bars that triggered the 🪟 emoji
-                    mask_distensibility = intraday["Distensibility Alert"] != ""
+                    # # Mask bars that triggered the 🪟 emoji
+                    # mask_distensibility = intraday["Distensibility Alert"] != ""
                     
-                    # Plot emoji above price (or F_numeric)but rangebut range
-                    scatter_distensibility = go.Scatter(
-                        x=intraday.loc[mask_distensibility, "Time"],
-                        y=intraday.loc[mask_distensibility, "F_numeric"] + 70,  # Slight offset upward
-                        mode="text",
-                        text=intraday.loc[mask_distensibility, "Distensibility Alert"],
-                        textposition="top center",
-                        textfont=dict(size=24),
-                        name="Distensibility 🪟",
-                        hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
-                        customdata=intraday.loc[mask_distensibility, "Distensibility"]
-                    )
+                    # # Plot emoji above price (or F_numeric)but rangebut range
+                    # scatter_distensibility = go.Scatter(
+                    #     x=intraday.loc[mask_distensibility, "Time"],
+                    #     y=intraday.loc[mask_distensibility, "F_numeric"] + 70,  # Slight offset upward
+                    #     mode="text",
+                    #     text=intraday.loc[mask_distensibility, "Distensibility Alert"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=24),
+                    #     name="Distensibility 🪟",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
+                    #     customdata=intraday.loc[mask_distensibility, "Distensibility"]
+                    # )
                     
-                    fig.add_trace(scatter_distensibility, row=1, col=1)
+                    # fig.add_trace(scatter_distensibility, row=1, col=1)
 
 
                     # Create a Boolean mask for rows with Stroke Growth ⭐ emojis
@@ -5513,19 +5513,19 @@ if st.sidebar.button("Run Analysis"):
                 #     name="Tiger"
                 # ), row=2, col=1)
                 
-                horse_df = intraday[intraday["Mike_Kijun_Horse_Emoji"] == "🏇🏽"]
+                # horse_df = intraday[intraday["Mike_Kijun_Horse_Emoji"] == "🏇🏽"]
                 
-                # Add trace to your figure
-                fig.add_trace(go.Scatter(
-                    x=horse_df["TimeIndex"],
-                    y=horse_df["F_numeric"] + 10,
-                    mode="text",
-                    text=horse_df["Mike_Kijun_Horse_Emoji"],
-                    textposition="bottom left",
-                    textfont=dict(size=30),
-                    name="Mike x Kijun + Horse",
-                    showlegend=True
-                ))
+                # # Add trace to your figure
+                # fig.add_trace(go.Scatter(
+                #     x=horse_df["TimeIndex"],
+                #     y=horse_df["F_numeric"] + 10,
+                #     mode="text",
+                #     text=horse_df["Mike_Kijun_Horse_Emoji"],
+                #     textposition="bottom left",
+                #     textfont=dict(size=30),
+                #     name="Mike x Kijun + Horse",
+                #     showlegend=True
+                # ))
 
                  
 
