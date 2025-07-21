@@ -4483,28 +4483,7 @@ if st.sidebar.button("Run Analysis"):
                         if st.session_state.selected_tab_index != idx:
                           st.session_state.selected_tab_index = idx
   
-                if st.session_state.selected_tab_index == idx:
-                    import yfinance as yf
-                    try:
-                        stock = yf.Ticker(t)
-                        expirations = stock.options
-                        latest_expiry = expirations[0]
-                
-                        opt_chain = stock.option_chain(latest_expiry)
-                        calls = opt_chain.calls
-                
-                        strikes = sorted(calls['strike'].unique())
-                        default_index = len(strikes) // 2
-                        selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
-                
-                        row = calls[calls['strike'] == selected_strike]
-                
-                with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
-                          st.dataframe(row.reset_index(drop=True), use_container_width=True)
-              
-           except Exception as e:
-                      st.warning(f"⚠️ Options data unavailable for {t}: {e}")
-
+           
                 
                 with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=False):
                     fig_midas = go.Figure()
