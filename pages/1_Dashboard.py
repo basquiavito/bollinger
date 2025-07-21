@@ -903,26 +903,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def get_annual_volatility(df):
-                    """
-                    Expects daily close prices. If using intraday data, first resample to daily.
-                    """
-                    df = df.copy()
-                    
-                    # If intraday data, resample to daily closes
-                    if df.index.freq != 'D' and "Date" in df.columns:
-                        df["Date"] = pd.to_datetime(df["Date"])
-                        df.set_index("Date", inplace=True)
-                        df = df.resample('1D').last()  # takes last close per day
                 
-                    df["returns"] = df["Close"].pct_change()
-                    daily_std = df["returns"].std()
-                    annual_vol = daily_std * np.sqrt(252)
-                    
-                    return annual_vol
-
-  
-                vol = get_annual_volatility(intraday)
 
 
                 def calculate_f_bbw(df, scale_factor=10):
@@ -7043,6 +7024,29 @@ if st.sidebar.button("Run Analysis"):
             except Exception as e:
                 st.error(f"Error fetching data for {t}: {e}")
 
+           
+                
+                ticker = st.session_state.get('current_ticker', 'AAPL')  # or however you're loading tickers
+                
+                # 🌀 Fetch option chain
+                stock = yf.Ticker(ticker)
+                expirations = stock.options
+                latest_expiry = expirations[0]
+                
+                # 🧲 Load option chain for latest expiry
+                opt_chain = stock.option_chain(latest_expiry)
+                calls = opt_chain.calls  # or puts = opt_chain.puts
+                
+                # 🧪 Selectable strike from calls
+                strikes = sorted(calls['strike'].unique())
+                default_index = len(strikes) // 2
+                selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
+                
+                # 📊 Show Greeks for selected strike
+                row = calls[calls['strike'] == selected_strike]
+                
+                with st.expander(f"🧮 Greeks for {ticker} — {selected_strike} ({latest_expiry})"):
+                    st.dataframe(row.reset_index(drop=True), use_container_width=True)
 
 
 
