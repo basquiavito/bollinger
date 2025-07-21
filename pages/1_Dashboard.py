@@ -1,5 +1,4 @@
-SyntaxError: invalid syntax. Perhaps you forgot a comma?
-[01:29:05] 🔄 Updated appimport streamlit as st
+
 import numpy as np
 import string       
 import yfinance as yf
