@@ -4475,30 +4475,30 @@ if st.sidebar.button("Run Analysis"):
                     st.session_state.selected_tab_index = 0
 
 
-              main_tabs = st.tabs([f"Ticker: {t}" for t in tickers])
+                main_tabs = st.tabs([f"Ticker: {t}" for t in tickers])
 
-              for idx, t in enumerate(tickers):
-                  with main_tabs[idx]:
-                    # Update session state when this tab is rendered
-                      if st.session_state.selected_tab_index != idx:
-                        st.session_state.selected_tab_index = idx
-
-              if st.session_state.selected_tab_index == idx:
-                  import yfinance as yf
-                  try:
-                      stock = yf.Ticker(t)
-                      expirations = stock.options
-                      latest_expiry = expirations[0]
-              
-                      opt_chain = stock.option_chain(latest_expiry)
-                      calls = opt_chain.calls
-              
-                      strikes = sorted(calls['strike'].unique())
-                      default_index = len(strikes) // 2
-                      selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
-              
-                      row = calls[calls['strike'] == selected_strike]
-              
+                for idx, t in enumerate(tickers):
+                    with main_tabs[idx]:
+                      # Update session state when this tab is rendered
+                        if st.session_state.selected_tab_index != idx:
+                          st.session_state.selected_tab_index = idx
+  
+                if st.session_state.selected_tab_index == idx:
+                    import yfinance as yf
+                    try:
+                        stock = yf.Ticker(t)
+                        expirations = stock.options
+                        latest_expiry = expirations[0]
+                
+                        opt_chain = stock.option_chain(latest_expiry)
+                        calls = opt_chain.calls
+                
+                        strikes = sorted(calls['strike'].unique())
+                        default_index = len(strikes) // 2
+                        selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
+                
+                        row = calls[calls['strike'] == selected_strike]
+                
                 with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
                           st.dataframe(row.reset_index(drop=True), use_container_width=True)
               
