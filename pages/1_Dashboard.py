@@ -3926,6 +3926,19 @@ if st.sidebar.button("Run Analysis"):
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
+                with st.expander("📊 Option Intelligence"):
+                    # Store 'merged' in session_state so it persists across reruns
+                    st.session_state.merged = merged
+                
+                    # Show current stock price
+                    st.success(f"Current Price: ${stock_price:.2f}")
+                
+                    # Calculate and display Put-Call Ratio (PCR)
+                    if total_call_volume > 0:
+                        pcr = round(total_put_volume / total_call_volume, 2)
+                        st.info(f"Put-Call Ratio (PCR): {pcr}")
+                    else:
+                        st.warning("Not enough call volume to calculate PCR.")
 
                 
 
