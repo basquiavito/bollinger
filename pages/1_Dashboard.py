@@ -8,7 +8,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import date
 from datetime import timedelta, datetime
-from pages.Option_pricing import get_full_option_chain
 
 import io
                 
@@ -4228,9 +4227,9 @@ if st.sidebar.button("Run Analysis"):
                   
                
                 
+ 
 
-
-
+           
                   
                   
 
@@ -4490,6 +4489,53 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
+
+      
+                with st.expander("📊 Options Intelligence", expanded=False):
+                    # 1) grab the same ticker you’re already using
+                    ticker = st.session_state.current_ticker  
+                    stock = yf.Ticker(ticker)
+                
+                    # 2) fetch calls & puts for your desired expiry (or the front‐month)
+                    exp = stock.options[0]
+                    chain = stock.option_chain(exp)
+                    calls, puts = chain.calls, chain.puts
+                
+                    # 3) compute Put/Call Ratio
+                    total_call_vol = calls["volume"].sum()
+                    total_put_vol  = puts["volume"].sum()
+                    if total_call_vol > 0:
+                        pcr = round(total_put_vol / total_call_vol, 2)
+                        st.metric("Put/Call Ratio (PCR)", pcr)
+                    else:
+                        st.warning("Not enough call volume to compute PCR.")
+                
+                    # 4) (optional) compute greeks & GEX exactly like in Option_Pricing
+                    S = stock.history(period="1d")["Close"].iloc[-1]
+                    def calc_gamma(iv, K, T, r=0.01):
+                        d1 = (np.log(S/K) + (r+0.5*iv**2)*T)/(iv*np.sqrt(T))
+                        return norm.pdf(d1)/(S*iv*np.sqrt(T))
+                
+                    # merge, calculate gammas, oi‐weighted GEX, floors & ceilings, etc.
+                    merged = pd.merge(
+                        calls[["strike","openInterest"]].rename(columns={"openInterest":"Call OI"}),
+                        puts[ ["strike","openInterest"]].rename(columns={"openInterest":"Put OI"}),
+                        on="strike"
+                    )
+                    # compute a very rough GEX‐proxy
+                    merged["Call Gamma"] = merged.apply(lambda r: calc_gamma(r.Call OI, r.strike, T), axis=1)
+                    merged["Put Gamma" ] = merged.apply(lambda r: calc_gamma(r.Put OI,  r.strike, T), axis=1)
+                    merged["Call GEX"]   = merged["Call Gamma"] * merged["Call OI"] * S**2
+                    merged["Put GEX"]    = merged["Put Gamma"]  * merged["Put OI"]  * S**2
+                
+                    floor = merged.loc[merged["Put GEX"].idxmax(), "strike"]
+                    ceil  = merged.loc[merged["Call GEX"].idxmax(),"strike"]
+                    st.write(f"🏠 Floor: {floor}, 🏛️ Ceiling: {ceil}")
+
+
+
+
+              
                 # with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
                 #     fig_midas = go.Figure()
 
