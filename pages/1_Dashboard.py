@@ -902,15 +902,27 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def get_annual_volatility(intraday):
-                      # Download 1 year of daily price data
-                      intraday["returns"] = intraday["Close"].pct_change()
-                      daily_std = intraday["returns"].std()
-                      # Annualize the daily standard deviation (~252 trading days/yr)
-                      annual_vol = daily_std * np.sqrt(252)
-                      return annual_vol
+
+                def get_annual_volatility(df):
+                    """
+                    Expects daily close prices. If using intraday data, first resample to daily.
+                    """
+                    df = df.copy()
+                    
+                    # If intraday data, resample to daily closes
+                    if df.index.freq != 'D' and "Date" in df.columns:
+                        df["Date"] = pd.to_datetime(df["Date"])
+                        df.set_index("Date", inplace=True)
+                        df = df.resample('1D').last()  # takes last close per day
+                
+                    df["returns"] = df["Close"].pct_change()
+                    daily_std = df["returns"].std()
+                    annual_vol = daily_std * np.sqrt(252)
+                    
+                    return annual_vol
+
   
-                intraday = get_annual_volatility(intraday)
+                vol = get_annual_volatility(intraday)
 
 
                 def calculate_f_bbw(df, scale_factor=10):
