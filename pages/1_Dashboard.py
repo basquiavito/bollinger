@@ -4471,105 +4471,53 @@ if st.sidebar.button("Run Analysis"):
                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
                         .reset_index(drop=True)
                     )
-                # if "selected_tab_index" not in st.session_state:
-                #     st.session_state.selected_tab_index = 0
+                if "selected_tab_index" not in st.session_state:
+                    st.session_state.selected_tab_index = 0
                 
-                # tab_labels = [f"Ticker: {t}" for t in tickers]
-                # selected_tab = st.radio("🔁 Select Ticker", tab_labels, index=0, horizontal=True)
-                # active_idx = tab_labels.index(selected_tab)
-                # active_ticker = tickers[active_idx]
+                tab_labels = [f"Ticker: {t}" for t in tickers]
+                selected_tab = st.radio("🔁 Select Ticker", tab_labels, index=0, horizontal=True)
+                active_idx = tab_labels.index(selected_tab)
+                active_ticker = tickers[active_idx]
 
   
            
-                # # 👇 Only show options data if this tab is the selected one
-                # if st.session_state.selected_tab_index == idx:
-                #     import yfinance as yf
-                #     try:
-                #         stock = yf.Ticker(t)
-                #         expirations = stock.options
-                #         latest_expiry = expirations[0]
+                # 👇 Only show options data if this tab is the selected one
+                if st.session_state.selected_tab_index == idx:
+                    import yfinance as yf
+                    try:
+                        stock = yf.Ticker(t)
+                        expirations = stock.options
+                        latest_expiry = expirations[0]
                 
-                #         opt_chain = stock.option_chain(latest_expiry)
-                #         calls = opt_chain.calls
+                        opt_chain = stock.option_chain(latest_expiry)
+                        calls = opt_chain.calls
                 
-                #         strikes = sorted(calls['strike'].unique())
-                #         default_index = len(strikes) // 2
-                #         strike_key = f"{t}_strike"
+                        strikes = sorted(calls['strike'].unique())
+                        default_index = len(strikes) // 2
+                        strike_key = f"{t}_strike"
                         
-                #         # Initialize only once
-                #         if strike_key not in st.session_state:
-                #             st.session_state[strike_key] = strikes[default_index]
+                        # Initialize only once
+                        if strike_key not in st.session_state:
+                            st.session_state[strike_key] = strikes[default_index]
                         
-                #         # Show selector bound to session state
-                #         selected_strike = st.selectbox(
-                #             "🔹 Select Strike",
-                #             strikes,
-                #             index=strikes.index(st.session_state[strike_key]),
-                #             key=strike_key  # 🔑 ensures state is saved per ticker
-                #         )
+                        # Show selector bound to session state
+                        selected_strike = st.selectbox(
+                            "🔹 Select Strike",
+                            strikes,
+                            index=strikes.index(st.session_state[strike_key]),
+                            key=strike_key  # 🔑 ensures state is saved per ticker
+                        )
                 
-                #         row = calls[calls['strike'] == selected_strike]
+                        row = calls[calls['strike'] == selected_strike]
                 
-                #         with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
-                #             st.dataframe(row.reset_index(drop=True), use_container_width=True)
+                        with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
+                            st.dataframe(row.reset_index(drop=True), use_container_width=True)
                 
-                #     except Exception as e:
-                #         st.warning(f"⚠️ Options data unavailable for {t}: {e}")
+                    except Exception as e:
+                        st.warning(f"⚠️ Options data unavailable for {t}: {e}")
 
 
-            
-            # ---------------------------------
-            # 0️⃣  Setup a "run_analysis" flag
-            # ---------------------------------
-            if "run_analysis" not in st.session_state:
-                st.session_state["run_analysis"] = False
-            
-            # The button only *sets* the flag – we never read
-            # the button value directly again.
-            if st.sidebar.button("Run Analysis"):
-                st.session_state["run_analysis"] = True
-            
-            
-            # ---------------------------------
-            # 1️⃣  Only render the heavy stuff
-            #     when the flag is True
-            # ---------------------------------
-            if st.session_state["run_analysis"]:
-            
-                # 1a.  Let the user pick which ticker’s page to show
-                tab_labels   = [f"Ticker: {t}" for t in tickers]
-                selected_tab = st.radio("🔁 Select Ticker", tab_labels, horizontal=True)
-                t            = tickers[tab_labels.index(selected_tab)]
-            
-                # 1b.  🔼  YOUR F% plot + other analysis for `t` here
-                #       (all the code you already had…)
-            
-                # 1c.  Options‑chain expander, with strike
-                import yfinance as yf
-                stock          = yf.Ticker(t)
-                latest_expiry  = stock.options[0]
-                calls          = stock.option_chain(latest_expiry).calls
-            
-                strikes        = sorted(calls["strike"].unique())
-                atm_index      = len(strikes) // 2
-                strike_key     = f"{t}_strike"
-            
-                # remember the chosen strike **per ticker**
-                if strike_key not in st.session_state:
-                    st.session_state[strike_key] = strikes[atm_index]
-            
-                selected_strike = st.selectbox(
-                    "🔹 Select Strike",
-                    strikes,
-                    index=strikes.index(st.session_state[strike_key]),
-                    key=strike_key,
-                )
-            
-                row = calls[calls["strike"] == selected_strike]
-                with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
-                    st.dataframe(row.reset_index(drop=True), use_container_width=True)
-
-
+    
 
 
 
