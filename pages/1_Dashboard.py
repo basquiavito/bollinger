@@ -556,17 +556,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = calculate_f_percentage(intraday, prev_close)
 
-                 def get_annual_volatility(ticker):
-                      # Download 1 year of daily price data
-                      df = yf.download(ticker, period='1y', interval='1d')
-                      df["returns"] = df["Close"].pct_change()
-                      daily_std = df["returns"].std()
-                      # Annualize the daily standard deviation (~252 trading days/yr)
-                      annual_vol = daily_std * np.sqrt(252)
-                      return annual_vol
-  
-                intraday = get_annual_volatility(intraday, prev_close)
-
+                
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -912,6 +902,16 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                 def get_annual_volatility(ticker):
+                      # Download 1 year of daily price data
+                      df = yf.download(ticker, period='1y', interval='1d')
+                      df["returns"] = df["Close"].pct_change()
+                      daily_std = df["returns"].std()
+                      # Annualize the daily standard deviation (~252 trading days/yr)
+                      annual_vol = daily_std * np.sqrt(252)
+                      return annual_vol
+  
+                intraday = get_annual_volatility(intraday)
 
 
                 def calculate_f_bbw(df, scale_factor=10):
