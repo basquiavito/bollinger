@@ -4573,7 +4573,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                 
-                with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
+                with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=False):
                     fig_midas = go.Figure()
                 
                     # === PREP: Calculate Smoothed Displacement Change ===
