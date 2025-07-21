@@ -6754,6 +6754,28 @@ if st.sidebar.button("Run Analysis"):
                 ))
 
 
+              import plotly.graph_objects as go
+
+              fig = go.Figure()
+              
+              # your Mike (F%) line here
+              fig.add_trace(go.Scatter(
+                  x=intraday["Date"],
+                  y=intraday["F_numeric"],
+                  mode="lines",
+                  name="Mike"
+              ))
+              
+              # Add horizontal levels
+              if floor_f:
+                  fig.add_hline(y=floor_f, line=dict(color="blue", dash="dot"), name="Floor")
+              if ceiling_f:
+                  fig.add_hline(y=ceiling_f, line=dict(color="red", dash="dot"), name="Ceiling")
+              if max_pain_f:
+                  fig.add_hline(y=max_pain_f, line=dict(color="gray", dash="dash"), name="Max Pain")
+              
+              st.plotly_chart(fig, use_container_width=True)
+
 
 
 
