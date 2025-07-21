@@ -4502,7 +4502,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
                           st.dataframe(row.reset_index(drop=True), use_container_width=True)
               
-                  except Exception as e:
+           except Exception as e:
                       st.warning(f"⚠️ Options data unavailable for {t}: {e}")
 
                 
