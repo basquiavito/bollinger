@@ -4276,54 +4276,54 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                   with st.expander("Options Intelligence", expanded=False):
-                  # use the loop variable t (the symbol), not session_state
-                       st.write(f"Running OI/GEX for: **{t}**")
+                 with st.expander("Options Intelligence", expanded=False):
+                # use the loop variable t (the symbol), not session_state
+                     st.write(f"Running OI/GEX for: **{t}**")
+                
+                     stock = yf.Ticker(t)
+                     if not stock.options:
+                          st.error(f"No option chain for {t}")
+                     else:
+                          front = stock.options[0]
+                          chain = stock.option_chain(front)
+                          calls, puts = chain.calls, chain.puts
                   
-                       stock = yf.Ticker(t)
-                       if not stock.options:
-                            st.error(f"No option chain for {t}")
-                       else:
-                            front = stock.options[0]
-                            chain = stock.option_chain(front)
-                            calls, puts = chain.calls, chain.puts
-                    
-                            # 1) PCR
-                            cv = calls["volume"].sum()
-                            pv = puts["volume"].sum()
-                            if cv > 0:
-                                st.metric("Put/Call Ratio", round(pv/cv, 2))
-                            else:
-                                st.warning("No call volume to compute PCR")
-                    
-                            # 2) Spot & time to expiry
-                            S = stock.history(period="1d")["Close"].iloc[-1]
-                            exp_date = datetime.strptime(front, "%Y-%m-%d")
-                            days = max((exp_date - datetime.today()).days, 1)
-                            T = days/365
-                    
-                            # 3) Build merge for OI
-                            df = pd.merge(
-                                calls[["strike","openInterest"]].rename(columns={"openInterest":"Call OI"}),
-                                puts[ ["strike","openInterest"]].rename(columns={"openInterest":"Put OI"}),
-                                on="strike"
-                            )
-                    
-                            # 4) Quick gamma function (using ATM IV)
-                            iv_atm = calls.iloc[(calls.strike-S).abs().idxmin()]["impliedVolatility"]
-                            def gamma(K):
-                                d1 = (log(S/K)+0.5*iv_atm**2*T)/(iv_atm*sqrt(T))
-                                return norm.pdf(d1)/(S*iv_atm*sqrt(T))
-                    
-                            df["Call Gamma"] = df["strike"].apply(gamma)
-                            df["Put Gamma"]  = df["Call Gamma"]
-                            df["Call GEX"]   = df["Call Gamma"]*df["Call OI"]*S**2
-                            df["Put GEX"]    = df["Put Gamma"] *df["Put OI"] *S**2
-                    
-                            # 5) Floor & Ceiling
-                            floor = df.loc[df["Put GEX"].idxmax(),"strike"]
-                            ceiling = df.loc[df["Call GEX"].idxmax(),"strike"]
-                            st.write(f"🏠 Floor = {floor}    🏛️ Ceiling = {ceiling}")
+                          # 1) PCR
+                          cv = calls["volume"].sum()
+                          pv = puts["volume"].sum()
+                          if cv > 0:
+                              st.metric("Put/Call Ratio", round(pv/cv, 2))
+                          else:
+                              st.warning("No call volume to compute PCR")
+                  
+                          # 2) Spot & time to expiry
+                          S = stock.history(period="1d")["Close"].iloc[-1]
+                          exp_date = datetime.strptime(front, "%Y-%m-%d")
+                          days = max((exp_date - datetime.today()).days, 1)
+                          T = days/365
+                  
+                          # 3) Build merge for OI
+                          df = pd.merge(
+                              calls[["strike","openInterest"]].rename(columns={"openInterest":"Call OI"}),
+                              puts[ ["strike","openInterest"]].rename(columns={"openInterest":"Put OI"}),
+                              on="strike"
+                          )
+                  
+                          # 4) Quick gamma function (using ATM IV)
+                          iv_atm = calls.iloc[(calls.strike-S).abs().idxmin()]["impliedVolatility"]
+                          def gamma(K):
+                              d1 = (log(S/K)+0.5*iv_atm**2*T)/(iv_atm*sqrt(T))
+                              return norm.pdf(d1)/(S*iv_atm*sqrt(T))
+                  
+                          df["Call Gamma"] = df["strike"].apply(gamma)
+                          df["Put Gamma"]  = df["Call Gamma"]
+                          df["Call GEX"]   = df["Call Gamma"]*df["Call OI"]*S**2
+                          df["Put GEX"]    = df["Put Gamma"] *df["Put OI"] *S**2
+                  
+                          # 5) Floor & Ceiling
+                          floor = df.loc[df["Put GEX"].idxmax(),"strike"]
+                          ceiling = df.loc[df["Call GEX"].idxmax(),"strike"]
+                          st.write(f"🏠 Floor = {floor}    🏛️ Ceiling = {ceiling}")
 
 
 
