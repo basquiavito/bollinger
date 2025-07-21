@@ -1,4 +1,3 @@
-
 import numpy as np
 import string       
 import yfinance as yf
@@ -8,7 +7,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import date
 from datetime import timedelta, datetime
-
 import io
                 
 
