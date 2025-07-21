@@ -4491,11 +4491,7 @@ if st.sidebar.button("Run Analysis"):
                     )
 
                 
-                import yfinance as yf
-                import pandas as pd
-                import numpy as np
-                from scipy.stats import norm
-                from datetime import datetime
+            
                 
                 with st.expander("📊 Options Intelligence", expanded=False):
                     # 1) grab the ticker you’re already using
