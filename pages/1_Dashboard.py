@@ -4497,7 +4497,19 @@ if st.sidebar.button("Run Analysis"):
                 
                         strikes = sorted(calls['strike'].unique())
                         default_index = len(strikes) // 2
-                        selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
+                        strike_key = f"{t}_strike"
+                        
+                        # Initialize only once
+                        if strike_key not in st.session_state:
+                            st.session_state[strike_key] = strikes[default_index]
+                        
+                        # Show selector bound to session state
+                        selected_strike = st.selectbox(
+                            "🔹 Select Strike",
+                            strikes,
+                            index=strikes.index(st.session_state[strike_key]),
+                            key=strike_key  # 🔑 ensures state is saved per ticker
+                        )
                 
                         row = calls[calls['strike'] == selected_strike]
                 
