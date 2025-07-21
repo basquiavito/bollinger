@@ -4471,13 +4471,13 @@ if st.sidebar.button("Run Analysis"):
                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
                         .reset_index(drop=True)
                     )
-                if "selected_tab_index" not in st.session_state:
-                    st.session_state.selected_tab_index = 0
+          
                 
                 tab_labels = [f"Ticker: {t}" for t in tickers]
-                selected_tab = st.radio("🔁 Select Ticker", tab_labels, index=0, horizontal=True)
+                selected_tab = st.radio("🔁 Select Ticker", tab_labels, index=0, horizontal=True, key="ticker_radio")
                 active_idx = tab_labels.index(selected_tab)
-                active_ticker = tickers[active_idx]
+                t = tickers[active_idx]  # ← active ticker
+
 
   
            
