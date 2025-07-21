@@ -1,4 +1,5 @@
-import streamlit as st
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+[01:29:05] 🔄 Updated appimport streamlit as st
 import numpy as np
 import string       
 import yfinance as yf
@@ -4489,48 +4490,63 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
-
-      
-                with st.expander("📊 Options Intelligence", expanded=False):
-                    # 1) grab the same ticker you’re already using
-                    ticker = st.session_state.current_ticker  
-                    stock = yf.Ticker(ticker)
                 
-                    # 2) fetch calls & puts for your desired expiry (or the front‐month)
-                    exp = stock.options[0]
+                import yfinance as yf
+                import pandas as pd
+                import numpy as np
+                from scipy.stats import norm
+                from datetime import datetime
+                
+                with st.expander("📊 Options Intelligence", expanded=False):
+                    # 1) grab the ticker you’re already using
+                    ticker = st.session_state.current_ticker
+                    stock  = yf.Ticker(ticker)
+                
+                    # 2) pick the front‐month expiry
+                    exp   = stock.options[0]
                     chain = stock.option_chain(exp)
                     calls, puts = chain.calls, chain.puts
                 
-                    # 3) compute Put/Call Ratio
+                    # 3) compute PCR
                     total_call_vol = calls["volume"].sum()
                     total_put_vol  = puts["volume"].sum()
                     if total_call_vol > 0:
-                        pcr = round(total_put_vol / total_call_vol, 2)
-                        st.metric("Put/Call Ratio (PCR)", pcr)
+                        st.metric("Put/Call Ratio (PCR)", round(total_put_vol / total_call_vol, 2))
                     else:
                         st.warning("Not enough call volume to compute PCR.")
                 
-                    # 4) (optional) compute greeks & GEX exactly like in Option_Pricing
+                    # 4) spot & time‐to‐expiry
                     S = stock.history(period="1d")["Close"].iloc[-1]
-                    def calc_gamma(iv, K, T, r=0.01):
-                        d1 = (np.log(S/K) + (r+0.5*iv**2)*T)/(iv*np.sqrt(T))
-                        return norm.pdf(d1)/(S*iv*np.sqrt(T))
+                    exp_date = datetime.strptime(exp, "%Y-%m-%d")
+                    T = max((exp_date - datetime.today()).days, 1) / 365
                 
-                    # merge, calculate gammas, oi‐weighted GEX, floors & ceilings, etc.
+                    # 5) build merged OI table
                     merged = pd.merge(
-                        calls[["strike","openInterest"]].rename(columns={"openInterest":"Call OI"}),
-                        puts[ ["strike","openInterest"]].rename(columns={"openInterest":"Put OI"}),
+                        calls[["strike", "openInterest"]].rename(columns={"openInterest": "Call OI"}),
+                        puts[ ["strike", "openInterest"]].rename(columns={"openInterest": "Put OI"}),
                         on="strike"
                     )
-                    # compute a very rough GEX‐proxy
-                    merged["Call Gamma"] = merged.apply(lambda r: calc_gamma(r.Call OI, r.strike, T), axis=1)
-                    merged["Put Gamma" ] = merged.apply(lambda r: calc_gamma(r.Put OI,  r.strike, T), axis=1)
+                
+                    # 6) gamma function
+                    def calc_gamma(K, iv, T):
+                        d1 = (np.log(S / K) + 0.5 * iv**2 * T) / (iv * np.sqrt(T))
+                        return norm.pdf(d1) / (S * iv * np.sqrt(T))
+                
+                    # 7) fetch IVs and compute GEX
+                    #    (you’ll probably already have impliedVolatility in your merged)
+                    #    here’s a quick hack: use ATM iv for all strikes (for demo)
+                    atm_iv = chain.calls.iloc[(chain.calls.strike - S).abs().idxmin()]["impliedVolatility"]
+                    merged["Call Gamma"] = merged.apply(lambda r: calc_gamma(r["strike"], atm_iv, T), axis=1)
+                    merged["Put Gamma"]  = merged["Call Gamma"]  # assume symmetric for demo
                     merged["Call GEX"]   = merged["Call Gamma"] * merged["Call OI"] * S**2
                     merged["Put GEX"]    = merged["Put Gamma"]  * merged["Put OI"]  * S**2
                 
-                    floor = merged.loc[merged["Put GEX"].idxmax(), "strike"]
-                    ceil  = merged.loc[merged["Call GEX"].idxmax(),"strike"]
-                    st.write(f"🏠 Floor: {floor}, 🏛️ Ceiling: {ceil}")
+                    # 8) floor & ceiling
+                    floor_strike   = merged.loc[merged["Put GEX"].idxmax(),   "strike"]
+                    ceiling_strike = merged.loc[merged["Call GEX"].idxmax(),  "strike"]
+                    st.write(f"🏠 Floor = {floor_strike},   🏛️ Ceiling = {ceiling_strike}")
+                
+                 
 
 
 
