@@ -4490,7 +4490,7 @@ if st.sidebar.button("Run Analysis"):
                     )
 
                   
-                            
+                        
                with st.expander("Options Intelligence", expanded=False):
                   # use the loop variable t (the symbol), not session_state
                   st.write(f"Running OI/GEX for: **{t}**")
@@ -4539,8 +4539,8 @@ if st.sidebar.button("Run Analysis"):
                       floor = df.loc[df["Put GEX"].idxmax(),"strike"]
                       ceiling = df.loc[df["Call GEX"].idxmax(),"strike"]
                       st.write(f"🏠 Floor = {floor}    🏛️ Ceiling = {ceiling}")
-
-               
+  
+                   
 
   
 
