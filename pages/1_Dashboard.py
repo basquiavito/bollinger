@@ -4473,15 +4473,12 @@ if st.sidebar.button("Run Analysis"):
                     )
                 if "selected_tab_index" not in st.session_state:
                     st.session_state.selected_tab_index = 0
+                
+                tab_labels = [f"Ticker: {t}" for t in tickers]
+                selected_tab = st.radio("🔁 Select Ticker", tab_labels, index=0, horizontal=True)
+                active_idx = tab_labels.index(selected_tab)
+                active_ticker = tickers[active_idx]
 
-
-                main_tabs = st.tabs([f"Ticker: {t}" for t in tickers])
-
-                for idx, t in enumerate(tickers):
-                    with main_tabs[idx]:
-                      # Update session state when this tab is rendered
-                        if st.session_state.selected_tab_index != idx:
-                          st.session_state.selected_tab_index = idx
   
            
                 # 👇 Only show options data if this tab is the selected one
