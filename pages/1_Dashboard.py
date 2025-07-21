@@ -8,7 +8,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import date
 from datetime import timedelta, datetime
-
 import io
                 
 
@@ -3913,20 +3912,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    
-                ticker = st.session_state.ticker  # or your current ticker input logic
-                merged = get_full_option_chain(ticker)
-                
-                # PCR logic
-                total_put_volume = merged[merged["type"] == "put"]["volume"].sum()
-                total_call_volume = merged[merged["type"] == "call"]["volume"].sum()
-                
-                if total_call_volume > 0:
-                    pcr = round(total_put_volume / total_call_volume, 2)
-                    st.info(f"Put-Call Ratio (PCR): {pcr}")
-                else:
-                    st.warning("Not enough call volume to calculate PCR.")
-                
+
 
 
                     
@@ -3940,19 +3926,6 @@ if st.sidebar.button("Run Analysis"):
                 ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
-                with st.expander("📊 Option Intelligence"):
-                    # Store 'merged' in session_state so it persists across reruns
-                    st.session_state.merged = merged
-                
-                    # Show current stock price
-                    st.success(f"Current Price: ${stock_price:.2f}")
-                
-                    # Calculate and display Put-Call Ratio (PCR)
-                    if total_call_volume > 0:
-                        pcr = round(total_put_volume / total_call_volume, 2)
-                        st.info(f"Put-Call Ratio (PCR): {pcr}")
-                    else:
-                        st.warning("Not enough call volume to calculate PCR.")
 
                 
 
@@ -4227,9 +4200,9 @@ if st.sidebar.button("Run Analysis"):
                   
                
                 
- 
 
-           
+
+
                   
                   
 
@@ -4489,15 +4462,6 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
-                
-            
-                     
-                                 
-
-
-
-
-              
                 # with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
                 #     fig_midas = go.Figure()
 
@@ -4609,7 +4573,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                 
-                with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=False):
+                with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
                     fig_midas = go.Figure()
                 
                     # === PREP: Calculate Smoothed Displacement Change ===
@@ -4620,7 +4584,7 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Bull_Displacement_Change"] = intraday["Bull_Displacement"].diff()
                     intraday["Bull_Displacement_Change_Smooth"] = intraday["Bull_Displacement_Change"].rolling(3).mean()
 
-
+                
                     # === LAYER 1: Main Price Lines ===
                     fig_midas.add_trace(go.Scatter(
                         x=intraday["Time"],
@@ -4709,12 +4673,12 @@ if st.sidebar.button("Run Analysis"):
                         yaxis=dict(
                             title="Price",
                             side="left",
-                            domain=[0.4, 1]  # Top 75% for main plot
+                            domain=[0.25, 1]  # Top 75% for main plot
                         ),
                         yaxis2=dict(
                             title="Displacement Δ",
                             side="left",
-                            domain=[0, 0.35],  # Bottom 20% for displacement plot
+                            domain=[0, 0.2],  # Bottom 20% for displacement plot
                             showgrid=False
                         ),
                         legend=dict(
@@ -4735,8 +4699,6 @@ if st.sidebar.button("Run Analysis"):
                     line=dict(color="lightgreen", width=2, dash="dot"),
                     yaxis="y2"
                     ))
-
-
 
                     st.plotly_chart(fig_midas, use_container_width=True)
 
