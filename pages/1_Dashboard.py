@@ -902,7 +902,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                 def get_annual_volatility(ticker):
+                def get_annual_volatility(ticker):
                       # Download 1 year of daily price data
                       df = yf.download(ticker, period='1y', interval='1d')
                       df["returns"] = df["Close"].pct_change()
@@ -911,7 +911,7 @@ if st.sidebar.button("Run Analysis"):
                       annual_vol = daily_std * np.sqrt(252)
                       return annual_vol
   
-                intraday = get_annual_volatility(intraday)
+               intraday = get_annual_volatility(intraday)
 
 
                 def calculate_f_bbw(df, scale_factor=10):
