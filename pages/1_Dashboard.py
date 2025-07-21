@@ -4483,7 +4483,6 @@ if st.sidebar.button("Run Analysis"):
                       if st.session_state.selected_tab_index != idx:
                         st.session_state.selected_tab_index = idx
 
-              # 👇 Only show options data if this tab is the selected one
               if st.session_state.selected_tab_index == idx:
                   import yfinance as yf
                   try:
@@ -4500,7 +4499,7 @@ if st.sidebar.button("Run Analysis"):
               
                       row = calls[calls['strike'] == selected_strike]
               
-                      with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
+                with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
                           st.dataframe(row.reset_index(drop=True), use_container_width=True)
               
                   except Exception as e:
