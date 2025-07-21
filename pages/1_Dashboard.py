@@ -4471,8 +4471,20 @@ if st.sidebar.button("Run Analysis"):
                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
                         .reset_index(drop=True)
                     )
-          
-                
+
+
+                    floor_price = st.sidebar.number_input("📉 Floor (Support Level)", value=100.0, step=0.5)
+                    ceiling_price = st.sidebar.number_input("📈 Ceiling (Resistance Level)", value=110.0, step=0.5)
+                    max_pain_price = st.sidebar.number_input("🪨 Max Pain Level", value=105.0, step=0.5)
+                    
+
+                    if prev_close:  # use yesterday’s close
+                        floor_f = ((floor_price - prev_close) / prev_close) * 10_000
+                        ceiling_f = ((ceiling_price - prev_close) / prev_close) * 10_000
+                        max_pain_f = ((max_pain_price - prev_close) / prev_close) * 10_000
+                    else:
+                        floor_f = ceiling_f = max_pain_f = None
+
                
 
 
