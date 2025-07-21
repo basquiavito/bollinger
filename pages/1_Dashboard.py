@@ -8,6 +8,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import date
 from datetime import timedelta, datetime
+from Option_pricing import get_full_option_chain
+
 import io
                 
 
@@ -3912,7 +3914,20 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
+                    
+                ticker = st.session_state.ticker  # or your current ticker input logic
+                merged = get_full_option_chain(ticker)
+                
+                # PCR logic
+                total_put_volume = merged[merged["type"] == "put"]["volume"].sum()
+                total_call_volume = merged[merged["type"] == "call"]["volume"].sum()
+                
+                if total_call_volume > 0:
+                    pcr = round(total_put_volume / total_call_volume, 2)
+                    st.info(f"Put-Call Ratio (PCR): {pcr}")
+                else:
+                    st.warning("Not enough call volume to calculate PCR.")
+                
 
 
                     
