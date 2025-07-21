@@ -4473,51 +4473,90 @@ if st.sidebar.button("Run Analysis"):
                     )
           
                 
-                tab_labels = [f"Ticker: {t}" for t in tickers]
-                selected_tab = st.radio("🔁 Select Ticker", tab_labels, index=0, horizontal=True, key="ticker_radio")
-                active_idx = tab_labels.index(selected_tab)
-                t = tickers[active_idx]  # ← active ticker
+                # tab_labels = [f"Ticker: {t}" for t in tickers]
+                # selected_tab = st.radio("🔁 Select Ticker", tab_labels, index=0, horizontal=True, key="ticker_radio")
+                # active_idx = tab_labels.index(selected_tab)
+                # t = tickers[active_idx]  # ← active ticker
 
 
   
            
-                # 👇 Only show options data if this tab is the selected one
-                if st.session_state.selected_tab_index == idx:
-                    import yfinance as yf
-                    try:
-                        stock = yf.Ticker(t)
-                        expirations = stock.options
-                        latest_expiry = expirations[0]
+                # # 👇 Only show options data if this tab is the selected one
+                # if st.session_state.selected_tab_index == idx:
+                #     import yfinance as yf
+                #     try:
+                #         stock = yf.Ticker(t)
+                #         expirations = stock.options
+                #         latest_expiry = expirations[0]
                 
-                        opt_chain = stock.option_chain(latest_expiry)
-                        calls = opt_chain.calls
+                #         opt_chain = stock.option_chain(latest_expiry)
+                #         calls = opt_chain.calls
                 
-                        strikes = sorted(calls['strike'].unique())
-                        default_index = len(strikes) // 2
-                        strike_key = f"{t}_strike"
+                #         strikes = sorted(calls['strike'].unique())
+                #         default_index = len(strikes) // 2
+                #         strike_key = f"{t}_strike"
                         
-                        # Initialize only once
-                        if strike_key not in st.session_state:
-                            st.session_state[strike_key] = strikes[default_index]
+                #         # Initialize only once
+                #         if strike_key not in st.session_state:
+                #             st.session_state[strike_key] = strikes[default_index]
                         
-                        # Show selector bound to session state
-                        selected_strike = st.selectbox(
-                            "🔹 Select Strike",
-                            strikes,
-                            index=strikes.index(st.session_state[strike_key]),
-                            key=strike_key  # 🔑 ensures state is saved per ticker
-                        )
+                #         # Show selector bound to session state
+                #         selected_strike = st.selectbox(
+                #             "🔹 Select Strike",
+                #             strikes,
+                #             index=strikes.index(st.session_state[strike_key]),
+                #             key=strike_key  # 🔑 ensures state is saved per ticker
+                #         )
                 
-                        row = calls[calls['strike'] == selected_strike]
+                #         row = calls[calls['strike'] == selected_strike]
                 
-                        with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
-                            st.dataframe(row.reset_index(drop=True), use_container_width=True)
+                #         with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
+                #             st.dataframe(row.reset_index(drop=True), use_container_width=True)
                 
-                    except Exception as e:
-                        st.warning(f"⚠️ Options data unavailable for {t}: {e}")
+                #     except Exception as e:
+                #         st.warning(f"⚠️ Options data unavailable for {t}: {e}")
 
 
-    
+                
+            # 1) Pick a ticker once
+            selected_ticker = st.radio(
+                "🔁 Select Ticker",
+                tickers,
+                index=0,
+                key="ticker_selector"
+            )
+            t = selected_ticker  # this is the one ticker we render
+            
+            # 2) Your F% plot for `t` here…
+            
+            # 3) Options data for `t`
+            import yfinance as yf
+            try:
+                stock        = yf.Ticker(t)
+                latest_expiry= stock.options[0]
+                calls        = stock.option_chain(latest_expiry).calls
+            except Exception as e:
+                st.warning(f"⚠️ Options data unavailable for {t}: {e}")
+                calls = pd.DataFrame()
+            
+            if not calls.empty:
+                strikes    = sorted(calls["strike"])
+                atm_index  = len(strikes)//2
+                strike_key = f"{t}_strike"
+            
+                if strike_key not in st.session_state:
+                    st.session_state[strike_key] = strikes[atm_index]
+            
+                selected_strike = st.selectbox(
+                    "🔹 Select Strike",
+                    strikes,
+                    index=strikes.index(st.session_state[strike_key]),
+                    key=strike_key
+                )
+            
+                with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
+                    row = calls[calls["strike"] == selected_strike]
+                    st.dataframe(row.reset_index(drop=True), use_container_width=True)
 
 
 
