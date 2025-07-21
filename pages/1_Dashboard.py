@@ -904,7 +904,6 @@ if st.sidebar.button("Run Analysis"):
 
                 def get_annual_volatility(ticker):
                       # Download 1 year of daily price data
-                      df = yf.download(ticker, period='1y', interval='1d')
                       df["returns"] = df["Close"].pct_change()
                       daily_std = df["returns"].std()
                       # Annualize the daily standard deviation (~252 trading days/yr)
