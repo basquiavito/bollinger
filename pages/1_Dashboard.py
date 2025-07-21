@@ -4471,116 +4471,27 @@ if st.sidebar.button("Run Analysis"):
                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
                         .reset_index(drop=True)
                     )
-
-                # with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
-                #     fig_midas = go.Figure()
-
-                #     intraday["Bear_Displacement_Change"] = intraday["Bear_Displacement"].diff()
-                #     intraday["Bear_Displacement_Change_Smooth"] = intraday["Bear_Displacement_Change"].rolling(3).mean()
-
-                #     # Mike / F_numeric Line
-                #     fig_midas.add_trace(go.Scatter(
-                #         x=intraday["Time"],
-                #         y=intraday["F_numeric"],
-                #         mode="lines",
-                #         name="Mike (F_numeric)",
-                #         line=dict(color="white", width=2)
-                #     ))
+                ticker = st.session_state.get('current_ticker', 'AAPL')  # or however you're loading tickers
                 
-                #     # MIDAS_Bear Line
-                #     fig_midas.add_trace(go.Scatter(
-                #         x=intraday["Time"],
-                #         y=intraday["MIDAS_Bear"],
-                #         mode="lines",
-                #         name="MIDAS_Bear",
-                #         line=dict(color="red", dash="dash")
-                #     ))
+                # 🌀 Fetch option chain
+                stock = yf.Ticker(ticker)
+                expirations = stock.options
+                latest_expiry = expirations[0]
                 
-                #     # MIDAS_Bull Line
-                #     fig_midas.add_trace(go.Scatter(
-                #         x=intraday["Time"],
-                #         y=intraday["MIDAS_Bull"],
-                #         mode="lines",
-                #         name="MIDAS_Bull",
-                #         line=dict(color="green", dash="dot")
-                #     ))
+                # 🧲 Load option chain for latest expiry
+                opt_chain = stock.option_chain(latest_expiry)
+                calls = opt_chain.calls  # or puts = opt_chain.puts
                 
-                #     fig_midas.update_layout(
-                #         height=400,
-                #         plot_bgcolor="black",
-                #         paper_bgcolor="black",
-                #         font=dict(color="white"),
-                #         title="MIDAS Anchors vs Mike",
-                #         xaxis_title="Time",
-                #         yaxis_title="Price"
-                #     )
-
-                #     bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                #     fig_midas.add_trace(go.Scatter(
-                #         x=bull_hand_rows["Time"],
-                #         y=bull_hand_rows["MIDAS_Bear"] + 3,  # Position above Bear line
-                #         mode="text",
-                #         text=["👋🏽"] * len(bull_hand_rows),
-                #         textposition="top right",
-                #         textfont=dict(size=13),
-                #         showlegend=False,
-                #         hovertemplate=(
-                #             "👋🏽 Bull MIDAS Breakout<br>"
-                #             "Time: %{x|%I:%M %p}<br>"
-                #             "Above MIDAS_Bear: %{y:.2f}<extra></extra>"
-                #         )
-                #       ))
-  
-                #     bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                #     fig_midas.add_trace(go.Scatter(
-                #         x=bear_glove_rows["Time"],
-                #         y=bear_glove_rows["MIDAS_Bull"] - 3,  # Position below Bull line
-                #         mode="text",
-                #         text=["🧤"] * len(bear_glove_rows),
-                #         textposition="bottom right",
-                #         textfont=dict(size=13),
-                #         showlegend=False,
-                #         hovertemplate=(
-                #             "🧤 Bear MIDAS Breakdown<br>"
-                #             "Time: %{x|%I:%M %p}<br>"
-                #             "Below MIDAS_Bull: %{y:.2f}<extra></extra>"
-                #         )
-                #     ))
-
-                #     fig_midas.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Bear_Displacement_Change_Smooth"],
-                #     mode="lines",
-                #     name="Bear Displacement Change (Smooth)",
-                #     line=dict(color="orangered", width=2, dash="dot"),
-                #     yaxis="y2"  # Secondary axis so it doesn't distort the price view
-                #     ))
-
-              
-                #     fig_midas.update_layout(
-                #         height=450,
-                #         plot_bgcolor="black",
-                #         paper_bgcolor="black",
-                #         font=dict(color="white"),
-                #         title="MIDAS Anchors vs Mike + Displacement Momentum",
-                #         xaxis_title="Time",
-                #         yaxis=dict(
-                #             title="Price",
-                #             side="left"
-                #         ),
-                #         yaxis2=dict(
-                #             title="Displacement Δ",
-                #             overlaying="y",     # Share the same x-axis
-                #             side="right",
-                #             showgrid=False
-                #         )
-                #     )
-
-
-                #     st.plotly_chart(fig_midas, use_container_width=True)
-
-
-
+                # 🧪 Selectable strike from calls
+                strikes = sorted(calls['strike'].unique())
+                default_index = len(strikes) // 2
+                selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
+                
+                # 📊 Show Greeks for selected strike
+                row = calls[calls['strike'] == selected_strike]
+                
+                with st.expander(f"🧮 Greeks for {ticker} — {selected_strike} ({latest_expiry})"):
+                    st.dataframe(row.reset_index(drop=True), use_container_width=True)
 
                 
                 with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=False):
@@ -7026,27 +6937,7 @@ if st.sidebar.button("Run Analysis"):
 
            
                 
-                ticker = st.session_state.get('current_ticker', 'AAPL')  # or however you're loading tickers
-                
-                # 🌀 Fetch option chain
-                stock = yf.Ticker(ticker)
-                expirations = stock.options
-                latest_expiry = expirations[0]
-                
-                # 🧲 Load option chain for latest expiry
-                opt_chain = stock.option_chain(latest_expiry)
-                calls = opt_chain.calls  # or puts = opt_chain.puts
-                
-                # 🧪 Selectable strike from calls
-                strikes = sorted(calls['strike'].unique())
-                default_index = len(strikes) // 2
-                selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
-                
-                # 📊 Show Greeks for selected strike
-                row = calls[calls['strike'] == selected_strike]
-                
-                with st.expander(f"🧮 Greeks for {ticker} — {selected_strike} ({latest_expiry})"):
-                    st.dataframe(row.reset_index(drop=True), use_container_width=True)
+
 
 
 
