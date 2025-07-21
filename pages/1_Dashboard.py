@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import date
 from datetime import timedelta, datetime
-from Option_pricing import get_full_option_chain
+from pages.Option_pricing import get_full_option_chain
 
 import io
                 
