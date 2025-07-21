@@ -4471,27 +4471,40 @@ if st.sidebar.button("Run Analysis"):
                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
                         .reset_index(drop=True)
                     )
-                ticker = st.session_state.get('current_ticker', 'AAPL')  # or however you're loading tickers
-                
-                # 🌀 Fetch option chain
-                stock = yf.Ticker(ticker)
-                expirations = stock.options
-                latest_expiry = expirations[0]
-                
-                # 🧲 Load option chain for latest expiry
-                opt_chain = stock.option_chain(latest_expiry)
-                calls = opt_chain.calls  # or puts = opt_chain.puts
-                
-                # 🧪 Selectable strike from calls
-                strikes = sorted(calls['strike'].unique())
-                default_index = len(strikes) // 2
-                selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
-                
-                # 📊 Show Greeks for selected strike
-                row = calls[calls['strike'] == selected_strike]
-                
-                with st.expander(f"🧮 Greeks for {ticker} — {selected_strike} ({latest_expiry})"):
-                    st.dataframe(row.reset_index(drop=True), use_container_width=True)
+                if "selected_tab_index" not in st.session_state:
+                    st.session_state.selected_tab_index = 0
+
+
+              main_tabs = st.tabs([f"Ticker: {t}" for t in tickers])
+
+              for idx, t in enumerate(tickers):
+                  with main_tabs[idx]:
+                    # Update session state when this tab is rendered
+                      if st.session_state.selected_tab_index != idx:
+                        st.session_state.selected_tab_index = idx
+
+              # 👇 Only show options data if this tab is the selected one
+              if st.session_state.selected_tab_index == idx:
+                  import yfinance as yf
+                  try:
+                      stock = yf.Ticker(t)
+                      expirations = stock.options
+                      latest_expiry = expirations[0]
+              
+                      opt_chain = stock.option_chain(latest_expiry)
+                      calls = opt_chain.calls
+              
+                      strikes = sorted(calls['strike'].unique())
+                      default_index = len(strikes) // 2
+                      selected_strike = st.selectbox("🔹 Select Strike", strikes, index=default_index)
+              
+                      row = calls[calls['strike'] == selected_strike]
+              
+                      with st.expander(f"🧮 Greeks for {t} — {selected_strike} ({latest_expiry})"):
+                          st.dataframe(row.reset_index(drop=True), use_container_width=True)
+              
+                  except Exception as e:
+                      st.warning(f"⚠️ Options data unavailable for {t}: {e}")
 
                 
                 with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=False):
