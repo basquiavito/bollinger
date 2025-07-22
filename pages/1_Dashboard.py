@@ -6755,8 +6755,8 @@ if st.sidebar.button("Run Analysis"):
               # Columns: price_col = 'F_numeric', BB_upper = 'BB_upper'
 
                 # Step 1: Get data range including Bollinger Bands
-                y_min = min(intraday[[price_col, 'BB_lower']].min())
-                y_max_data = max(intraday[[price_col, 'BB_upper']].max())
+                y_min = min(intraday[[price_col, 'F% Lower']].min())
+                y_max_data = max(intraday[[price_col, 'F% Upper']].max())
                 
                 # Step 2: Account for emoji buffer (emojis plotted at y + 3)
                 emoji_buffer = 4
