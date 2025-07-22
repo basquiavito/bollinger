@@ -4338,8 +4338,24 @@ if st.sidebar.button("Run Analysis"):
                                   intraday.at[intraday.index[i], "Bull_Displacement_Double"] = "👑"
 
 
-
-
+                      intraday["Bear_Lethal_Accel"] = ""
+                      
+                      for i in range(2, len(intraday)):
+                          prev = intraday["Bear_Displacement"].iloc[i - 1]
+                          curr = intraday["Bear_Displacement"].iloc[i]
+                          delta = curr - prev
+                          recent_min = intraday["Bear_Displacement"].iloc[i-3:i].min()
+                          
+                          # Lethal if all 3 conditions met
+                          if (
+                              pd.notna(curr)
+                              and curr > 1.5 * recent_min  # explosive growth in displacement
+                              and delta > 5               # sharp jump in a single bar
+                              and curr > 20               # absolute distance confirms real separation
+                          ):
+                              intraday.at[intraday.index[i], "Bear_Lethal_Accel"] = "⚔️"
+                      
+                      
 
 
 
@@ -4556,7 +4572,7 @@ if st.sidebar.button("Run Analysis"):
                                     st.dataframe(
                                         intraday[[
                                             'Time', price_col, 'Volume',
-                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
                                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
                                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
                                         ]]
