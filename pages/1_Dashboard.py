@@ -6570,11 +6570,11 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[cloud_mask, "Time"],
-                    y=intraday.loc[cloud_mask, "F_numeric"] +43,
+                    y=intraday.loc[cloud_mask, "F_numeric"] +33,
                     mode="text",
                     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
                     textposition="top center",
-                    textfont=dict(size=21),
+                    textfont=dict(size=15),
                     name="Heaven ☁️",
                     hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
                 ), row=1, col=1)
@@ -6602,11 +6602,11 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[drizzle_mask, "Time"],
-                    y=intraday.loc[drizzle_mask, "F_numeric"] + 43,  # Position below the bar
+                    y=intraday.loc[drizzle_mask, "F_numeric"] + 33,  # Position below the bar
                     mode="text",
                     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
                     textposition="bottom center",
-                    textfont=dict(size=21),
+                    textfont=dict(size=15),
                     name="Price Dropped Below Demand 🌧️",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
