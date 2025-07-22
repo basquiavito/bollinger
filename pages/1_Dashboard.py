@@ -6149,18 +6149,18 @@ if st.sidebar.button("Run Analysis"):
                 #     )
                 # ), row=1, col=1)
 
-                # ⚔️ Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
-                bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "⚔️"]
+                # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
+                bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
                 fig.add_trace(go.Scatter(
                     x=bear_lethal_rows["TimeIndex"],
                     y=bear_lethal_rows["F_numeric"] - 3,  # Offset below Mike for clarity
                     mode="text",
-                    text=["⚔️"] * len(bear_lethal_rows),
+                    text=["🥊"] * len(bear_lethal_rows),
                     textposition="bottom right",
                     textfont=dict(size=22),
                     showlegend=False,
                     hovertemplate=(
-                        "⚔️ Bear Lethal Acceleration<br>"
+                        "🥊 Bear Lethal Acceleration<br>"
                         "Time: %{x|%I:%M %p}<br>"
                         "F%: %{y:.2f}<extra></extra>"
                     )
