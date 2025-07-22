@@ -6745,12 +6745,12 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
 
-                # # Get y-range from F_numeric (or your price_col)
-                # y_min = intraday[price_col].min()
-                # y_max = intraday[price_col].max()
-                # margin = (y_max - y_min) * 0.05  # 15% buffer
+                # Get y-range from F_numeric (or your price_col)
+                y_min = intraday[price_col].min()
+                y_max = intraday[price_col].max()
+                margin = (y_max - y_min) * 0.05  # 15% buffer
                 
-                # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
+                fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
                 
                 # # Base bounds including BBs
                 # y_min = min(intraday[[price_col, 'F% Lower']].min())
