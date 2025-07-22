@@ -4357,8 +4357,8 @@ if st.sidebar.button("Run Analysis"):
                                     """
                                 
                                     # 1. Detect anchor appearance
-                                    df["BullAnchor"] = df["MIDAS_Bull"].notna() & df["MidasBull"].shift(1).isna()
-                                    df["BearAnchor"] = df["MIDAS_Bear"].notna() & df["MidasBear"].shift(1).isna()
+                                    df["BullAnchor"] = df["MIDAS_Bull"].notna() & df["MIDAS_Bull"].shift(1).isna()
+                                    df["BearAnchor"] = df["MIDAS_Bear"].notna() & df["MIDAS_Bear"].shift(1).isna()
                                 
                                     # 2. Detect price crossing TD lines
                                     df["Crossed_TD_Demand"] = (df["F_numeric"].shift(1) < df["TD_Demand"]) & (df["F_numeric"] >= df["TD_Demand"])
