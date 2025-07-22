@@ -6748,7 +6748,7 @@ if st.sidebar.button("Run Analysis"):
                 # Get y-range from F_numeric (or your price_col)
                 y_min = intraday[price_col].min()
                 y_max = intraday[price_col].max()
-                margin = (y_max - y_min) * 0.15  # 15% buffer
+                margin = (y_max - y_min) * 0.08  # 15% buffer
                 
                 fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
                 
@@ -6839,26 +6839,26 @@ if st.sidebar.button("Run Analysis"):
                 #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
                        
                       # Show YVA and Yesterday Range
-                if yva_min is not None and yva_max is not None:
-                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
-                if prev_close:
-                    range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
-                    st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+                # if yva_min is not None and yva_max is not None:
+                #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
+                # if prev_close:
+                #     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+                #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
                 
-                # 🧭 Opening Position vs YVA
-                if yva_min is not None and yva_max is not None:
-                    opening_price = intraday["Close"].iloc[0]
+                # # 🧭 Opening Position vs YVA
+                # if yva_min is not None and yva_max is not None:
+                #     opening_price = intraday["Close"].iloc[0]
                 
-                    if yva_min < opening_price < yva_max:
-                        yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
-                    elif opening_price >= yva_max:
-                        yva_position_msg = "⬆️ Opened **above** Yesterday's Value Area"
-                    elif opening_price <= yva_min:
-                        yva_position_msg = "⬇️ Opened **below** Yesterday's Value Area"
-                    else:
-                        yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
+                #     if yva_min < opening_price < yva_max:
+                #         yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
+                #     elif opening_price >= yva_max:
+                #         yva_position_msg = "⬆️ Opened **above** Yesterday's Value Area"
+                #     elif opening_price <= yva_min:
+                #         yva_position_msg = "⬇️ Opened **below** Yesterday's Value Area"
+                #     else:
+                #         yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
                 
-                    st.markdown(f"### {yva_position_msg}")
+                #     st.markdown(f"### {yva_position_msg}")
 
 
                     #   # ✅ Detect Initiative Breakout from Yesterday’s Value Area
