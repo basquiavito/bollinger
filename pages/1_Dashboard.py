@@ -6153,11 +6153,11 @@ if st.sidebar.button("Run Analysis"):
                 bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
                 fig.add_trace(go.Scatter(
                     x=bear_lethal_rows["TimeIndex"],
-                    y=bear_lethal_rows["F_numeric"] - 3,  # Offset below Mike for clarity
+                    y=bear_lethal_rows["F_numeric"] - 20,  # Offset below Mike for clarity
                     mode="text",
                     text=["🥊"] * len(bear_lethal_rows),
                     textposition="bottom right",
-                    textfont=dict(size=26),
+                    textfont=dict(size=16),
                     showlegend=False,
                     hovertemplate=(
                         "🥊 Bear Lethal Acceleration<br>"
@@ -6170,11 +6170,11 @@ if st.sidebar.button("Run Analysis"):
                 bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
                 fig.add_trace(go.Scatter(
                     x=bull_lethal_rows["TimeIndex"],
-                    y=bull_lethal_rows["F_numeric"] + 3,  # Offset above Mike for clarity
+                    y=bull_lethal_rows["F_numeric"] + 20,  # Offset above Mike for clarity
                     mode="text",
                     text=["🚀"] * len(bull_lethal_rows),
                     textposition="top right",
-                    textfont=dict(size=26),
+                    textfont=dict(size=16),
                     showlegend=False,
                     hovertemplate=(
                         "🚀 Bull Lethal Acceleration<br>"
