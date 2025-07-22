@@ -6752,18 +6752,18 @@ if st.sidebar.button("Run Analysis"):
                 
                 # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
                 
-                # Base bounds including BBs
-                y_min = min(intraday[[price_col, 'F% Lower']].min())
-                y_max_base = max(intraday[[price_col, 'F% Upper']].max())
+                # # Base bounds including BBs
+                # y_min = min(intraday[[price_col, 'F% Lower']].min())
+                # y_max_base = max(intraday[[price_col, 'F% Upper']].max())
                 
-                # Assume max emoji is plotted at BB_upper + 3
-                y_max = y_max_base + 3
+                # # Assume max emoji is plotted at BB_upper + 3
+                # y_max = y_max_base + 3
                 
-                # Now add margin
-                margin = (y_max - y_min) * 0.05
+                # # Now add margin
+                # margin = (y_max - y_min) * 0.05
                 
-                # Final range
-                fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
+                # # Final range
+                # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
                                             
                                 
                 
