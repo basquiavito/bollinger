@@ -4552,7 +4552,7 @@ if st.sidebar.button("Run Analysis"):
               
                 #               st.plotly_chart(fig_ichimoku, use_container_width=True)
 
-               with st.expander("🪞 MIDAS Anchor Table", expanded=False):
+                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
                                         intraday[[
                                             'Time', price_col, 'Volume',
