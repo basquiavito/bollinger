@@ -6792,6 +6792,36 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
 
+
+               # Bull triggers (calls) 🐎
+                bull_points = df[df["Bull3DeltaTrigger"]]
+                fig.add_trace(go.Scatter(
+                    x=bull_points["TimeIndex"],
+                    y=bull_points["F_numeric"],
+                    mode="text",
+                    text=["🐎"] * len(bull_points),
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Bull 3Δ Trigger",
+                    showlegend=False
+                ))
+            
+                # Bear triggers (puts) 🐍
+                bear_points = df[df["Bear3DeltaTrigger"]]
+                fig.add_trace(go.Scatter(
+                    x=bear_points["TimeIndex"],
+                    y=bear_points["F_numeric"],
+                    mode="text",
+                    text=["🐍"] * len(bear_points),
+                    textposition="bottom center",
+                    textfont=dict(size=18),
+                    name="Bear 3Δ Trigger",
+                    showlegend=False
+                ))
+            
+
+
+
                 # # Get y-range from F_numeric (or your price_col)
                 # y_min = intraday[price_col].min()
                 # y_max = intraday[price_col].max()
