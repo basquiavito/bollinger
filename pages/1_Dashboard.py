@@ -4361,8 +4361,8 @@ if st.sidebar.button("Run Analysis"):
                                     df["BearAnchor"] = df["MIDAS_Bear"].notna() & df["MIDAS_Bear"].shift(1).isna()
                                 
                                     # 2. Detect price crossing TD lines
-                                    df["Crossed_TD_Demand"] = (df["F_numeric"].shift(1) < df["TD_Demand"]) & (df["F_numeric"] >= df["TD_Demand"])
-                                    df["Crossed_TD_Supply"] = (df["F_numeric"].shift(1) > df["TD_Supply"]) & (df["F_numeric"] <= df["TD_Supply"])
+                                    df["Crossed_TD_Demand"] = (df["F_numeric"].shift(1) < df['TD Demand Line F']) & (df["F_numeric"] >= df['TD Demand Line F'])
+                                    df["Crossed_TD_Supply"] = (df["F_numeric"].shift(1) > df['TD Supply Line F']) & (df["F_numeric"] <= df[['TD Supply Line F'])
                                 
                                     # 3. Calculate slope direction of Midas lines
                                     df["BullSlope"] = df["MIDAS_Bull"].diff()
