@@ -4355,7 +4355,22 @@ if st.sidebar.button("Run Analysis"):
                           ):
                               intraday.at[intraday.index[i], "Bear_Lethal_Accel"] = "⚔️"
                       
-                      
+                      intraday["Bull_Lethal_Accel"] = ""
+
+                      for i in range(2, len(intraday)):
+                          prev = intraday["Bull_Displacement"].iloc[i - 1]
+                          curr = intraday["Bull_Displacement"].iloc[i]
+                          delta = curr - prev
+                          recent_min = intraday["Bull_Displacement"].iloc[i-3:i].min()
+                          
+                          if (
+                              pd.notna(curr)
+                              and curr > 1.5 * recent_min
+                              and delta > 5
+                              and curr > 20
+                          ):
+                              intraday.at[intraday.index[i], "Bull_Lethal_Accel"] = "🚀"
+
 
 
 
@@ -4572,7 +4587,7 @@ if st.sidebar.button("Run Analysis"):
                                     st.dataframe(
                                         intraday[[
                                             'Time', price_col, 'Volume',
-                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
                                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
                                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
                                         ]]
