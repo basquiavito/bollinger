@@ -3896,8 +3896,47 @@ if st.sidebar.button("Run Analysis"):
                     intraday.loc[last_swimmer_idx, "Swimmer_Emoji"] = "🦑"
 
 
+                
+                def check_midas_3delta_trigger(df):
+                    """
+                    Detects conditions to trigger a 3-delta buy alert:
+                    - A Midas Bull or Bear anchor appears
+                    - Price crosses a TD Supply or Demand line
+                    - The cross is in the same direction as Midas slope
+                    Returns the dataframe with Bull3DeltaTrigger and Bear3DeltaTrigger columns
+                    """
+                
+                    # 1. Detect anchor appearance
+                    df["BullAnchor"] = df["MidasBull"].notna() & df["MidasBull"].shift(1).isna()
+                    df["BearAnchor"] = df["MidasBear"].notna() & df["MidasBear"].shift(1).isna()
+                
+                    # 2. Detect price crossing TD lines
+                    df["Crossed_TD_Demand"] = (df["F_numeric"].shift(1) < df["TD_Demand"]) & (df["F_numeric"] >= df["TD_Demand"])
+                    df["Crossed_TD_Supply"] = (df["F_numeric"].shift(1) > df["TD_Supply"]) & (df["F_numeric"] <= df["TD_Supply"])
+                
+                    # 3. Calculate slope direction of Midas lines
+                    df["BullSlope"] = df["MidasBull"].diff()
+                    df["BearSlope"] = df["MidasBear"].diff()
+                
+                    df["BullSlopeUp"] = df["BullSlope"] > 0
+                    df["BearSlopeDown"] = df["BearSlope"] < 0
+                
+                    # 4. Final trigger logic
+                    df["Bull3DeltaTrigger"] = (
+                        df["BullAnchor"] &
+                        df["Crossed_TD_Demand"] &
+                        df["BullSlopeUp"]
+                    )
+                
+                    df["Bear3DeltaTrigger"] = (
+                        df["BearAnchor"] &
+                        df["Crossed_TD_Supply"] &
+                        df["BearSlopeDown"]
+                    )
+                
+                    return df
 
-
+                intraday = check_midas_3delta_trigger(intraday)
 
 
 
@@ -3929,7 +3968,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Range","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "Time","Volume","F_numeric","RVOL_5","Bull3DeltaTrigger","Bear3DeltaTrigger","Range","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
