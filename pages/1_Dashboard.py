@@ -6794,7 +6794,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                # Bull triggers (calls) 🐎
-                bull_points = df[df["Bull3DeltaTrigger"]]
+                bull_points = intraday[intraday["Bull3DeltaTrigger"]]
                 fig.add_trace(go.Scatter(
                     x=bull_points["TimeIndex"],
                     y=bull_points["F_numeric"],
@@ -6807,7 +6807,7 @@ if st.sidebar.button("Run Analysis"):
                 ))
             
                 # Bear triggers (puts) 🐍
-                bear_points = df[df["Bear3DeltaTrigger"]]
+                bear_points = intraday[intraday["Bear3DeltaTrigger"]]
                 fig.add_trace(go.Scatter(
                     x=bear_points["TimeIndex"],
                     y=bear_points["F_numeric"],
