@@ -4506,17 +4506,17 @@ if st.sidebar.button("Run Analysis"):
                 #               st.plotly_chart(fig_ichimoku, use_container_width=True)
 
                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
-                                  st.dataframe(
-                                      intraday[[
-                                          'Time', price_col, 'Volume',
-                                          'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
-                                          'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
-                                          'Bull_Midas_Wake', 'Bear_Midas_Wake'
-                                      ]]
-                                      .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
-                                      .reset_index(drop=True)
-                                  )
-              
+                                    st.dataframe(
+                                        intraday[[
+                                            'Time', price_col, 'Volume',
+                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
+                                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
+                                        ]]
+                                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+                                        .reset_index(drop=True)
+                                    )
+                
 
                    
                
