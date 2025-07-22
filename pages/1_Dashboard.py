@@ -6745,16 +6745,28 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
 
-                # Get y-range from F_numeric (or your price_col)
-                y_min = intraday[price_col].min()
-                y_max = intraday[price_col].max()
-                margin = (y_max - y_min) * 0.05  # 15% buffer
+                # # Get y-range from F_numeric (or your price_col)
+                # y_min = intraday[price_col].min()
+                # y_max = intraday[price_col].max()
+                # margin = (y_max - y_min) * 0.05  # 15% buffer
                 
+                # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
+                
+                # Base bounds including BBs
+                y_min = min(intraday[[price_col, 'BB_lower']].min())
+                y_max_base = max(intraday[[price_col, 'BB_upper']].max())
+                
+                # Assume max emoji is plotted at BB_upper + 3
+                y_max = y_max_base + 3
+                
+                # Now add margin
+                margin = (y_max - y_min) * 0.05
+                
+                # Final range
                 fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
+                                            
+                                
                 
-                            
-                
-
 
 
                 # # 💀 plot for Bear Displacement Doubling
