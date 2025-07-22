@@ -5089,22 +5089,22 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(scatter_distensibility, row=1, col=1)
 
 
-                    # Create a Boolean mask for rows with Stroke Growth ⭐ emojis
-                    # mask_stroke_growth = intraday["Stroke Growth ⭐"] != ""
+                    Create a Boolean mask for rows with Stroke Growth ⭐ emojis
+                    mask_stroke_growth = intraday["Stroke Growth ⭐"] != ""
                     
-                    # # Plot Stroke Growth ⭐ emojis just below the F_numeric line
-                    # scatter_stroke_growth = go.Scatter(
-                    #     x=intraday.loc[mask_stroke_growth, "Time"],
-                    #     y=intraday.loc[mask_stroke_growth, "F_numeric"] + 38,  # Adjust vertical offset if needed
-                    #     mode="text",
-                    #     text=intraday.loc[mask_stroke_growth, "Stroke Growth ⭐"],
-                    #     textposition="top center",
-                    #     textfont=dict(size=16),
-                    #     name="Stroke Growth ⭐",
-                    #     hovertemplate="Time: %{x}<br>⭐ Stroke Volume Growth<extra></extra>"
-                    # )
+                    # Plot Stroke Growth ⭐ emojis just below the F_numeric line
+                    scatter_stroke_growth = go.Scatter(
+                        x=intraday.loc[mask_stroke_growth, "Time"],
+                        y=intraday.loc[mask_stroke_growth, "F_numeric"] + 38,  # Adjust vertical offset if needed
+                        mode="text",
+                        text=intraday.loc[mask_stroke_growth, "Stroke Growth ⭐"],
+                        textposition="top center",
+                        textfont=dict(size=16),
+                        name="Stroke Growth ⭐",
+                        hovertemplate="Time: %{x}<br>⭐ Stroke Volume Growth<extra></extra>"
+                    )
                     
-                    # fig.add_trace(scatter_stroke_growth, row=1, col=1)
+                    fig.add_trace(scatter_stroke_growth, row=1, col=1)
 
                   
 
