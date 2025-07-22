@@ -6801,7 +6801,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=["🐎"] * len(bull_points),
                     textposition="top center",
-                    textfont=dict(size=18),
+                    textfont=dict(size=89),
                     name="Bull 3Δ Trigger",
                     showlegend=False
                 ))
@@ -6814,7 +6814,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=["🐍"] * len(bear_points),
                     textposition="bottom center",
-                    textfont=dict(size=18),
+                    textfont=dict(size=89),
                     name="Bear 3Δ Trigger",
                     showlegend=False
                 ))
