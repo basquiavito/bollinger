@@ -6753,8 +6753,14 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
 
-
-            
+                # Get y-range from F_numeric (or your price_col)
+                y_min = intraday[price_col].min()
+                y_max = intraday[price_col].max()
+                margin = (y_max - y_min) * 0.15  # 15% buffer
+                
+                fig.update_yaxes(range=[y_min - margin, y_max + margin])
+                
+                            
                 if floor_f:
                     fig.add_hline(y=floor_f, line=dict(color="blue", dash="dot"), name="Floor")
                 if ceiling_f:
