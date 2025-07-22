@@ -4337,7 +4337,56 @@ if st.sidebar.button("Run Analysis"):
                               if curr >= 2 * prev:
                                   intraday.at[intraday.index[i], "Bull_Displacement_Double"] = "👑"
 
-                      # Add emojis
+
+
+
+
+
+
+
+
+                              
+                  
+                      def check_midas_3delta_trigger(df):
+                                    """
+                                    Detects conditions to trigger a 3-delta buy alert:
+                                    - A Midas Bull or Bear anchor appears
+                                    - Price crosses a TD Supply or Demand line
+                                    - The cross is in the same direction as Midas slope
+                                    Returns the dataframe with Bull3DeltaTrigger and Bear3DeltaTrigger columns
+                                    """
+                                
+                                    # 1. Detect anchor appearance
+                                    df["BullAnchor"] = df["MidasBull"].notna() & df["MidasBull"].shift(1).isna()
+                                    df["BearAnchor"] = df["MidasBear"].notna() & df["MidasBear"].shift(1).isna()
+                                
+                                    # 2. Detect price crossing TD lines
+                                    df["Crossed_TD_Demand"] = (df["F_numeric"].shift(1) < df["TD_Demand"]) & (df["F_numeric"] >= df["TD_Demand"])
+                                    df["Crossed_TD_Supply"] = (df["F_numeric"].shift(1) > df["TD_Supply"]) & (df["F_numeric"] <= df["TD_Supply"])
+                                
+                                    # 3. Calculate slope direction of Midas lines
+                                    df["BullSlope"] = df["MidasBull"].diff()
+                                    df["BearSlope"] = df["MidasBear"].diff()
+                                
+                                    df["BullSlopeUp"] = df["BullSlope"] > 0
+                                    df["BearSlopeDown"] = df["BearSlope"] < 0
+                                
+                                    # 4. Final trigger logic
+                                    df["Bull3DeltaTrigger"] = (
+                                        df["BullAnchor"] &
+                                        df["Crossed_TD_Demand"] &
+                                        df["BullSlopeUp"]
+                                    )
+                                
+                                    df["Bear3DeltaTrigger"] = (
+                                        df["BearAnchor"] &
+                                        df["Crossed_TD_Supply"] &
+                                        df["BearSlopeDown"]
+                                    )
+                                
+                                    return df
+                
+                      intraday = check_midas_3delta_trigger(intraday)
                       def add_mike_midas_cross_emojis(df, price_col):
                           if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
                               return df, None, None
@@ -4452,51 +4501,10 @@ if st.sidebar.button("Run Analysis"):
                 # Display anchor info
                 st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
                 st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
-            
-                  
-                      def check_midas_3delta_trigger(df):
-                                    """
-                                    Detects conditions to trigger a 3-delta buy alert:
-                                    - A Midas Bull or Bear anchor appears
-                                    - Price crosses a TD Supply or Demand line
-                                    - The cross is in the same direction as Midas slope
-                                    Returns the dataframe with Bull3DeltaTrigger and Bear3DeltaTrigger columns
-                                    """
-                                
-                                    # 1. Detect anchor appearance
-                                    df["BullAnchor"] = df["MidasBull"].notna() & df["MidasBull"].shift(1).isna()
-                                    df["BearAnchor"] = df["MidasBear"].notna() & df["MidasBear"].shift(1).isna()
-                                
-                                    # 2. Detect price crossing TD lines
-                                    df["Crossed_TD_Demand"] = (df["F_numeric"].shift(1) < df["TD_Demand"]) & (df["F_numeric"] >= df["TD_Demand"])
-                                    df["Crossed_TD_Supply"] = (df["F_numeric"].shift(1) > df["TD_Supply"]) & (df["F_numeric"] <= df["TD_Supply"])
-                                
-                                    # 3. Calculate slope direction of Midas lines
-                                    df["BullSlope"] = df["MidasBull"].diff()
-                                    df["BearSlope"] = df["MidasBear"].diff()
-                                
-                                    df["BullSlopeUp"] = df["BullSlope"] > 0
-                                    df["BearSlopeDown"] = df["BearSlope"] < 0
-                                
-                                    # 4. Final trigger logic
-                                    df["Bull3DeltaTrigger"] = (
-                                        df["BullAnchor"] &
-                                        df["Crossed_TD_Demand"] &
-                                        df["BullSlopeUp"]
-                                    )
-                                
-                                    df["Bear3DeltaTrigger"] = (
-                                        df["BearAnchor"] &
-                                        df["Crossed_TD_Supply"] &
-                                        df["BearSlopeDown"]
-                                    )
-                                
-                                    return df
-                
-                      intraday = check_midas_3delta_trigger(intraday)
-
-
-
+  
+  
+  
+  
 
 
 
