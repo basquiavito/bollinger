@@ -4217,8 +4217,8 @@ if st.sidebar.button("Run Analysis"):
                   
 
 
-                  # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
+                  # # Show DataFrame
+                  # st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
                 
                                          # Initialize columns
@@ -4455,9 +4455,9 @@ if st.sidebar.button("Run Analysis"):
 
                 
  
-                # Display anchor info
-                st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
-                st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
+                # # Display anchor info
+                # st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
+                # st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
             
         
      
@@ -6886,21 +6886,21 @@ if st.sidebar.button("Run Analysis"):
                         # When price opens above yesterday's high OR below yesterday's low
                         # AND remains there throughout the first 30 minutes
                     
-                    opened_above_yh = opening_price > prev_high
-                    opened_below_yl = opening_price < prev_low
+                    # opened_above_yh = opening_price > prev_high
+                    # opened_below_yl = opening_price < prev_low
                     
-                    first_6 = intraday.iloc[:6]
-                    stayed_above_yh = (first_6["Close"] > prev_high).all()
-                    stayed_below_yl = (first_6["Close"] < prev_low).all()
+                    # first_6 = intraday.iloc[:6]
+                    # stayed_above_yh = (first_6["Close"] > prev_high).all()
+                    # stayed_below_yl = (first_6["Close"] < prev_low).all()
                     
-                    if opened_above_yh and stayed_above_yh:
-                        st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
+                    # if opened_above_yh and stayed_above_yh:
+                    #     st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
                     
-                    elif opened_below_yl and stayed_below_yl:
-                        st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
+                    # elif opened_below_yl and stayed_below_yl:
+                    #     st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
                     
-                    elif opened_above_yh or opened_below_yl:
-                        st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
+                    # elif opened_above_yh or opened_below_yl:
+                    #     st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
                         
                         
 
