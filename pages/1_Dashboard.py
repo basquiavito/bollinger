@@ -4353,7 +4353,7 @@ if st.sidebar.button("Run Analysis"):
                               and delta > 5               # sharp jump in a single bar
                               and curr > 20               # absolute distance confirms real separation
                           ):
-                              intraday.at[intraday.index[i], "Bear_Lethal_Accel"] = "⚔️"
+                              intraday.at[intraday.index[i], "Bear_Lethal_Accel"] = "🥊"
                       
                       intraday["Bull_Lethal_Accel"] = ""
 
