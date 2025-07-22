@@ -4668,7 +4668,7 @@ if st.sidebar.button("Run Analysis"):
                         rows=3,
                         cols=1,
                         vertical_spacing=0.03,
-                        row_heights=[0.60, 0.20, 0.20],  
+                        row_heights=[0.50, 0.25, 0.25],  
                         subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS"),
                         shared_xaxes=True,
                        
@@ -6745,12 +6745,12 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
 
-                # # Get y-range from F_numeric (or your price_col)
-                # y_min = intraday[price_col].min()
-                # y_max = intraday[price_col].max()
-                # margin = (y_max - y_min) * 0.05  # 15% buffer
+                # Get y-range from F_numeric (or your price_col)
+                y_min = intraday[price_col].min()
+                y_max = intraday[price_col].max()
+                margin = (y_max - y_min) * 0.05  # 15% buffer
                 
-                # fig.update_yaxes(range=[y_min - margin, y_max + margin])
+                fig.update_yaxes(range=[y_min - margin, y_max + margin])
                 
                             
                 
