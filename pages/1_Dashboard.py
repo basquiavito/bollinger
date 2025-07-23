@@ -6869,7 +6869,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
                 
-                Columns: price_col = 'F_numeric', BB_upper = 'BB_upper'
+                #Columns: price_col = 'F_numeric', BB_upper = 'BB_upper'
 
                 #Step 1: Get data range including Bollinger Bands
                 y_min = min(intraday[[price_col, 'F% Lower']].min())
