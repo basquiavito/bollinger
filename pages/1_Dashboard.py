@@ -6635,7 +6635,7 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[cloud_mask, "Time"],
-                    y=intraday.loc[cloud_mask, "F_numeric"] +60,
+                    y=intraday.loc[cloud_mask, "F_numeric"] +144,
                     mode="text",
                     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
                     textposition="top center",
@@ -6667,7 +6667,7 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[drizzle_mask, "Time"],
-                    y=intraday.loc[drizzle_mask, "F_numeric"] + 60,  # Position below the bar
+                    y=intraday.loc[drizzle_mask, "F_numeric"] + 144,  # Position below the bar
                     mode="text",
                     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
                     textposition="bottom center",
@@ -6771,7 +6771,7 @@ if st.sidebar.button("Run Analysis"):
                 # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
                 scatter_tk_sun = go.Scatter(
                     x=intraday.loc[mask_tk_sun, "Time"],
-                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 70,  # Offset for visibility
+                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 144,  # Offset for visibility
                     mode="text",
                     text="🌞",
                     textposition="top center",
@@ -6783,7 +6783,7 @@ if st.sidebar.button("Run Analysis"):
                 # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
                 scatter_tk_moon = go.Scatter(
                     x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] + 70,  # Offset for visibility
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] + 14,  # Offset for visibility
                     mode="text",
                     text="🌙",
                     textposition="bottom center",
@@ -6806,7 +6806,7 @@ if st.sidebar.button("Run Analysis"):
                 # 👼🏻 Sanyaku Kouten marker (Bullish)
                 scatter_sanyaku_kouten = go.Scatter(
                     x=intraday.loc[mask_sanyaku_kouten, "Time"],
-                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] + 150,  # Lower offset
+                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] + 233,  # Lower offset
                     mode="text",
                     text="👼🏻",
                     textposition="bottom center",
@@ -6818,7 +6818,7 @@ if st.sidebar.button("Run Analysis"):
                 # 👺 Sanyaku Gyakuten marker (Bearish)
                 scatter_sanyaku_gyakuten = go.Scatter(
                     x=intraday.loc[mask_sanyaku_gyakuten, "Time"],
-                    y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 150,  # Lower offset
+                    y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 233,  # Lower offset
                     mode="text",
                     text="👺",
                     textposition="top center",
