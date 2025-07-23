@@ -6639,7 +6639,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
                     textposition="top center",
-                    textfont=dict(size=34),
+                    textfont=dict(size=21),
                     name="Heaven ☁️",
                     hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
                 ), row=1, col=1)
@@ -6671,7 +6671,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
                     textposition="bottom center",
-                    textfont=dict(size=34),
+                    textfont=dict(size=21),
                     name="Price Dropped Below Demand 🌧️",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
@@ -6775,7 +6775,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="🌞",
                     textposition="top center",
-                    textfont=dict(size=55),
+                    textfont=dict(size=34),
                     name="Tenkan-Kijun Bullish Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
                 )
@@ -6787,7 +6787,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="🌙",
                     textposition="bottom center",
-                    textfont=dict(size=55),
+                    textfont=dict(size=34),
                     name="Tenkan-Kijun Bearish Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
                 )
@@ -6810,7 +6810,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="👼🏻",
                     textposition="bottom center",
-                    textfont=dict(size=89),
+                    textfont=dict(size=55),
                     name="Sanyaku Kouten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
                 )
@@ -6822,7 +6822,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="👺",
                     textposition="top center",
-                    textfont=dict(size=89),
+                    textfont=dict(size=55),
                     name="Sanyaku Gyakuten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
                 )
