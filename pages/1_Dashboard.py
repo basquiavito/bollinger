@@ -6688,7 +6688,7 @@ if st.sidebar.button("Run Analysis"):
                 # Scatter plot for 🕸️ (slightly below F_numeric)
                 scatter_tenkan_cross_down = go.Scatter(
                     x=intraday.loc[mask_tenkan_cross_down, "Time"],
-                    y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - ,
+                    y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 20,
                     mode="text",
                     text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
                     textposition="bottom right",
