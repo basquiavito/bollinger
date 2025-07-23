@@ -6783,7 +6783,7 @@ if st.sidebar.button("Run Analysis"):
                 # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
                 scatter_tk_moon = go.Scatter(
                     x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] + 144,  # Offset for visibility
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 144,  # Offset for visibility
                     mode="text",
                     text="🌙",
                     textposition="bottom center",
