@@ -6806,11 +6806,11 @@ if st.sidebar.button("Run Analysis"):
                 # 👼🏻 Sanyaku Kouten marker (Bullish)
                 scatter_sanyaku_kouten = go.Scatter(
                     x=intraday.loc[mask_sanyaku_kouten, "Time"],
-                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] + 100,  # Lower offset
+                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] + 150,  # Lower offset
                     mode="text",
                     text="👼🏻",
                     textposition="bottom center",
-                    textfont=dict(size=32),
+                    textfont=dict(size=40),
                     name="Sanyaku Kouten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
                 )
@@ -6818,11 +6818,11 @@ if st.sidebar.button("Run Analysis"):
                 # 👺 Sanyaku Gyakuten marker (Bearish)
                 scatter_sanyaku_gyakuten = go.Scatter(
                     x=intraday.loc[mask_sanyaku_gyakuten, "Time"],
-                    y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 100,  # Lower offset
+                    y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 150,  # Lower offset
                     mode="text",
                     text="👺",
                     textposition="top center",
-                    textfont=dict(size=32),
+                    textfont=dict(size=40),
                     name="Sanyaku Gyakuten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
                 )
