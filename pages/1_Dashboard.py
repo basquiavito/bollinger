@@ -4121,7 +4121,6 @@ if st.sidebar.button("Run Analysis"):
                   profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
 
                   
-                                   Add the Ear_Emoji column to intraday based on the profile logic
  
                    # Define Initial Balance from first 12 candles
                   ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
