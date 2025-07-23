@@ -6791,6 +6791,11 @@ if st.sidebar.button("Run Analysis"):
                     name="Tenkan-Kijun Bearish Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
                 )
+
+
+   # # Add to the F% Plot
+                fig.add_trace(scatter_tk_sun, row=1, col=1)
+                fig.add_trace(scatter_tk_moon, row=1, col=1)
                 # 👼🏻 Bullish Sanyaku Kouten
                 mask_sanyaku_kouten = intraday["Sanyaku_Kouten"] == "🟩"
                 
@@ -6801,11 +6806,11 @@ if st.sidebar.button("Run Analysis"):
                 # 👼🏻 Sanyaku Kouten marker (Bullish)
                 scatter_sanyaku_kouten = go.Scatter(
                     x=intraday.loc[mask_sanyaku_kouten, "Time"],
-                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] - 60,  # Lower offset
+                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] + 60,  # Lower offset
                     mode="text",
                     text="👼🏻",
                     textposition="bottom center",
-                    textfont=dict(size=82),
+                    textfont=dict(size=32),
                     name="Sanyaku Kouten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
                 )
@@ -6817,7 +6822,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text="👺",
                     textposition="top center",
-                    textfont=dict(size=82),
+                    textfont=dict(size=32),
                     name="Sanyaku Gyakuten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
                 )
@@ -6830,9 +6835,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # # Add to the F% Plot
-                # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+             
 
                 cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
                 fig.add_trace(go.Scatter(
