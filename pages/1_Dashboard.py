@@ -5498,20 +5498,20 @@ if st.sidebar.button("Run Analysis"):
                         if two_bar_hold.any():
                             ghost_idx = two_bar_hold[two_bar_hold].index[0]  # first valid bar
 
-                            # # Plot 👻 emoji on the first bar
-                            # fig.add_trace(
-                            #     go.Scatter(
-                            #         x=[intraday.at[ghost_idx, "Time"]],
-                            #         y=[intraday.at[ghost_idx, "F_numeric"] + 8],
-                            #         mode="text",
-                            #         text=["🔑"],
-                            #         textposition="middle center",
-                            #         textfont=dict(size=20, color="purple"),
-                            #         name="Confirmed Buy TDST Breakout",
-                            #         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                            #     ),
-                            #     row=1, col=1
-                            # )
+                            # Plot 👻 emoji on the first bar
+                            fig.add_trace(
+                                go.Scatter(
+                                    x=[intraday.at[ghost_idx, "Time"]],
+                                    y=[intraday.at[ghost_idx, "F_numeric"] + 8],
+                                    mode="text",
+                                    text=["🔑"],
+                                    textposition="middle center",
+                                    textfont=dict(size=20, color="purple"),
+                                    name="Confirmed Buy TDST Breakout",
+                                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                                ),
+                                row=1, col=1
+                            )
 
 
                     # Step 1: Get all Sell TDST points (each defines its own world)
@@ -5535,19 +5535,19 @@ if st.sidebar.button("Run Analysis"):
 
                         if confirmed.any():
                             ghost_idx = confirmed[confirmed].index[0]
-                            # fig.add_trace(
-                            #     go.Scatter(
-                            #         x=[intraday.at[ghost_idx, "Time"]],
-                            #         y=[intraday.at[ghost_idx, "F_numeric"] - 8],
-                            #         mode="text",
-                            #         text=["👻"],
-                            #         textposition="middle center",
-                            #         textfont=dict(size=20, color="purple"),
-                            #         name="Confirmed Sell TDST Breakdown",
-                            #         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                            #     ),
-                            #     row=1, col=1
-                            # )
+                            fig.add_trace(
+                                go.Scatter(
+                                    x=[intraday.at[ghost_idx, "Time"]],
+                                    y=[intraday.at[ghost_idx, "F_numeric"] - 8],
+                                    mode="text",
+                                    text=["👻"],
+                                    textposition="middle center",
+                                    textfont=dict(size=20, color="purple"),
+                                    name="Confirmed Sell TDST Breakdown",
+                                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                                ),
+                                row=1, col=1
+                            )
 
 
 
@@ -6115,39 +6115,39 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
 
-                #                 # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
-                # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                # fig.add_trace(go.Scatter(
-                #     x=bull_hand_rows["TimeIndex"],
-                #     y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
-                #     mode="text",
-                #     text=["👋🏽"] * len(bull_hand_rows),
-                #     textposition="top right",
-                #     textfont=dict(size=22),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "👋🏽 Bull MIDAS Breakout<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         f"Bear MIDAS: {{y:.2f}}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                                # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
+                bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                fig.add_trace(go.Scatter(
+                    x=bull_hand_rows["TimeIndex"],
+                    y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
+                    mode="text",
+                    text=["👋🏽"] * len(bull_hand_rows),
+                    textposition="top right",
+                    textfont=dict(size=22),
+                    showlegend=False,
+                    hovertemplate=(
+                        "👋🏽 Bull MIDAS Breakout<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        f"Bear MIDAS: {{y:.2f}}<extra></extra>"
+                    )
+                ), row=1, col=1)
                 
-                # # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
-                # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_glove_rows["TimeIndex"],
-                #     y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
-                #     mode="text",
-                #     text=["🧤"] * len(bear_glove_rows),
-                #     textposition="bottom right",
-                #     textfont=dict(size=22),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🧤 Bear MIDAS Breakdown<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
+                bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                fig.add_trace(go.Scatter(
+                    x=bear_glove_rows["TimeIndex"],
+                    y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
+                    mode="text",
+                    text=["🧤"] * len(bear_glove_rows),
+                    textposition="bottom right",
+                    textfont=dict(size=22),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🧤 Bear MIDAS Breakdown<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        f"Bull MIDAS: {{y:.2f}}<extra></extra>"
+                    )
+                ), row=1, col=1)
 
                 # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
                 bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
@@ -6259,33 +6259,33 @@ if st.sidebar.button("Run Analysis"):
                     ), row=1, col=1)
 
                                 
-                #                    # Plot 💸 for breakout above IB High
-                # high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
-                # fig.add_trace(go.Scatter(
-                #     x=high_break_df["TimeIndex"],
-                #     y=high_break_df["F_numeric"] + 30,
-                #     mode="text",
-                #     text=high_break_df["IB_High_Break"],
-                #     textposition="top left",
-                #     textfont=dict(size=24),
-                #     name="Breakout Above IB 💸",
-                #     showlegend=True,
-                #     hovertemplate="Time: %{x}<br>💸 IB High Breakout"
-                # ), row=1, col=1)
+                                   # Plot 💸 for breakout above IB High
+                high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
+                fig.add_trace(go.Scatter(
+                    x=high_break_df["TimeIndex"],
+                    y=high_break_df["F_numeric"] + 30,
+                    mode="text",
+                    text=high_break_df["IB_High_Break"],
+                    textposition="top left",
+                    textfont=dict(size=24),
+                    name="Breakout Above IB 💸",
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>💸 IB High Breakout"
+                ), row=1, col=1)
                 
-                # # Plot 🧧 for breakdown below IB Low
-                # low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
-                # fig.add_trace(go.Scatter(
-                #     x=low_break_df["TimeIndex"],
-                #     y=low_break_df["F_numeric"] - 30,
-                #     mode="text",
-                #     text=low_break_df["IB_Low_Break"],
-                #     textposition="bottom left",
-                #     textfont=dict(size=24),
-                #     name="Breakdown Below IB 🧧",
-                #     showlegend=True,
-                #     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
-                # ), row=1, col=1)
+                # Plot 🧧 for breakdown below IB Low
+                low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
+                fig.add_trace(go.Scatter(
+                    x=low_break_df["TimeIndex"],
+                    y=low_break_df["F_numeric"] - 30,
+                    mode="text",
+                    text=low_break_df["IB_Low_Break"],
+                    textposition="bottom left",
+                    textfont=dict(size=24),
+                    name="Breakdown Below IB 🧧",
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
+                ), row=1, col=1)
 
 
 
@@ -6766,66 +6766,66 @@ if st.sidebar.button("Run Analysis"):
 
   
         
-                # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
-                # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
+                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
+                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
-                # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                # scatter_tk_sun = go.Scatter(
-                #     x=intraday.loc[mask_tk_sun, "Time"],
-                #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 40,  # Offset for visibility
-                #     mode="text",
-                #     text="🌞",
-                #     textposition="top center",
-                #     textfont=dict(size=24),
-                #     name="Tenkan-Kijun Bullish Cross",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                # )
+                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                scatter_tk_sun = go.Scatter(
+                    x=intraday.loc[mask_tk_sun, "Time"],
+                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 40,  # Offset for visibility
+                    mode="text",
+                    text="🌞",
+                    textposition="top center",
+                    textfont=dict(size=24),
+                    name="Tenkan-Kijun Bullish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                )
 
-                # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                # scatter_tk_moon = go.Scatter(
-                #     x=intraday.loc[mask_tk_moon, "Time"],
-                #     y=intraday.loc[mask_tk_moon, "F_numeric"] + 40,  # Offset for visibility
-                #     mode="text",
-                #     text="🌙",
-                #     textposition="bottom center",
-                #     textfont=dict(size=24),
-                #     name="Tenkan-Kijun Bearish Cross",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                # )
-                # # 👼🏻 Bullish Sanyaku Kouten
-                # mask_sanyaku_kouten = intraday["Sanyaku_Kouten"] == "🟩"
+                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                scatter_tk_moon = go.Scatter(
+                    x=intraday.loc[mask_tk_moon, "Time"],
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] + 40,  # Offset for visibility
+                    mode="text",
+                    text="🌙",
+                    textposition="bottom center",
+                    textfont=dict(size=24),
+                    name="Tenkan-Kijun Bearish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                )
+                # 👼🏻 Bullish Sanyaku Kouten
+                mask_sanyaku_kouten = intraday["Sanyaku_Kouten"] == "🟩"
                 
-                # # 👺 Bearish Sanyaku Gyakuten
-                # mask_sanyaku_gyakuten = intraday["Sanyaku_Gyakuten"] == "🟥"
+                # 👺 Bearish Sanyaku Gyakuten
+                mask_sanyaku_gyakuten = intraday["Sanyaku_Gyakuten"] == "🟥"
                 
 
-                # # 👼🏻 Sanyaku Kouten marker (Bullish)
-                # scatter_sanyaku_kouten = go.Scatter(
-                #     x=intraday.loc[mask_sanyaku_kouten, "Time"],
-                #     y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] - 60,  # Lower offset
-                #     mode="text",
-                #     text="👼🏻",
-                #     textposition="bottom center",
-                #     textfont=dict(size=82),
-                #     name="Sanyaku Kouten",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
-                # )
+                # 👼🏻 Sanyaku Kouten marker (Bullish)
+                scatter_sanyaku_kouten = go.Scatter(
+                    x=intraday.loc[mask_sanyaku_kouten, "Time"],
+                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] - 60,  # Lower offset
+                    mode="text",
+                    text="👼🏻",
+                    textposition="bottom center",
+                    textfont=dict(size=82),
+                    name="Sanyaku Kouten",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
+                )
                 
-                # # 👺 Sanyaku Gyakuten marker (Bearish)
-                # scatter_sanyaku_gyakuten = go.Scatter(
-                #     x=intraday.loc[mask_sanyaku_gyakuten, "Time"],
-                #     y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 60,  # Lower offset
-                #     mode="text",
-                #     text="👺",
-                #     textposition="top center",
-                #     textfont=dict(size=82),
-                #     name="Sanyaku Gyakuten",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
-                # )
+                # 👺 Sanyaku Gyakuten marker (Bearish)
+                scatter_sanyaku_gyakuten = go.Scatter(
+                    x=intraday.loc[mask_sanyaku_gyakuten, "Time"],
+                    y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 60,  # Lower offset
+                    mode="text",
+                    text="👺",
+                    textposition="top center",
+                    textfont=dict(size=82),
+                    name="Sanyaku Gyakuten",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
+                )
                 
-                # # Add to figure
-                # fig.add_trace(scatter_sanyaku_kouten, row=1, col=1)
-                # fig.add_trace(scatter_sanyaku_gyakuten, row=1, col=1)
+                # Add to figure
+                fig.add_trace(scatter_sanyaku_kouten, row=1, col=1)
+                fig.add_trace(scatter_sanyaku_gyakuten, row=1, col=1)
 
 
 
