@@ -6915,6 +6915,24 @@ if st.sidebar.button("Run Analysis"):
                 #     textposition="bottom center",
                 #     showlegend=False
                 # ))
+
+
+   # (A.1) 40ish Reversal (star markers)
+                mask_40ish = intraday["40ish"] != ""
+                scatter_40ish = go.Scatter(
+                    x=intraday.loc[mask_40ish, "Time"],
+                    y=intraday.loc[mask_40ish, "F_numeric"] + 89,
+                    mode="markers",
+                    marker_symbol="star",
+                    marker_size=18,
+                    marker_color="gold",
+                    name="40ish Reversal",
+                    text=intraday.loc[mask_40ish, "40ish"],
+
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                )
+                fig.add_trace(scatter_40ish, row=1, col=1)
+
                 up_high_mask = intraday["Y_High_Cross"] == "✈️"
                 up_high_trace = go.Scatter(
                     x=intraday.loc[up_high_mask, "Time"],
