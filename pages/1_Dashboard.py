@@ -4161,16 +4161,16 @@ if st.sidebar.button("Run Analysis"):
 
 
                   
-                                    # === Top Dot Logic by 15-Minute Block ===
-                  # top_dots = (
-                  #     intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
-                  #     .sort_values("LetterIndex")
-                  #     .reset_index(drop=True)
-                  # )
-                  # top_dots = (
-                  #     intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
-                  #     .reset_index(drop=True)
-                  # )
+                  #                   # === Top Dot Logic by 15-Minute Block ===
+                  top_dots = (
+                      intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
+                      .sort_values("LetterIndex")
+                      .reset_index(drop=True)
+                  )
+                  top_dots = (
+                      intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
+                      .reset_index(drop=True)
+                  )
                   # top_dots["Time"] = intraday.groupby("LetterIndex")["Time"].max().values  # Force dot to close of bracket
 
                   # Step 1: Get row of max F% per 15-min block (actual auction moment)
@@ -4788,18 +4788,18 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(colored_dots, row=1, col=1)
                                         
                     #             # === Define Dots ===
-                    # main_dot = go.Scatter(
-                    #     x=top_dots["Time"],
-                    #     y=top_dots["F_numeric"],
-                    #     mode="markers",
-                    #     marker=dict(
-                    #         color=top_dots["DotColor"],
-                    #         size=8,
-                    #         symbol="circle"
-                    #     ),
-                    #     name="15-min Top Dot",
-                    #     hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
-                    # )
+                    main_dot = go.Scatter(
+                        x=top_dots["Time"],
+                        y=top_dots["F_numeric"],
+                        mode="markers",
+                        marker=dict(
+                            color=top_dots["DotColor"],
+                            size=8,
+                            symbol="circle"
+                        ),
+                        name="15-min Top Dot",
+                        hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
+                    )
                     
                     # ghost_dot = go.Scatter(
                     #     x=top_dots["Time_HighMoment"],
