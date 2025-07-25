@@ -4788,18 +4788,18 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(colored_dots, row=1, col=1)
                                         
                     #             # === Define Dots ===
-                    main_dot = go.Scatter(
-                        x=top_dots["Time"],
-                        y=top_dots["F_numeric"],
-                        mode="markers",
-                        marker=dict(
-                            color=top_dots["DotColor"],
-                            size=8,
-                            symbol="circle"
-                        ),
-                        name="15-min Top Dot",
-                        hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
-                    )
+                    # main_dot = go.Scatter(
+                    #     x=top_dots["Time"],
+                    #     y=top_dots["F_numeric"],
+                    #     mode="markers",
+                    #     marker=dict(
+                    #         color=top_dots["DotColor"],
+                    #         size=8,
+                    #         symbol="circle"
+                    #     ),
+                    #     name="15-min Top Dot",
+                    #     hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
+                    # )
                     
                     # ghost_dot = go.Scatter(
                     #     x=top_dots["Time_HighMoment"],
@@ -4816,7 +4816,7 @@ if st.sidebar.button("Run Analysis"):
                     # )
                     
                     # === Now Add to Plot ===
-                    fig.add_trace(main_dot, row=1, col=1)
+                    # fig.add_trace(main_dot, row=1, col=1)
                     # fig.add_trace(ghost_dot, row=1, col=1)
                     #**************************************************************************************************************************************************************************
 
@@ -4895,16 +4895,16 @@ if st.sidebar.button("Run Analysis"):
                     # # Drop rows where Chikou_F is NaN (due to shifting)
                     chikou_plot = intraday.dropna(subset=["Chikou_F"])
 
-                    # Plot without shifting time
-                    chikou_line = go.Scatter(
-                        x=chikou_plot["Time"],
-                        y=chikou_plot["Chikou_F"],
-                        mode="lines",
+                    # # Plot without shifting time
+                    # chikou_line = go.Scatter(
+                    #     x=chikou_plot["Time"],
+                    #     y=chikou_plot["Chikou_F"],
+                    #     mode="lines",
                       
-                        name="Chikou (F%)",
-                        line=dict(color="purple", dash="dash", width=1)
-                    )
-                    fig.add_trace(chikou_line, row=1, col=1)
+                    #     name="Chikou (F%)",
+                    #     line=dict(color="purple", dash="dash", width=1)
+                    # )
+                    # fig.add_trace(chikou_line, row=1, col=1)
 
                     intraday["Chikou"] = intraday["Close"].shift(-26)
 
@@ -4981,45 +4981,45 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                                        # Span A – Yellow Line
-                    span_a_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanA_F"],
-                        mode="lines",
-                        line=dict(color="yellow", width=0.4),
-                        name="Span A (F%)"
-                    )
-                    fig.add_trace(span_a_line, row=1, col=1)
+                    #                     # Span A – Yellow Line
+                    # span_a_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanA_F"],
+                    #     mode="lines",
+                    #     line=dict(color="yellow", width=0.4),
+                    #     name="Span A (F%)"
+                    # )
+                    # fig.add_trace(span_a_line, row=1, col=1)
 
-                    # Span B – Blue Line
-                    span_b_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanB_F"],
-                        mode="lines",
-                        line=dict(color="blue", width=0.4),
-                        name="Span B (F%)"
-                    )
-                    fig.add_trace(span_b_line, row=1, col=1)
+                    # # Span B – Blue Line
+                    # span_b_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanB_F"],
+                    #     mode="lines",
+                    #     line=dict(color="blue", width=0.4),
+                    #     name="Span B (F%)"
+                    # )
+                    # fig.add_trace(span_b_line, row=1, col=1)
 
-                    # Invisible SpanA for cloud base
-                    fig.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanA_F"],
-                        line=dict(width=0),
-                        mode='lines',
-                        showlegend=False
-                    ), row=1, col=1)
+                    # # Invisible SpanA for cloud base
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanA_F"],
+                    #     line=dict(width=0),
+                    #     mode='lines',
+                    #     showlegend=False
+                    # ), row=1, col=1)
 
-                    # SpanB with fill → grey Kumo
-                    fig.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanB_F"],
-                        fill='tonexty',
-                        fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                        line=dict(width=0),
-                        mode='lines',
-                        name='Kumo Cloud'
-                    ), row=1, col=1)
+                    # # SpanB with fill → grey Kumo
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanB_F"],
+                    #     fill='tonexty',
+                    #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                    #     line=dict(width=0),
+                    #     mode='lines',
+                    #     name='Kumo Cloud'
+                    # ), row=1, col=1)
 
 
                                     # Mask for different RVOL thresholds
