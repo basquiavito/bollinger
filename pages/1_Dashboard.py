@@ -556,7 +556,34 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = calculate_f_percentage(intraday, prev_close)
 
+                def calculate_vector_percentage(intraday_df):
+                    if intraday_df.empty:
+                        intraday_df["Vector%"] = "N/A"
+                        return intraday_df
                 
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Vector%"] = "N/A"
+                
+                    total_rows = len(intraday_df)
+                    num_vectors = total_rows // 3
+                
+                    for i in range(num_vectors):
+                        i0 = i * 3
+                        i1 = i0 + 2
+                
+                        open_price = intraday_df.iloc[i0]["Open"]
+                        close_price = intraday_df.iloc[i1]["Close"]
+                
+                        vector_mike = ((close_price - open_price) / open_price) * 10000
+                        vector_mike = round(vector_mike, 0)
+                        vector_mike_str = f"{int(vector_mike)}%"
+                
+                        # Set the same Vector% for the 3 rows in this unit
+                        intraday_df.loc[i0:i1, "Vector%"] = vector_mike_str
+                
+                    return intraday_df
+                intraday = calculate_vector_percentage(intraday)
+
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -3923,7 +3950,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
+                                    "Time","Volume","F_numeric","Vector%","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
 
                     st.dataframe(intraday[cols_to_show])
 
