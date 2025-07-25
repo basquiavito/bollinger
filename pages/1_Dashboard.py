@@ -7117,8 +7117,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
    
-                start_date = datetime.strptime(start_date, "%Y-%m-%d")  # adjust format as needed
-
+ 
 
                 fig.update_layout(
                     title=f"{t} – VOLMIKE.COM – {start_date.strftime('%Y-%m-%d')}",
