@@ -4639,40 +4639,40 @@ if st.sidebar.button("Run Analysis"):
                         yaxis="y"
                     ))
                 
-                    # === LAYER 2: Emoji Markers ===
-                    bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                    fig_midas.add_trace(go.Scatter(
-                        x=bull_hand_rows["Time"],
-                        y=bull_hand_rows["MIDAS_Bear"] + 3,
-                        mode="text",
-                        text=["👋🏽"] * len(bull_hand_rows),
-                        textposition="top right",
-                        textfont=dict(size=13),
-                        showlegend=False,
-                        hovertemplate=(
-                            "👋🏽 Bull MIDAS Breakout<br>"
-                            "Time: %{x|%I:%M %p}<br>"
-                            "Above MIDAS_Bear: %{y:.2f}<extra></extra>"
-                        ),
-                        yaxis="y"
-                    ))
+                    # # === LAYER 2: Emoji Markers ===
+                    # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                    # fig_midas.add_trace(go.Scatter(
+                    #     x=bull_hand_rows["Time"],
+                    #     y=bull_hand_rows["MIDAS_Bear"] + 3,
+                    #     mode="text",
+                    #     text=["👋🏽"] * len(bull_hand_rows),
+                    #     textposition="top right",
+                    #     textfont=dict(size=13),
+                    #     showlegend=False,
+                    #     hovertemplate=(
+                    #         "👋🏽 Bull MIDAS Breakout<br>"
+                    #         "Time: %{x|%I:%M %p}<br>"
+                    #         "Above MIDAS_Bear: %{y:.2f}<extra></extra>"
+                    #     ),
+                    #     yaxis="y"
+                    # ))
                 
-                    bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                    fig_midas.add_trace(go.Scatter(
-                        x=bear_glove_rows["Time"],
-                        y=bear_glove_rows["MIDAS_Bull"] - 3,
-                        mode="text",
-                        text=["🧤"] * len(bear_glove_rows),
-                        textposition="bottom right",
-                        textfont=dict(size=13),
-                        showlegend=False,
-                        hovertemplate=(
-                            "🧤 Bear MIDAS Breakdown<br>"
-                            "Time: %{x|%I:%M %p}<br>"
-                            "Below MIDAS_Bull: %{y:.2f}<extra></extra>"
-                        ),
-                        yaxis="y"
-                    ))
+                    # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                    # fig_midas.add_trace(go.Scatter(
+                    #     x=bear_glove_rows["Time"],
+                    #     y=bear_glove_rows["MIDAS_Bull"] - 3,
+                    #     mode="text",
+                    #     text=["🧤"] * len(bear_glove_rows),
+                    #     textposition="bottom right",
+                    #     textfont=dict(size=13),
+                    #     showlegend=False,
+                    #     hovertemplate=(
+                    #         "🧤 Bear MIDAS Breakdown<br>"
+                    #         "Time: %{x|%I:%M %p}<br>"
+                    #         "Below MIDAS_Bull: %{y:.2f}<extra></extra>"
+                    #     ),
+                    #     yaxis="y"
+                    # ))
                 
                     # === LAYER 3: Smooth Displacement Change (Separate Panel) ===
                     fig_midas.add_trace(go.Scatter(
