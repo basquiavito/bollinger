@@ -7117,17 +7117,18 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
    
-                 
+                start_date = datetime.strptime(start_date, "%Y-%m-%d")  # adjust format as needed
+
 
                 fig.update_layout(
-                    title=f"{t} – VOLMIKE.COM",
+                    title=f"{t} – VOLMIKE.COM – {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
                     height=1800,  # Increase overall figure height (default ~450-600)
 
                      
                 )
+ 
 
-      
 
 
                 st.plotly_chart(fig, use_container_width=True)
