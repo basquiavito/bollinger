@@ -556,6 +556,30 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = calculate_f_percentage(intraday, prev_close)
 
+
+                def add_unit_percentage(intraday_df):
+                    if intraday_df.empty:
+                        intraday_df["Unit%"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Unit%"] = ""
+                
+                    for i in range(len(intraday_df)):
+                        open_price = intraday_df.iloc[i]["Open"]
+                        close_price = intraday_df.iloc[i]["Close"]
+                
+                        if open_price > 0:
+                            unit_mike = ((close_price - open_price) / open_price) * 10000
+                            unit_mike = round(unit_mike, 0)
+                            unit_mike_str = f"{int(unit_mike)}%"
+                            intraday_df.at[i, "Unit%"] = unit_mike_str
+                        else:
+                            intraday_df.at[i, "Unit%"] = ""
+                
+                    return intraday_df
+                intraday = add_unit_percentage(intraday)
+
                 def calculate_vector_percentage(intraday_df):
                     if intraday_df.empty:
                         intraday_df["Vector%"] = ""
@@ -3951,7 +3975,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","Vector%","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
+                                    "Time","Volume","F_numeric","Unit%","Vector%","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
 
                     st.dataframe(intraday[cols_to_show])
 
