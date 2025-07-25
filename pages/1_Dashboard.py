@@ -558,30 +558,31 @@ if st.sidebar.button("Run Analysis"):
 
                 def calculate_vector_percentage(intraday_df):
                     if intraday_df.empty:
-                        intraday_df["Vector%"] = "N/A"
+                        intraday_df["Vector%"] = ""
                         return intraday_df
                 
                     intraday_df = intraday_df.copy()
-                    intraday_df["Vector%"] = "N/A"
+                    intraday_df["Vector%"] = ""  # ← blank instead of "N/A"
                 
                     total_rows = len(intraday_df)
                     num_vectors = total_rows // 3
                 
                     for i in range(num_vectors):
                         i0 = i * 3
-                        i1 = i0 + 2
+                        i2 = i0 + 2
                 
                         open_price = intraday_df.iloc[i0]["Open"]
-                        close_price = intraday_df.iloc[i1]["Close"]
+                        close_price = intraday_df.iloc[i2]["Close"]
                 
                         vector_mike = ((close_price - open_price) / open_price) * 10000
                         vector_mike = round(vector_mike, 0)
                         vector_mike_str = f"{int(vector_mike)}%"
                 
-                        # Set the same Vector% for the 3 rows in this unit
-                        intraday_df.loc[i0:i1, "Vector%"] = vector_mike_str
+                        # Assign only to the third (last) bar of the vector
+                        intraday_df.at[i2, "Vector%"] = vector_mike_str
                 
                     return intraday_df
+
                 intraday = calculate_vector_percentage(intraday)
 
                 def compute_option_value(df, premium=64, contracts=100):
