@@ -5312,17 +5312,15 @@ if st.sidebar.button("Run Analysis"):
                     ))
                     
                                   # Pick the first 🦻🏼 ear row
-                   # === Overlay: 🦻🏼 Ear Line (Top %Vol Bin No Longer Active)
+                  # === Overlay: 🦻🏼 Ear Line (Top %Vol Bin No Longer Active)
                     ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                     
                     if not ear_row.empty:
                         ear_level = ear_row["F% Level"].values[0]
-                        ear_vol = ear_row["%Vol"].values[0]
-                        ear_time = ear_row["Time"].values[0]
                     
                         # Find first time this F% Level appeared in intraday
-                        match_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
-                        ear_row_match = intraday[intraday["TimeIndex"] == match_time]
+                        ear_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
+                        ear_row_match = intraday[intraday["TimeIndex"] == ear_time]
                     
                         if not ear_row_match.empty:
                             ear_unit = ear_row_match["Cumulative_Unit"].values[0]
@@ -5330,15 +5328,15 @@ if st.sidebar.button("Run Analysis"):
                             fig_displacement.add_hline(
                                 y=ear_unit,
                                 line=dict(color="gray", dash="dot", width=1),
-                                annotation_text=f"🦻🏼 {ear_level} (Vol: {ear_vol:.2f}%)",
+                                annotation_text="🦻🏼 Volume Memory",
                                 annotation_position="top left",
                                 annotation_font=dict(color="gray", size=13),
                                 opacity=0.5
                             )
                     
-  
-  
-  
+                      
+                      
+                      
                      
 
        # === Overlay: IB High as Resistance in Cumulative Unit Space ===
