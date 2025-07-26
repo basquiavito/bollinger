@@ -5203,8 +5203,50 @@ if st.sidebar.button("Run Analysis"):
                         customdata=top_vector_neg[["Vector Momentum"]].values
                     ))
                     
+                                        
+                                        # Sort top 3 positive and negative Vector Forces
+                    top_positive_force = intraday[intraday["Vector Force"] != ""].copy()
+                    top_positive_force = top_positive_force[top_positive_force["Vector Force"].apply(lambda x: isinstance(x, (int, float)))].nlargest(3, "Vector Force")
                     
+                    top_negative_force = intraday[intraday["Vector Force"] != ""].copy()
+                    top_negative_force = top_negative_force[top_negative_force["Vector Force"].apply(lambda x: isinstance(x, (int, float)))].nsmallest(3, "Vector Force")
                     
+                    # Plotting 💪🏼 markers (top 3 positive)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_positive_force["Time"],
+                        y=top_positive_force["Cumulative_Unit"] + 32,
+                        mode="text",
+                        text=["💪🏼"] * 3,
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        name="Top Force Up",
+                        customdata=top_positive_force[["Vector Force"]],
+                        hovertemplate=(
+                            "💪🏼 Explosion Up<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Force: %{customdata[0]:.1f}<extra></extra>"
+                        )
+                    ))
+                    
+                    # Plotting 🦾 markers (top 3 negative)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_negative_force["Time"],
+                        y=top_negative_force["Cumulative_Unit"] - 32,
+                        mode="text",
+                        text=["🦾"] * 3,
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        name="Top Force Down",
+                        customdata=top_negative_force[["Vector Force"]],
+                        hovertemplate=(
+                            "🦾 Slam Down<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Force: %{customdata[0]:.1f}<extra></extra>"
+                        )
+                    ))
+
                                       
                     # === Layout ===
                     fig_displacement.update_layout(
