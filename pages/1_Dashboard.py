@@ -5292,7 +5292,27 @@ if st.sidebar.button("Run Analysis"):
                         customdata=bottom_3_energy[["Vector Energy"]].values
                     ))
 
-                                      
+                            # --- Select top 3 most thrust-efficient vector bars (lowest Force_per_3bar_Range)
+                    thrust_df = intraday.copy()
+                    thrust_df["FPR_Numeric"] = pd.to_numeric(thrust_df["Force_per_3bar_Range"], errors="coerce")
+                    top_3_thrust = thrust_df.nsmallest(3, "FPR_Numeric").dropna(subset=["FPR_Numeric"])
+                    
+                    # --- Add fuel pump markers to your existing fig_displacement
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_3_thrust["Time"],
+                        y=top_3_thrust["Cumulative_Unit"],
+                        mode="text",
+                        text=["⛽️"] * len(top_3_thrust),
+                        textfont=dict(size=18),
+                        name="Thrust Efficiency",
+                        hovertemplate=(
+                            "⛽️ Efficient Thrust<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Efficiency: %{customdata[0]:.2f}<extra></extra>"
+                        ),
+                        customdata=top_3_thrust[["FPR_Numeric"]].values
+                    ))
+                              
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
