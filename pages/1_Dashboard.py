@@ -727,7 +727,8 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_acceleration(intraday)
 
-
+                
+                intraday_df["Volume"] = pd.to_numeric(intraday_df["Volume"], errors="coerce")
 
 
                 def add_unit_momentum(intraday_df):
