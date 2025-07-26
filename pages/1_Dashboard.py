@@ -5248,6 +5248,27 @@ if st.sidebar.button("Run Analysis"):
                             "Force: %{customdata[0]:.1f}<extra></extra>"
                         )
                     ))
+                    # --- Prepare Top 3 Vector Energy Rows ---
+                    intraday["Vector Energy_numeric"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
+                    top_energy_rows = intraday.nlargest(3, "Vector Energy_numeric").dropna(subset=["Vector Energy_numeric"])
+                    
+                    # --- Plot Emoji Markers for Top Energy Spikes ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_energy_rows["Time"],
+                        y=top_energy_rows["Cumulative_Unit"] + 5,  # Lift marker above line
+                        mode="text",
+                        text=["🧨"] * len(top_energy_rows),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="Top Energy Bursts",
+                        showlegend=False,
+                        hovertemplate=(
+                            "🧨 Energy Burst<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Vector Energy: %{customdata[0]:,.1f}<extra></extra>"
+                        ),
+                        customdata=top_energy_rows[["Vector Energy_numeric"]].values
+                    ))
 
                                       
                     # === Layout ===
