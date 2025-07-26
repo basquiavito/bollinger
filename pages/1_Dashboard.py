@@ -5160,7 +5160,7 @@ if st.sidebar.button("Run Analysis"):
                 # Panel 2: Vector%
                 fig_vector.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["Vector%_numeric"],
+                    y=intraday["Vector%"],
                     mode="lines+markers",
                     name="Vector%",
                     line=dict(color="cyan", dash="dot"),
@@ -5170,9 +5170,9 @@ if st.sidebar.button("Run Analysis"):
                 # Panel 3: Velocity
                 fig_vector.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["Velocity_numeric"],
+                    y=intraday["Velocity"],
                     mode="lines+markers",
-                    name="Vector Velocity",
+                    name="Velocity",
                     line=dict(color="orange"),
                     hovertemplate="Velocity: %{y:.1f}%<extra></extra>"
                 ), row=3, col=1)
@@ -5180,7 +5180,7 @@ if st.sidebar.button("Run Analysis"):
                 # Panel 4: Vector Force
                 fig_vector.add_trace(go.Scatter(
                     x=intraday["Time"],
-                    y=intraday["Vector Force_numeric"],
+                    y=intraday["Vector Force"],
                     mode="lines+markers",
                     name="Vector Force",
                     line=dict(color="crimson"),
