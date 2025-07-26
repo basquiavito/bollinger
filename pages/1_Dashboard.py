@@ -5294,43 +5294,7 @@ if st.sidebar.button("Run Analysis"):
 
                 # --- Energy Efficiency Markers on Cumulative Flight Path ---
                     
-                    # Convert efficiency columns to numeric
-                    intraday["Vector_Energy_per_3bar_Range"] = pd.to_numeric(
-                        intraday["Vector_Energy_per_3bar_Range"], errors="coerce"
-                    )
-                    
-                    # Filter for 3-bar vector rows
-                    eff_rows = intraday.iloc[2::3].copy()
-                    eff_values = eff_rows["Vector_Energy_per_3bar_Range"]
-                    
-                    # Define dynamic thresholds
-                    high_eff_threshold = eff_values.quantile(0.80)
-                    low_eff_threshold = eff_values.quantile(0.20)
-                    
-                    eff_emojis = []
-                    for val in eff_values:
-                        if pd.isna(val):
-                            eff_emojis.append("")
-                        elif val > high_eff_threshold:
-                            eff_emojis.append("🔥")  # Inefficient burst — high energy burn per range
-                        elif val < low_eff_threshold:
-                            eff_emojis.append("🌬️")  # Efficient glide
-                        else:
-                            eff_emojis.append("")
-                    
-                    # Plot the emojis
-                    fig_displacement.add_trace(go.Scatter(
-                        x=eff_rows["Time"],
-                        y=eff_rows["Cumulative_Unit"] + 48,
-                        mode="text",
-                        text=eff_emojis,
-                        textposition="top center",
-                        textfont=dict(size=18),
-                        name="Energy Efficiency",
-                        showlegend=False,
-                        hovertemplate="Time: %{x}<br>Energy/Range Efficiency: %{y:.1f}<extra></extra>",
-                    ))
-
+     
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
