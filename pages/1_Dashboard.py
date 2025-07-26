@@ -5310,7 +5310,7 @@ if st.sidebar.button("Run Analysis"):
                     # --- 5. Plot ⛽️ for Efficient Moves ---
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_eff["Time"],
-                        y=top3_eff["Cumulative_Unit"],
+                        y=top3_eff["Cumulative_Unit"] + 48,
                         mode="text",
                         text=["🦅"] * len(top3_eff),
                         textposition="top center",
@@ -5327,7 +5327,7 @@ if st.sidebar.button("Run Analysis"):
                     # --- 6. Plot 💢 for Wasteful Moves ---
                     fig_displacement.add_trace(go.Scatter(
                         x=bottom3_eff["Time"],
-                        y=bottom3_eff["Cumulative_Unit"],
+                        y=bottom3_eff["Cumulative_Unit"] - 48,
                         mode="text",
                         text=["💢"] * len(bottom3_eff),
                         textposition="bottom center",
