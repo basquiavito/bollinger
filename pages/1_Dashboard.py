@@ -5335,37 +5335,30 @@ if st.sidebar.button("Run Analysis"):
                               )
                       
                         
-                        
-                                            # === Overlay: 👃🏽 Nose Line (Top Time Bin)
+                              # === Overlay: 👃🏽 Nose Line (Top Time Bin)
                     nose_row = profile_df[profile_df["👃🏽"] == "👃🏽"]
                     
                     if not nose_row.empty:
                         nose_level = nose_row["F% Level"].values[0]
-                        nose_letters = nose_row["Letter_Count"].values[0]
-                        nose_time = nose_row["Time"].values[0]
                     
-                        match_time = intraday.loc[intraday["F_Bin"] == str(nose_level), "TimeIndex"].min()
-                        nose_row_match = intraday[intraday["TimeIndex"] == match_time]
+                        # Find first time this F% Level appeared in intraday
+                        nose_time = intraday.loc[intraday["F_Bin"] == str(nose_level), "TimeIndex"].min()
+                        nose_row_match = intraday[intraday["TimeIndex"] == nose_time]
                     
                         if not nose_row_match.empty:
                             nose_unit = nose_row_match["Cumulative_Unit"].values[0]
                     
-                            fig_displacement.add_trace(go.Scatter(
-                                x=[intraday["TimeIndex"].min(), intraday["TimeIndex"].max()],
-                                y=[nose_unit, nose_unit],
-                                mode="lines",
-                                name="👃🏽 Time Memory",
+                            fig_displacement.add_hline(
+                                y=nose_unit,
                                 line=dict(color="orange", dash="dot", width=1),
-                                hovertemplate=(
-                                    "👃🏽 Time Memory<br>"
-                                    f"Level: {nose_level}<br>"
-                                    f"Letters: {nose_letters}<br>"
-                                    f"Time: {nose_time}<extra></extra>"
-                                ),
-                                showlegend=False
-                            ))
+                                annotation_text="👃🏽 Time Memory",
+                                annotation_position="top left",
+                                annotation_font=dict(color="orange", size=13),
+                                opacity=0.5
+                            )
                     
-                                       
+                                        
+                                                           
 
        # === Overlay: IB High as Resistance in Cumulative Unit Space ===
                     ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
