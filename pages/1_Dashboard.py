@@ -776,6 +776,10 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_momentum(intraday)
 
+
+                print(intraday["Volume"].head(10))
+                print(intraday["Volume"].apply(type).value_counts())
+
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
