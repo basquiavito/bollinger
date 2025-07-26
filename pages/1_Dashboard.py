@@ -5092,7 +5092,12 @@ if st.sidebar.button("Run Analysis"):
                         textposition="top center",
                         textfont=dict(size=18),
                         showlegend=False,
-                        hovertemplate="Time: %{x}<br>Velocity: %{text}<extra></extra>"
+                        hovertemplate=(
+                                      "🚀 Vector Burst<br>"
+                                      "Time: %{x|%I:%M %p}<br>"
+                                      "Velocity: %{customdata[0]}%<br>"
+                                      "Cumulative Unit: %{y:.1f}<extra></extra>"
+                                  ),
                     ))
                     
                     # --- Plot 🪂 markers for top negative velocities ---
@@ -5104,7 +5109,12 @@ if st.sidebar.button("Run Analysis"):
                         textposition="bottom center",
                         textfont=dict(size=18),
                         showlegend=False,
-                        hovertemplate="Time: %{x}<br>Velocity: %{text}<extra></extra>"
+                        hovertemplate=(
+                                      "🪂 Crash Down<br>"
+                                      "Time: %{x|%I:%M %p}<br>"
+                                      "Velocity: %{customdata[0]}%<br>"
+                                      "Cumulative Unit: %{y:.1f}<extra></extra>"
+                                  )
                     ))
 
                          
