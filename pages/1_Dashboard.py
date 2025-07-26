@@ -7130,8 +7130,8 @@ if st.sidebar.button("Run Analysis"):
 
 
    # # Add to the F% Plot
-                # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+                fig.add_trace(scatter_tk_sun, row=1, col=1)
+                fig.add_trace(scatter_tk_moon, row=1, col=1)
                 # # 👼🏻 Bullish Sanyaku Kouten
                 # mask_sanyaku_kouten = intraday["Sanyaku_Kouten"] == "🟩"
                 
