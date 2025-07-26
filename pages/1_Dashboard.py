@@ -5310,40 +5310,31 @@ if st.sidebar.button("Run Analysis"):
                         ),
                         customdata=bottom_3_energy[["Vector Energy"]].values
                     ))
-
-              # --- Energy Efficiency Markers on Cumulative Flight Path ---
-                      # === EARS: Add shaded resistance zones (top 3 volume bins) ===
-                    ear_colors = ["rgba(255, 105, 97, 0.15)", "rgba(255, 105, 97, 0.1)", "rgba(255, 105, 97, 0.07)"]  # Light red shades
                     
-                    for i in range(min(3, len(top_3_ears))):
-                        level = top_3_ears.iloc[i]["F% Level"]
-                        band_top = level + 10  # Add thickness (10 F% units)
-                        band_bottom = level - 10
+                                  # Pick the first 🦻🏼 ear row
+                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"].head(1)
+                    
+                    if not ear_row.empty:
+                        ear_level = ear_row["F% Level"].values[0]
+                        time_seen = ear_row["Time"].values[0]
                         
-                        fig_displacement.add_shape(
-                            type="rect",
-                            xref="x",
-                            yref="y",
-                            x0=intraday["Time"].iloc[0],
-                            x1=intraday["Time"].iloc[-1],
-                            y0=band_bottom,
-                            y1=band_top,
-                            fillcolor=ear_colors[i],
-                            line=dict(width=0),
-                            layer="below"
-                        )
+                        # Find matching Cumulative Unit% in intraday
+                        match = intraday[intraday["Time"] == time_seen]
                         
-                        # Optional: Add emoji label to the band
-                    fig_displacement.add_trace(go.Scatter(
-                            x=[intraday["Time"].iloc[-1]],
-                            y=[level],
-                            mode="text",
-                            text=[f"👂 {i+1}"],
-                            textfont=dict(size=16, color="lightcoral"),
-                            textposition="middle right",
-                            showlegend=False,
-                            hoverinfo="skip"
-                        ))
+                        if not match.empty:
+                            cumu_unit = match["Cumulative_Unit"].values[0]
+                            
+                            fig_displacement.add_trace(go.Scatter(
+                                x=[time_seen],
+                                y=[cumu_unit],
+                                mode="text",
+                                text=["🦻🏼"],
+                                textfont=dict(size=20),
+                                textposition="middle right",
+                                showlegend=False,
+                                hovertemplate=f"🦻🏼 High Vol Bin<br>F% Level: {ear_level}<extra></extra>"
+                            ))
+
   
        
                     # === Layout ===
