@@ -5300,7 +5300,7 @@ if st.sidebar.button("Run Analysis"):
                     # --- Add fuel pump markers to your existing fig_displacement
                     fig_displacement.add_trace(go.Scatter(
                         x=top_3_thrust["Time"],
-                        y=top_3_thrust["Cumulative_Unit"],
+                        y=top_3_thrust["Cumulative_Unit"] + 48,
                         mode="text",
                         text=["⛽️"] * len(top_3_thrust),
                         textfont=dict(size=18),
