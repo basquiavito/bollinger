@@ -825,7 +825,7 @@ if st.sidebar.button("Run Analysis"):
               
                   return intraday_df
 
-                  intraday = add_vector_force(intraday)
+                intraday = add_vector_force(intraday)
 
 
 
