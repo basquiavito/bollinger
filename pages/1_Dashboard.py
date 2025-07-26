@@ -7293,9 +7293,9 @@ if st.sidebar.button("Run Analysis"):
                  )
 
                 fig.add_trace(scatter_astronaut, row=1, col=1)
-                    # ✈️ Upward Crosses ABOVE Yesterday High
-                    up_high_mask = intraday["Y_High_Cross"] == "✈️"
-                    up_high_trace = go.Scatter(
+                        # ✈️ Upward Crosses ABOVE Yesterday High
+                  up_high_mask = intraday["Y_High_Cross"] == "✈️"
+                  up_high_trace = go.Scatter(
                         x=intraday.loc[up_high_mask, "Time"],
                         y=intraday.loc[up_high_mask, "F_numeric"] + 144,
                         mode="text",
