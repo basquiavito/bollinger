@@ -5086,7 +5086,7 @@ if st.sidebar.button("Run Analysis"):
                     # --- Plot 🚀 markers for top positive velocities ---
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_pos["Time"],
-                        y=top3_pos["Cumulative_Unit"],
+                        y=top3_pos["Cumulative_Unit"] + 10,
                         mode="text",
                         text=["🚀"] * 3,
                         textposition="top center",
@@ -5098,7 +5098,7 @@ if st.sidebar.button("Run Analysis"):
                     # --- Plot 🪂 markers for top negative velocities ---
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_neg["Time"],
-                        y=top3_neg["Cumulative_Unit"],
+                        y=top3_neg["Cumulative_Unit"] - 10,
                         mode="text",
                         text=["🪂"] * 3,
                         textposition="bottom center",
