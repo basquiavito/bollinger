@@ -5050,7 +5050,7 @@ if st.sidebar.button("Run Analysis"):
                         ),
                         text=[f"{val:+}%" for val in vector_rows["Vector%_numeric"]],
                         textposition="top center",
-                        textfont=dict(size=9),
+                        textfont=dict(size=13),
                         hovertemplate="Vector%: %{text}<br>Time: %{x}<extra></extra>"
                     ))
 
@@ -5064,7 +5064,7 @@ if st.sidebar.button("Run Analysis"):
                         font=dict(color="white"),
                         title="🧠 Mike's Physics Engine – Flight Path via Cumulative Unit%",
                         xaxis=dict(title="Time"),
-                        textfont=dict(size=13),  # 👈 bigger font
+                   
 
                         yaxis=dict(title="Cumulative Unit (×10⁻⁴)", zeroline=True),
                         margin=dict(t=40, b=40),
