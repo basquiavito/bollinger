@@ -5139,7 +5139,7 @@ if st.sidebar.button("Run Analysis"):
                     # === Add ⚡ markers (top 2 positive)
                     fig_displacement.add_trace(go.Scatter(
                         x=top2_pos_accel["Time"],
-                        y=top2_pos_accel["Cumulative_Unit"],
+                        y=top2_pos_accel["Cumulative_Unit"] + 16,
                         mode="text",
                         text=["⚡"] * len(top2_pos_accel),
                         textposition="top center",
@@ -5153,7 +5153,7 @@ if st.sidebar.button("Run Analysis"):
                     # === Add 🐢 markers (top 2 negative)
                     fig_displacement.add_trace(go.Scatter(
                         x=top2_neg_accel["Time"],
-                        y=top2_neg_accel["Cumulative_Unit"],
+                        y=top2_neg_accel["Cumulative_Unit"] - 16,
                         mode="text",
                         text=["🐢"] * len(top2_neg_accel),
                         textposition="bottom center",
