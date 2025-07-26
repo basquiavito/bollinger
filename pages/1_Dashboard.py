@@ -5181,12 +5181,12 @@ if st.sidebar.button("Run Analysis"):
                         x=top_vector_pos["Time"],
                         y=top_vector_pos["Cumulative_Unit"] + 24,
                         mode="text",
-                        text=["🚀"] * 3,
+                        text=["💥"] * 3,
                         textposition="top center",
                         textfont=dict(size=18),
                         name="High Vector Momentum",
                         showlegend=False,
-                        hovertemplate="🚀 Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
+                        hovertemplate="💥 Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
                         customdata=top_vector_pos[["Vector Momentum"]].values
                     ))
                     
