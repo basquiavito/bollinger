@@ -5134,69 +5134,42 @@ if st.sidebar.button("Run Analysis"):
 
              
                 with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
-                    fig_vector = make_subplots(
-                    rows=4, cols=1,
-                    shared_xaxes=True,
-                    vertical_spacing=0.03,
-                    row_heights=[0.35, 0.25, 0.2, 0.2],
-                    subplot_titles=(
-                        "Displacement (Mike)",
-                        "Vector Displacement %",
-                        "Vector Velocity",
-                        "Vector Force"
+                   
+                    fig_unit = go.Figure()
+    
+                    # Plot Unit% (converted from string to float inline)
+                    fig_unit.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Unit%"].str.replace("%", "").astype(float),
+                        mode="lines+markers",
+                        name="Unit%",
+                        line=dict(color="lime", width=2),
+                        hovertemplate="Time: %{x}<br>Unit%: %{y:.0f}%<extra></extra>"
+                    ))
+                
+                    # Zero reference line
+                    fig_unit.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=[0] * len(intraday),
+                        mode="lines",
+                        name="Zero",
+                        line=dict(color="gray", dash="dot"),
+                        showlegend=False
+                    ))
+                
+                    # Layout
+                    fig_unit.update_layout(
+                        height=300,
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        title="Bar-by-Bar Displacement (Unit%)",
+                        xaxis=dict(title="Time"),
+                        yaxis=dict(title="Unit% (×10⁻⁴)"),
+                        margin=dict(t=40, b=40),
+                        legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
                     )
-                )
-            
-                # Panel 1: Mike's Displacement
-                fig_vector.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["F_numeric"],
-                    mode="lines",
-                    name="Unit%",
-                    line=dict(color="dodgerblue", width=2),
-                    hovertemplate="Time: %{x}<br>Displacement: %{y:.1f}<extra></extra>"
-                ), row=1, col=1)
-            
-                # Panel 2: Vector%
-                fig_vector.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Vector%"],
-                    mode="lines+markers",
-                    name="Vector%",
-                    line=dict(color="cyan", dash="dot"),
-                    hovertemplate="Vector%: %{y:.1f}%<extra></extra>"
-                ), row=2, col=1)
-            
-                # Panel 3: Velocity
-                fig_vector.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Velocity"],
-                    mode="lines+markers",
-                    name="Velocity",
-                    line=dict(color="orange"),
-                    hovertemplate="Velocity: %{y:.1f}%<extra></extra>"
-                ), row=3, col=1)
-            
-                # Panel 4: Vector Force
-                fig_vector.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Vector Force"],
-                    mode="lines+markers",
-                    name="Vector Force",
-                    line=dict(color="crimson"),
-                    hovertemplate="Force: %{y:.1f}<extra></extra>"
-                ), row=4, col=1)
-            
-                fig_vector.update_layout(
-                    height=900,
-                    plot_bgcolor="black",
-                    paper_bgcolor="black",
-                    font=dict(color="white"),
-                    title="📐 Mike's Full Physics Engine: Displacement, Velocity, and Force",
-                    xaxis4=dict(title="Time"),
-                    legend=dict(orientation="h", y=1.02, x=1, xanchor="right"),
-                    margin=dict(t=60, b=40)
-                )
+
               
                 st.plotly_chart(fig_displacement, use_container_width=True)
 
