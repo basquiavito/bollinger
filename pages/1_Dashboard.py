@@ -5366,7 +5366,7 @@ if st.sidebar.button("Run Analysis"):
                             line=dict(color="deeppink", dash="dash", width=1),
                             annotation_text="🧧 IB Low",
                             annotation_position="bottom left",
-                            annotation_font=dict(color="deeppink", size=13),
+                            annotation_font=dict(color="gold", size=13),
                             opacity=0.6
                         )
 
