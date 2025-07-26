@@ -5064,6 +5064,8 @@ if st.sidebar.button("Run Analysis"):
                         font=dict(color="white"),
                         title="🧠 Mike's Physics Engine – Flight Path via Cumulative Unit%",
                         xaxis=dict(title="Time"),
+                        textfont=dict(size=13),  # 👈 bigger font
+
                         yaxis=dict(title="Cumulative Unit (×10⁻⁴)", zeroline=True),
                         margin=dict(t=40, b=40),
                         legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
