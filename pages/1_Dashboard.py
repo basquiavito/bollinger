@@ -730,9 +730,51 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                def add_unit_momentum(intraday_df):
+                    if intraday_df.empty or "Unit Velocity" not in intraday_df.columns or "Volume" not in intraday_df.columns:
+                        intraday_df["Unit Momentum"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Unit Momentum"] = ""
+                
+                    for i in range(len(intraday_df)):
+                        velocity_str = intraday_df.iloc[i]["Unit Velocity"]
+                        volume = intraday_df.iloc[i]["Volume"]
+                
+                        if isinstance(velocity_str, str) and velocity_str.strip().endswith("%") and isinstance(volume, (int, float)):
+                            velocity_val = int(velocity_str.strip().replace("%", ""))
+                            momentum = velocity_val * volume
+                            intraday_df.at[i, "Unit Momentum"] = momentum
+                        else:
+                            intraday_df.at[i, "Unit Momentum"] = ""
+                
+                    return intraday_df
+                intraday = add_unit_momentum(intraday)
 
+                def add_vector_momentum(intraday_df):
+                    if intraday_df.empty or "Velocity" not in intraday_df.columns or "Volume" not in intraday_df.columns:
+                        intraday_df["Vector Momentum"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Vector Momentum"] = ""
+                
+                    for i in range(2, len(intraday_df), 3):
+                        velocity_str = intraday_df.iloc[i]["Velocity"]
+                        volume_sum = intraday_df.iloc[i - 2:i + 1]["Volume"].sum()
+                
+                        if isinstance(velocity_str, str) and velocity_str.strip().endswith("%"):
+                            velocity_val = int(velocity_str.strip().replace("%", ""))
+                            momentum = velocity_val * volume_sum
+                            intraday_df.at[i, "Vector Momentum"] = momentum
+                        else:
+                            intraday_df.at[i, "Vector Momentum"] = ""
+                
+                    return intraday_df
 
-              
+                intraday = add_vector_momentum(intraday)
+
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -4099,7 +4141,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
+                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
 
                     st.dataframe(intraday[cols_to_show])
 
