@@ -7280,6 +7280,30 @@ if st.sidebar.button("Run Analysis"):
                     name="Cross Above Y-High (✈️)"
                 )
 
+                
+                breach_mask = intraday["Y_Low_Cross"] == "🛟"
+                breach_trace = go.Scatter(
+                    x=intraday.loc[breach_mask, "Time"],
+                    y=intraday.loc[breach_mask, "F_numeric"] - 40,  # Offset downward for clarity
+                    mode="text",
+                    text=intraday.loc[breach_mask, "Y_Low_Cross"],
+                    textposition="bottom center",
+                    textfont=dict(size=28),
+                    name="Cross Below Y-Low (🛟)"
+                )
+                
+                                
+                recovery_mask = intraday["Y_Low_Cross"] == "🚣🏽"
+                recovery_trace = go.Scatter(
+                    x=intraday.loc[recovery_mask, "Time"],
+                    y=intraday.loc[recovery_mask, "F_numeric"] + 40,  # Offset for visibility
+                    mode="text",
+                    text=intraday.loc[recovery_mask, "Y_Low_Cross"],
+                    textposition="top center",
+                    textfont=dict(size=28),
+                    name="Cross Above Y-Low (🚣🏽)"
+                )
+
                 astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
                 scatter_astronaut = go.Scatter(
