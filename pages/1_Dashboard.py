@@ -7308,8 +7308,7 @@ if st.sidebar.button("Run Analysis"):
 
 #                     # Add to figure
                 fig.add_trace(up_high_trace, row=1, col=1)
-                fig.add_trace(down_high_trace, row=1, col=1)
-
+ 
 
 
                     # Filter where the Astronaut or Moon emoji exist
