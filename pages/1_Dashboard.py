@@ -5132,6 +5132,44 @@ if st.sidebar.button("Run Analysis"):
                 #     st.plotly_chart(fig_midas, use_container_width=True)
 
 
+             
+                with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
+                    fig_displacement = go.Figure()
+                
+                    # === PLOT: Displacement Line ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F_numeric"],
+                        mode="lines",
+                        name="Displacement (F%)",
+                        line=dict(color="green", width=2),
+                        hovertemplate="Time: %{x}<br>Displacement: %{y:.1f}<extra></extra>"
+                    ))
+                
+                    # === Reference Line at Zero ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=[0] * len(intraday),
+                        mode="lines",
+                        name="Zero Line",
+                        line=dict(color="gray", width=1, dash="dot"),
+                        showlegend=False
+                    ))
+                
+                    # === LAYOUT ===
+                    fig_displacement.update_layout(
+                        height=350,
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        title="Displacement Trajectory (Mike's Flight Path)",
+                        xaxis=dict(title="Time"),
+                        yaxis=dict(title="Displacement (×10⁻⁴)", zeroline=True),
+                        margin=dict(t=40, b=40),
+                        legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
+                    )
+                
+                    st.plotly_chart(fig_displacement, use_container_width=True)
 
              
 
