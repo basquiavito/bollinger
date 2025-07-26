@@ -4997,9 +4997,16 @@ if st.sidebar.button("Run Analysis"):
                                         .reset_index(drop=True)
                                     )
                 
+                
+                                   
+                               # Convert Unit% to numeric
+                intraday["Unit%_Numeric"] = (
+                    intraday["Unit%"].str.replace("%", "", regex=False).replace("", "0").astype(float)
+                )
+                
+                # Calculate cumulative sum
+                intraday["Cumulative_Unit"] = intraday["Unit%_Numeric"].cumsum()
 
-                   
-               
 
 
              
