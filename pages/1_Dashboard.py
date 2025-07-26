@@ -5047,7 +5047,7 @@ if st.sidebar.button("Run Analysis"):
                         legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
                     )
                               
-                st.plotly_chart(fig_unit, use_container_width=True)
+                st.plotly_chart(fig_displacement, use_container_width=True)
 
              
 
