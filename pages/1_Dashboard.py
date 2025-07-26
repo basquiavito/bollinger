@@ -5350,9 +5350,9 @@ if st.sidebar.button("Run Analysis"):
                     
                             fig_displacement.add_hline(
                                 y=nose_unit,
-                                line=dict(color="orange", dash="dot", width=1),
+                                line=dict(color="lightpink", dash="dot", width=1),
                                 annotation_text="👃🏽 Time Memory",
-                                annotation_position="lightpink",
+                                annotation_position="top left",
                                 annotation_font=dict(color="#0ff", size=13),
                                 opacity=0.5
                             )
