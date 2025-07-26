@@ -7276,7 +7276,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=intraday.loc[up_high_mask, "Y_High_Cross"],
                     textposition="top center",
-                    textfont=dict(size=21),
+                    textfont=dict(size=28),
                     name="Cross Above Y-High (✈️)"
                 )
 
