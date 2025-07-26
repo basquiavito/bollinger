@@ -5291,8 +5291,41 @@ if st.sidebar.button("Run Analysis"):
                         ),
                         customdata=bottom_3_energy[["Vector Energy"]].values
                     ))
+# --- Filter valid vector rows with numeric efficiency values ---
+                    vector_eff_rows = intraday[(intraday["Vector_Energy_per_3bar_Range"] != "") & (intraday["Vector_Energy_per_3bar_Range"].apply(lambda x: isinstance(x, numbers.Number)))]
+                    
+                    # --- Get top 3 lowest efficiency values (most efficient moves) ---
+                    top_eff = vector_eff_rows.nsmallest(3, "Vector_Energy_per_3bar_Range")
+                    
+                    # --- Add eagle markers to displacement plot ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_eff["Time"],
+                        y=top_eff["Cumulative_Unit"] + 48,  # or another reference line like Midas
+                        mode="text",
+                        text=[🏮"] * len(top_eff),
+                        textposition="top center",
+                        textfont=dict(size=20),
+                        showlegend=False,
+                        customdata=top_eff[["Vector_Energy_per_3bar_Range"]].values,
+                        hovertemplate="🏮 Efficient Spike<br>Time: %{x|%I:%M %p}<br>Energy Efficiency: %{customdata[0]:.2f}<extra></extra>"
+                    ))
 
-                   
+                   # --- Get bottom 3 least efficient energy spikes ---
+                    bottom_eff = vector_eff_rows.nlargest(3, "Vector_Energy_per_3bar_Range")
+                    
+                    # --- Add 💢 markers to the displacement plot ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=bottom_eff["Time"],
+                        y=bottom_eff["Cumulative_Unit"],  # Adjust if you prefer another Y-axis
+                        mode="text",
+                        text=["💢"] * len(bottom_eff),
+                        textposition="bottom center",
+                        textfont=dict(size=20),
+                        showlegend=False,
+                        customdata=bottom_eff[["Vector_Energy_per_3bar_Range"]].values,
+                        hovertemplate="💢 Energy Waste<br>Time: %{x|%I:%M %p}<br>Energy Efficiency: %{customdata[0]:.2f}<extra></extra>"
+                    ))
+
                               
                     # === Layout ===
                     fig_displacement.update_layout(
