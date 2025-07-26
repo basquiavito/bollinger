@@ -5152,7 +5152,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["F_numeric"],
                     mode="lines",
-                    name="Displacement (F%)",
+                    name="Unit%",
                     line=dict(color="dodgerblue", width=2),
                     hovertemplate="Time: %{x}<br>Displacement: %{y:.1f}<extra></extra>"
                 ), row=1, col=1)
