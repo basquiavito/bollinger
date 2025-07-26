@@ -5092,8 +5092,7 @@ if st.sidebar.button("Run Analysis"):
                         textposition="top center",
                         textfont=dict(size=18),
                         showlegend=False,
-                        customdata=top_positive_vel[["Velocity"]].values,
-
+ 
                         hovertemplate=(
                                       "🚀 Vector Burst<br>"
                                       "Time: %{x|%I:%M %p}<br>"
