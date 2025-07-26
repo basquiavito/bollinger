@@ -609,6 +609,63 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = calculate_vector_percentage(intraday)
 
+                def add_unit_velocity(intraday_df):
+                    if intraday_df.empty or "Unit%" not in intraday_df.columns:
+                        intraday_df["Unit Velocity"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Unit Velocity"] = ""
+                
+                    for i in range(1, len(intraday_df)):
+                        prev = intraday_df.iloc[i - 1]["Unit%"]
+                        curr = intraday_df.iloc[i]["Unit%"]
+                
+                        if isinstance(prev, str) and prev.strip().endswith("%") and \
+                           isinstance(curr, str) and curr.strip().endswith("%"):
+                
+                            prev_val = int(prev.strip().replace("%", ""))
+                            curr_val = int(curr.strip().replace("%", ""))
+                            velocity = curr_val - prev_val
+                
+                            intraday_df.at[i, "Unit Velocity"] = f"{velocity:+d}%"
+                        else:
+                            intraday_df.at[i, "Unit Velocity"] = ""
+                
+                    # First row has no previous unit, so remains blank
+                    intraday_df.at[0, "Unit Velocity"] = ""
+                
+                    return intraday_df
+
+                intraday = add_unit_velocity(intraday)
+                def add_vector_velocity(intraday_df):
+                    if intraday_df.empty or "Vector%" not in intraday_df.columns:
+                        intraday_df["Velocity"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Velocity"] = ""
+                
+                    previous_vector_val = None
+                
+                    for i in range(len(intraday_df)):
+                        vector_val = intraday_df.iloc[i]["Vector%"]
+                
+                        if isinstance(vector_val, str) and vector_val.strip().endswith("%") and vector_val.strip() != "":
+                            current_val = int(vector_val.strip().replace("%", ""))
+                
+                            if previous_vector_val is not None:
+                                velocity = current_val - previous_vector_val
+                                intraday_df.at[i, "Velocity"] = f"{velocity:+d}%"
+                            else:
+                                intraday_df.at[i, "Velocity"] = ""
+                
+                            previous_vector_val = current_val
+                
+                    return intraday_df
+
+                intraday = add_vector_velocity(intraday)
+
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -3975,7 +4032,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","Unit%","Vector%","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
+                                    "Time","Volume","F_numeric","Unit%","Vector%",  " Unit Velocity","Velocity","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
 
                     st.dataframe(intraday[cols_to_show])
 
