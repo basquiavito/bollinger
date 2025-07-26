@@ -5034,26 +5034,26 @@ if st.sidebar.button("Run Analysis"):
                         showlegend=False
                     ))
 
-                    # Step 2: Add Vector% Markers at every 3rd bar
-                    # Filter rows with Vector% (not empty) and convert to numeric
+                   # === ADD: Vector% Markers ===
                     vector_rows = intraday[intraday["Vector%"].str.endswith("%")].copy()
                     vector_rows["Vector%_numeric"] = vector_rows["Vector%"].str.replace("%", "").astype(int)
                     
-                    fig_vector_overlay.add_trace(go.Scatter(
+                    fig_displacement.add_trace(go.Scatter(
                         x=vector_rows["Time"],
-                        y=vector_rows["Cumulative_Unit%"],
+                        y=vector_rows["Cumulative_Unit"],
                         mode="markers+text",
-                        name="📍 Vector%",
+                        name="Vector%",
                         marker=dict(
-                            size=10,
-                            color=["green" if val > 0 else "red" for val in vector_rows["Vector%_numeric"]],
-                            symbol="triangle-up"  # or "circle", or emojis as `text`
+                            size=9,
+                            color=["limegreen" if val > 0 else "orangered" for val in vector_rows["Vector%_numeric"]],
+                            symbol="circle"
                         ),
                         text=[f"{val:+}%" for val in vector_rows["Vector%_numeric"]],
                         textposition="top center",
-                        textfont=dict(size=10),
+                        textfont=dict(size=9),
                         hovertemplate="Vector%: %{text}<br>Time: %{x}<extra></extra>"
                     ))
+
                     
                                       
                     # === Layout ===
