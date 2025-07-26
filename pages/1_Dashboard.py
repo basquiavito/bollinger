@@ -5336,7 +5336,22 @@ if st.sidebar.button("Run Analysis"):
                             ))
 
   
-       
+       # === Overlay: IB High as Resistance in Cumulative Unit Space ===
+                    ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
+                    ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
+                    
+                    if not ib_high_row.empty:
+                        ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
+                    
+                        fig_displacement.add_hline(
+                            y=ib_high_unit,
+                            line=dict(color="gold", dash="dash", width=1),
+                            annotation_text="💸 IB High",
+                            annotation_position="top left",
+                            annotation_font=dict(color="gold", size=13),
+                            opacity=0.6
+                        )
+
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
