@@ -5157,13 +5157,13 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
                                       # Example: label only large unit moves
-                    unit_rows = intraday[intraday["Unit Change"].abs() >= 3]
+                    unit_rows = intraday[intraday["Unit%"].abs() >= 3]
                     
                     fig_displacement.add_trace(go.Scatter(
                         x=unit_rows["Time"],
                         y=unit_rows["F_numeric"] + 2,  # Offset for visibility
                         mode="text",
-                        text=unit_rows["Unit Change"].astype(str),
+                        text=unit_rows["Unit%"].astype(str),
                         textposition="top center",
                         textfont=dict(size=12, color="white"),
                         showlegend=False
