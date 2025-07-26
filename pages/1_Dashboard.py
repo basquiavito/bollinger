@@ -5363,7 +5363,7 @@ if st.sidebar.button("Run Analysis"):
                     
                         fig_displacement.add_hline(
                             y=ib_low_unit,
-                            line=dict(color="deeppink", dash="dash", width=1),
+                            line=dict(color="gold", dash="dash", width=1),
                             annotation_text="🧧 IB Low",
                             annotation_position="bottom left",
                             annotation_font=dict(color="gold", size=13),
