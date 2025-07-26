@@ -5179,7 +5179,7 @@ if st.sidebar.button("Run Analysis"):
                     # === Vector Momentum Markers ===
                     fig_displacement.add_trace(go.Scatter(
                         x=top_vector_pos["Time"],
-                        y=top_vector_pos["Cumulative_Unit"],
+                        y=top_vector_pos["Cumulative_Unit"] + 24,
                         mode="text",
                         text=["🚀"] * 3,
                         textposition="top center",
@@ -5192,7 +5192,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig_displacement.add_trace(go.Scatter(
                         x=top_vector_neg["Time"],
-                        y=top_vector_neg["Cumulative_Unit"],
+                        y=top_vector_neg["Cumulative_Unit"] - 24,
                         mode="text",
                         text=["🌪️"] * 3,
                         textposition="bottom center",
