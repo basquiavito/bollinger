@@ -5357,7 +5357,32 @@ if st.sidebar.button("Run Analysis"):
                                 opacity=0.5
                             )
                     
-                                        
+                                           # === Plot 🪶 Tail Emoji on Physics Plot (no line)
+                    tail_rows = profile_df[profile_df["Tail"] == "🪶"]
+                    
+                    for _, row in tail_rows.iterrows():
+                        tail_level = row["F% Level"]
+                    
+                        # Match first appearance in intraday
+                        time_index = intraday.loc[intraday["F_Bin"] == str(tail_level), "TimeIndex"].min()
+                        match_row = intraday[intraday["TimeIndex"] == time_index]
+                    
+                        if not match_row.empty:
+                            y_val = match_row["Cumulative_Unit"].values[0]
+                    
+                            fig_displacement.add_trace(go.Scatter(
+                                x=[time_index],
+                                y=[y_val],
+                                mode="text",
+                                text=["🪶"],
+                                textposition="middle center",
+                                textfont=dict(size=20),
+                                hovertemplate=(
+                                    f"🪶 Tail (Single Letter)<br>Level: {tail_level}<br>Time: {row['Time']}<extra></extra>"
+                                ),
+                                showlegend=False
+                            ))
+                 
                                                            
 
        # === Overlay: IB High as Resistance in Cumulative Unit Space ===
