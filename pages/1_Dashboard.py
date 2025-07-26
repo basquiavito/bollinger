@@ -5388,8 +5388,14 @@ if st.sidebar.button("Run Analysis"):
                             fig_displacement.add_hline(
                                 y=ear_unit,
                                 line=dict(color="gray", dash="dot", width=1),
-                                annotation_text="🦻🏼 Volume Memory",
+                                annotation_text=f"🦻🏼 {ear_level} (Vol: {ear_vol:.2f}%)",
                                 annotation_position="top left",
+                                hovertemplate=(
+                                              "🦻🏼 Volume Memory<br>"
+                                              f"Level: {ear_level}<br>"
+                                              f"%Vol: {ear_vol:.2f}%<br>"
+                                              f"Time: {ear_time}<extra></extra>"
+                                          ),
                                 annotation_font=dict(color="gray", size=13),
                                 opacity=0.5
                             )
