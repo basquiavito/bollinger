@@ -776,9 +776,73 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_momentum_rvol(intraday)
 
-               
-                               
-    
+                def add_unit_force(intraday_df):
+                      if intraday_df.empty or "Unit Acceleration" not in intraday_df.columns or "RVOL_5" not in intraday_df.columns:
+                          intraday_df["Unit Force"] = ""
+                          return intraday_df
+                  
+                      intraday_df = intraday_df.copy()
+                      intraday_df["Unit Force"] = ""
+                  
+                      for i in range(len(intraday_df)):
+                          accel_str = intraday_df.iloc[i]["Unit Acceleration"]
+                          rvol = intraday_df.iloc[i]["RVOL_5"]
+                  
+                          if isinstance(accel_str, str) and accel_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
+                              try:
+                                  accel_val = int(accel_str.strip().replace("%", ""))
+                                  force = accel_val * rvol
+                                  intraday_df.at[i, "Unit Force"] = force
+                              except ValueError:
+                                  intraday_df.at[i, "Unit Force"] = ""
+                          else:
+                              intraday_df.at[i, "Unit Force"] = ""
+  
+                      return intraday_df
+                intraday = add_unit_force(intraday)
+  
+                def add_vector_force(intraday_df):
+                  if intraday_df.empty or "Acceleration" not in intraday_df.columns or "RVOL_5" not in intraday_df.columns:
+                      intraday_df["Vector Force"] = ""
+                      return intraday_df
+              
+                  intraday_df = intraday_df.copy()
+                  intraday_df["Vector Force"] = ""
+              
+                  for i in range(2, len(intraday_df), 3):
+                      accel_str = intraday_df.iloc[i]["Acceleration"]
+                      rvol_sum = intraday_df.iloc[i - 2:i + 1]["RVOL_5"].sum()
+              
+                      if isinstance(accel_str, str) and accel_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
+                          try:
+                              accel_val = int(accel_str.strip().replace("%", ""))
+                              force = accel_val * rvol_sum
+                              intraday_df.at[i, "Vector Force"] = force
+                          except ValueError:
+                              intraday_df.at[i, "Vector Force"] = ""
+                      else:
+                          intraday_df.at[i, "Vector Force"] = ""
+              
+                  return intraday_df
+
+                  intraday = add_vector_force(intraday)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
 
                 def compute_option_value(df, premium=64, contracts=100):
                     """
@@ -4146,7 +4210,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
+                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
 
                     st.dataframe(intraday[cols_to_show])
 
