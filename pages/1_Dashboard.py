@@ -4490,6 +4490,9 @@ if st.sidebar.button("Run Analysis"):
                   profile_df["%Vol"] = profile_df["F% Level"].astype(str).map(vol_percent).fillna(0)
 
 
+                  # Define most volume bin level (used in resistance)
+                  max_vol_level = profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level']
+                  max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
 
                   
                                     # Add earliest Time seen in each F% bin
