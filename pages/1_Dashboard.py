@@ -5255,19 +5255,41 @@ if st.sidebar.button("Run Analysis"):
                     # --- Plot Emoji Markers for Top Energy Spikes ---
                     fig_displacement.add_trace(go.Scatter(
                         x=top_energy_rows["Time"],
-                        y=top_energy_rows["Cumulative_Unit"] + 5,  # Lift marker above line
+                        y=top_energy_rows["Cumulative_Unit"] + 40,  # Lift marker above line
                         mode="text",
-                        text=["🧨"] * len(top_energy_rows),
+                        text=["🔋"] * len(top_energy_rows),
                         textposition="top center",
                         textfont=dict(size=18),
                         name="Top Energy Bursts",
                         showlegend=False,
                         hovertemplate=(
-                            "🧨 Energy Burst<br>"
+                            "🔋 Energy Burst<br>"
                             "Time: %{x|%I:%M %p}<br>"
                             "Vector Energy: %{customdata[0]:,.1f}<extra></extra>"
                         ),
                         customdata=top_energy_rows[["Vector Energy_numeric"]].values
+                    ))
+                    # === Find Bottom 3 Vector Energy Spikes ===
+                    bottom_vector_energy = intraday[intraday["Vector Energy"] != ""].copy()
+                    bottom_vector_energy["Vector Energy"] = pd.to_numeric(bottom_vector_energy["Vector Energy"], errors="coerce")
+                    bottom_vector_energy = bottom_vector_energy.dropna(subset=["Vector Energy"])
+                    bottom_3_energy = bottom_vector_energy.nsmallest(3, "Vector Energy")
+                    
+                    # === Plot Bottom 3 Vector Energy 🪫 Markers ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=bottom_3_energy["Time"],
+                        y=bottom_3_energy["Cumulative_Unit"] - 40,
+                        mode="text",
+                        text=["🪫"] * len(bottom_3_energy),
+                        textposition="bottom center",
+                        textfont=dict(size=20),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🪫 Low Energy<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Vector Energy: %{customdata[0]:.1f}<extra></extra>"
+                        ),
+                        customdata=bottom_3_energy[["Vector Energy"]].values
                     ))
 
                                       
