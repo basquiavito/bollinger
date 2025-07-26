@@ -5312,13 +5312,13 @@ if st.sidebar.button("Run Analysis"):
                         x=top3_eff["Time"],
                         y=top3_eff["Cumulative_Unit"] + 48,
                         mode="text",
-                        text=["🦅"] * len(top3_eff),
+                        text=["🔦"] * len(top3_eff),
                         textposition="top center",
                         textfont=dict(size=20),
                         showlegend=False,
                         customdata=top3_eff[["Vector_Energy_per_3bar_Range"]],
                         hovertemplate=(
-                            "🦅 Efficient Energy Spike<br>"
+                            "🔦 Efficient Energy Spike<br>"
                             "Time: %{x|%I:%M %p}<br>"
                             "Energy/Range: %{customdata[0]:.2f}<extra></extra>"
                         )
