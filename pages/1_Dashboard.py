@@ -5352,6 +5352,24 @@ if st.sidebar.button("Run Analysis"):
                             opacity=0.6
                         )
 
+
+
+                                      # === Overlay: IB Low as Support in Cumulative Unit Space ===
+                    ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
+                    ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
+                    
+                    if not ib_low_row.empty:
+                        ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
+                    
+                        fig_displacement.add_hline(
+                            y=ib_low_unit,
+                            line=dict(color="deeppink", dash="dash", width=1),
+                            annotation_text="🧧 IB Low",
+                            annotation_position="bottom left",
+                            annotation_font=dict(color="deeppink", size=13),
+                            opacity=0.6
+                        )
+
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
