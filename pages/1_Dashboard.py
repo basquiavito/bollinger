@@ -5399,7 +5399,8 @@ if st.sidebar.button("Run Analysis"):
                                 annotation_position="top left",
                                 hovertemplate=(
                                               "🦻🏼 Volume Memory<br>"
-                                              f"%Vol: {ear_vol:.2f}%<br>"
+                                              f"Level: {ear_level}<br>"
+
                                               f"Time: {ear_time}<extra></extra>"
                                           ),
                                 annotation_font=dict(color="gray", size=13),
