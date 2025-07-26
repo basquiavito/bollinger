@@ -5164,7 +5164,48 @@ if st.sidebar.button("Run Analysis"):
                         showlegend=False
                     ))
 
-                         
+
+                    
+                    df["Unit Momentum"] = pd.to_numeric(df["Unit Momentum"], errors="coerce")
+                    df["Vector Momentum"] = pd.to_numeric(df["Vector Momentum"], errors="coerce")
+                    
+                    top_unit_pos = intraday.nlargest(3, "Unit Momentum")
+                    top_unit_neg = intraday.nsmallest(3, "Unit Momentum")
+                    
+                    top_vector_pos = intraday.nlargest(3, "Vector Momentum")
+                    top_vector_neg = intraday.nsmallest(3, "Vector Momentum")
+                    
+                    
+                    # === Vector Momentum Markers ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_vector_pos["Time"],
+                        y=top_vector_pos["Cumulative_Unit"],
+                        mode="text",
+                        text=["🚀"] * 3,
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="High Vector Momentum",
+                        showlegend=False,
+                        hovertemplate="🚀 Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
+                        customdata=top_vector_pos[["Vector Momentum"]].values
+                    ))
+                    
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_vector_neg["Time"],
+                        y=top_vector_neg["Cumulative_Unit"],
+                        mode="text",
+                        text=["🌪️"] * 3,
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        name="Low Vector Momentum",
+                        showlegend=False,
+                        hovertemplate="🌪️ Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
+                        customdata=top_vector_neg[["Vector Momentum"]].values
+                    ))
+                    
+                    
+                    
+                                      
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
