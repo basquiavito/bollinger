@@ -4684,9 +4684,7 @@ if st.sidebar.button("Run Analysis"):
                           above = False
 
 
-                  with st.expander("📐 Market Resistance Levels", expanded=False):
-                      st.dataframe(res_df)
-
+              
                   with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
                       # Detect price column
@@ -5332,9 +5330,11 @@ if st.sidebar.button("Run Analysis"):
                     )
                               
                 st.plotly_chart(fig_displacement, use_container_width=True)
-
-             
-
+            
+                         
+                with st.expander("📐 Market Resistance Levels", expanded=False):
+                                  st.dataframe(res_df)
+            
 
 
 
