@@ -5419,20 +5419,7 @@ if st.sidebar.button("Run Analysis"):
                             opacity=0.6
                         )
                     
-                    ## Calculate Cumulative Unit range from IB high/low directly
-                    ib_high_unit = intraday["Cumulative_Unit"].iloc[intraday["F_numeric"].idxmax()]
-                    ib_low_unit = intraday["Cumulative_Unit"].iloc[intraday["F_numeric"].idxmin()]
-                    
-                    ib_unit_range = ib_high_unit - ib_low_unit
-                    ib_third = ib_unit_range / 3
-                    
-                    unit_upper_third = ib_low_unit + 2 * ib_third
-                    unit_middle_third = ib_low_unit + ib_third
-                    
-                    # Plot them
-                    fig_displacement.add_hline(y=unit_middle_third, line=dict(color="gray", dash="dash", width=0.5))
-                    fig_displacement.add_hline(y=unit_upper_third, line=dict(color="gray", dash="dash", width=0.5))
-                    
+                   
                           
                     # === Layout ===
                     fig_displacement.update_layout(
