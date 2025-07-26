@@ -5198,7 +5198,7 @@ if st.sidebar.button("Run Analysis"):
                     margin=dict(t=60, b=40)
                 )
               
-              st.plotly_chart(fig_displacement, use_container_width=True)
+                st.plotly_chart(fig_displacement, use_container_width=True)
 
              
 
