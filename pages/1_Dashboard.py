@@ -5332,12 +5332,7 @@ if st.sidebar.button("Run Analysis"):
                                 textfont=dict(size=20),
                                 textposition="middle right",
                                 showlegend=False,
-                                hovertemplate=(
-                                                "🦻🏼 Volume Memory<br>"
-                                                f"Level: {ear_level}<br>"
-                                                f"%Vol: {ear_vol:.2f}%<br>"
-                                                f"Time: {ear_time}<extra></extra>"
-                                            )                            ))
+                                                 ))
 
 
 
