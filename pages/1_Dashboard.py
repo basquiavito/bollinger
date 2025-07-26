@@ -5314,28 +5314,59 @@ if st.sidebar.button("Run Analysis"):
                                   # Pick the first 🦻🏼 ear row
                     ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"].head(1)
                     
+                    # if not ear_row.empty:
+                    #     ear_level = ear_row["F% Level"].values[0]
+                    #     time_seen = ear_row["Time"].values[0]
+                        
+                    #     # Find matching Cumulative Unit% in intraday
+                    #     match = intraday[intraday["Time"] == time_seen]
+                        
+                    #     if not match.empty:
+                    #         cumu_unit = match["Cumulative_Unit"].values[0]
+                            
+                    #         fig_displacement.add_trace(go.Scatter(
+                    #             x=[time_seen],
+                    #             y=[cumu_unit],
+                    #             mode="text",
+                    #             text=["🦻🏼"],
+                    #             textfont=dict(size=20),
+                    #             textposition="middle right",
+                    #             showlegend=False,
+                    #             hovertemplate=f"🦻🏼 High Vol Bin<br>F% Level: {ear_level}<extra></extra>"
+                    #         ))
+
+
+
+                    # === Plot 🦻🏼 Ear as a hoverable dashed line ===
+                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                    
                     if not ear_row.empty:
                         ear_level = ear_row["F% Level"].values[0]
-                        time_seen = ear_row["Time"].values[0]
-                        
-                        # Find matching Cumulative Unit% in intraday
-                        match = intraday[intraday["Time"] == time_seen]
-                        
-                        if not match.empty:
-                            cumu_unit = match["Cumulative_Unit"].values[0]
-                            
+                        ear_vol = ear_row["%Vol"].values[0]
+                        ear_time = ear_row["Time"].values[0]
+                    
+                        # Match F% level to intraday time for mapping to Cumulative_Unit
+                        match_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
+                        ear_row_match = intraday[intraday["TimeIndex"] == match_time]
+                    
+                        if not ear_row_match.empty:
+                            ear_unit = ear_row_match["Cumulative_Unit"].values[0]
+                    
                             fig_displacement.add_trace(go.Scatter(
-                                x=[time_seen],
-                                y=[cumu_unit],
-                                mode="text",
-                                text=["🦻🏼"],
-                                textfont=dict(size=20),
-                                textposition="middle right",
-                                showlegend=False,
-                                hovertemplate=f"🦻🏼 High Vol Bin<br>F% Level: {ear_level}<extra></extra>"
+                                x=[intraday["TimeIndex"].min(), intraday["TimeIndex"].max()],
+                                y=[ear_unit, ear_unit],
+                                mode="lines",
+                                name="🦻🏼 Volume Memory",
+                                line=dict(color="gray", dash="dot", width=1),
+                                hovertemplate=(
+                                    "🦻🏼 Volume Memory<br>"
+                                    f"Level: {ear_level}<br>"
+                                    f"%Vol: {ear_vol:.2f}%<br>"
+                                    f"Time: {ear_time}<extra></extra>"
+                                ),
+                                showlegend=False
                             ))
 
-  
        # === Overlay: IB High as Resistance in Cumulative Unit Space ===
                     ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
                     ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
