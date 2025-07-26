@@ -5316,7 +5316,7 @@ if st.sidebar.button("Run Analysis"):
                     # --- Add 💢 markers to the displacement plot ---
                     fig_displacement.add_trace(go.Scatter(
                         x=bottom_eff["Time"],
-                        y=bottom_eff["Cumulative_Unit"],  # Adjust if you prefer another Y-axis
+                        y=bottom_eff["Cumulative_Unit"] -  48,,  # Adjust if you prefer another Y-axis
                         mode="text",
                         text=["💢"] * len(bottom_eff),
                         textposition="bottom center",
