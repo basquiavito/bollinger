@@ -5291,57 +5291,8 @@ if st.sidebar.button("Run Analysis"):
                         ),
                         customdata=bottom_3_energy[["Vector Energy"]].values
                     ))
-# --- Filter valid vector rows with numeric efficiency values ---
-                                    # STEP 1: Filter only rows that have non-empty values
-                    # --- 1. Clean & Convert the Efficiency Column ---
-                    intraday["Vector_Energy_per_3bar_Range"] = pd.to_numeric(
-                    intraday["Vector_Energy_per_3bar_Range"], errors="coerce"
-                    )
-                    
-                    # --- 2. Drop rows where conversion failed (NaN) ---
-                    vector_eff = intraday.dropna(subset=["Vector_Energy_per_3bar_Range"]).copy()
-                    
-                    # --- 3. Select Top 3 Most Efficient (lowest ratio) ---
-                    top3_eff = vector_eff.nsmallest(3, "Vector_Energy_per_3bar_Range")
-                    
-                    # --- 4. Select Top 3 Least Efficient (highest ratio) ---
-                    bottom3_eff = vector_eff.nlargest(3, "Vector_Energy_per_3bar_Range")
-                    
-                    # --- 5. Plot ⛽️ for Efficient Moves ---
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_eff["Time"],
-                        y=top3_eff["Cumulative_Unit"] + 48,
-                        mode="text",
-                        text=["🔦"] * len(top3_eff),
-                        textposition="top center",
-                        textfont=dict(size=20),
-                        showlegend=False,
-                        customdata=top3_eff[["Vector_Energy_per_3bar_Range"]],
-                        hovertemplate=(
-                            "🔦 Efficient Energy Spike<br>"
-                            "Time: %{x|%I:%M %p}<br>"
-                            "Energy/Range: %{customdata[0]:.2f}<extra></extra>"
-                        )
-                    ))
-                    
-                    # --- 6. Plot 💢 for Wasteful Moves ---
-                    fig_displacement.add_trace(go.Scatter(
-                        x=bottom3_eff["Time"],
-                        y=bottom3_eff["Cumulative_Unit"] - 48,
-                        mode="text",
-                        text=["💢"] * len(bottom3_eff),
-                        textposition="bottom center",
-                        textfont=dict(size=20),
-                        showlegend=False,
-                        customdata=bottom3_eff[["Vector_Energy_per_3bar_Range"]],
-                        hovertemplate=(
-                            "💢 Energy Waste Spike<br>"
-                            "Time: %{x|%I:%M %p}<br>"
-                            "Energy/Range: %{customdata[0]:.2f}<extra></extra>"
-                        )
-                    ))
 
-                              
+                
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
