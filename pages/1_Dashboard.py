@@ -5419,45 +5419,21 @@ if st.sidebar.button("Run Analysis"):
                             opacity=0.6
                         )
                     
-                    # Match IB High and Low to Cumulative Unit space
-                    ib_high_time = intraday.loc[intraday["F_Bin"] == str(int(ib_high)), "TimeIndex"].min()
-                    ib_low_time = intraday.loc[intraday["F_Bin"] == str(int(ib_low)), "TimeIndex"].min()
+                    ## Calculate Cumulative Unit range from IB high/low directly
+                    ib_high_unit = intraday["Cumulative_Unit"].iloc[intraday["F_numeric"].idxmax()]
+                    ib_low_unit = intraday["Cumulative_Unit"].iloc[intraday["F_numeric"].idxmin()]
                     
-                    ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
-                    ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
+                    ib_unit_range = ib_high_unit - ib_low_unit
+                    ib_third = ib_unit_range / 3
                     
-                    if not ib_high_row.empty and not ib_low_row.empty:
-                        ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
-                        ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
+                    unit_upper_third = ib_low_unit + 2 * ib_third
+                    unit_middle_third = ib_low_unit + ib_third
                     
-                        # Divide into thirds
-                        ib_unit_range = ib_high_unit - ib_low_unit
-                        unit_third = ib_unit_range / 3
+                    # Plot them
+                    fig_displacement.add_hline(y=unit_middle_third, line=dict(color="gray", dash="dash", width=0.5))
+                    fig_displacement.add_hline(y=unit_upper_third, line=dict(color="gray", dash="dash", width=0.5))
                     
-                        unit_top_third = ib_low_unit + 2 * unit_third
-                        unit_middle_third = ib_low_unit + unit_third
-                    
-                        # Plot the dashed thirds
-                        fig_displacement.add_hline(
-                            y=unit_top_third,
-                            line=dict(color="gray", dash="dash", width=1),
-                            annotation_text="Upper Third",
-                            annotation_position="top left",
-                            annotation_font=dict(color="gray", size=11),
-                            opacity=0.5
-                        )
-                    
-                        fig_displacement.add_hline(
-                            y=unit_middle_third,
-                            line=dict(color="gray", dash="dash", width=1),
-                            annotation_text="Middle Third",
-                            annotation_position="top left",
-                            annotation_font=dict(color="gray", size=11),
-                            opacity=0.5
-                        )
-
-
-      
+                          
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
