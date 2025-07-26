@@ -5302,7 +5302,7 @@ if st.sidebar.button("Run Analysis"):
                         x=top_eff["Time"],
                         y=top_eff["Cumulative_Unit"] + 48,  # or another reference line like Midas
                         mode="text",
-                        text=[🏮"] * len(top_eff),
+                        text=["🏮"] * len(top_eff),
                         textposition="top center",
                         textfont=dict(size=20),
                         showlegend=False,
