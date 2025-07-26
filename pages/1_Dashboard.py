@@ -5005,42 +5005,41 @@ if st.sidebar.button("Run Analysis"):
              
                 with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
                    
-                    fig_unit = go.Figure()
-    
-                    # Plot Unit% (converted from string to float inline)
-                    fig_unit.add_trace(go.Scatter(
+                    fig_displacement = go.Figure()
+
+                    # === Cumulative Unit% Line ===
+                    fig_displacement.add_trace(go.Scatter(
                         x=intraday["Time"],
-                        y=intraday["Unit%"].str.replace("%", "").astype(float),
-                        mode="lines+markers",
-                        name="Unit%",
-                        line=dict(color="lime", width=2),
-                        hovertemplate="Time: %{x}<br>Unit%: %{y:.0f}%<extra></extra>"
+                        y=intraday["Cumulative_Unit"],
+                        mode="lines",
+                        name="Cumulative Unit%",
+                        line=dict(color="dodgerblue", width=2),
+                        hovertemplate="Time: %{x}<br>Cumulative Unit%: %{y:.1f}<extra></extra>"
                     ))
                 
-                    # Zero reference line
-                    fig_unit.add_trace(go.Scatter(
+                    # === Zero Reference Line ===
+                    fig_displacement.add_trace(go.Scatter(
                         x=intraday["Time"],
                         y=[0] * len(intraday),
                         mode="lines",
-                        name="Zero",
-                        line=dict(color="gray", dash="dot"),
+                        name="Zero Line",
+                        line=dict(color="gray", width=1, dash="dot"),
                         showlegend=False
                     ))
                 
-                    # Layout
-                    fig_unit.update_layout(
-                        height=300,
+                    # === Layout ===
+                    fig_displacement.update_layout(
+                        height=350,
                         plot_bgcolor="black",
                         paper_bgcolor="black",
                         font=dict(color="white"),
-                        title="Bar-by-Bar Displacement (Unit%)",
+                        title="🧠 Mike's Physics Engine – Flight Path via Cumulative Unit%",
                         xaxis=dict(title="Time"),
-                        yaxis=dict(title="Unit% (×10⁻⁴)"),
+                        yaxis=dict(title="Cumulative Unit (×10⁻⁴)", zeroline=True),
                         margin=dict(t=40, b=40),
                         legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
                     )
-
-              
+                              
                 st.plotly_chart(fig_unit, use_container_width=True)
 
              
