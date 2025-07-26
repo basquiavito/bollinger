@@ -4504,7 +4504,21 @@ if st.sidebar.button("Run Analysis"):
                   va_min = min(value_area_levels)
                   va_max = max(value_area_levels)
                   
-
+                  # === STEP 1: Create Resistance Reference Data ===
+                  resistance_lines = {
+                      "IB_High": ib_high,
+                      "IB_Low": ib_low,
+                      "High_Vol_Bin": max_vol_level,
+                      "High_Letter_Bin": max_letter_level,
+                      "VA_High": va_max,
+                      "VA_Low": va_min
+                  }
+                  
+                  res_df = pd.DataFrame({
+                      "Level": list(resistance_lines.values()),
+                      "Label": list(resistance_lines.keys())
+                  }).sort_values(by="Level", ascending=False).reset_index(drop=True)
+                  
 
 
                          # Step 1: Identify the volume-dominant F% level
@@ -4665,6 +4679,12 @@ if st.sidebar.button("Run Analysis"):
                           intraday.at[intraday.index[i], "🪘"] = "🪘"
                           intraday.at[intraday.index[i], "Drum_Y"] = now["F_numeric"] - 16
                           above = False
+
+
+
+
+                  with st.expander("📐 Market Resistance Levels", expanded=False):
+                      st.dataframe(res_df)
 
                   with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
