@@ -881,6 +881,40 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+ 
+
+                def add_force_efficiency(df):
+                    """
+                    Adds two columns:
+                      - Force_per_Range: Vector Force divided by last bar's Range
+                      - Force_per_3bar_Range: Vector Force divided by 3-bar cumulative Range
+                    """
+                    if df.empty or "Vector Force" not in df.columns or "Range" not in df.columns:
+                        df["Force_per_Range"] = ""
+                        df["Force_per_3bar_Range"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Force_per_Range"] = ""
+                    df["Force_per_3bar_Range"] = ""
+                
+                    for i in range(2, len(df), 3):  # Only vector rows
+                        force = df.iloc[i]["Vector Force"]
+                        last_range = df.iloc[i]["Range"]
+                        three_bar_range = df.iloc[i - 2:i + 1]["Range"].sum()
+                
+                        # Force / last bar range
+                        if isinstance(force, numbers.Number) and isinstance(last_range, numbers.Number) and last_range != 0:
+                            df.at[i, "Force_per_Range"] = force / last_range
+                
+                        # Force / 3-bar range
+                        if isinstance(force, numbers.Number) and isinstance(three_bar_range, numbers.Number) and three_bar_range != 0:
+                            df.at[i, "Force_per_3bar_Range"] = force / three_bar_range
+                
+                    return df
+                
+                # Apply it
+                intraday = add_force_efficiency(intraday)
 
 
 
@@ -4259,7 +4293,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","RVOL_5","Range" ]
+                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","RVOL_5","Range" ]
 
                     st.dataframe(intraday[cols_to_show])
 
