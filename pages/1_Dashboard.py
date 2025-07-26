@@ -5117,6 +5117,53 @@ if st.sidebar.button("Run Analysis"):
                                   )
                     ))
 
+
+
+
+                  # --- ACCELERATION MARKERS: Top 2 Positive (⚡) and Top 2 Negative (🐢) ---
+
+                    # Clean and convert Acceleration to numeric
+                    intraday["Acceleration_numeric"] = pd.to_numeric(
+                        intraday["Acceleration"].str.replace("%", ""), errors="coerce"
+                    )
+                    
+                    # Drop NaNs
+                    valid_accel = intraday.dropna(subset=["Acceleration_numeric"])
+                    
+                    # Sort and pick top 2 positive
+                    top2_pos_accel = valid_accel.nlargest(2, "Acceleration_numeric")
+                    
+                    # Sort and pick top 2 negative
+                    top2_neg_accel = valid_accel.nsmallest(2, "Acceleration_numeric")
+                    
+                    # === Add ⚡ markers (top 2 positive)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top2_pos_accel["Time"],
+                        y=top2_pos_accel["Cumulative_Unit"],
+                        mode="text",
+                        text=["⚡"] * len(top2_pos_accel),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="High Acceleration",
+                        hovertemplate="⚡ Surge Up<br>Time: %{x}<br>Accel: %{customdata[0]}%<extra></extra>",
+                        customdata=top2_pos_accel[["Acceleration"]],
+                        showlegend=False
+                    ))
+                    
+                    # === Add 🐢 markers (top 2 negative)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top2_neg_accel["Time"],
+                        y=top2_neg_accel["Cumulative_Unit"],
+                        mode="text",
+                        text=["🐢"] * len(top2_neg_accel),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        name="Slowdown",
+                        hovertemplate="🐢 Slow Down<br>Time: %{x}<br>Accel: %{customdata[0]}%<extra></extra>",
+                        customdata=top2_neg_accel[["Acceleration"]],
+                        showlegend=False
+                    ))
+
                          
                     # === Layout ===
                     fig_displacement.update_layout(
