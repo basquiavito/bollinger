@@ -4197,7 +4197,23 @@ if st.sidebar.button("Run Analysis"):
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_bee_emoji(intraday)
 
-
+           # Identify Top 3 Positive and Negative Velocity Vectors
+                def extract_top_velocity_markers(df, col_name="Velocity", time_col="Time"):
+                    # Convert to numeric (strip "%")
+                    df = df.copy()
+                    df["Velocity_Num"] = pd.to_numeric(df[col_name].str.replace("%", ""), errors="coerce")
+                    
+                    # Drop rows with NaNs
+                    df_clean = df.dropna(subset=["Velocity_Num"])
+                
+                    # Get top 3 positive and negative
+                    top_pos = df_clean.nlargest(3, "Velocity_Num")
+                    top_neg = df_clean.nsmallest(3, "Velocity_Num")
+                
+                    return top_pos, top_neg
+                
+                # Get markers
+                top_pos_vel, top_neg_vel = extract_top_velocity_markers(intraday)
 
                 def add_mike_kijun_atr_emoji(df, atr_col="ATR"):
                     """
@@ -5052,6 +5068,31 @@ if st.sidebar.button("Run Analysis"):
                         textposition="top center",
                         textfont=dict(size=13),
                         hovertemplate="Vector%: %{text}<br>Time: %{x}<extra></extra>"
+                    ))
+     
+                    
+                    # 🚀 Add markers for top positive velocities
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_pos_vel["Time"],
+                        y=top_pos_vel["Cumulative_Unit"],
+                        mode="text",
+                        text=["🚀"] * len(top_pos_vel),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="Time: %{x}<br>Velocity: %{text}<extra></extra>"
+                    ))
+                    
+                    # 🪂 Add markers for top negative velocities
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_neg_vel["Time"],
+                        y=top_neg_vel["Cumulative_Unit"],
+                        mode="text",
+                        text=["🪂"] * len(top_neg_vel),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="Time: %{x}<br>Velocity: %{text}<extra></extra>"
                     ))
 
                     
