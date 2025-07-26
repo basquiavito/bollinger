@@ -5033,7 +5033,29 @@ if st.sidebar.button("Run Analysis"):
                         line=dict(color="gray", width=1, dash="dot"),
                         showlegend=False
                     ))
-                
+
+                    # Step 2: Add Vector% Markers at every 3rd bar
+                    # Filter rows with Vector% (not empty) and convert to numeric
+                    vector_rows = intraday[intraday["Vector%"].str.endswith("%")].copy()
+                    vector_rows["Vector%_numeric"] = vector_rows["Vector%"].str.replace("%", "").astype(int)
+                    
+                    fig_vector_overlay.add_trace(go.Scatter(
+                        x=vector_rows["Time"],
+                        y=vector_rows["Cumulative_Unit%"],
+                        mode="markers+text",
+                        name="📍 Vector%",
+                        marker=dict(
+                            size=10,
+                            color=["green" if val > 0 else "red" for val in vector_rows["Vector%_numeric"]],
+                            symbol="triangle-up"  # or "circle", or emojis as `text`
+                        ),
+                        text=[f"{val:+}%" for val in vector_rows["Vector%_numeric"]],
+                        textposition="top center",
+                        textfont=dict(size=10),
+                        hovertemplate="Vector%: %{text}<br>Time: %{x}<extra></extra>"
+                    ))
+                    
+                                      
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=350,
