@@ -666,6 +666,73 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_velocity(intraday)
 
+
+
+                def add_unit_acceleration(intraday_df):
+                    if intraday_df.empty or "Unit Velocity" not in intraday_df.columns:
+                        intraday_df["Unit Acceleration"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Unit Acceleration"] = ""
+                
+                    for i in range(2, len(intraday_df)):
+                        prev = intraday_df.iloc[i - 1]["Unit Velocity"]
+                        curr = intraday_df.iloc[i]["Unit Velocity"]
+                
+                        if isinstance(prev, str) and prev.strip().endswith("%") and \
+                           isinstance(curr, str) and curr.strip().endswith("%"):
+                
+                            prev_val = int(prev.strip().replace("%", ""))
+                            curr_val = int(curr.strip().replace("%", ""))
+                            accel = curr_val - prev_val
+                
+                            intraday_df.at[i, "Unit Acceleration"] = f"{accel:+d}%"
+                        else:
+                            intraday_df.at[i, "Unit Acceleration"] = ""
+                
+                    return intraday_df
+
+                intraday = add_unit_acceleration(intraday)
+
+
+                
+                def add_vector_acceleration(intraday_df):
+                    if intraday_df.empty or "Velocity" not in intraday_df.columns:
+                        intraday_df["Acceleration"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Acceleration"] = ""
+                
+                    last_vector_row = None
+                    last_velocity_val = None
+                
+                    for i in range(len(intraday_df)):
+                        velocity_str = intraday_df.iloc[i]["Velocity"]
+                
+                        if isinstance(velocity_str, str) and velocity_str.strip().endswith("%") and velocity_str.strip() != "":
+                            current_velocity = int(velocity_str.strip().replace("%", ""))
+                
+                            if last_velocity_val is not None:
+                                acceleration = current_velocity - last_velocity_val
+                                intraday_df.at[i, "Acceleration"] = f"{acceleration:+d}%"
+                            else:
+                                intraday_df.at[i, "Acceleration"] = ""
+                
+                            last_velocity_val = current_velocity
+                            last_vector_row = i
+                
+                    return intraday_df
+
+                intraday = add_vector_acceleration(intraday)
+
+
+
+
+
+
+              
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -4032,7 +4099,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
+                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration""RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
 
                     st.dataframe(intraday[cols_to_show])
 
