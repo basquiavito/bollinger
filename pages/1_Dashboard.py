@@ -4683,7 +4683,9 @@ if st.sidebar.button("Run Analysis"):
                           intraday.at[intraday.index[i], "Drum_Y"] = now["F_numeric"] - 16
                           above = False
 
-
+                  
+                  st.write("Resistance DataFrame Preview:")
+                  st.write(res_df)
 
 
                   with st.expander("📐 Market Resistance Levels", expanded=False):
