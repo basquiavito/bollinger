@@ -5313,9 +5313,9 @@ if st.sidebar.button("Run Analysis"):
 
               # --- Energy Efficiency Markers on Cumulative Flight Path ---
                       # === EARS: Add shaded resistance zones (top 3 volume bins) ===
-                     ear_colors = ["rgba(255, 105, 97, 0.15)", "rgba(255, 105, 97, 0.1)", "rgba(255, 105, 97, 0.07)"]  # Light red shades
+                    ear_colors = ["rgba(255, 105, 97, 0.15)", "rgba(255, 105, 97, 0.1)", "rgba(255, 105, 97, 0.07)"]  # Light red shades
                     
-                     for i in range(min(3, len(top_3_ears))):
+                    for i in range(min(3, len(top_3_ears))):
                         level = top_3_ears.iloc[i]["F% Level"]
                         band_top = level + 10  # Add thickness (10 F% units)
                         band_bottom = level - 10
