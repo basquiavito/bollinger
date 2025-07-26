@@ -7272,11 +7272,11 @@ if st.sidebar.button("Run Analysis"):
                 up_high_mask = intraday["Y_High_Cross"] == "✈️"
                 up_high_trace = go.Scatter(
                     x=intraday.loc[up_high_mask, "Time"],
-                    y=intraday.loc[up_high_mask, "F_numeric"] + 100,
+                    y=intraday.loc[up_high_mask, "F_numeric"] + 40,
                     mode="text",
                     text=intraday.loc[up_high_mask, "Y_High_Cross"],
                     textposition="top center",
-                    textfont=dict(size=34),
+                    textfont=dict(size=21),
                     name="Cross Above Y-High (✈️)"
                 )
 
@@ -7305,17 +7305,6 @@ if st.sidebar.button("Run Analysis"):
                     name="Cross Above Y-High (✈️)"
                 )
 
-                # 🪂 Downward Crosses BELOW Yesterday High
-                down_high_mask = intraday["Y_High_Cross"] == "🪂"
-                down_high_trace = go.Scatter(
-                    x=intraday.loc[down_high_mask, "Time"],
-                    y=intraday.loc[down_high_mask, "F_numeric"] - 144,
-                    mode="text",
-                    text=intraday.loc[down_high_mask, "Y_High_Cross"],
-                    textposition="bottom center",
-                    textfont=dict(size=55),
-                    name="Cross Below Y-High (🪂)"
-                )
 
 #                     # Add to figure
                 fig.add_trace(up_high_trace, row=1, col=1)
