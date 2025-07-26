@@ -5292,12 +5292,21 @@ if st.sidebar.button("Run Analysis"):
                         customdata=bottom_3_energy[["Vector Energy"]].values
                     ))
 # --- Filter valid vector rows with numeric efficiency values ---
-                    vector_eff_rows = intraday[(intraday["Vector_Energy_per_3bar_Range"] != "") & (intraday["Vector_Energy_per_3bar_Range"].apply(lambda x: isinstance(x, numbers.Number)))]
+                                    # STEP 1: Filter only rows that have non-empty values
+                    vector_eff_rows = intraday[intraday["Vector_Energy_per_3bar_Range"] != ""].copy()
                     
-                    # --- Get top 3 lowest efficiency values (most efficient moves) ---
-                    top_eff = vector_eff_rows.nsmallest(3, "Vector_Energy_per_3bar_Range")
+                    # STEP 2: Convert the column to numeric (safely handle errors)
+                    vector_eff_rows["Vector_Energy_per_3bar_Range"] = pd.to_numeric(
+                        vector_eff_rows["Vector_Energy_per_3bar_Range"], errors="coerce"
+                    )
                     
-                    # --- Add eagle markers to displacement plot ---
+                    # STEP 3: Drop rows where conversion failed (e.g., still NaN)
+                    vector_eff_rows = vector_eff_rows.dropna(subset=["Vector_Energy_per_3bar_Range"])
+                    
+                    # STEP 4: Get top 3 values (highest energy efficiency)
+                    top3_energy_eff = vector_eff_rows.nlargest(3, "Vector_Energy_per_3bar_Range")
+                    
+                                        # --- Add eagle markers to displacement plot ---
                     fig_displacement.add_trace(go.Scatter(
                         x=top_eff["Time"],
                         y=top_eff["Cumulative_Unit"] + 48,  # or another reference line like Midas
@@ -5311,8 +5320,7 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
                    # --- Get bottom 3 least efficient energy spikes ---
-                    bottom_eff = vector_eff_rows.nlargest(3, "Vector_Energy_per_3bar_Range")
-                    
+                     
                     # --- Add 💢 markers to the displacement plot ---
                     fig_displacement.add_trace(go.Scatter(
                         x=bottom_eff["Time"],
