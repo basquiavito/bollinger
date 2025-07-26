@@ -5070,7 +5070,43 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate="Vector%: %{text}<br>Time: %{x}<extra></extra>"
                     ))
      
+                                        # --- Extract top 3 positive and negative Velocity points ---
+                    velocity_data = intraday.copy()
+                    velocity_data["Velocity_Num"] = pd.to_numeric(velocity_data["Velocity"].str.replace("%", ""), errors="coerce")
                     
+                    # Drop NaNs
+                    velocity_data = velocity_data.dropna(subset=["Velocity_Num", "Cumulative_Unit", "Time"])
+                    
+                    # Top 3 positive
+                    top3_pos = velocity_data.nlargest(3, "Velocity_Num")
+                    
+                    # Top 3 negative
+                    top3_neg = velocity_data.nsmallest(3, "Velocity_Num")
+                    
+                    # --- Plot 🚀 markers for top positive velocities ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_pos["Time"],
+                        y=top3_pos["Cumulative_Unit"],
+                        mode="text",
+                        text=["🚀"] * 3,
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="Time: %{x}<br>Velocity: %{text}<extra></extra>"
+                    ))
+                    
+                    # --- Plot 🪂 markers for top negative velocities ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_neg["Time"],
+                        y=top3_neg["Cumulative_Unit"],
+                        mode="text",
+                        text=["🪂"] * 3,
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="Time: %{x}<br>Velocity: %{text}<extra></extra>"
+                    ))
+
                          
                     # === Layout ===
                     fig_displacement.update_layout(
