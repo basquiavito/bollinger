@@ -827,8 +827,57 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_force(intraday)
 
+ 
+                def add_unit_energy(df):
+                    if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
+                        df["Unit Energy"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Unit Energy"] = ""
+                
+                    for i in range(len(df)):
+                        v_str = df.iloc[i]["Unit Velocity"]
+                        rvol = df.iloc[i]["RVOL_5"]
+                
+                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
+                            try:
+                                v_val = int(v_str.strip().replace("%", ""))
+                                energy = rvol * (v_val ** 2)
+                                df.at[i, "Unit Energy"] = energy
+                            except ValueError:
+                                df.at[i, "Unit Energy"] = ""
+                        else:
+                            df.at[i, "Unit Energy"] = ""
+                
+                    return df
 
+                intraday = add_unit_energy(intraday)
+                def add_vector_energy(df):
+                    if df.empty or "Velocity" not in df.columns or "RVOL_5" not in df.columns:
+                        df["Vector Energy"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Vector Energy"] = ""
+                
+                    for i in range(2, len(df), 3):
+                        v_str = df.iloc[i]["Velocity"]
+                        rvol_sum = df.iloc[i - 2:i + 1]["RVOL_5"].sum()
+                
+                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
+                            try:
+                                v_val = int(v_str.strip().replace("%", ""))
+                                energy = rvol_sum * (v_val ** 2)
+                                df.at[i, "Vector Energy"] = energy
+                            except ValueError:
+                                df.at[i, "Vector Energy"] = ""
+                        else:
+                            df.at[i, "Vector Energy"] = ""
+                
+                    return df
 
+                intraday = add_vector_energy(intraday)
 
 
 
@@ -4210,7 +4259,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
+                                    "Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","RVOL_5","Range","+DI_F%","-DI_F%","ADX_F%","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert", ]
 
                     st.dataframe(intraday[cols_to_show])
 
