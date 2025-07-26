@@ -12,6 +12,8 @@ from plotly.subplots import make_subplots
 from datetime import date
 from datetime import timedelta, datetime
 import io
+import numbers
+                             
                 
 
 def compute_value_area(
@@ -727,58 +729,56 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_acceleration(intraday)
 
+               
                 
-                intraday["Volume"] = pd.to_numeric(intraday["Volume"], errors="coerce")
+                def add_unit_momentum_rvol(df):
+                    if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
+                        df["Unit Momentum"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Unit Momentum"] = ""
+                
+                    for i in range(len(df)):
+                        v_str  = df.iloc[i]["Unit Velocity"]
+                        rvol   = df.iloc[i]["RVOL_5"]
+                
+                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
+                            try:
+                                v_val = int(v_str.strip().replace("%", ""))
+                                df.at[i, "Unit Momentum"] = v_val * rvol
+                            except ValueError:
+                                df.at[i, "Unit Momentum"] = ""
+                
+                    return df
+                intraday = add_unit_momentum_rvol(intraday)
 
+                def add_vector_momentum_rvol(df):
+                    if df.empty or "Velocity" not in df.columns or "RVOL_5" not in df.columns:
+                        df["Vector Momentum"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Vector Momentum"] = ""
+                
+                    for i in range(2, len(df), 3):  # Every third bar
+                        v_str = df.iloc[i]["Velocity"]
+                        rvol_sum = df.iloc[i-2:i+1]["RVOL_5"].sum()
+                
+                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
+                            try:
+                                v_val = int(v_str.strip().replace("%", ""))
+                                df.at[i, "Vector Momentum"] = v_val * rvol_sum
+                            except ValueError:
+                                df.at[i, "Vector Momentum"] = ""
+                
+                    return df
 
-                def add_unit_momentum(intraday_df):
-                    if intraday_df.empty or "Unit Velocity" not in intraday_df.columns or "Volume" not in intraday_df.columns:
-                        intraday_df["Unit Momentum"] = ""
-                        return intraday_df
-                
-                    intraday_df = intraday_df.copy()
-                    intraday_df["Unit Momentum"] = ""
-                
-                    for i in range(len(intraday_df)):
-                        velocity_str = intraday_df.iloc[i]["Unit Velocity"]
-                        volume = intraday_df.iloc[i]["Volume"]
-                
-                        if isinstance(velocity_str, str) and velocity_str.strip().endswith("%") and isinstance(volume, (int, float)):
-                            velocity_val = int(velocity_str.strip().replace("%", ""))
-                            momentum = velocity_val * volume
-                            intraday_df.at[i, "Unit Momentum"] = momentum
-                        else:
-                            intraday_df.at[i, "Unit Momentum"] = ""
-                
-                    return intraday_df
-                intraday = add_unit_momentum(intraday)
+                intraday = add_vector_momentum_rvol(intraday)
 
-                def add_vector_momentum(intraday_df):
-                    if intraday_df.empty or "Velocity" not in intraday_df.columns or "Volume" not in intraday_df.columns:
-                        intraday_df["Vector Momentum"] = ""
-                        return intraday_df
-                
-                    intraday_df = intraday_df.copy()
-                    intraday_df["Vector Momentum"] = ""
-                
-                    for i in range(2, len(intraday_df), 3):
-                        velocity_str = intraday_df.iloc[i]["Velocity"]
-                        volume_sum = intraday_df.iloc[i - 2:i + 1]["Volume"].sum()
-                
-                        if isinstance(velocity_str, str) and velocity_str.strip().endswith("%"):
-                            velocity_val = int(velocity_str.strip().replace("%", ""))
-                            momentum = velocity_val * volume_sum
-                            intraday_df.at[i, "Vector Momentum"] = momentum
-                        else:
-                            intraday_df.at[i, "Vector Momentum"] = ""
-                
-                    return intraday_df
-
-                intraday = add_vector_momentum(intraday)
-
-
-                print(intraday["Volume"].head(10))
-                print(intraday["Volume"].apply(type).value_counts())
+               
+                               
+    
 
                 def compute_option_value(df, premium=64, contracts=100):
                     """
