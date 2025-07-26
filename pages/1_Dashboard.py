@@ -5058,7 +5058,7 @@ if st.sidebar.button("Run Analysis"):
                                       
                     # === Layout ===
                     fig_displacement.update_layout(
-                        height=350,
+                        height=550,
                         plot_bgcolor="black",
                         paper_bgcolor="black",
                         font=dict(color="white"),
