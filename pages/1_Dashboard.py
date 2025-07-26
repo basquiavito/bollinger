@@ -7348,7 +7348,7 @@ if st.sidebar.button("Run Analysis"):
                     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
                     textposition="bottom center",
                     name="New Lows 🏊🏽‍♂️🦑",
-                    textfont=dict(size=21),
+                    textfont=dict(size=24),
                     showlegend=True
                 )
 
