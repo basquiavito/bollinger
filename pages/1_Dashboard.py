@@ -5166,8 +5166,8 @@ if st.sidebar.button("Run Analysis"):
 
 
                     
-                    intraday["Unit Momentum"] = pd.to_numeric(df["Unit Momentum"], errors="coerce")
-                    intraday["Vector Momentum"] = pd.to_numeric(df["Vector Momentum"], errors="coerce")
+                    intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
+                    intraday["Vector Momentum"] = pd.to_numeric(intraday["Vector Momentum"], errors="coerce")
                     
                     top_unit_pos = intraday.nlargest(3, "Unit Momentum")
                     top_unit_neg = intraday.nsmallest(3, "Unit Momentum")
