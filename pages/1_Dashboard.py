@@ -4808,26 +4808,7 @@ if st.sidebar.button("Run Analysis"):
                
                 
            
-                def add_ib_field_force(df, resistance_col="IB_High"):
-                    df = df.copy()
                 
-                    # 1. Convert Velocity to numeric (Voltage)
-                    df["V_numeric"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
-                
-                    # 2. Charge = RVOL_5
-                    Q = df["RVOL_5"]
-                
-                    # 3. Distance from IB High to current level
-                    d = (df[resistance_col] - df["Cumulative_Unit"]).abs().replace(0, np.nan)  # avoid div-by-zero
-                
-                    # 4. Field = Voltage / Distance
-                    df["IB_Field_Intensity"] = df["V_numeric"] / d
-                
-                    # 5. Electric Force = Q * Field
-                    df["IB_Electric_Force"] = Q * df["IB_Field_Intensity"]
-                
-                    return df
-                intraday = add_ib_field_force(intraday)
 
 
 
@@ -4838,7 +4819,26 @@ if st.sidebar.button("Run Analysis"):
                   # # Show DataFrame
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽","IB_Field_Intensity","IB_Electric_Force"]])
 
-                
+                  def add_ib_field_force(df, resistance_col="IB_High"):
+                      df = df.copy()
+                  
+                      # 1. Convert Velocity to numeric (Voltage)
+                      df["V_numeric"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
+                  
+                      # 2. Charge = RVOL_5
+                      Q = df["RVOL_5"]
+                  
+                      # 3. Distance from IB High to current level
+                      d = (df[resistance_col] - df["Cumulative_Unit"]).abs().replace(0, np.nan)  # avoid div-by-zero
+                  
+                      # 4. Field = Voltage / Distance
+                      df["IB_Field_Intensity"] = df["V_numeric"] / d
+                  
+                      # 5. Electric Force = Q * Field
+                      df["IB_Electric_Force"] = Q * df["IB_Field_Intensity"]
+                  
+                      return df
+                  intraday = add_ib_field_force(intraday)
                                          # Initialize columns
                   intraday["🪘"] = ""
                   intraday["Drum_Y"] = np.nan
