@@ -848,7 +848,49 @@ if st.sidebar.button("Run Analysis"):
                 
                     return df
                 intraday =  add_market_capacitance(intraday)
-                 
+
+
+                def add_charge_polarity(df):
+                    """
+                    Adds 'Charge_Polarity' and 'Charge_Bias' columns:
+                      - Charge_Bias: 3-bar rolling sum of (Velocity_sign * RVOL_5)
+                      - Charge_Polarity:
+                          '🔴 Protonic'   → positive (bullish charge)
+                          '🔵 Electronic' → negative (bearish charge)
+                          '⚪ Neutral'     → near zero bias
+                    """
+                    df = df.copy()
+                
+                    # Ensure RVOL_5 is numeric
+                    df["RVOL_5"] = pd.to_numeric(df["RVOL_5"], errors="coerce").fillna(0)
+                
+                    # Get sign of vector velocity (from column 'Velocity' as string with '%')
+                    velocity_str = df["Velocity"].astype(str).str.strip()
+                    velocity_sign = velocity_str.str[0].map({"+": 1, "-": -1}).fillna(0)
+                
+                    # Compute signed charge (1 bar)
+                    df["Signed_Charge"] = velocity_sign * df["RVOL_5"]
+                
+                    # 3-bar rolling sum = Charge Bias
+                    df["Charge_Bias"] = df["Signed_Charge"].rolling(window=3, min_periods=1).sum()
+                
+                    # Interpret polarity
+                    def classify_bias(val, threshold=0.5):
+                        if val > threshold:
+                            return "🔴 Protonic"
+                        elif val < -threshold:
+                            return "🔵 Electronic"
+                        else:
+                            return "⚪ Neutral"
+                
+                    df["Charge_Polarity"] = df["Charge_Bias"].apply(classify_bias)
+                
+                    return df
+                intraday = add_charge_polarity(intraday)
+
+
+
+              
                 def add_unit_momentum_rvol(df):
                     if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
                         df["Unit Momentum"] = ""
@@ -4544,7 +4586,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
