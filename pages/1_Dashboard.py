@@ -978,7 +978,7 @@ if st.sidebar.button("Run Analysis"):
                     df["Acceleration_numeric"] = pd.to_numeric(df["Acceleration_numeric"], errors="coerce")
                 
                     # Relative volume (volume mass)
-                    df["Volume_Mass"] = df["Volume"] / df["Volume"].rolling(20).mean()
+                    df["Volume_Mass"] = df["Volume"] / df["Volume"].rolling(9).mean()
                 
                     # Drag = Force - (Mass × Acceleration)
                     df["Drag"] = df["Vector Force"] - (df["Volume_Mass"] * df["Acceleration_numeric"])
