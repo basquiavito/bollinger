@@ -958,11 +958,22 @@ if st.sidebar.button("Run Analysis"):
 
 
                 intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
-                
-                # Calculate Jerk (bar-over-bar change in acceleration)
-                intraday["Jerk"] = intraday["Acceleration_numeric"].diff()
-                
-                              
+                  
+                 def add_jerk(df):
+                     df = df.copy()
+                      
+                      # Ensure acceleration is numeric
+                     if "Acceleration_numeric" not in df.columns:
+                          df["Acceleration_numeric"] = pd.to_numeric(df["Acceleration"].str.replace("%", ""), errors="coerce")
+                      
+                      # Jerk = ΔAcceleration
+                     df["Jerk"] = df["Acceleration_numeric"].diff()
+                      
+                    return df
+                    intraday = add_jerk(intraday)
+
+                          
+                                        
 
                 def compute_option_value(df, premium=64, contracts=100):
                     """
