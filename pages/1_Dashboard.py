@@ -878,7 +878,26 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_force(intraday)
 
- 
+                def add_mike_power(df):
+                    df = df.copy()
+                
+                    if "Vector Force" not in df.columns or "Velocity" not in df.columns:
+                        df["Power"] = ""
+                        return df
+                
+                    # Convert Velocity % to float
+                    velocity_numeric = (
+                        df["Velocity"]
+                        .fillna("0%")
+                        .str.replace("%", "", regex=False)
+                        .astype(float)
+                    )
+                
+                    df["Power"] = df["Vector Force"] * velocity_numeric
+              
+                  return df
+                intraday = add_mike_power(intraday)
+
                 def add_unit_energy(df):
                     if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
                         df["Unit Energy"] = ""
@@ -4407,7 +4426,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
