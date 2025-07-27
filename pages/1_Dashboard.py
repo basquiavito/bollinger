@@ -1063,6 +1063,19 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+                def calculate_kijun_sen(df, period=26):
+                    highest_high = df["High"].rolling(window=period, min_periods=1).max()
+                    lowest_low = df["Low"].rolling(window=period, min_periods=1).min()
+                    df["Kijun_sen"] = (highest_high + lowest_low) / 2
+                    return df
+
+                intraday = calculate_kijun_sen(intraday, period=26)
+                # Use the previous close (prev_close) from your daily data
+                intraday["Kijun_F"] = ((intraday["Kijun_sen"] - prev_close) / prev_close) * 10000
+
+
+                # Apply the function to your intraday data
+                intraday = calculate_kijun_sen(intraday, period=26)
 
 
 
