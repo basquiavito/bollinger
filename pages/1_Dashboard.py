@@ -1069,29 +1069,6 @@ if st.sidebar.button("Run Analysis"):
                 intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
  
 
-                def add_market_field_force(df, resistance_col="Kijun_F"):
-                    df = df.copy()
-                    
-                    # Voltage = Velocity (numeric)
-                    df["V_numeric"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
-                    
-                    # Charge = RVOL_5
-                    Q = df["RVOL_5"]
-                    
-                    # Distance = |resistance - current level|
-                    d = (df[resistance_col] - df["Cumulative_Unit"]).abs().replace(0, np.nan)
-                    
-                    # Field = V / d
-                    df["Field_Intensity"] = df["V_numeric"] / d
-                    
-                    # Force = Q * (V / d)
-                    df["Electric_Force"] = Q * df["Field_Intensity"]
-                    
-                    return df
-                
-                          
-                intraday = add_market_field_force(intraday)
-
 
 
 
@@ -1845,6 +1822,32 @@ if st.sidebar.button("Run Analysis"):
 
                 # Apply the function to your intraday data
                 intraday = calculate_kijun_sen(intraday, period=26)
+
+
+
+              
+                def add_market_field_force(df, resistance_col="Kijun_F"):
+                    df = df.copy()
+                    
+                    # Voltage = Velocity (numeric)
+                    df["V_numeric"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
+                    
+                    # Charge = RVOL_5
+                    Q = df["RVOL_5"]
+                    
+                    # Distance = |resistance - current level|
+                    d = (df[resistance_col] - df["Cumulative_Unit"]).abs().replace(0, np.nan)
+                    
+                    # Field = V / d
+                    df["Field_Intensity"] = df["V_numeric"] / d
+                    
+                    # Force = Q * (V / d)
+                    df["Electric_Force"] = Q * df["Field_Intensity"]
+                    
+                    return df
+                
+                          
+                intraday = add_market_field_force(intraday)
 
                 def f_ichimoku_confirmation(row):
                     if row["Close"] > row["Kijun_sen"]:
