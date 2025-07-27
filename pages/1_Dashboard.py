@@ -4817,7 +4817,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                   # # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽","IB_Field_Intensity","IB_Electric_Force"]])
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
                   def add_ib_field_force(df, resistance_col="IB_High"):
                       df = df.copy()
