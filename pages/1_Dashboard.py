@@ -729,37 +729,52 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_acceleration(intraday)
 
-                def add_jerk(df):
+                def add_dual_jerk(df):
                     """
                     Adds:
-                      - Jerk_Vector: signed Δacceleration
-                      - Jerk_Unit: absolute Δacceleration
-                    Treats blank Acceleration as '0%'.
+                      - Jerk_Unit   = Δ(Unit Acceleration)
+                      - Jerk_Vector = Δ(Vector Acceleration)
+                
+                    Assumes your DF already has:
+                      'Unit Acceleration'  (strings like '+2%', '' for no accel)
+                      'Acceleration'       (vector accel strings like '+5%', etc.)
                     """
                     df = df.copy()
-                
-                    # 1) Normalize acceleration strings, map blank->'0%'
-                    accel_str = df["Acceleration"].fillna("").replace("", "0%").astype(str)
-                
-                    # 2) Strip '%' and convert to float
-                    df["Acceleration_numeric"] = pd.to_numeric(
-                        accel_str.str.replace("%", "", regex=False),
-                        errors="coerce"
+                    
+                    # --- Parse Unit Acceleration to numeric ---
+                    ua = (
+                        df["Unit Acceleration"]
+                        .fillna("")           # blanks → ""
+                        .replace("", "0%")    # interpret blank as 0%
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
                     )
+                    df["Unit_Acc_num"] = pd.to_numeric(ua, errors="coerce")
+                    
+                    # --- Parse Vector Acceleration to numeric ---
+                    va = (
+                        df["Acceleration"]
+                        .fillna("")           # blanks → ""
+                        .replace("", "0%")
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                    )
+                    df["Vector_Acc_num"] = pd.to_numeric(va, errors="coerce")
                 
-                    # 3) ΔAcceleration = Jerk
-                    df["Jerk_Vector"] = df["Acceleration_numeric"].diff().fillna(0)
-                
-                    # 4) Magnitude
-                    df["Jerk_Unit"] = df["Jerk_Vector"].abs()
+                    # --- Compute Jerks (differences) ---
+                    df["Jerk_Unit"]   = df["Unit_Acc_num"].diff().fillna(0)
+                    df["Jerk_Vector"] = df["Vector_Acc_num"].diff().fillna(0)
                 
                     return df
+              
+                # Apply it:
+                intraday = add_dual_jerk(intraday)
+
                 
                  
 
 
-                intraday =  add_jerk(intraday)
-                
+                 
                 def add_unit_momentum_rvol(df):
                     if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
                         df["Unit Momentum"] = ""
