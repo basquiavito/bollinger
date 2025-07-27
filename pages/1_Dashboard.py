@@ -5866,7 +5866,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=cap_context_df["Charge_Polarity"],
                         textposition="top center",
-                        textfont=dict(size=3),
+                        textfont=dict(size=4),
                         showlegend=False,
                         hovertemplate="Charge Polarity: %{text}<br>Time: %{x|%I:%M %p}<extra></extra>",
                     ))
