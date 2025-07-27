@@ -769,7 +769,9 @@ if st.sidebar.button("Run Analysis"):
                       if i % 3 == 2:
                           vec_jerk.iloc[i] = full_vec_diff.iloc[i]
                   df["Jerk_Vector"] = vec_jerk
-              
+                  df["Snap"] = df["Jerk_Vector"].diff()
+ 
+
                   return df
 
                 intraday = add_dual_jerk(intraday)
@@ -1010,9 +1012,7 @@ if st.sidebar.button("Run Analysis"):
  
 
               
-                intraday["Snap"] = intraday["Jerk_Vector"].diff()
- 
-
+          
 
 
 
