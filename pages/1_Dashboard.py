@@ -730,45 +730,50 @@ if st.sidebar.button("Run Analysis"):
                 intraday = add_vector_acceleration(intraday)
 
                 def add_dual_jerk(df):
-                    """
-                    Adds:
-                      - Jerk_Unit   = Δ(Unit Acceleration)
-                      - Jerk_Vector = Δ(Vector Acceleration)
-                
-                    Assumes your DF already has:
-                      'Unit Acceleration'  (strings like '+2%', '' for no accel)
-                      'Acceleration'       (vector accel strings like '+5%', etc.)
-                    """
-                    df = df.copy()
-                    
-                    # --- Parse Unit Acceleration to numeric ---
-                    ua = (
-                        df["Unit Acceleration"]
-                        .fillna("")           # blanks → ""
-                        .replace("", "0%")    # interpret blank as 0%
-                        .astype(str)
-                        .str.replace("%", "", regex=False)
-                    )
-                    df["Unit_Acc_num"] = pd.to_numeric(ua, errors="coerce")
-                    
-                    # --- Parse Vector Acceleration to numeric ---
-                    va = (
-                        df["Acceleration"]
-                        .fillna("")           # blanks → ""
-                        .replace("", "0%")
-                        .astype(str)
-                        .str.replace("%", "", regex=False)
-                    )
-                    df["Vector_Acc_num"] = pd.to_numeric(va, errors="coerce")
-                
-                    # --- Compute Jerks (differences) ---
-                    df["Jerk_Unit"]   = df["Unit_Acc_num"].diff().fillna(0)
-                    df["Jerk_Vector"] = df["Vector_Acc_num"].diff().fillna(0)
-                
-                    return df
+                  """
+                  Adds:
+                    - Jerk_Unit   = Δ(Unit Acceleration) on every bar
+                    - Jerk_Vector = Δ(Vector Acceleration) ONLY on the last bar of each 3-bar vector
+                  """
+                  df = df.copy()
               
-                # Apply it:
+                  # --- Parse Unit Acceleration to numeric ---
+                  ua = (
+                      df["Unit Acceleration"]
+                      .fillna("")           # blanks → ""
+                      .replace("", "0%")    # interpret blank as 0%
+                      .astype(str)
+                      .str.replace("%", "", regex=False)
+                  )
+                  df["Unit_Acc_num"] = pd.to_numeric(ua, errors="coerce").fillna(0)
+              
+                  # --- Parse Vector Acceleration to numeric ---
+                  va = (
+                      df["Acceleration"]
+                      .fillna("")           # blanks → ""
+                      .replace("", "0%")
+                      .astype(str)
+                      .str.replace("%", "", regex=False)
+                  )
+                  df["Vector_Acc_num"] = pd.to_numeric(va, errors="coerce").fillna(0)
+              
+                  # --- Unit Jerk: Δ(Unit Acceleration) every bar ---
+                  df["Jerk_Unit"] = df["Unit_Acc_num"].diff().fillna(0)
+              
+                  # --- Full Vector Jerk diff series ---
+                  full_vec_diff = df["Vector_Acc_num"].diff().fillna(0)
+              
+                  # --- Vector Jerk only on 3rd bar of each vector (0-based idx 2,5,8...) ---
+                  vec_jerk = pd.Series(0.0, index=df.index)
+                  for i in range(len(df)):
+                      if i % 3 == 2:
+                          vec_jerk.iloc[i] = full_vec_diff.iloc[i]
+                  df["Jerk_Vector"] = vec_jerk
+              
+                  return df
+
                 intraday = add_dual_jerk(intraday)
+
 
                 
                  
