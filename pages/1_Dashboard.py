@@ -5760,11 +5760,11 @@ if st.sidebar.button("Run Analysis"):
                     # Plot 🐼 Positive Forces
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_force_up["Time"],
-                        y=top3_force_up["Cumulative_Unit"] + 5,
+                        y=top3_force_up["Cumulative_Unit"] + 88,
                         mode="text",
                         text=["🐼"] * len(top3_force_up),
                         textposition="top center",
-                        textfont=dict(size=10),
+                        textfont=dict(size=16),
                         hovertemplate=(
                             "🐼 Electric Force Up<br>"
                             "Time: %{x}<br>"
@@ -5777,11 +5777,11 @@ if st.sidebar.button("Run Analysis"):
                     # Plot 🐻 Negative Forces
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_force_down["Time"],
-                        y=top3_force_down["Cumulative_Unit"] - 5,
+                        y=top3_force_down["Cumulative_Unit"] - 88,
                         mode="text",
                         text=["🐻"] * len(top3_force_down),
                         textposition="bottom center",
-                        textfont=dict(size=10),
+                        textfont=dict(size=16),
                         hovertemplate=(
                             "🐻 Electric Force Down<br>"
                             "Time: %{x}<br>"
