@@ -885,17 +885,23 @@ if st.sidebar.button("Run Analysis"):
                         df["Power"] = ""
                         return df
                 
-                    # Convert Velocity % to float
-                    velocity_numeric = (
+                    # --- Clean velocity column ---
+                    velocity_clean = (
                         df["Velocity"]
-                        .fillna("0%")
+                        .fillna("0%")              # fill NaNs
+                        .replace("", "0%")         # replace empty strings
                         .str.replace("%", "", regex=False)
                         .astype(float)
                     )
                 
-                    df["Power"] = df["Vector Force"] * velocity_numeric
-              
+                    # --- Clean vector force column ---
+                    force_clean = pd.to_numeric(df["Vector Force"], errors="coerce").fillna(0)
+                
+                    # --- Compute power ---
+                    df["Power"] = force_clean * velocity_clean
+                
                     return df
+
                 intraday = add_mike_power(intraday)
 
                 def add_unit_energy(df):
