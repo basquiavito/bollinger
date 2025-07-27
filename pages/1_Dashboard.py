@@ -5423,7 +5423,9 @@ if st.sidebar.button("Run Analysis"):
                             opacity=0.6
                         )
                     
-                                       # Drop NaNs
+                              # Add Jerk as rate of change of acceleration
+                    intraday["Jerk"] = intraday["Acceleration_numeric"].diff()
+         # Drop NaNs
                     valid_jerk = intraday.dropna(subset=["Jerk", "Cumulative_Unit", "TimeIndex"])
                     
                     # Top 2 Positive Jerk (⚙️)
