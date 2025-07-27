@@ -5454,7 +5454,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig_displacement.add_trace(go.Scatter(
                         x=top_drag["TimeIndex"],
-                        y=top_drag["Cumulative_Unit"] + 70,
+                        y=top_drag["Cumulative_Unit"] - 56,
                         mode="text",
                         text=["🌫️"] * len(top_drag),
                         textposition="top center",
@@ -5466,7 +5466,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig_displacement.add_trace(go.Scatter(
                         x=low_drag["TimeIndex"],
-                        y=low_drag["Cumulative_Unit"] - 70,
+                        y=low_drag["Cumulative_Unit"] + 56,
                         mode="text",
                         text=["🎯"] * len(low_drag),
                         textposition="bottom center",
