@@ -4407,7 +4407,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Vector_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
