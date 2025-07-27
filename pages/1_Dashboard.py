@@ -5447,7 +5447,7 @@ if st.sidebar.button("Run Analysis"):
                     # ⚙️ Positive Jerk Markers
                     fig_displacement.add_trace(go.Scatter(
                         x=top2_jerk_up["TimeIndex"],
-                        y=top2_jerk_up["Cumulative_Unit"] + 56,
+                        y=top2_jerk_up["Cumulative_Unit"] + 5,
                         mode="text",
                         text=["⚙️"] * len(top2_jerk_up),
                         textposition="top center",
@@ -5460,7 +5460,7 @@ if st.sidebar.button("Run Analysis"):
                     # 🧱 Negative Jerk Markers
                     fig_displacement.add_trace(go.Scatter(
                         x=top2_jerk_down["TimeIndex"],
-                        y=top2_jerk_down["Cumulative_Unit"] - 56,
+                        y=top2_jerk_down["Cumulative_Unit"] - 5,
                         mode="text",
                         text=["🧱"] * len(top2_jerk_down),
                         textposition="bottom center",
