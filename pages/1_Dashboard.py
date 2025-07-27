@@ -958,35 +958,61 @@ if st.sidebar.button("Run Analysis"):
 
 
                 intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
-                      
-                def add_drag(df):
+ 
+
+
+
+                
+                def compute_kijun_drag_mike(df):
                     """
-                    Adds a 'Drag' column:
-                    Drag = Vector Force - (Relative Volume × Acceleration)
-                    Ensures numeric types throughout.
+                    Computes aerodynamic drag per bar, relative to Kijun line:
+                    - Drag_Kijun_Vector: Signed (Vector Force − RVOL_5 × Acceleration)
+                    - Drag_Kijun_Unit: Unsigned (magnitude)
+                    - Distance_to_Kijun: Absolute distance from Mike to Kijun in Unit space
+                
+                    Inputs:
+                    - 'Kijun_F'         → Kijun value (convert to unit space)
+                    - 'Vector force'    → Vector Force
+                    - 'Acceleration'    → Percent string (e.g., '1.2%') to be parsed
+                    - 'RVOL_5'          → Relative volume, acts as mass proxy
+                    - 'Cumulative_Unit' → Mike's displacement in unit space
                     """
                     df = df.copy()
                 
-                    # Ensure columns are present
-                    if not {"Vector Force", "Volume", "Acceleration_numeric"}.issubset(df.columns):
-                        df["Drag"] = np.nan
-                        return df
+                    # Parse Acceleration % string to float
+                    if "Acceleration_numeric" not in df.columns:
+                        df["Acceleration_numeric"] = (
+                            df["Acceleration"]
+                            .astype(str)
+                            .str.replace("%", "")
+                            .astype(float)
+                        )
                 
-                    # Convert to numeric to avoid dtype issues
-                    df["Vector Force"] = pd.to_numeric(df["Vector Force"], errors="coerce")
-                    df["Volume"] = pd.to_numeric(df["Volume"], errors="coerce")
-                    df["Acceleration_numeric"] = pd.to_numeric(df["Acceleration_numeric"], errors="coerce")
+                    # Convert Kijun_F to Kijun_Unit space — needs mapping
+                    if "Kijun_Unit" not in df.columns:
+                        df["Kijun_Unit"] = df["Kijun_F"]  # placeholder — assume 1:1 mapping
+                        # Ideally: apply same F% → CU transform used on Mike
                 
-                    # Relative volume (volume mass)
-                    df["Volume_Mass"] = df["Volume"] / df["Volume"].rolling(9).mean()
+                    # Compute Vector Drag = F - (mass × accel)
+                    df["Drag_Kijun_Vector"] = df["Vector force"] - (df["RVOL_5"] * df["Acceleration_numeric"])
                 
-                    # Drag = Force - (Mass × Acceleration)
-                    df["Drag"] = df["Vector Force"] - (df["Volume_Mass"] * df["Acceleration_numeric"])
+                    # Compute Unit Drag (magnitude only)
+                    df["Drag_Kijun_Unit"] = df["Drag_Kijun_Vector"].abs()
+                
+                    # Distance from Mike to Kijun in unit space
+                    df["Distance_to_Kijun"] = (df["Cumulative_Unit"] - df["Kijun_Unit"]).abs()
                 
                     return df
-                intraday =add_drag(intraday)
+                intraday = compute_kijun_drag_mike(intraday)
 
 
+
+
+
+
+
+
+              
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -4369,7 +4395,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","Drag"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","Drag_Kijun_Unit"]
 
                     st.dataframe(intraday[cols_to_show])
 
