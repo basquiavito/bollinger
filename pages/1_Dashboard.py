@@ -877,11 +877,11 @@ if st.sidebar.button("Run Analysis"):
                     # Interpret polarity
                     def classify_bias(val, threshold=0.5):
                         if val > threshold:
-                            return "🔵 Protonic"
+                            return "🔵"
                         elif val < -threshold:
-                            return "🔴 Electronic"
+                            return "🔴"
                         else:
-                            return "⚪ Neutral"
+                            return "⚪"
                 
                     df["Charge_Polarity"] = df["Charge_Bias"].apply(classify_bias)
                 
@@ -5862,11 +5862,11 @@ if st.sidebar.button("Run Analysis"):
                     # Plot them
                     fig_displacement.add_trace(go.Scatter(
                         x=cap_context_df["TimeIndex"],
-                        y=cap_context_df["Cumulative_Unit"] + 24,
+                        y=cap_context_df["Cumulative_Unit"] + 5,
                         mode="text",
                         text=cap_context_df["Charge_Polarity"],
                         textposition="top center",
-                        textfont=dict(size=18),
+                        textfont=dict(size=8),
                         showlegend=False,
                         hovertemplate="Charge Polarity: %{text}<br>Time: %{x|%I:%M %p}<extra></extra>",
                     ))
