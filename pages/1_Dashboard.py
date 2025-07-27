@@ -969,7 +969,7 @@ if st.sidebar.button("Run Analysis"):
                       # Jerk = ΔAcceleration
                      df["Jerk"] = df["Acceleration_numeric"].diff()
                       
-                return df
+                     return df
                 intraday = add_jerk(intraday)
   
                       
