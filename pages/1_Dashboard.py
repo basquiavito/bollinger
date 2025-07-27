@@ -5619,7 +5619,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["🔷"] * len(top3_power_up),
                         textposition="top center",
-                        textfont=dict(size=8),
+                        textfont=dict(size=16),
                         showlegend=False,
                         hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
                         customdata=top3_power_up[["Power_numeric"]].values
@@ -5632,7 +5632,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["🔶"] * len(top3_power_down),
                         textposition="bottom center",
-                        textfont=dict(size=8),
+                        textfont=dict(size=16),
                         showlegend=False,
                         hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
                         customdata=top3_power_down[["Power_numeric"]].values
