@@ -5838,7 +5838,37 @@ if st.sidebar.button("Run Analysis"):
                         customdata=top3_cap_down[["Vector_Capacitance"]].values
                     ))
 
-
+                    
+                    # Ensure Capacitance is numeric
+                    intraday["Capacitance_numeric"] = pd.to_numeric(intraday["Capacitance"], errors="coerce")
+                    
+                    # Get top 3 positive and negative indices
+                    top_pos = intraday.nlargest(3, "Capacitance_numeric").index
+                    top_neg = intraday.nsmallest(3, "Capacitance_numeric").index
+                    
+                    # Combine and add ±1 context
+                    all_indices = set()
+                    for idx in list(top_pos) + list(top_neg):
+                        all_indices.update([idx - 1, idx, idx + 1])
+                    
+                    # Filter valid indices
+                    context_indices = [i for i in all_indices if 0 <= i < len(intraday)]
+                    cap_context_df = intraday.iloc[context_indices].copy()
+                    
+                    # Drop NaNs and keep only rows with polarity
+                    cap_context_df = cap_context_df.dropna(subset=["Charge_Polarity", "Cumulative_Unit", "TimeIndex"])
+                    
+                    # Plot them
+                    fig_displacement.add_trace(go.Scatter(
+                        x=cap_context_df["TimeIndex"],
+                        y=cap_context_df["Cumulative_Unit"] + 24,
+                        mode="text",
+                        text=cap_context_df["Charge_Polarity"],
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="Charge Polarity: %{text}<br>Time: %{x|%I:%M %p}<extra></extra>",
+                    ))
 
 
                   # Clean up electric force column
