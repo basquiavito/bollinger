@@ -957,8 +957,12 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-              
+                intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
+                
+                # Calculate Jerk (bar-over-bar change in acceleration)
+                intraday["Jerk"] = intraday["Acceleration_numeric"].diff()
+                
+                              
 
                 def compute_option_value(df, premium=64, contracts=100):
                     """
@@ -5419,8 +5423,41 @@ if st.sidebar.button("Run Analysis"):
                             opacity=0.6
                         )
                     
-                   
-                          
+                                       # Drop NaNs
+                    valid_jerk = intraday.dropna(subset=["Jerk", "Cumulative_Unit", "TimeIndex"])
+                    
+                    # Top 2 Positive Jerk (⚙️)
+                    top2_jerk_up = valid_jerk.nlargest(2, "Jerk")
+                    
+                    # Top 2 Negative Jerk (🧱)
+                    top2_jerk_down = valid_jerk.nsmallest(2, "Jerk")
+                    # ⚙️ Positive Jerk Markers
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top2_jerk_up["TimeIndex"],
+                        y=top2_jerk_up["Cumulative_Unit"] + 56,
+                        mode="text",
+                        text=["⚙️"] * len(top2_jerk_up),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="⚙️ Surge Jerk<br>Time: %{x|%I:%M %p}<br>Jerk: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top2_jerk_up[["Jerk"]].values
+                    ))
+                    
+                    # 🧱 Negative Jerk Markers
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top2_jerk_down["TimeIndex"],
+                        y=top2_jerk_down["Cumulative_Unit"] - 56,
+                        mode="text",
+                        text=["🧱"] * len(top2_jerk_down),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🧱 Brake Jerk<br>Time: %{x|%I:%M %p}<br>Jerk: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top2_jerk_down[["Jerk"]].values
+                    ))
+                    
+                                                                  
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
