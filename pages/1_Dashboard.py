@@ -895,7 +895,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     df["Power"] = df["Vector Force"] * velocity_numeric
               
-                  return df
+                    return df
                 intraday = add_mike_power(intraday)
 
                 def add_unit_energy(df):
