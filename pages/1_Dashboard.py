@@ -5862,11 +5862,11 @@ if st.sidebar.button("Run Analysis"):
                     # Plot them
                     fig_displacement.add_trace(go.Scatter(
                         x=cap_context_df["TimeIndex"],
-                        y=cap_context_df["Cumulative_Unit"] + 5,
+                        y=cap_context_df["Cumulative_Unit"] + 3,
                         mode="text",
                         text=cap_context_df["Charge_Polarity"],
                         textposition="top center",
-                        textfont=dict(size=8),
+                        textfont=dict(size=3),
                         showlegend=False,
                         hovertemplate="Charge Polarity: %{text}<br>Time: %{x|%I:%M %p}<extra></extra>",
                     ))
