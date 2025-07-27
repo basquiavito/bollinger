@@ -959,10 +959,33 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
                       
-                intraday["Volume_Mass"] = intraday["Volume"] / intraday["Volume"].rolling(20).mean()
-                intraday["Drag"] = intraday["Vector Force"] - (intraday["Volume_Mass"] * intraday["Acceleration_numeric"])
+                def add_drag(df):
+                    """
+                    Adds a 'Drag' column:
+                    Drag = Vector Force - (Relative Volume × Acceleration)
+                    Ensures numeric types throughout.
+                    """
+                    df = df.copy()
+                
+                    # Ensure columns are present
+                    if not {"Vector Force", "Volume", "Acceleration_numeric"}.issubset(df.columns):
+                        df["Drag"] = np.nan
+                        return df
+                
+                    # Convert to numeric to avoid dtype issues
+                    df["Vector Force"] = pd.to_numeric(df["Vector Force"], errors="coerce")
+                    df["Volume"] = pd.to_numeric(df["Volume"], errors="coerce")
+                    df["Acceleration_numeric"] = pd.to_numeric(df["Acceleration_numeric"], errors="coerce")
+                
+                    # Relative volume (volume mass)
+                    df["Volume_Mass"] = df["Volume"] / df["Volume"].rolling(20).mean()
+                
+                    # Drag = Force - (Mass × Acceleration)
+                    df["Drag"] = df["Vector Force"] - (df["Volume_Mass"] * df["Acceleration_numeric"])
+                
+                    return df
+                intraday =add_drag(intraday)
 
-                                        
 
                 def compute_option_value(df, premium=64, contracts=100):
                     """
@@ -4346,7 +4369,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range" ]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy","Drag"]
 
                     st.dataframe(intraday[cols_to_show])
 
