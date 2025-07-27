@@ -5271,7 +5271,7 @@ if st.sidebar.button("Run Analysis"):
                     # ⚙️ Positive Jerk Markers (above the flight path)
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_pos_jerk["Time"],
-                        y=top3_pos_jerk["Cumulative_Unit"] + 24,
+                        y=top3_pos_jerk["Cumulative_Unit"] + 56,
                         mode="text",
                         text=["⚙️"] * len(top3_pos_jerk),
                         textposition="top center",
@@ -5288,7 +5288,7 @@ if st.sidebar.button("Run Analysis"):
                     # 🧱 Negative Jerk Markers (below the flight path)
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_neg_jerk["Time"],
-                        y=top3_neg_jerk["Cumulative_Unit"] - 24,
+                        y=top3_neg_jerk["Cumulative_Unit"] - 56,
                         mode="text",
                         text=["🧱"] * len(top3_neg_jerk),
                         textposition="bottom center",
