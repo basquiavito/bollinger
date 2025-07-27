@@ -5839,9 +5839,10 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
                     
-                    # Ensure Capacitance is numeric
-                    intraday["Capacitance_numeric"] = pd.to_numeric(intraday["Capacitance"], errors="coerce")
-                    
+                                        # Ensure Capacitance is numeric
+                    # Ensure Vector Capacitance is numeric
+                    intraday["Capacitance_numeric"] = pd.to_numeric(intraday["Vector_Capacitance"], errors="coerce")
+                                        
                     # Get top 3 positive and negative indices
                     top_pos = intraday.nlargest(3, "Capacitance_numeric").index
                     top_neg = intraday.nsmallest(3, "Capacitance_numeric").index
