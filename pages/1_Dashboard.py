@@ -4227,49 +4227,7 @@ if st.sidebar.button("Run Analysis"):
                 top_pos_vel, top_neg_vel = extract_top_velocity_markers(intraday)
 
      
-                def compute_kijun_drag_mike(df):
-                    """
-                    Computes aerodynamic drag per bar, relative to Kijun line:
-                    - Drag_Kijun_Vector: Signed (Vector Force − RVOL_5 × Acceleration)
-                    - Drag_Kijun_Unit: Unsigned (magnitude)
-                    - Distance_to_Kijun: Absolute distance from Mike to Kijun in Unit space
-                
-                    Inputs:
-                    - 'Kijun_F'         → Kijun value (convert to unit space)
-                    - 'Vector force'    → Vector Force
-                    - 'Acceleration'    → Percent string (e.g., '1.2%') to be parsed
-                    - 'RVOL_5'          → Relative volume, acts as mass proxy
-                    - 'Cumulative_Unit' → Mike's displacement in unit space
-                    """
-                    df = df.copy()
-                
-                    # Parse Acceleration % string to float
-                    if "Acceleration_numeric" not in df.columns:
-                        df["Acceleration_numeric"] = (
-                            df["Acceleration"]
-                            .astype(str)
-                            .str.replace("%", "")
-                            .astype(float)
-                        )
-                
-                    # Convert Kijun_F to Kijun_Unit space — needs mapping
-                    if "Kijun_Unit" not in df.columns:
-                        df["Kijun_Unit"] = df["Kijun_F"]  # placeholder — assume 1:1 mapping
-                        # Ideally: apply same F% → CU transform used on Mike
-                
-                    # Compute Vector Drag = F - (mass × accel)
-                    df["Drag_Kijun_Vector"] = df["Vector force"] - (df["RVOL_5"] * df["Acceleration_numeric"])
-                
-                    # Compute Unit Drag (magnitude only)
-                    df["Drag_Kijun_Unit"] = df["Drag_Kijun_Vector"].abs()
-                
-                    # Distance from Mike to Kijun in unit space
-                    df["Distance_to_Kijun"] = (df["Cumulative_Unit"] - df["Kijun_Unit"]).abs()
-                
-                    return df
-                intraday = compute_kijun_drag_mike(intraday)
-
-
+             
 
 
               
@@ -5105,6 +5063,48 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Calculate cumulative sum
                 intraday["Cumulative_Unit"] = intraday["Unit%_Numeric"].cumsum()
+                def compute_kijun_drag_mike(df):
+                  """
+                  Computes aerodynamic drag per bar, relative to Kijun line:
+                  - Drag_Kijun_Vector: Signed (Vector Force − RVOL_5 × Acceleration)
+                  - Drag_Kijun_Unit: Unsigned (magnitude)
+                  - Distance_to_Kijun: Absolute distance from Mike to Kijun in Unit space
+              
+                  Inputs:
+                  - 'Kijun_F'         → Kijun value (convert to unit space)
+                  - 'Vector force'    → Vector Force
+                  - 'Acceleration'    → Percent string (e.g., '1.2%') to be parsed
+                  - 'RVOL_5'          → Relative volume, acts as mass proxy
+                  - 'Cumulative_Unit' → Mike's displacement in unit space
+                  """
+                  df = df.copy()
+              
+                  # Parse Acceleration % string to float
+                  if "Acceleration_numeric" not in df.columns:
+                      df["Acceleration_numeric"] = (
+                          df["Acceleration"]
+                          .astype(str)
+                          .str.replace("%", "")
+                          .astype(float)
+                      )
+              
+                  # Convert Kijun_F to Kijun_Unit space — needs mapping
+                  if "Kijun_Unit" not in df.columns:
+                      df["Kijun_Unit"] = df["Kijun_F"]  # placeholder — assume 1:1 mapping
+                      # Ideally: apply same F% → CU transform used on Mike
+              
+                  # Compute Vector Drag = F - (mass × accel)
+                  df["Drag_Kijun_Vector"] = df["Vector force"] - (df["RVOL_5"] * df["Acceleration_numeric"])
+              
+                  # Compute Unit Drag (magnitude only)
+                  df["Drag_Kijun_Unit"] = df["Drag_Kijun_Vector"].abs()
+              
+                  # Distance from Mike to Kijun in unit space
+                  df["Distance_to_Kijun"] = (df["Cumulative_Unit"] - df["Kijun_Unit"]).abs()
+              
+                  return df
+                intraday = compute_kijun_drag_mike(intraday)
+
 
 
 
