@@ -729,7 +729,36 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_acceleration(intraday)
 
-               
+                def add_jerk(df):
+                    """
+                    Adds two columns:
+                      - Jerk_Vector: signed rate of change of acceleration
+                      - Jerk_Unit:       absolute magnitude of that change
+                
+                    Expects:
+                      - df["Acceleration"] as strings like '+3%' or '-1%'
+                    """
+                    df = df.copy()
+                
+                    # 1. Strip '%' and coerce to float, invalid → NaN
+                    df["Acceleration_numeric"] = pd.to_numeric(
+                        df["Acceleration"].astype(str).str.replace("%", "", regex=False),
+                        errors="coerce"
+                    )
+                
+                    # 2. Compute signed jerk (Δacceleration)
+                    df["Jerk_Vector"] = df["Acceleration_numeric"].diff()
+                
+                    # 3. Compute magnitude
+                    df["Jerk_Unit"] = df["Jerk_Vector"].abs()
+                
+                    # 4. (Optional) fill first NaN with 0 if you prefer
+                    df["Jerk_Vector"].fillna(0, inplace=True)
+                    df["Jerk_Unit"].fillna(0, inplace=True)
+                
+                    return df
+
+                intraday =  add_jerk(intraday)
                 
                 def add_unit_momentum_rvol(df):
                     if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
