@@ -5446,36 +5446,7 @@ if st.sidebar.button("Run Analysis"):
                             opacity=0.6
                         )
 
-                    valid_drag = intraday.dropna(subset=["Drag", "Cumulative_Unit", "TimeIndex"])
-      
-                    # Top 2 drag spikes (inefficiency zones)
-                    top_drag = valid_drag.nlargest(2, "Drag")
-                    low_drag = valid_drag.nsmallest(2, "Drag")
-                    
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top_drag["TimeIndex"],
-                        y=top_drag["Cumulative_Unit"] - 56,
-                        mode="text",
-                        text=["🌫️"] * len(top_drag),
-                        textposition="top center",
-                        textfont=dict(size=18),
-                        showlegend=False,
-                        hovertemplate="🌫️ Market Drag<br>Time: %{x|%I:%M %p}<br>Drag: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top_drag[["Drag"]].values
-                    ))
-                    
-                    fig_displacement.add_trace(go.Scatter(
-                        x=low_drag["TimeIndex"],
-                        y=low_drag["Cumulative_Unit"] + 56,
-                        mode="text",
-                        text=["🎯"] * len(low_drag),
-                        textposition="bottom center",
-                        textfont=dict(size=18),
-                        showlegend=False,
-                        hovertemplate="🎯 Hyper Efficiency<br>Time: %{x|%I:%M %p}<br>Drag: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=low_drag[["Drag"]].values
-                    ))
-                              
+           
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
