@@ -779,41 +779,75 @@ if st.sidebar.button("Run Analysis"):
 
                 
                                  
+                # def add_market_capacitance(df):
+                #     """
+                #     Adds 'Charge', 'Voltage', and 'Capacitance' columns to the DataFrame.
+                
+                #     Definitions:
+                #       - Charge     = RVOL_5 × Direction (from Velocity sign)
+                #       - Voltage    = abs(Velocity) as float
+                #       - Capacitance = Charge / Voltage
+                
+                #     All values handled carefully to avoid divide-by-zero or parsing issues.
+                #     """
+                #     df = df.copy()
+                
+                #     # --- 1. Ensure RVOL_5 is numeric ---
+                #     df["RVOL_5"] = pd.to_numeric(df["RVOL_5"], errors="coerce").fillna(0)
+                
+                #     # --- 2. Extract Velocity sign and magnitude ---
+                #     velocity_str = df["Velocity"].astype(str).str.strip()
+                
+                #     df["Velocity_Sign"] = velocity_str.str[0].map({"+": 1, "-": -1}).fillna(0)
+                #     df["Voltage"] = pd.to_numeric(velocity_str.str.replace("%", "", regex=False), errors="coerce").abs()
+                
+                #     # --- 3. Compute Signed Charge ---
+                #     df["Charge"] = df["RVOL_5"] * df["Velocity_Sign"]
+                
+                #        # Capacitance = Charge / Voltage × 100 (scaled)
+                #     df["Capacitance"] = df.apply(
+                #         lambda row: (row["Charge"] / row["Voltage"]) * 100 if row["Voltage"] not in [0, None, float('nan')] else 0,
+                #         axis=1
+                #     )
+                
+                #     return df
+                # intraday =  add_market_capacitance(intraday)
+                
                 def add_market_capacitance(df):
                     """
-                    Adds 'Charge', 'Voltage', and 'Capacitance' columns to the DataFrame.
+                    Computes a vector-style Capacitance:
+                      - Charge = sum of RVOL_5 over 3 bars × direction of Velocity
+                      - Voltage = abs(Vector Velocity)
+                      - Capacitance = Charge / Voltage × 100 (scaled)
                 
-                    Definitions:
-                      - Charge     = RVOL_5 × Direction (from Velocity sign)
-                      - Voltage    = abs(Velocity) as float
-                      - Capacitance = Charge / Voltage
-                
-                    All values handled carefully to avoid divide-by-zero or parsing issues.
+                    Assumes:
+                      - 'RVOL_5' is bar-level volume
+                      - 'Velocity' is already 3-bar vector velocity (in "%")
                     """
                     df = df.copy()
                 
-                    # --- 1. Ensure RVOL_5 is numeric ---
-                    df["RVOL_5"] = pd.to_numeric(df["RVOL_5"], errors="coerce").fillna(0)
-                
-                    # --- 2. Extract Velocity sign and magnitude ---
+                    # Parse Velocity into numeric and sign
                     velocity_str = df["Velocity"].astype(str).str.strip()
-                
                     df["Velocity_Sign"] = velocity_str.str[0].map({"+": 1, "-": -1}).fillna(0)
                     df["Voltage"] = pd.to_numeric(velocity_str.str.replace("%", "", regex=False), errors="coerce").abs()
                 
-                    # --- 3. Compute Signed Charge ---
-                    df["Charge"] = df["RVOL_5"] * df["Velocity_Sign"]
+                    # Initialize columns
+                    df["Vector_Charge"] = 0.0
+                    df["Vector_Capacitance"] = 0.0
                 
-                       # Capacitance = Charge / Voltage × 100 (scaled)
-                    df["Capacitance"] = df.apply(
-                        lambda row: (row["Charge"] / row["Voltage"]) * 100 if row["Voltage"] not in [0, None, float('nan')] else 0,
-                        axis=1
-                    )
+                    # Only calculate every 3rd row (assuming Velocity is vector-style)
+                    for i in range(2, len(df), 3):
+                        charge_sum = df.loc[i-2:i, "RVOL_5"].sum()
+                        sign = df.at[i, "Velocity_Sign"]
+                        voltage = df.at[i, "Voltage"]
+                
+                        signed_charge = charge_sum * sign
+                
+                        df.at[i, "Vector_Charge"] = signed_charge
+                        df.at[i, "Vector_Capacitance"] = (signed_charge / voltage * 100) if voltage not in [0, None, float("nan")] else 0
                 
                     return df
                 intraday =  add_market_capacitance(intraday)
-
-
                  
                 def add_unit_momentum_rvol(df):
                     if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
@@ -4510,7 +4544,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Charge","Capacitance","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
