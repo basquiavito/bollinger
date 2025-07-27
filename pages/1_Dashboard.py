@@ -5435,7 +5435,6 @@ if st.sidebar.button("Run Analysis"):
                         )
                     
                               # Add Jerk as rate of change of acceleration
-                    intraday["Jerk"] = intraday["Acceleration_numeric"].diff()
          # Drop NaNs
                     valid_jerk = intraday.dropna(subset=["Jerk", "Cumulative_Unit", "TimeIndex"])
                     
