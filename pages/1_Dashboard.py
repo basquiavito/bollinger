@@ -5615,7 +5615,7 @@ if st.sidebar.button("Run Analysis"):
                     # === 🔷 Top 3 Power Surges ===
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_power_up["Time"],
-                        y=top3_power_up["Cumulative_Unit"] + 8,
+                        y=top3_power_up["Cumulative_Unit"] + 72,
                         mode="text",
                         text=["🔷"] * len(top3_power_up),
                         textposition="top center",
@@ -5628,7 +5628,7 @@ if st.sidebar.button("Run Analysis"):
                     # === 🔶 Top 3 Power Drops ===
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_power_down["Time"],
-                        y=top3_power_down["Cumulative_Unit"] - 8,
+                        y=top3_power_down["Cumulative_Unit"] - 72,
                         mode="text",
                         text=["🔶"] * len(top3_power_down),
                         textposition="bottom center",
