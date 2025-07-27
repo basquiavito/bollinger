@@ -877,9 +877,9 @@ if st.sidebar.button("Run Analysis"):
                     # Interpret polarity
                     def classify_bias(val, threshold=0.5):
                         if val > threshold:
-                            return "🔴 Protonic"
+                            return "🔵 Protonic"
                         elif val < -threshold:
-                            return "🔵 Electronic"
+                            return "🔴 Electronic"
                         else:
                             return "⚪ Neutral"
                 
