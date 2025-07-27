@@ -5822,34 +5822,34 @@ if st.sidebar.button("Run Analysis"):
                     top3_ib_force_up = valid_ib_force.nlargest(3, "IB_Electric_Force")
                     top3_ib_force_down = valid_ib_force.nsmallest(3, "IB_Electric_Force")
                     
-                    # === ⚡ Markers (Top 3 Positive IB Force)
+                    # === 💡 Markers (Top 3 Positive IB Force)
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_ib_force_up["Time"],
-                        y=top3_ib_force_up["Cumulative_Unit"] + 16,
+                        y=top3_ib_force_up["Cumulative_Unit"] + 96,
                         mode="text",
-                        text=["⚡"] * len(top3_ib_force_up),
+                        text=["💡"] * len(top3_ib_force_up),
                         textposition="top center",
                         textfont=dict(size=18),
                         showlegend=False,
                         hovertemplate=(
-                            "⚡ IB Electric Force (UP)<br>"
+                            "💡 IB Electric Force (UP)<br>"
                             "Time: %{x}<br>"
                             "Force: %{customdata[0]:.2f}<extra></extra>"
                         ),
                         customdata=top3_ib_force_up[["IB_Electric_Force"]].values
                     ))
                     
-                    # === 🐢 Markers (Top 3 Negative IB Force)
+                    # === 🕯️ Markers (Top 3 Negative IB Force)
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_ib_force_down["Time"],
-                        y=top3_ib_force_down["Cumulative_Unit"] - 16,
+                        y=top3_ib_force_down["Cumulative_Unit"] - 96,
                         mode="text",
-                        text=["🐢"] * len(top3_ib_force_down),
+                        text=["🕯️"] * len(top3_ib_force_down),
                         textposition="bottom center",
                         textfont=dict(size=18),
                         showlegend=False,
                         hovertemplate=(
-                            "🐢 IB Electric Force (DOWN)<br>"
+                            "🕯️ IB Electric Force (DOWN)<br>"
                             "Time: %{x}<br>"
                             "Force: %{customdata[0]:.2f}<extra></extra>"
                         ),
