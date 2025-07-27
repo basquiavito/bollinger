@@ -5671,7 +5671,43 @@ if st.sidebar.button("Run Analysis"):
                         customdata=top3_power_down[["Power_numeric"]].values
                     ))
 
-           
+
+
+                                      # Drop NaNs or invalid entries
+                    valid_capacitance = intraday.dropna(subset=["Capacitance"])
+                    
+                    # Top 3 positive Capacitance (high potential for breakout pressure being stored)
+                    top3_cap_up = valid_capacitance.nlargest(3, "Capacitance")
+                    
+                    # Top 3 negative Capacitance (possibly reactive rejection or imbalance)
+                    top3_cap_down = valid_capacitance.nsmallest(3, "Capacitance")
+                    # ⚡ High Capacitance markers (storage building)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_cap_up["TimeIndex"],
+                        y=top3_cap_up["Cumulative_Unit"] + 80,
+                        mode="text",
+                        text=["🧲"] * len(top3_cap_up),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🧲 High Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_cap_up[["Capacitance"]].values
+                    ))
+                    
+                    # 🪹 Low Capacitance markers (release, unstable)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_cap_down["TimeIndex"],
+                        y=top3_cap_down["Cumulative_Unit"] - 80,
+                        mode="text",
+                        text=["🪹"] * len(top3_cap_down),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🪹 Low Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_cap_down[["Capacitance"]].values
+                    ))
+
+                               
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
