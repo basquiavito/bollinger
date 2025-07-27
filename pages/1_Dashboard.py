@@ -5742,7 +5742,55 @@ if st.sidebar.button("Run Analysis"):
                         customdata=top3_cap_down[["Capacitance"]].values
                     ))
 
-                               
+
+
+
+                  # Clean up electric force column
+                    intraday["Electric_Force"] = pd.to_numeric(intraday["Electric_Force"], errors='coerce')
+                    
+                    # Drop NaNs
+                    valid_force = intraday.dropna(subset=["Electric_Force", "Cumulative_Unit", "Time"])
+                    
+                    # Top 3 Positive Forces (🐼)
+                    top3_force_up = valid_force.nlargest(3, "Electric_Force")
+                    
+                    # Top 3 Negative Forces (🔌)
+                    top3_force_down = valid_force.nsmallest(3, "Electric_Force")
+                    
+                    # Plot 🐼 Positive Forces
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_force_up["Time"],
+                        y=top3_force_up["Cumulative_Unit"] + 5,
+                        mode="text",
+                        text=["🐼"] * len(top3_force_up),
+                        textposition="top center",
+                        textfont=dict(size=10),
+                        hovertemplate=(
+                            "🐼 Electric Force Up<br>"
+                            "Time: %{x}<br>"
+                            "Force: %{customdata[0]:.2f}<extra></extra>"
+                        ),
+                        customdata=top3_force_up[["Electric_Force"]],
+                        showlegend=False
+                    ))
+                    
+                    # Plot 🐻 Negative Forces
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_force_down["Time"],
+                        y=top3_force_down["Cumulative_Unit"] - 5,
+                        mode="text",
+                        text=["🐻"] * len(top3_force_down),
+                        textposition="bottom center",
+                        textfont=dict(size=10),
+                        hovertemplate=(
+                            "🐻 Electric Force Down<br>"
+                            "Time: %{x}<br>"
+                            "Force: %{customdata[0]:.2f}<extra></extra>"
+                        ),
+                        customdata=top3_force_down[["Electric_Force"]],
+                        showlegend=False
+                    ))
+
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
