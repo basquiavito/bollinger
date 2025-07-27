@@ -731,32 +731,32 @@ if st.sidebar.button("Run Analysis"):
 
                 def add_jerk(df):
                     """
-                    Adds two columns:
-                      - Jerk_Vector: signed rate of change of acceleration
-                      - Jerk_Unit:       absolute magnitude of that change
-                
-                    Expects:
-                      - df["Acceleration"] as strings like '+3%' or '-1%'
+                    Adds:
+                      - Jerk_Vector: signed Δacceleration
+                      - Jerk_Unit: absolute Δacceleration
+                    Treats blank Acceleration as '0%'.
                     """
                     df = df.copy()
                 
-                    # 1. Strip '%' and coerce to float, invalid → NaN
+                    # 1) Normalize acceleration strings, map blank->'0%'
+                    accel_str = df["Acceleration"].fillna("").replace("", "0%").astype(str)
+                
+                    # 2) Strip '%' and convert to float
                     df["Acceleration_numeric"] = pd.to_numeric(
-                        df["Acceleration"].astype(str).str.replace("%", "", regex=False),
+                        accel_str.str.replace("%", "", regex=False),
                         errors="coerce"
                     )
                 
-                    # 2. Compute signed jerk (Δacceleration)
-                    df["Jerk_Vector"] = df["Acceleration_numeric"].diff()
+                    # 3) ΔAcceleration = Jerk
+                    df["Jerk_Vector"] = df["Acceleration_numeric"].diff().fillna(0)
                 
-                    # 3. Compute magnitude
+                    # 4) Magnitude
                     df["Jerk_Unit"] = df["Jerk_Vector"].abs()
                 
-                    # 4. (Optional) fill first NaN with 0 if you prefer
-                    df["Jerk_Vector"].fillna(0, inplace=True)
-                    df["Jerk_Unit"].fillna(0, inplace=True)
-                
                     return df
+                
+                 
+
 
                 intraday =  add_jerk(intraday)
                 
