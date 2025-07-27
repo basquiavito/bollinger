@@ -5439,7 +5439,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig_displacement.add_trace(go.Scatter(
                         x=top_eff["Time"],
-                        y=top_eff["Cumulative_Unit"] + 48,
+                        y=top_eff["Cumulative_Unit"] +64,
                         mode="text",
                         text=["🔌"] * len(top_eff),
                         textposition="top center",
@@ -5455,7 +5455,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig_displacement.add_trace(go.Scatter(
                         x=bottom_eff["Time"],
-                        y=bottom_eff["Cumulative_Unit"] - 48,
+                        y=bottom_eff["Cumulative_Unit"] - 64,
                         mode="text",
                         text=["⚠️"] * len(bottom_eff),
                         textposition="bottom center",
