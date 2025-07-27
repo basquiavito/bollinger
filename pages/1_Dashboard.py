@@ -960,9 +960,36 @@ if st.sidebar.button("Run Analysis"):
                 intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
  
 
-
-
-           
+                def add_jerk(df):
+                    """
+                    Adds two columns:
+                    - 'Jerk_Unit': magnitude of Δacceleration
+                    - 'Jerk_Vector': signed Δacceleration
+                
+                    Assumes 'Acceleration' is a percent string (e.g., '1.2%')
+                    """
+                    df = df.copy()
+                
+                    # Ensure Acceleration is numeric
+                    if "Acceleration_numeric" not in df.columns:
+                        df["Acceleration_numeric"] = (
+                            df["Acceleration"]
+                            .astype(str)
+                            .str.replace("%", "", regex=False)
+                            .astype(float)
+                        )
+                
+                    # Vector form: rate of change
+                    df["Jerk_Vector"] = df["Acceleration_numeric"].diff()
+                
+                    # Unit form: magnitude
+                    df["Jerk_Unit"] = df["Jerk_Vector"].abs()
+                
+                    return df
+                
+                intraday = add_jerk(intraday)
+                
+                           
 
 
 
@@ -4358,7 +4385,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Unit Energy","Vector Energy"]
 
                     st.dataframe(intraday[cols_to_show])
 
