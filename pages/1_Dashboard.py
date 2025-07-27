@@ -804,9 +804,9 @@ if st.sidebar.button("Run Analysis"):
                     # --- 3. Compute Signed Charge ---
                     df["Charge"] = df["RVOL_5"] * df["Velocity_Sign"]
                 
-                    # --- 4. Compute Capacitance = Charge / Voltage ---
+                       # Capacitance = Charge / Voltage × 100 (scaled)
                     df["Capacitance"] = df.apply(
-                        lambda row: row["Charge"] / row["Voltage"] if row["Voltage"] not in [0, None, float('nan')] else 0,
+                        lambda row: (row["Charge"] / row["Voltage"]) * 100 if row["Voltage"] not in [0, None, float('nan')] else 0,
                         axis=1
                     )
                 
