@@ -1302,7 +1302,6 @@ if st.sidebar.button("Run Analysis"):
                 # ✅ Apply it
                 intraday = add_integrated_accelerations(intraday)
                 
-                              import pandas as pd
 
                 def add_volatility_composite(df, window=10, alpha=1.0, beta=1.0, gamma=1.0):
                     """
