@@ -5841,7 +5841,7 @@ if st.sidebar.button("Run Analysis"):
                     # === 🔶 Top 3 Power Drops ===
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_power_down["Time"],
-                        y=top3_power_down["Cumulative_Unit"] - 72,
+                        y=top3_power_down["Cumulative_Unit"] - 104,
                         mode="text",
                         text=["🔶"] * len(top3_power_down),
                         textposition="bottom center",
@@ -5864,7 +5864,7 @@ if st.sidebar.button("Run Analysis"):
                     # 🌟 High Intensity markers
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_intensity_up["TimeIndex"],
-                        y=top3_intensity_up["Cumulative_Unit"] + 48,
+                        y=top3_intensity_up["Cumulative_Unit"] + 104,
                         mode="text",
                         text=["🌟"] * len(top3_intensity_up),
                         textposition="top center",
