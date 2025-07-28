@@ -1223,7 +1223,23 @@ if st.sidebar.button("Run Analysis"):
                                   
                 intraday = add_market_field_force(intraday)
      
-
+                def add_wave_intensity(df):
+                    """
+                    Adds 'Wave_Intensity' = Power / Range, representing how much power is delivered per unit price movement.
+                    Assumes 'Power' and 'Range' columns are already in df.
+                    """
+                    df = df.copy()
+                    
+                    # Ensure numeric values
+                    power = pd.to_numeric(df["Power"], errors="coerce")
+                    range_ = pd.to_numeric(df["Range"], errors="coerce").replace(0, np.nan)  # avoid div-by-zero
+                
+                    # Compute intensity
+                    df["Wave_Intensity"] = power / range_
+                    
+                    return df
+                
+                intraday = add_wave_intensity(intraday)
 
 
               
