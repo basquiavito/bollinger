@@ -1013,6 +1013,39 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_mike_power(intraday)
 
+
+                def add_wave_intensity(df):
+                    """
+                    Adds 'Intensity' column to represent wave energy intensity:
+                        Intensity = Power / Distance
+                    where:
+                        - Power is from your physics engine (already computed)
+                        - Distance is the absolute change in Cumulative_Unit (price movement)
+                
+                    Notes:
+                        - Handles division by zero or missing values gracefully.
+                        - Outputs 0 when Power is 0 or no movement occurred.
+                    """
+                    df = df.copy()
+                
+                    # Ensure required columns are present and clean
+                    df["Power"] = pd.to_numeric(df["Power"], errors="coerce").fillna(0)
+                    df["Cumulative_Unit"] = pd.to_numeric(df["Cumulative_Unit"], errors="coerce")
+                
+                    # Calculate distance = movement of price (like amplitude)
+                    df["Distance"] = df["Cumulative_Unit"].diff().abs().fillna(0)
+                
+                    # Avoid divide-by-zero by replacing 0 distances with np.nan temporarily
+                    df["Intensity"] = df.apply(
+                        lambda row: row["Power"] / row["Distance"] if row["Distance"] != 0 else 0,
+                        axis=1
+                    )
+                
+                    return df
+                
+                intraday = add_wave_intensity(intraday)
+                
+                              
                 def add_unit_energy(df):
                     if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
                         df["Unit Energy"] = ""
@@ -4586,7 +4619,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
