@@ -6083,9 +6083,6 @@ if st.sidebar.button("Run Analysis"):
                         customdata=top3_ib_force_down[["IB_Electric_Force"]].values
                     ))
 
-
-        
-                  
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
@@ -6100,14 +6097,12 @@ if st.sidebar.button("Run Analysis"):
                         margin=dict(t=40, b=40),
                         legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
                     )
-
-
-
-
-
-
-                    st.plotly_chart(fig_displacement, use_container_width=True)
-
+                              
+                st.plotly_chart(fig_displacement, use_container_width=True)
+            
+                         
+                with st.expander("📐 Market Resistance Levels", expanded=False):
+                                  st.dataframe(res_df)
             
 
 
