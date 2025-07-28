@@ -5834,8 +5834,43 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
                         customdata=top3_power_down[["Power_numeric"]].values
                     ))
-
-
+                    
+                    # Ensure numeric and drop invalids
+                    intraday["Wave_Intensity"] = pd.to_numeric(intraday["Wave_Intensity"], errors="coerce")
+                    valid_intensity = intraday.dropna(subset=["Wave_Intensity", "Cumulative_Unit", "TimeIndex"])
+                    
+                    # Top 3 positive intensity spikes (🌟)
+                    top3_intensity_up = valid_intensity.nlargest(3, "Wave_Intensity")
+                    
+                    # Top 3 negative (low intensity zones – 🫧)
+                    top3_intensity_down = valid_intensity.nsmallest(3, "Wave_Intensity")
+                    
+                    # 🌟 High Intensity markers
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_intensity_up["TimeIndex"],
+                        y=top3_intensity_up["Cumulative_Unit"] + 48,
+                        mode="text",
+                        text=["🌟"] * len(top3_intensity_up),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🌟 Intensity Spike<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_intensity_up[["Wave_Intensity"]].values
+                    ))
+                    
+                    # 🫧 Low Intensity markers
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_intensity_down["TimeIndex"],
+                        y=top3_intensity_down["Cumulative_Unit"] - 48,
+                        mode="text",
+                        text=["🫧"] * len(top3_intensity_down),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🫧 Weak Intensity<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_intensity_down[["Wave_Intensity"]].values
+                    ))
+                    
 
                                       # Drop NaNs or invalid entries
                     valid_capacitance = intraday.dropna(subset=["Vector_Capacitance"])
