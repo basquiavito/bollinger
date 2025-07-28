@@ -734,31 +734,33 @@ if st.sidebar.button("Run Analysis"):
                     Adds a new column: 'Integrated_Acceleration'
                     which is the cumulative sum (integral) of acceleration over time.
                 
-                    Acceleration is expected as a percentage string like '5%'.
+                    Handles edge cases like blank or missing acceleration.
                     """
-                
                     df = df.copy()
                 
-                    # 1. Parse acceleration column (remove % and convert to float)
-                    df["Acceleration_numeric"] = (
+                    # 1. Clean and convert Acceleration column to numeric
+                    accel_clean = (
                         df["Acceleration"]
+                        .fillna("0%")                # Fill NaNs with 0%
+                        .replace("", "0%")           # Replace blank strings with 0%
                         .astype(str)
                         .str.replace("%", "", regex=False)
-                        .astype(float)
-                        .fillna(0)
                     )
                 
-                    # 2. Integrate acceleration (cumulative sum)
+                    df["Acceleration_numeric"] = pd.to_numeric(accel_clean, errors="coerce").fillna(0)
+                
+                    # 2. Cumulative sum (integral of acceleration)
                     df["Integrated_Acceleration"] = df["Acceleration_numeric"].cumsum()
                 
                     return df
                 
                 # ✅ Apply it
                 intraday = add_integrated_acceleration(intraday)
-                
-
-
-
+    
+                    
+    
+    
+    
 
               
                 def add_dual_jerk(df):
