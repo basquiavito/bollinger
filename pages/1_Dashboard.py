@@ -6106,8 +6106,8 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                with st.expander("📐 Market Resistance Levels", expanded=False):
-                                  st.dataframe(res_df)
+                    st.plotly_chart(fig_displacement, use_container_width=True)
+
             
 
 
