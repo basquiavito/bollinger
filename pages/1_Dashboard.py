@@ -6082,6 +6082,14 @@ if st.sidebar.button("Run Analysis"):
                         ),
                         customdata=top3_ib_force_down[["IB_Electric_Force"]].values
                     ))
+                    fig_displacement.add_trace(go.Scatter(
+                        x=intraday["TimeIndex"],
+                        y=intraday["Kijun_F"],
+                        mode="lines",
+                        name="Kijun",
+                        line=dict(color="green", width=2, dash="dash"),
+                        hovertemplate="Time: %{x|%I:%M %p}<br>Kijun: %{y:.2f}<extra></extra>"
+                    ))
 
                     # === Layout ===
                     fig_displacement.update_layout(
