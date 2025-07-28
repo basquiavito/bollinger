@@ -6097,19 +6097,22 @@ if st.sidebar.button("Run Analysis"):
                         mode="lines",
                         name="Unit Velocity",
                         line=dict(width=2, dash="dot"),
-                        yaxis="y2",  # separate Y axis if needed
                         hovertemplate="Time: %{x|%I:%M %p}<br>Velocity: %{y}%<extra></extra>"
+
+                              # Add second Y-axis for clarity (optional)
+                        fig_displacement.update_layout(
+                            yaxis2=dict(
+                                title="Unit Velocity (%)",
+                                overlaying="y",
+                                side="right",
+                                showgrid=False
+                            )
+                        )
+
                     ))
                     
                     # Add second Y-axis for clarity (optional)
-                    fig_displacement.update_layout(
-                        yaxis2=dict(
-                            title="Unit Velocity (%)",
-                            overlaying="y",
-                            side="right",
-                            showgrid=False
-                        )
-                    )
+       
 
                   
                     # === Layout ===
