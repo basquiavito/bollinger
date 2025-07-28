@@ -729,6 +729,38 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_acceleration(intraday)
 
+                def add_integrated_acceleration(df):
+                    """
+                    Adds a new column: 'Integrated_Acceleration'
+                    which is the cumulative sum (integral) of acceleration over time.
+                
+                    Acceleration is expected as a percentage string like '5%'.
+                    """
+                
+                    df = df.copy()
+                
+                    # 1. Parse acceleration column (remove % and convert to float)
+                    df["Acceleration_numeric"] = (
+                        df["Acceleration"]
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                        .astype(float)
+                        .fillna(0)
+                    )
+                
+                    # 2. Integrate acceleration (cumulative sum)
+                    df["Integrated_Acceleration"] = df["Acceleration_numeric"].cumsum()
+                
+                    return df
+                
+                # ✅ Apply it
+                intraday = add_integrated_acceleration(intraday)
+                
+
+
+
+
+              
                 def add_dual_jerk(df):
                   """
                   Adds:
@@ -779,40 +811,7 @@ if st.sidebar.button("Run Analysis"):
 
                 
                                  
-                # def add_market_capacitance(df):
-                #     """
-                #     Adds 'Charge', 'Voltage', and 'Capacitance' columns to the DataFrame.
-                
-                #     Definitions:
-                #       - Charge     = RVOL_5 × Direction (from Velocity sign)
-                #       - Voltage    = abs(Velocity) as float
-                #       - Capacitance = Charge / Voltage
-                
-                #     All values handled carefully to avoid divide-by-zero or parsing issues.
-                #     """
-                #     df = df.copy()
-                
-                #     # --- 1. Ensure RVOL_5 is numeric ---
-                #     df["RVOL_5"] = pd.to_numeric(df["RVOL_5"], errors="coerce").fillna(0)
-                
-                #     # --- 2. Extract Velocity sign and magnitude ---
-                #     velocity_str = df["Velocity"].astype(str).str.strip()
-                
-                #     df["Velocity_Sign"] = velocity_str.str[0].map({"+": 1, "-": -1}).fillna(0)
-                #     df["Voltage"] = pd.to_numeric(velocity_str.str.replace("%", "", regex=False), errors="coerce").abs()
-                
-                #     # --- 3. Compute Signed Charge ---
-                #     df["Charge"] = df["RVOL_5"] * df["Velocity_Sign"]
-                
-                #        # Capacitance = Charge / Voltage × 100 (scaled)
-                #     df["Capacitance"] = df.apply(
-                #         lambda row: (row["Charge"] / row["Voltage"]) * 100 if row["Voltage"] not in [0, None, float('nan')] else 0,
-                #         axis=1
-                #     )
-                
-                #     return df
-                # intraday =  add_market_capacitance(intraday)
-                
+        
                 def add_market_capacitance(df):
                     """
                     Computes a vector-style Capacitance:
@@ -4635,7 +4634,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
