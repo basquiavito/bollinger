@@ -5485,6 +5485,15 @@ if st.sidebar.button("Run Analysis"):
                    
                     fig_displacement = go.Figure()
 
+                  # --- Create a 2-row layout (row 1 = main engine, row 2 = volatility)
+                    fig = make_subplots(
+                        rows=2, cols=1,
+                        shared_xaxes=True,
+                        row_heights=[0.7, 0.3],
+                        vertical_spacing=0.06,
+                        subplot_titles=("🧠 Mike's Physics Engine", "📉 Volatility Composite")
+                    )
+
                     # === Cumulative Unit% Line ===
                     fig_displacement.add_trace(go.Scatter(
                         x=intraday["Time"],
@@ -6180,9 +6189,25 @@ if st.sidebar.button("Run Analysis"):
                       name="Kijun (Cumulative)",
                       hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
                       ))
+
+
+
+                    # --- Row 2: Smoothed Volatility Plot
+                    fig.add_trace(go.Scatter(
+                        x=intraday["TimeIndex"],
+                        y=intraday["Volatility_Composite"].rolling(window=3, min_periods=1).mean(),  # smoothing
+                        mode="lines",
+                        name="Volatility",
+                        line=dict(color="violet", width=2),
+                        fill='tozeroy'
+                    ), row=2, col=1)
+                    
+
+
+                  
                     # === Layout ===
                     fig_displacement.update_layout(
-                        height=550,
+                        height=700,
                         plot_bgcolor="black",
                         paper_bgcolor="black",
                         font=dict(color="white"),
@@ -6194,7 +6219,12 @@ if st.sidebar.button("Run Analysis"):
                         margin=dict(t=40, b=40),
                         legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
                     )
-                              
+
+                
+                    fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
+                    fig.update_yaxes(title_text="Volatility", row=2, col=1)
+                    fig.update_xaxes(title_text="Time", row=2, col=1)
+                                                  
                 st.plotly_chart(fig_displacement, use_container_width=True)
             
                          
