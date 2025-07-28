@@ -1156,7 +1156,7 @@ if st.sidebar.button("Run Analysis"):
                 # Apply the function to your intraday data
                 intraday = calculate_kijun_sen(intraday, period=26)
 
-
+             
 
                 intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
  
@@ -1167,7 +1167,31 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Calculate cumulative sum
                 intraday["Cumulative_Unit"] = intraday["Unit%_Numeric"].cumsum()
-              
+
+
+                def add_kijun_displacement(df, period=26):
+                    """
+                    Adds 'Kijun_Cumulative' column to df:
+                    Midpoint of highest and lowest Cumulative_Unit over a rolling period.
+                    This is the Ichimoku Kijun-sen, but computed in displacement space.
+                    """
+                    df = df.copy()
+                
+                    # Ensure Cumulative_Unit is numeric
+                    df["Cumulative_Unit"] = pd.to_numeric(df["Cumulative_Unit"], errors="coerce")
+                
+                    # Rolling midpoint of displacement
+                    df["Kijun_Cumulative"] = (
+                        df["Cumulative_Unit"]
+                        .rolling(window=period, min_periods=1)
+                        .apply(lambda x: (x.max() + x.min()) / 2)
+                    )
+                
+                    return df
+                
+                # Apply to your intraday DataFrame
+                intraday = add_kijun_displacement(intraday)
+
                 def add_wave_intensity(df):
                     """
                     Adds 'Intensity' column to represent wave energy intensity:
@@ -4671,7 +4695,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Unit_Acceleration","Integrated_Vector_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Unit_Acceleration","Integrated_Vector_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
