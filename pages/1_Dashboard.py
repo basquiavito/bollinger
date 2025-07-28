@@ -6115,6 +6115,14 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate="Time: %{x|%I:%M %p}<br>Kijun: %{y:.2f}<extra></extra>"
                     ))
 
+                     fig_displacement.add_trace(go.Scatter(
+                        x=intraday["TimeIndex"],
+                        y=intraday["Kijun_Cumulative"],
+                        mode="lines",
+                        line=dict(color="deepskyblue", dash="dot", width=2),
+                        name="Kijun (Cumulative)",
+                        hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
+                    ))
                     # === Layout ===
                     fig_displacement.update_layout(
                         height=550,
