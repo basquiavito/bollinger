@@ -6097,10 +6097,74 @@ if st.sidebar.button("Run Analysis"):
                         margin=dict(t=40, b=40),
                         legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
                     )
-                              
+
+
+
+
+
                 st.plotly_chart(fig_displacement, use_container_width=True)
             
-                         
+                
+                # --- Clean and prepare ---
+                intraday["Unit_Velocity_numeric"] = pd.to_numeric(
+                    intraday["Unit Velocity"].astype(str).str.replace("%", "", regex=False),
+                    errors="coerce"
+                )
+                
+                # --- Identify top 3 positive and negative spikes ---
+                top3_up = intraday.nlargest(3, "Unit_Velocity_numeric")
+                top3_down = intraday.nsmallest(3, "Unit_Velocity_numeric")
+                
+                # --- Build plot ---
+                fig_velocity = go.Figure()
+                
+                # Line trace
+                fig_velocity.add_trace(go.Scatter(
+                    x=intraday["TimeIndex"],
+                    y=intraday["Unit_Velocity_numeric"],
+                    mode="lines+markers",
+                    name="Unit Velocity",
+                    line=dict(width=2),
+                    marker=dict(size=5),
+                    hovertemplate="Time: %{x}<br>Velocity: %{y}%<extra></extra>"
+                ))
+                
+                # Annotate top 3 surges (🟢)
+                fig_velocity.add_trace(go.Scatter(
+                    x=top3_up["TimeIndex"],
+                    y=top3_up["Unit_Velocity_numeric"],
+                    mode="text",
+                    text=["🟢"] * len(top3_up),
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    showlegend=False,
+                    hovertemplate="🟢 Surge<br>%{y}%<extra></extra>"
+                ))
+                
+                # Annotate top 3 dips (🔻)
+                fig_velocity.add_trace(go.Scatter(
+                    x=top3_down["TimeIndex"],
+                    y=top3_down["Unit_Velocity_numeric"],
+                    mode="text",
+                    text=["🔻"] * len(top3_down),
+                    textposition="bottom center",
+                    textfont=dict(size=18),
+                    showlegend=False,
+                    hovertemplate="🔻 Drop<br>%{y}%<extra></extra>"
+                ))
+                
+                # Layout
+                fig_velocity.update_layout(
+                    title="Unit Velocity Over Time",
+                    yaxis_title="Unit Velocity (%)",
+                    xaxis_title="Time",
+                    template="plotly_dark",
+                    height=450
+                )
+                
+                # Show it
+                fig_velocity.show()
+
                 with st.expander("📐 Market Resistance Levels", expanded=False):
                                   st.dataframe(res_df)
             
