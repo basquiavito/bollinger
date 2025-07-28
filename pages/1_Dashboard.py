@@ -728,34 +728,32 @@ if st.sidebar.button("Run Analysis"):
                     return intraday_df
 
                 intraday = add_vector_acceleration(intraday)
-
-                def add_integrated_acceleration(df):
+                def add_integrated_unit_acceleration(df):
                     """
-                    Adds a new column: 'Integrated_Acceleration'
-                    which is the cumulative sum (integral) of acceleration over time.
-                
-                    Handles edge cases like blank or missing acceleration.
+                    Adds a column: 'Integrated_Unit_Acceleration'
+                    which is the cumulative sum of Unit Acceleration.
                     """
                     df = df.copy()
                 
-                    # 1. Clean and convert Acceleration column to numeric
-                    accel_clean = (
-                        df["Acceleration"]
-                        .fillna("0%")                # Fill NaNs with 0%
-                        .replace("", "0%")           # Replace blank strings with 0%
+                    # Clean Unit Acceleration
+                    unit_accel_clean = (
+                        df["Unit Acceleration"]
+                        .fillna("0%")
+                        .replace("", "0%")
                         .astype(str)
                         .str.replace("%", "", regex=False)
                     )
                 
-                    df["Acceleration_numeric"] = pd.to_numeric(accel_clean, errors="coerce").fillna(0)
+                    df["Unit_Acceleration_numeric"] = pd.to_numeric(unit_accel_clean, errors="coerce").fillna(0)
                 
-                    # 2. Cumulative sum (integral of acceleration)
-                    df["Integrated_Acceleration"] = df["Acceleration_numeric"].cumsum()
+                    # Cumulative sum
+                    df["Integrated_Unit_Acceleration"] = df["Unit_Acceleration_numeric"].cumsum()
                 
                     return df
                 
-                # ✅ Apply it
-                intraday = add_integrated_acceleration(intraday)
+                # ✅ Apply to your dataframe
+                intraday = add_integrated_unit_acceleration(intraday)
+
     
                     
     
@@ -1242,8 +1240,45 @@ if st.sidebar.button("Run Analysis"):
                 
                 intraday = add_wave_intensity(intraday)
 
-
-              
+                def add_integrated_accelerations(df):
+                    """
+                    Adds cumulative (integrated) acceleration:
+                      - 'Acceleration_numeric' and 'Unit_Acceleration_numeric' = cleaned % values
+                      - 'Integrated_Vector_Acceleration' = cumsum of vector acceleration
+                      - 'Integrated_Unit_Acceleration' = cumsum of unit acceleration
+                    """
+                    df = df.copy()
+                
+                    # --- Clean Vector Acceleration ---
+                    vec_accel = (
+                        df["Acceleration"]
+                        .fillna("0%")
+                        .replace("", "0%")
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                    )
+                    df["Acceleration_numeric"] = pd.to_numeric(vec_accel, errors="coerce").fillna(0)
+                
+                    # --- Clean Unit Acceleration ---
+                    unit_accel = (
+                        df["Unit Acceleration"]
+                        .fillna("0%")
+                        .replace("", "0%")
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                    )
+                    df["Unit_Acceleration_numeric"] = pd.to_numeric(unit_accel, errors="coerce").fillna(0)
+                
+                    # --- Integrals (Cumulative Sums) ---
+                    df["Integrated_Vector_Acceleration"] = df["Acceleration_numeric"].cumsum()
+                    df["Integrated_Unit_Acceleration"] = df["Unit_Acceleration_numeric"].cumsum()
+                
+                    return df
+                
+                # ✅ Apply it
+                intraday = add_integrated_accelerations(intraday)
+                
+                              
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -4636,7 +4671,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","F_numeric","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Unit_Acceleration","Integrated_Vector_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
