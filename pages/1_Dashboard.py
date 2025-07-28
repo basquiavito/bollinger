@@ -6111,7 +6111,7 @@ if st.sidebar.button("Run Analysis"):
                       x=intraday["TimeIndex"],
                       y=intraday["Kijun_Cumulative"],
                       mode="lines",
-                      line=dict(color="green", dash="solit", width=1.5),
+                      line=dict(color="green", dash="solid", width=1.5),
                       name="Kijun (Cumulative)",
                       hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
                       ))
