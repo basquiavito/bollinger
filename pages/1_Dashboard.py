@@ -6084,25 +6084,7 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
 
-        # Ensure numeric velocity
-                    intraday["Unit_Velocity_numeric"] = pd.to_numeric(
-                        intraday["Unit Velocity"].astype(str).str.replace("%", "", regex=False),
-                        errors="coerce"
-                    )
-                    
-                    # Add to existing Cumulative Unit chart
-                    fig_displacement.add_trace(go.Scatter(
-                        x=intraday["TimeIndex"],
-                        y=intraday["Unit_Velocity_numeric"],
-                        mode="lines",
-                        name="Unit Velocity",
-                        line=dict(width=2, dash="dot"),
-                        yaxis="y2",  # separate Y axis if needed
-                        hovertemplate="Time: %{x|%I:%M %p}<br>Velocity: %{y}%<extra></extra>"
-                    ))
-
-       
-
+        
                   
                     # === Layout ===
                     fig_displacement.update_layout(
