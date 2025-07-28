@@ -1014,36 +1014,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = add_mike_power(intraday)
 
 
-                def add_wave_intensity(df):
-                    """
-                    Adds 'Intensity' column to represent wave energy intensity:
-                        Intensity = Power / Distance
-                    where:
-                        - Power is from your physics engine (already computed)
-                        - Distance is the absolute change in Cumulative_Unit (price movement)
-                
-                    Notes:
-                        - Handles division by zero or missing values gracefully.
-                        - Outputs 0 when Power is 0 or no movement occurred.
-                    """
-                    df = df.copy()
-                
-                    # Ensure required columns are present and clean
-                    df["Power"] = pd.to_numeric(df["Power"], errors="coerce").fillna(0)
-                    df["Cumulative_Unit"] = pd.to_numeric(df["Cumulative_Unit"], errors="coerce")
-                
-                    # Calculate distance = movement of price (like amplitude)
-                    df["Distance"] = df["Cumulative_Unit"].diff().abs().fillna(0)
-                
-                    # Avoid divide-by-zero by replacing 0 distances with np.nan temporarily
-                    df["Intensity"] = df.apply(
-                        lambda row: row["Power"] / row["Distance"] if row["Distance"] != 0 else 0,
-                        axis=1
-                    )
-                
-                    return df
-                
-                intraday = add_wave_intensity(intraday)
+              
                 
                               
                 def add_unit_energy(df):
@@ -1198,7 +1169,36 @@ if st.sidebar.button("Run Analysis"):
                 # Calculate cumulative sum
                 intraday["Cumulative_Unit"] = intraday["Unit%_Numeric"].cumsum()
               
-
+                def add_wave_intensity(df):
+                    """
+                    Adds 'Intensity' column to represent wave energy intensity:
+                        Intensity = Power / Distance
+                    where:
+                        - Power is from your physics engine (already computed)
+                        - Distance is the absolute change in Cumulative_Unit (price movement)
+                
+                    Notes:
+                        - Handles division by zero or missing values gracefully.
+                        - Outputs 0 when Power is 0 or no movement occurred.
+                    """
+                    df = df.copy()
+                
+                    # Ensure required columns are present and clean
+                    df["Power"] = pd.to_numeric(df["Power"], errors="coerce").fillna(0)
+                    df["Cumulative_Unit"] = pd.to_numeric(df["Cumulative_Unit"], errors="coerce")
+                
+                    # Calculate distance = movement of price (like amplitude)
+                    df["Distance"] = df["Cumulative_Unit"].diff().abs().fillna(0)
+                
+                    # Avoid divide-by-zero by replacing 0 distances with np.nan temporarily
+                    df["Intensity"] = df.apply(
+                        lambda row: row["Power"] / row["Distance"] if row["Distance"] != 0 else 0,
+                        axis=1
+                    )
+                
+                    return df
+                
+                intraday = add_wave_intensity(intraday)
 
                 def add_market_field_force(df, resistance_col="Kijun_F"):
                             df = df.copy()
