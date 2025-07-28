@@ -1302,7 +1302,50 @@ if st.sidebar.button("Run Analysis"):
                 # ✅ Apply it
                 intraday = add_integrated_accelerations(intraday)
                 
-                              
+                              import pandas as pd
+
+                def add_volatility_composite(df, window=10, alpha=1.0, beta=1.0, gamma=1.0):
+                    """
+                    Adds rolling volatility measures and a composite Volatility_Score to the DataFrame.
+                    
+                    Parameters:
+                    - window: lookback period for rolling standard deviation
+                    - alpha: weight for Range volatility
+                    - beta: weight for Acceleration volatility
+                    - gamma: weight for Jerk volatility
+                    
+                    New columns:
+                    - Volatility_Range         = rolling std of (High - Low)
+                    - Volatility_Acceleration  = rolling std of acceleration (numeric)
+                    - Volatility_Jerk          = rolling std of jerk (numeric)
+                    - Volatility_Composite     = alpha*Volatility_Range + beta*Volatility_Acceleration + gamma*Volatility_Jerk
+                    """
+                    df = df.copy()
+                    
+                    # 1) Ensure Range exists (High − Low)
+                    df["Range"] = pd.to_numeric(df["High"], errors="coerce") - pd.to_numeric(df["Low"], errors="coerce")
+                    
+                    # 2) Clean acceleration and jerk numeric columns
+                    df["Acceleration_numeric"] = pd.to_numeric(df.get("Acceleration_numeric", df.get("Acceleration", 0)).astype(str).str.replace("%", "", regex=False), errors="coerce").fillna(0)
+                    df["Jerk_numeric"] = pd.to_numeric(df.get("Jerk", 0), errors="coerce").fillna(0)
+                    
+                    # 3) Rolling standard deviations
+                    df["Volatility_Range"] = df["Range"].rolling(window, min_periods=1).std()
+                    df["Volatility_Acceleration"] = df["Acceleration_numeric"].rolling(window, min_periods=1).std()
+                    df["Volatility_Jerk"] = df["Jerk_numeric"].rolling(window, min_periods=1).std()
+                    
+                    # 4) Composite score
+                    df["Volatility_Composite"] = (
+                        alpha * df["Volatility_Range"]
+                        + beta * df["Volatility_Acceleration"]
+                        + gamma * df["Volatility_Jerk"]
+                    )
+                    
+                    return df
+                
+                # Apply to intraday
+                intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
+
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -4695,7 +4738,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Unit_Acceleration","Integrated_Vector_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Volatility_Composite","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Unit_Acceleration","Integrated_Vector_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
