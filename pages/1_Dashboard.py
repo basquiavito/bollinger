@@ -1303,37 +1303,57 @@ if st.sidebar.button("Run Analysis"):
                 intraday = add_integrated_accelerations(intraday)
                 
 
+ 
                 def add_volatility_composite(df, window=10, alpha=1.0, beta=1.0, gamma=1.0):
                     """
-                    Adds rolling volatility measures and a composite Volatility_Score to the DataFrame.
-                    
-                    Parameters:
-                    - window: lookback period for rolling standard deviation
-                    - alpha: weight for Range volatility
-                    - beta: weight for Acceleration volatility
-                    - gamma: weight for Jerk volatility
+                    Adds rolling volatility measures and a composite Volatility_Composite to the DataFrame.
                     
                     New columns:
-                    - Volatility_Range         = rolling std of (High - Low)
-                    - Volatility_Acceleration  = rolling std of acceleration (numeric)
-                    - Volatility_Jerk          = rolling std of jerk (numeric)
-                    - Volatility_Composite     = alpha*Volatility_Range + beta*Volatility_Acceleration + gamma*Volatility_Jerk
+                      - Range                    = High − Low
+                      - Acceleration_numeric     = cleaned acceleration values as float
+                      - Jerk_numeric             = cleaned jerk values as float
+                      - Volatility_Range         = rolling std of Range
+                      - Volatility_Acceleration  = rolling std of Acceleration_numeric
+                      - Volatility_Jerk          = rolling std of Jerk_numeric
+                      - Volatility_Composite     = alpha*Volatility_Range + beta*Volatility_Acceleration + gamma*Volatility_Jerk
                     """
                     df = df.copy()
                     
-                    # 1) Ensure Range exists (High − Low)
+                    # 1) Compute Range
                     df["Range"] = pd.to_numeric(df["High"], errors="coerce") - pd.to_numeric(df["Low"], errors="coerce")
                     
-                    # 2) Clean acceleration and jerk numeric columns
-                    df["Acceleration_numeric"] = pd.to_numeric(df.get("Acceleration_numeric", df.get("Acceleration", 0)).astype(str).str.replace("%", "", regex=False), errors="coerce").fillna(0)
-                    df["Jerk_numeric"] = pd.to_numeric(df.get("Jerk", 0), errors="coerce").fillna(0)
+                    # 2) Prepare Acceleration_numeric
+                    if "Acceleration_numeric" in df.columns:
+                        accel_raw = df["Acceleration_numeric"].astype(float)
+                    else:
+                        accel_raw = df.get("Acceleration", pd.Series("0%", index=df.index))
+                    # Clean and convert to float
+                    accel_series = (
+                        accel_raw
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                        .replace("", "0")
+                        .astype(float)
+                    )
+                    df["Acceleration_numeric"] = accel_series.fillna(0)
                     
-                    # 3) Rolling standard deviations
+                    # 3) Prepare Jerk_numeric
+                    jerk_raw = df.get("Jerk", pd.Series("0%", index=df.index))
+                    jerk_series = (
+                        jerk_raw
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                        .replace("", "0")
+                        .astype(float)
+                    )
+                    df["Jerk_numeric"] = jerk_series.fillna(0)
+                    
+                    # 4) Rolling standard deviations
                     df["Volatility_Range"] = df["Range"].rolling(window, min_periods=1).std()
                     df["Volatility_Acceleration"] = df["Acceleration_numeric"].rolling(window, min_periods=1).std()
                     df["Volatility_Jerk"] = df["Jerk_numeric"].rolling(window, min_periods=1).std()
                     
-                    # 4) Composite score
+                    # 5) Composite score
                     df["Volatility_Composite"] = (
                         alpha * df["Volatility_Range"]
                         + beta * df["Volatility_Acceleration"]
@@ -1341,7 +1361,10 @@ if st.sidebar.button("Run Analysis"):
                     )
                     
                     return df
-                
+
+# Example usage:
+# intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
+
                 # Apply to intraday
                 intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
 
