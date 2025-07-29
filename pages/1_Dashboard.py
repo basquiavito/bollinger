@@ -6332,6 +6332,31 @@ if st.sidebar.button("Run Analysis"):
                       
                 st.plotly_chart(fig_volatility, use_container_width=True)
 
+                with st.expander("⚡ Velocity Line Plot", expanded=False):
+                    fig_velocity = go.Figure()
+                
+                    fig_velocity.add_trace(go.Scatter(
+                        x=intraday["TimeIndex"],
+                        y=intraday["Velocity_Num"],
+                        mode="lines",
+                        name="Velocity",
+                        line=dict(color="orange", width=2)
+                    ))
+                
+                    fig_velocity.add_hline(y=20, line=dict(color="green", dash="dash"))
+                    fig_velocity.add_hline(y=-20, line=dict(color="red", dash="dash"))
+                
+                    fig_velocity.update_layout(
+                        height=300,
+                        title="⚡ Velocity Flow",
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        xaxis_title="Time",
+                        yaxis_title="Velocity (%)",
+                    )
+                
+                    st.plotly_chart(fig_velocity, use_container_width=True)
 
 
 
