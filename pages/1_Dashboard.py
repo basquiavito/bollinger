@@ -5544,11 +5544,10 @@ if st.sidebar.button("Run Analysis"):
 
                   # --- Create a 2-row layout (row 1 = main engine, row 2 = volatility)
                     fig = make_subplots(
-                        rows=2, cols=1,
+                        rows=1, cols=1,
                         shared_xaxes=True,
-                        row_heights=[0.7, 0.3],
-                        vertical_spacing=0.06,
-                        subplot_titles=("🧠 Mike's Physics Engine", "📉 Volatility Composite")
+               
+                        subplot_titles=("🧠 Mike's Physics Engine")
                     )
 
                     # === Cumulative Unit% Line ===
@@ -6264,7 +6263,7 @@ if st.sidebar.button("Run Analysis"):
                   
                     # === Layout ===
                     fig_displacement.update_layout(
-                        height=700,
+                        height=500,
                         plot_bgcolor="black",
                         paper_bgcolor="black",
                         font=dict(color="white"),
@@ -6279,8 +6278,8 @@ if st.sidebar.button("Run Analysis"):
 
                 
                     fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
-                    fig.update_yaxes(title_text="Volatility", row=2, col=1)
-                    fig.update_xaxes(title_text="Time", row=2, col=1)
+                
+               
                 st.plotly_chart(fig_displacement, use_container_width=True)
 
                 # st.plotly_chart(fig, use_container_width=True)
