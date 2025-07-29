@@ -4783,9 +4783,8 @@ if st.sidebar.button("Run Analysis"):
                 
                     return zone_stats
 
+                 intraday = compute_ib_volume_weights(intraday)
 
-                    ib_stats = compute_ib_volume_weights(intraday, ib_high=ib_high, ib_low=ib_low)
-                    st.dataframe(ib_stats)
                     
                     
 
