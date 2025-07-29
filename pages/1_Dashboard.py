@@ -6337,7 +6337,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     fig_velocity.add_trace(go.Scatter(
                         x=intraday["TimeIndex"],
-                        y=intraday["Velocity_Num"],
+                        y=intraday["Unit Velocity"],
                         mode="lines",
                         name="Velocity",
                         line=dict(color="orange", width=2)
