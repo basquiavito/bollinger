@@ -6331,17 +6331,17 @@ if st.sidebar.button("Run Analysis"):
                           )
                       
                 st.plotly_chart(fig_volatility, use_container_width=True)
-                # Create a smoothed version of Velocity
-                intraday["Unit Velocity"] = intraday["Unit Velocity"].rolling(window=5, min_periods=1).mean()
-
+                # Create a smoothed version of Unit Velocity
+                intraday["Velocity_SMA"] = intraday["Unit Velocity"].rolling(window=5, min_periods=1).mean()
+                
                 with st.expander("⚡ Velocity Line Plot", expanded=False):
                     fig_velocity = go.Figure()
                 
                     fig_velocity.add_trace(go.Scatter(
                         x=intraday["TimeIndex"],
-                        y=intraday["Unit Velocity"],
+                        y=intraday["Velocity_SMA"],
                         mode="lines",
-                        name="Velocity",
+                        name="Smoothed Velocity",
                         line=dict(color="orange", width=2)
                     ))
                 
@@ -6359,6 +6359,7 @@ if st.sidebar.button("Run Analysis"):
                     )
                 
                     st.plotly_chart(fig_velocity, use_container_width=True)
+
 
 
 
