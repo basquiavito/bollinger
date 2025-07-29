@@ -6248,16 +6248,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # # --- Row 2: Smoothed Volatility Plot
-                    # fig.add_trace(go.Scatter(
-                    #     x=intraday["TimeIndex"],
-                    #     y=intraday["Volatility_Composite"].rolling(window=3, min_periods=1).mean(),  # smoothing
-                    #     mode="lines",
-                    #     name="Volatility",
-                    #     line=dict(color="violet", width=2),
-                    #     fill='tozeroy'
-                    # ), row=2, col=1)
-                    
+                  
 
 
                   
@@ -6314,7 +6305,33 @@ if st.sidebar.button("Run Analysis"):
                 st.plotly_chart(fig_capacitance, use_container_width=True)
                 
 
-                           
+                with st.expander("📉 Volatility Composite (Smoothed)", expanded=False):
+                          fig_volatility = go.Figure()
+                      
+                          fig_volatility.add_trace(go.Scatter(
+                              x=intraday["TimeIndex"],
+                              y=intraday["Volatility_Composite"].rolling(window=3, min_periods=1).mean(),
+                              mode="lines",
+                              name="Volatility",
+                              line=dict(color="violet", width=2),
+                              fill='tozeroy',
+                              hovertemplate="Time: %{x}<br>Volatility: %{y:.2f}<extra></extra>"
+                          ))
+                      
+                          fig_volatility.update_layout(
+                              height=300,
+                              title="📉 Volatility Composite (Smoothed)",
+                              plot_bgcolor="black",
+                              paper_bgcolor="black",
+                              font=dict(color="white"),
+                              xaxis=dict(title="Time"),
+                              yaxis=dict(title="Volatility"),
+                              margin=dict(t=40, b=40),
+                              showlegend=True
+                          )
+                      
+                st.plotly_chart(fig_volatility, use_container_width=True)
+
 
 
 
