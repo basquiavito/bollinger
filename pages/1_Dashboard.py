@@ -6249,15 +6249,15 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # --- Row 2: Smoothed Volatility Plot
-                    fig.add_trace(go.Scatter(
-                        x=intraday["TimeIndex"],
-                        y=intraday["Volatility_Composite"].rolling(window=3, min_periods=1).mean(),  # smoothing
-                        mode="lines",
-                        name="Volatility",
-                        line=dict(color="violet", width=2),
-                        fill='tozeroy'
-                    ), row=2, col=1)
+                    # # --- Row 2: Smoothed Volatility Plot
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday["TimeIndex"],
+                    #     y=intraday["Volatility_Composite"].rolling(window=3, min_periods=1).mean(),  # smoothing
+                    #     mode="lines",
+                    #     name="Volatility",
+                    #     line=dict(color="violet", width=2),
+                    #     fill='tozeroy'
+                    # ), row=2, col=1)
                     
 
 
