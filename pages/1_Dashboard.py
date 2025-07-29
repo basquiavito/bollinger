@@ -6114,137 +6114,137 @@ if st.sidebar.button("Run Analysis"):
 
                     
                                         # Ensure Capacitance is numeric
-                    # Ensure Vector Capacitance is numeric
-                    intraday["Capacitance_numeric"] = pd.to_numeric(intraday["Vector_Capacitance"], errors="coerce")
+                  #   # Ensure Vector Capacitance is numeric
+                  #   intraday["Capacitance_numeric"] = pd.to_numeric(intraday["Vector_Capacitance"], errors="coerce")
                                         
-                    # Get top 3 positive and negative indices
-                    top_pos = intraday.nlargest(3, "Capacitance_numeric").index
-                    top_neg = intraday.nsmallest(3, "Capacitance_numeric").index
+                  #   # Get top 3 positive and negative indices
+                  #   top_pos = intraday.nlargest(3, "Capacitance_numeric").index
+                  #   top_neg = intraday.nsmallest(3, "Capacitance_numeric").index
                     
-                    # Combine and add ±1 context
-                    all_indices = set()
-                    for idx in list(top_pos) + list(top_neg):
-                        all_indices.update([idx - 1, idx, idx + 1])
+                  #   # Combine and add ±1 context
+                  #   all_indices = set()
+                  #   for idx in list(top_pos) + list(top_neg):
+                  #       all_indices.update([idx - 1, idx, idx + 1])
                     
-                    # Filter valid indices
-                    context_indices = [i for i in all_indices if 0 <= i < len(intraday)]
-                    cap_context_df = intraday.iloc[context_indices].copy()
+                  #   # Filter valid indices
+                  #   context_indices = [i for i in all_indices if 0 <= i < len(intraday)]
+                  #   cap_context_df = intraday.iloc[context_indices].copy()
                     
-                    # Drop NaNs and keep only rows with polarity
-                    cap_context_df = cap_context_df.dropna(subset=["Charge_Polarity", "Cumulative_Unit", "TimeIndex"])
+                  #   # Drop NaNs and keep only rows with polarity
+                  #   cap_context_df = cap_context_df.dropna(subset=["Charge_Polarity", "Cumulative_Unit", "TimeIndex"])
                     
-                    # Plot them
-                    fig_displacement.add_trace(go.Scatter(
-                        x=cap_context_df["TimeIndex"],
-                        y=cap_context_df["Cumulative_Unit"] + 3,
-                        mode="text",
-                        text=cap_context_df["Charge_Polarity"],
-                        textposition="top center",
-                        textfont=dict(size=4),
-                        showlegend=False,
-                        hovertemplate="Charge Polarity: %{text}<br>Time: %{x|%I:%M %p}<extra></extra>",
-                    ))
+                  #   # Plot them
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=cap_context_df["TimeIndex"],
+                  #       y=cap_context_df["Cumulative_Unit"] + 3,
+                  #       mode="text",
+                  #       text=cap_context_df["Charge_Polarity"],
+                  #       textposition="top center",
+                  #       textfont=dict(size=4),
+                  #       showlegend=False,
+                  #       hovertemplate="Charge Polarity: %{text}<br>Time: %{x|%I:%M %p}<extra></extra>",
+                  #   ))
 
 
-                  # Clean up electric force column
-                    intraday["Electric_Force"] = pd.to_numeric(intraday["Electric_Force"], errors='coerce')
+                  # # # Clean up electric force column
+                  # #   intraday["Electric_Force"] = pd.to_numeric(intraday["Electric_Force"], errors='coerce')
                     
-                    # Drop NaNs
-                    valid_force = intraday.dropna(subset=["Electric_Force", "Cumulative_Unit", "Time"])
+                  #   # Drop NaNs
+                  #   valid_force = intraday.dropna(subset=["Electric_Force", "Cumulative_Unit", "Time"])
                     
-                    # Top 3 Positive Forces (🐼)
-                    top3_force_up = valid_force.nlargest(3, "Electric_Force")
+                  #   # Top 3 Positive Forces (🐼)
+                  #   top3_force_up = valid_force.nlargest(3, "Electric_Force")
                     
-                    # Top 3 Negative Forces (🔌)
-                    top3_force_down = valid_force.nsmallest(3, "Electric_Force")
+                  #   # Top 3 Negative Forces (🔌)
+                  #   top3_force_down = valid_force.nsmallest(3, "Electric_Force")
                     
-                    # Plot 🐼 Positive Forces
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_force_up["Time"],
-                        y=top3_force_up["Cumulative_Unit"] + 88,
-                        mode="text",
-                        text=["🐼"] * len(top3_force_up),
-                        textposition="top center",
-                        textfont=dict(size=16),
-                        hovertemplate=(
-                            "🐼 Electric Force Up<br>"
-                            "Time: %{x}<br>"
-                            "Force: %{customdata[0]:.2f}<extra></extra>"
-                        ),
-                        customdata=top3_force_up[["Electric_Force"]],
-                        showlegend=False
-                    ))
+                  #   # Plot 🐼 Positive Forces
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top3_force_up["Time"],
+                  #       y=top3_force_up["Cumulative_Unit"] + 88,
+                  #       mode="text",
+                  #       text=["🐼"] * len(top3_force_up),
+                  #       textposition="top center",
+                  #       textfont=dict(size=16),
+                  #       hovertemplate=(
+                  #           "🐼 Electric Force Up<br>"
+                  #           "Time: %{x}<br>"
+                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
+                  #       ),
+                  #       customdata=top3_force_up[["Electric_Force"]],
+                  #       showlegend=False
+                  #   ))
                     
-                    # Plot 🐻 Negative Forces
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_force_down["Time"],
-                        y=top3_force_down["Cumulative_Unit"] - 88,
-                        mode="text",
-                        text=["🐻"] * len(top3_force_down),
-                        textposition="bottom center",
-                        textfont=dict(size=16),
-                        hovertemplate=(
-                            "🐻 Electric Force Down<br>"
-                            "Time: %{x}<br>"
-                            "Force: %{customdata[0]:.2f}<extra></extra>"
-                        ),
-                        customdata=top3_force_down[["Electric_Force"]],
-                        showlegend=False
-                    ))
+                  #   # Plot 🐻 Negative Forces
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top3_force_down["Time"],
+                  #       y=top3_force_down["Cumulative_Unit"] - 88,
+                  #       mode="text",
+                  #       text=["🐻"] * len(top3_force_down),
+                  #       textposition="bottom center",
+                  #       textfont=dict(size=16),
+                  #       hovertemplate=(
+                  #           "🐻 Electric Force Down<br>"
+                  #           "Time: %{x}<br>"
+                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
+                  #       ),
+                  #       customdata=top3_force_down[["Electric_Force"]],
+                  #       showlegend=False
+                  #   ))
 
 
-                  # Ensure IB_Electric_Force is numeric
-                    intraday["IB_Electric_Force"] = pd.to_numeric(intraday["IB_Electric_Force"], errors='coerce')
+                  # # Ensure IB_Electric_Force is numeric
+                  #   intraday["IB_Electric_Force"] = pd.to_numeric(intraday["IB_Electric_Force"], errors='coerce')
                     
-                    # Drop rows with missing values
-                    valid_ib_force = intraday.dropna(subset=["IB_Electric_Force", "Cumulative_Unit", "Time"])
+                  #   # Drop rows with missing values
+                  #   valid_ib_force = intraday.dropna(subset=["IB_Electric_Force", "Cumulative_Unit", "Time"])
                     
-                    # Top 3 positive and negative
-                    top3_ib_force_up = valid_ib_force.nlargest(3, "IB_Electric_Force")
-                    top3_ib_force_down = valid_ib_force.nsmallest(3, "IB_Electric_Force")
+                  #   # Top 3 positive and negative
+                  #   top3_ib_force_up = valid_ib_force.nlargest(3, "IB_Electric_Force")
+                  #   top3_ib_force_down = valid_ib_force.nsmallest(3, "IB_Electric_Force")
                     
-                    # === 💡 Markers (Top 3 Positive IB Force)
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_ib_force_up["Time"],
-                        y=top3_ib_force_up["Cumulative_Unit"] + 96,
-                        mode="text",
-                        text=["💡"] * len(top3_ib_force_up),
-                        textposition="top center",
-                        textfont=dict(size=18),
-                        showlegend=False,
-                        hovertemplate=(
-                            "💡 IB Electric Force (UP)<br>"
-                            "Time: %{x}<br>"
-                            "Force: %{customdata[0]:.2f}<extra></extra>"
-                        ),
-                        customdata=top3_ib_force_up[["IB_Electric_Force"]].values
-                    ))
+                  #   # === 💡 Markers (Top 3 Positive IB Force)
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top3_ib_force_up["Time"],
+                  #       y=top3_ib_force_up["Cumulative_Unit"] + 96,
+                  #       mode="text",
+                  #       text=["💡"] * len(top3_ib_force_up),
+                  #       textposition="top center",
+                  #       textfont=dict(size=18),
+                  #       showlegend=False,
+                  #       hovertemplate=(
+                  #           "💡 IB Electric Force (UP)<br>"
+                  #           "Time: %{x}<br>"
+                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
+                  #       ),
+                  #       customdata=top3_ib_force_up[["IB_Electric_Force"]].values
+                  #   ))
                     
-                    # === 🕯️ Markers (Top 3 Negative IB Force)
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_ib_force_down["Time"],
-                        y=top3_ib_force_down["Cumulative_Unit"] - 96,
-                        mode="text",
-                        text=["🕯️"] * len(top3_ib_force_down),
-                        textposition="bottom center",
-                        textfont=dict(size=18),
-                        showlegend=False,
-                        hovertemplate=(
-                            "🕯️ IB Electric Force (DOWN)<br>"
-                            "Time: %{x}<br>"
-                            "Force: %{customdata[0]:.2f}<extra></extra>"
-                        ),
-                        customdata=top3_ib_force_down[["IB_Electric_Force"]].values
-                    ))
+                    # # === 🕯️ Markers (Top 3 Negative IB Force)
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top3_ib_force_down["Time"],
+                    #     y=top3_ib_force_down["Cumulative_Unit"] - 96,
+                    #     mode="text",
+                    #     text=["🕯️"] * len(top3_ib_force_down),
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=18),
+                    #     showlegend=False,
+                    #     hovertemplate=(
+                    #         "🕯️ IB Electric Force (DOWN)<br>"
+                    #         "Time: %{x}<br>"
+                    #         "Force: %{customdata[0]:.2f}<extra></extra>"
+                    #     ),
+                    #     customdata=top3_ib_force_down[["IB_Electric_Force"]].values
+                    # ))
                  
-                    fig_displacement.add_trace(go.Scatter(
-                      x=intraday["TimeIndex"],
-                      y=intraday["Kijun_Cumulative"],
-                      mode="lines",
-                      line=dict(color="green", dash="solid", width=1.5),
-                      name="Kijun (Cumulative)",
-                      hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
-                      ))
+                    # fig_displacement.add_trace(go.Scatter(
+                    #   x=intraday["TimeIndex"],
+                    #   y=intraday["Kijun_Cumulative"],
+                    #   mode="lines",
+                    #   line=dict(color="green", dash="solid", width=1.5),
+                    #   name="Kijun (Cumulative)",
+                    #   hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
+                    #   ))
 
 
 
