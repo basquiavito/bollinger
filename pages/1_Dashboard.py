@@ -6283,7 +6283,7 @@ if st.sidebar.button("Run Analysis"):
                     fig.update_xaxes(title_text="Time", row=2, col=1)
                 st.plotly_chart(fig_displacement, use_container_width=True)
 
-                st.plotly_chart(fig, use_container_width=True)
+                # st.plotly_chart(fig, use_container_width=True)
             
                          
                 with st.expander("🧲 Market Capacitance (Charge Storage & Release)", expanded=False):
