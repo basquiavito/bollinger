@@ -5859,258 +5859,258 @@ if st.sidebar.button("Run Analysis"):
                     
 
                   
-                  # Ensure column is numeric
-                    intraday["Vector_Energy_Eff"] = pd.to_numeric(intraday["Vector_Energy_per_3bar_Range"], errors="coerce")
+                  # # Ensure column is numeric
+                  #   intraday["Vector_Energy_Eff"] = pd.to_numeric(intraday["Vector_Energy_per_3bar_Range"], errors="coerce")
                     
-                    # --- Top 3 Most Efficient (🔌) ---
-                    top_eff = intraday.nlargest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
+                  #   # --- Top 3 Most Efficient (🔌) ---
+                  #   top_eff = intraday.nlargest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
                     
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top_eff["Time"],
-                        y=top_eff["Cumulative_Unit"] +64,
-                        mode="text",
-                        text=["🔌"] * len(top_eff),
-                        textposition="top center",
-                        textfont=dict(size=18),
-                        name="High Energy Efficiency",
-                        showlegend=False,
-                        hovertemplate="🔌 Efficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top_eff[["Vector_Energy_Eff"]].values
-                    ))
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top_eff["Time"],
+                  #       y=top_eff["Cumulative_Unit"] +64,
+                  #       mode="text",
+                  #       text=["🔌"] * len(top_eff),
+                  #       textposition="top center",
+                  #       textfont=dict(size=18),
+                  #       name="High Energy Efficiency",
+                  #       showlegend=False,
+                  #       hovertemplate="🔌 Efficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
+                  #       customdata=top_eff[["Vector_Energy_Eff"]].values
+                  #   ))
                     
-                    # --- Bottom 3 Least Efficient (⚠️) ---
-                    bottom_eff = intraday.nsmallest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
+                  #   # --- Bottom 3 Least Efficient (⚠️) ---
+                  #   bottom_eff = intraday.nsmallest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
                     
-                    fig_displacement.add_trace(go.Scatter(
-                        x=bottom_eff["Time"],
-                        y=bottom_eff["Cumulative_Unit"] - 64,
-                        mode="text",
-                        text=["⚠️"] * len(bottom_eff),
-                        textposition="bottom center",
-                        textfont=dict(size=18),
-                        name="Low Energy Efficiency",
-                        showlegend=False,
-                        hovertemplate="⚠️ Inefficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=bottom_eff[["Vector_Energy_Eff"]].values
-                    ))
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=bottom_eff["Time"],
+                  #       y=bottom_eff["Cumulative_Unit"] - 64,
+                  #       mode="text",
+                  #       text=["⚠️"] * len(bottom_eff),
+                  #       textposition="bottom center",
+                  #       textfont=dict(size=18),
+                  #       name="Low Energy Efficiency",
+                  #       showlegend=False,
+                  #       hovertemplate="⚠️ Inefficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
+                  #       customdata=bottom_eff[["Vector_Energy_Eff"]].values
+                  #   ))
 
                   
                   
-                  # Pick the first 🦻🏼 ear row
-                  # === Overlay: 🦻🏼 Ear Line (Top %Vol Bin No Longer Active)
-                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                  # # Pick the first 🦻🏼 ear row
+                  # # === Overlay: 🦻🏼 Ear Line (Top %Vol Bin No Longer Active)
+                  #   ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                     
-                    if not ear_row.empty:
-                        ear_level = ear_row["F% Level"].values[0]
+                  #   if not ear_row.empty:
+                  #       ear_level = ear_row["F% Level"].values[0]
                     
-                        # Find first time this F% Level appeared in intraday
-                        ear_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
-                        ear_row_match = intraday[intraday["TimeIndex"] == ear_time]
+                  #       # Find first time this F% Level appeared in intraday
+                  #       ear_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
+                  #       ear_row_match = intraday[intraday["TimeIndex"] == ear_time]
                     
-                        if not ear_row_match.empty:
-                            ear_unit = ear_row_match["Cumulative_Unit"].values[0]
+                  #       if not ear_row_match.empty:
+                  #           ear_unit = ear_row_match["Cumulative_Unit"].values[0]
                     
-                            fig_displacement.add_hline(
-                                y=ear_unit,
-                                line=dict(color="gray", dash="dot", width=1),
-                                annotation_text="🦻🏼 Volume Memory",
-                                annotation_position="top left",
-                                annotation_font=dict(color="gray", size=13),
-                                opacity=0.5
-                              )
+                  #           fig_displacement.add_hline(
+                  #               y=ear_unit,
+                  #               line=dict(color="gray", dash="dot", width=1),
+                  #               annotation_text="🦻🏼 Volume Memory",
+                  #               annotation_position="top left",
+                  #               annotation_font=dict(color="gray", size=13),
+                  #               opacity=0.5
+                  #             )
                       
                         
-                              # === Overlay: 👃🏽 Nose Line (Top Time Bin)
-                    nose_row = profile_df[profile_df["👃🏽"] == "👃🏽"]
+                  #             # === Overlay: 👃🏽 Nose Line (Top Time Bin)
+                  #   nose_row = profile_df[profile_df["👃🏽"] == "👃🏽"]
                     
-                    if not nose_row.empty:
-                        nose_level = nose_row["F% Level"].values[0]
+                    # if not nose_row.empty:
+                    #     nose_level = nose_row["F% Level"].values[0]
                     
-                        # Find first time this F% Level appeared in intraday
-                        nose_time = intraday.loc[intraday["F_Bin"] == str(nose_level), "TimeIndex"].min()
-                        nose_row_match = intraday[intraday["TimeIndex"] == nose_time]
+                    #     # Find first time this F% Level appeared in intraday
+                    #     nose_time = intraday.loc[intraday["F_Bin"] == str(nose_level), "TimeIndex"].min()
+                    #     nose_row_match = intraday[intraday["TimeIndex"] == nose_time]
                     
-                        if not nose_row_match.empty:
-                            nose_unit = nose_row_match["Cumulative_Unit"].values[0]
+                    #     if not nose_row_match.empty:
+                    #         nose_unit = nose_row_match["Cumulative_Unit"].values[0]
                     
-                            fig_displacement.add_hline(
-                                y=nose_unit,
-                                line=dict(color="lightpink", dash="dot", width=1),
-                                annotation_text="👃🏽 Time Memory",
-                                annotation_position="top left",
-                                annotation_font=dict(color="#0ff", size=13),
-                                opacity=0.5
-                            )
+                    #         fig_displacement.add_hline(
+                    #             y=nose_unit,
+                    #             line=dict(color="lightpink", dash="dot", width=1),
+                    #             annotation_text="👃🏽 Time Memory",
+                    #             annotation_position="top left",
+                    #             annotation_font=dict(color="#0ff", size=13),
+                    #             opacity=0.5
+                    #         )
                     
-                                           # === Plot 🪶 Tail Emoji on Physics Plot (no line)
-                    tail_rows = profile_df[profile_df["Tail"] == "🪶"]
+                    #                        # === Plot 🪶 Tail Emoji on Physics Plot (no line)
+                    # tail_rows = profile_df[profile_df["Tail"] == "🪶"]
                     
-                    for _, row in tail_rows.iterrows():
-                        tail_level = row["F% Level"]
+                    # for _, row in tail_rows.iterrows():
+                    #     tail_level = row["F% Level"]
                     
-                        # Match first appearance in intraday
-                        time_index = intraday.loc[intraday["F_Bin"] == str(tail_level), "TimeIndex"].min()
-                        match_row = intraday[intraday["TimeIndex"] == time_index]
+                    #     # Match first appearance in intraday
+                    #     time_index = intraday.loc[intraday["F_Bin"] == str(tail_level), "TimeIndex"].min()
+                    #     match_row = intraday[intraday["TimeIndex"] == time_index]
                     
-                        if not match_row.empty:
-                            y_val = match_row["Cumulative_Unit"].values[0]
+                    #     if not match_row.empty:
+                    #         y_val = match_row["Cumulative_Unit"].values[0]
                     
-                            fig_displacement.add_trace(go.Scatter(
-                                x=[time_index],
-                                y=[y_val],
-                                mode="text",
-                                text=["🪶"],
-                                textposition="middle center",
-                                textfont=dict(size=20),
-                                hovertemplate=(
-                                    f"🪶 Tail (Single Letter)<br>Level: {tail_level}<br>Time: {row['Time']}<extra></extra>"
-                                ),
-                                showlegend=False
-                            ))
+                    #         fig_displacement.add_trace(go.Scatter(
+                    #             x=[time_index],
+                    #             y=[y_val],
+                    #             mode="text",
+                    #             text=["🪶"],
+                    #             textposition="middle center",
+                    #             textfont=dict(size=20),
+                    #             hovertemplate=(
+                    #                 f"🪶 Tail (Single Letter)<br>Level: {tail_level}<br>Time: {row['Time']}<extra></extra>"
+                    #             ),
+                    #             showlegend=False
+                    #         ))
                  
                                                            
 
-       # === Overlay: IB High as Resistance in Cumulative Unit Space ===
-                    ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
-                    ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
+       # # === Overlay: IB High as Resistance in Cumulative Unit Space ===
+       #              ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
+       #              ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
                     
-                    if not ib_high_row.empty:
-                        ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
+       #              if not ib_high_row.empty:
+       #                  ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
                     
-                        fig_displacement.add_hline(
-                            y=ib_high_unit,
-                            line=dict(color="gold", dash="dash", width=1),
-                            annotation_text="💸 IB High",
-                            annotation_position="top left",
-                            annotation_font=dict(color="gold", size=13),
-                            opacity=0.6
-                        )
+       #                  fig_displacement.add_hline(
+       #                      y=ib_high_unit,
+       #                      line=dict(color="gold", dash="dash", width=1),
+       #                      annotation_text="💸 IB High",
+       #                      annotation_position="top left",
+       #                      annotation_font=dict(color="gold", size=13),
+       #                      opacity=0.6
+       #                  )
 
 
 
-                                      # === Overlay: IB Low as Support in Cumulative Unit Space ===
-                    ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
-                    ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
+       #                                # === Overlay: IB Low as Support in Cumulative Unit Space ===
+       #              ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
+       #              ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
                     
-                    if not ib_low_row.empty:
-                        ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
+       #              if not ib_low_row.empty:
+       #                  ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
                     
-                        fig_displacement.add_hline(
-                            y=ib_low_unit,
-                            line=dict(color="gold", dash="dash", width=1),
-                            annotation_text="🧧 IB Low",
-                            annotation_position="bottom left",
-                            annotation_font=dict(color="gold", size=13),
-                            opacity=0.6
-                        )
-                    # Convert power column to numeric just in case
-                    intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
+       #                  fig_displacement.add_hline(
+       #                      y=ib_low_unit,
+       #                      line=dict(color="gold", dash="dash", width=1),
+       #                      annotation_text="🧧 IB Low",
+       #                      annotation_position="bottom left",
+       #                      annotation_font=dict(color="gold", size=13),
+       #                      opacity=0.6
+       #                  )
+       #              # Convert power column to numeric just in case
+       #              intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
                     
-                    # Drop NaNs
-                    valid_power = intraday.dropna(subset=["Power_numeric", "Cumulative_Unit", "Time"])
+       #              # Drop NaNs
+       #              valid_power = intraday.dropna(subset=["Power_numeric", "Cumulative_Unit", "Time"])
                     
-                    # Top 3 positive power
-                    top3_power_up = valid_power.nlargest(3, "Power_numeric")
+       #              # Top 3 positive power
+       #              top3_power_up = valid_power.nlargest(3, "Power_numeric")
                     
-                    # Top 3 negative power
-                    top3_power_down = valid_power.nsmallest(3, "Power_numeric")
+       #              # Top 3 negative power
+       #              top3_power_down = valid_power.nsmallest(3, "Power_numeric")
                     
-                    # === 🔷 Top 3 Power Surges ===
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_power_up["Time"],
-                        y=top3_power_up["Cumulative_Unit"] + 72,
-                        mode="text",
-                        text=["🔷"] * len(top3_power_up),
-                        textposition="top center",
-                        textfont=dict(size=16),
-                        showlegend=False,
-                        hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top3_power_up[["Power_numeric"]].values
-                    ))
+       #              # === 🔷 Top 3 Power Surges ===
+       #              fig_displacement.add_trace(go.Scatter(
+       #                  x=top3_power_up["Time"],
+       #                  y=top3_power_up["Cumulative_Unit"] + 72,
+       #                  mode="text",
+       #                  text=["🔷"] * len(top3_power_up),
+       #                  textposition="top center",
+       #                  textfont=dict(size=16),
+       #                  showlegend=False,
+       #                  hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
+       #                  customdata=top3_power_up[["Power_numeric"]].values
+       #              ))
                     
-                    # === 🔶 Top 3 Power Drops ===
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_power_down["Time"],
-                        y=top3_power_down["Cumulative_Unit"] - 104,
-                        mode="text",
-                        text=["🔶"] * len(top3_power_down),
-                        textposition="bottom center",
-                        textfont=dict(size=16),
-                        showlegend=False,
-                        hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top3_power_down[["Power_numeric"]].values
-                    ))
+       #              # === 🔶 Top 3 Power Drops ===
+       #              fig_displacement.add_trace(go.Scatter(
+       #                  x=top3_power_down["Time"],
+       #                  y=top3_power_down["Cumulative_Unit"] - 104,
+       #                  mode="text",
+       #                  text=["🔶"] * len(top3_power_down),
+       #                  textposition="bottom center",
+       #                  textfont=dict(size=16),
+       #                  showlegend=False,
+       #                  hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
+       #                  customdata=top3_power_down[["Power_numeric"]].values
+       #              ))
                     
-                    # Ensure numeric and drop invalids
-                    intraday["Wave_Intensity"] = pd.to_numeric(intraday["Wave_Intensity"], errors="coerce")
-                    valid_intensity = intraday.dropna(subset=["Wave_Intensity", "Cumulative_Unit", "TimeIndex"])
+       #              # Ensure numeric and drop invalids
+       #              intraday["Wave_Intensity"] = pd.to_numeric(intraday["Wave_Intensity"], errors="coerce")
+       #              valid_intensity = intraday.dropna(subset=["Wave_Intensity", "Cumulative_Unit", "TimeIndex"])
                     
-                    # Top 3 positive intensity spikes (🌟)
-                    top3_intensity_up = valid_intensity.nlargest(3, "Wave_Intensity")
+       #              # Top 3 positive intensity spikes (🌟)
+       #              top3_intensity_up = valid_intensity.nlargest(3, "Wave_Intensity")
                     
-                    # Top 3 negative (low intensity zones – 🫧)
-                    top3_intensity_down = valid_intensity.nsmallest(3, "Wave_Intensity")
+       #              # Top 3 negative (low intensity zones – 🫧)
+       #              top3_intensity_down = valid_intensity.nsmallest(3, "Wave_Intensity")
                     
-                    # 🌟 High Intensity markers
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_intensity_up["TimeIndex"],
-                        y=top3_intensity_up["Cumulative_Unit"] + 104,
-                        mode="text",
-                        text=["🌟"] * len(top3_intensity_up),
-                        textposition="top center",
-                        textfont=dict(size=18),
-                        showlegend=False,
-                        hovertemplate="🌟 Intensity Spike<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top3_intensity_up[["Wave_Intensity"]].values
-                    ))
+       #              # 🌟 High Intensity markers
+       #              fig_displacement.add_trace(go.Scatter(
+       #                  x=top3_intensity_up["TimeIndex"],
+       #                  y=top3_intensity_up["Cumulative_Unit"] + 104,
+       #                  mode="text",
+       #                  text=["🌟"] * len(top3_intensity_up),
+       #                  textposition="top center",
+       #                  textfont=dict(size=18),
+       #                  showlegend=False,
+       #                  hovertemplate="🌟 Intensity Spike<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
+       #                  customdata=top3_intensity_up[["Wave_Intensity"]].values
+       #              ))
                     
-                    # 🫧 Low Intensity markers
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_intensity_down["TimeIndex"],
-                        y=top3_intensity_down["Cumulative_Unit"] - 48,
-                        mode="text",
-                        text=["🫧"] * len(top3_intensity_down),
-                        textposition="bottom center",
-                        textfont=dict(size=18),
-                        showlegend=False,
-                        hovertemplate="🫧 Weak Intensity<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top3_intensity_down[["Wave_Intensity"]].values
-                    ))
+       #              # 🫧 Low Intensity markers
+       #              fig_displacement.add_trace(go.Scatter(
+       #                  x=top3_intensity_down["TimeIndex"],
+       #                  y=top3_intensity_down["Cumulative_Unit"] - 48,
+       #                  mode="text",
+       #                  text=["🫧"] * len(top3_intensity_down),
+       #                  textposition="bottom center",
+       #                  textfont=dict(size=18),
+       #                  showlegend=False,
+       #                  hovertemplate="🫧 Weak Intensity<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
+       #                  customdata=top3_intensity_down[["Wave_Intensity"]].values
+       #              ))
                     
 
-                                      # Drop NaNs or invalid entries
-                    valid_capacitance = intraday.dropna(subset=["Vector_Capacitance"])
+       #                                # Drop NaNs or invalid entries
+       #              valid_capacitance = intraday.dropna(subset=["Vector_Capacitance"])
                     
-                    # Top 3 positive Capacitance (high potential for breakout pressure being stored)
-                    top3_cap_up = valid_capacitance.nlargest(3, "Vector_Capacitance")
+       #              # Top 3 positive Capacitance (high potential for breakout pressure being stored)
+       #              top3_cap_up = valid_capacitance.nlargest(3, "Vector_Capacitance")
                     
-                    # Top 3 negative Capacitance (possibly reactive rejection or imbalance)
-                    top3_cap_down = valid_capacitance.nsmallest(3, "Vector_Capacitance")
-                    # ⚡ High Capacitance markers (storage building)
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_cap_up["TimeIndex"],
-                        y=top3_cap_up["Cumulative_Unit"] + 80,
-                        mode="text",
-                        text=["🧲"] * len(top3_cap_up),
-                        textposition="top center",
-                        textfont=dict(size=18),
-                        showlegend=False,
-                        hovertemplate="🧲 High Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top3_cap_up[["Vector_Capacitance"]].values
-                    ))
+       #              # Top 3 negative Capacitance (possibly reactive rejection or imbalance)
+       #              top3_cap_down = valid_capacitance.nsmallest(3, "Vector_Capacitance")
+       #              # ⚡ High Capacitance markers (storage building)
+       #              fig_displacement.add_trace(go.Scatter(
+       #                  x=top3_cap_up["TimeIndex"],
+       #                  y=top3_cap_up["Cumulative_Unit"] + 80,
+       #                  mode="text",
+       #                  text=["🧲"] * len(top3_cap_up),
+       #                  textposition="top center",
+       #                  textfont=dict(size=18),
+       #                  showlegend=False,
+       #                  hovertemplate="🧲 High Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
+       #                  customdata=top3_cap_up[["Vector_Capacitance"]].values
+       #              ))
                     
-                    # 🪹 Low Capacitance markers (release, unstable)
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_cap_down["TimeIndex"],
-                        y=top3_cap_down["Cumulative_Unit"] - 80,
-                        mode="text",
-                        text=["🪹"] * len(top3_cap_down),
-                        textposition="bottom center",
-                        textfont=dict(size=18),
-                        showlegend=False,
-                        hovertemplate="🪹 Low Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top3_cap_down[["Vector_Capacitance"]].values
-                    ))
+       #              # 🪹 Low Capacitance markers (release, unstable)
+       #              fig_displacement.add_trace(go.Scatter(
+       #                  x=top3_cap_down["TimeIndex"],
+       #                  y=top3_cap_down["Cumulative_Unit"] - 80,
+       #                  mode="text",
+       #                  text=["🪹"] * len(top3_cap_down),
+       #                  textposition="bottom center",
+       #                  textfont=dict(size=18),
+       #                  showlegend=False,
+       #                  hovertemplate="🪹 Low Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
+       #                  customdata=top3_cap_down[["Vector_Capacitance"]].values
+       #              ))
 
                     
                                         # Ensure Capacitance is numeric
