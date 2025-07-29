@@ -4735,11 +4735,59 @@ if st.sidebar.button("Run Analysis"):
 
                 
                
+                
+                def compute_ib_volume_weights(intraday, ib_high, ib_low):
+                    """
+                    Split the Initial Balance range into 3 equal compartments: Cellar, Core, Loft.
+                    For each, compute:
+                      - Total volume
+                      - Volume per area (pressure)
+                      - Weight (assuming unit gravity, w = mg)
+                    """
+                    df = intraday.copy()
+                    
+                    # Define IB levels
+                    ib_range = ib_high - ib_low
+                    third = ib_range / 3
+                
+                    # Define compartment boundaries
+                    cellar_top = ib_low + third
+                    core_top = ib_low + 2 * third
+                
+                    # Tag zones
+                    def tag_zone(row):
+                        price = row["Close"]
+                        if price < cellar_top:
+                            return "Cellar"
+                        elif price < core_top:
+                            return "Core"
+                        else:
+                            return "Loft"
+                
+                    df["IB_Zone"] = df.apply(tag_zone, axis=1)
+                
+                    # Compute zone stats
+                    zone_stats = df.groupby("IB_Zone")["Volume"].agg(
+                        Total_Volume="sum",
+                        Bar_Count="count"
+                    ).reset_index()
+                
+                    # Assume equal area for all zones
+                    zone_stats["Area"] = 1  # normalized
+                
+                    # Volume per area = pressure
+                    zone_stats["Volume_Pressure"] = zone_stats["Total_Volume"] / zone_stats["Area"]
+                
+                    # Weight (w = m * g); here mass ~ volume, and gravity g = 1
+                    zone_stats["Weight"] = zone_stats["Total_Volume"]  # since g = 1
+                
+                    return zone_stats
 
 
-
-
-
+                    ib_stats = compute_ib_volume_weights(intraday, ib_high=ib_high, ib_low=ib_low)
+                    st.dataframe(ib_stats)
+                    
+                    
 
 
 
