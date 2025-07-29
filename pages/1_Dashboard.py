@@ -5112,9 +5112,6 @@ if st.sidebar.button("Run Analysis"):
                         return zone_stats
   
                   ib_stats = compute_ib_volume_weights(intraday, ib_high=ib_high, ib_low=ib_low)
-                  st.dataframe(ib_stats)
-        
-          
                 
 
 
@@ -5175,7 +5172,15 @@ if st.sidebar.button("Run Analysis"):
                           above = False
 
 
-              
+                # --- Display inside an Expander ---
+                  with st.expander("🏛️ Initial Balance Volume Control Chambers", expanded=False):
+                      st.dataframe(ib_stats.style.format({
+                          "Total_Volume": "{:,.0f}",
+                          "Volume_Pressure": "{:,.2f}",
+                          "Weight": "{:,.0f}"
+                      }))        
+                            
+                
                   with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
                       # Detect price column
