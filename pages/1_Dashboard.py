@@ -5881,40 +5881,40 @@ if st.sidebar.button("Run Analysis"):
                     
 
                   
-                  # # Ensure column is numeric
-                  #   intraday["Vector_Energy_Eff"] = pd.to_numeric(intraday["Vector_Energy_per_3bar_Range"], errors="coerce")
+                  # Ensure column is numeric
+                    intraday["Vector_Energy_Eff"] = pd.to_numeric(intraday["Vector_Energy_per_3bar_Range"], errors="coerce")
                     
-                  #   # --- Top 3 Most Efficient (🔌) ---
-                  #   top_eff = intraday.nlargest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
+                    # --- Top 3 Most Efficient (🔌) ---
+                    top_eff = intraday.nlargest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
                     
-                  #   fig_displacement.add_trace(go.Scatter(
-                  #       x=top_eff["Time"],
-                  #       y=top_eff["Cumulative_Unit"] +64,
-                  #       mode="text",
-                  #       text=["🔌"] * len(top_eff),
-                  #       textposition="top center",
-                  #       textfont=dict(size=18),
-                  #       name="High Energy Efficiency",
-                  #       showlegend=False,
-                  #       hovertemplate="🔌 Efficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
-                  #       customdata=top_eff[["Vector_Energy_Eff"]].values
-                  #   ))
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_eff["Time"],
+                        y=top_eff["Cumulative_Unit"] +64,
+                        mode="text",
+                        text=["🔌"] * len(top_eff),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="High Energy Efficiency",
+                        showlegend=False,
+                        hovertemplate="🔌 Efficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top_eff[["Vector_Energy_Eff"]].values
+                    ))
                     
-                  #   # --- Bottom 3 Least Efficient (⚠️) ---
-                  #   bottom_eff = intraday.nsmallest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
+                    # --- Bottom 3 Least Efficient (⚠️) ---
+                    bottom_eff = intraday.nsmallest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
                     
-                  #   fig_displacement.add_trace(go.Scatter(
-                  #       x=bottom_eff["Time"],
-                  #       y=bottom_eff["Cumulative_Unit"] - 64,
-                  #       mode="text",
-                  #       text=["⚠️"] * len(bottom_eff),
-                  #       textposition="bottom center",
-                  #       textfont=dict(size=18),
-                  #       name="Low Energy Efficiency",
-                  #       showlegend=False,
-                  #       hovertemplate="⚠️ Inefficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
-                  #       customdata=bottom_eff[["Vector_Energy_Eff"]].values
-                  #   ))
+                    fig_displacement.add_trace(go.Scatter(
+                        x=bottom_eff["Time"],
+                        y=bottom_eff["Cumulative_Unit"] - 64,
+                        mode="text",
+                        text=["⚠️"] * len(bottom_eff),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        name="Low Energy Efficiency",
+                        showlegend=False,
+                        hovertemplate="⚠️ Inefficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=bottom_eff[["Vector_Energy_Eff"]].values
+                    ))
 
                   
                   
