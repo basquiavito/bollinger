@@ -5896,113 +5896,113 @@ if st.sidebar.button("Run Analysis"):
 
                   
                   
-                  # # Pick the first 🦻🏼 ear row
-                  # # === Overlay: 🦻🏼 Ear Line (Top %Vol Bin No Longer Active)
-                  #   ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                  # Pick the first 🦻🏼 ear row
+                  # === Overlay: 🦻🏼 Ear Line (Top %Vol Bin No Longer Active)
+                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                     
-                  #   if not ear_row.empty:
-                  #       ear_level = ear_row["F% Level"].values[0]
+                    if not ear_row.empty:
+                        ear_level = ear_row["F% Level"].values[0]
                     
-                  #       # Find first time this F% Level appeared in intraday
-                  #       ear_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
-                  #       ear_row_match = intraday[intraday["TimeIndex"] == ear_time]
+                        # Find first time this F% Level appeared in intraday
+                        ear_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
+                        ear_row_match = intraday[intraday["TimeIndex"] == ear_time]
                     
-                  #       if not ear_row_match.empty:
-                  #           ear_unit = ear_row_match["Cumulative_Unit"].values[0]
+                        if not ear_row_match.empty:
+                            ear_unit = ear_row_match["Cumulative_Unit"].values[0]
                     
-                  #           fig_displacement.add_hline(
-                  #               y=ear_unit,
-                  #               line=dict(color="gray", dash="dot", width=1),
-                  #               annotation_text="🦻🏼 Volume Memory",
-                  #               annotation_position="top left",
-                  #               annotation_font=dict(color="gray", size=13),
-                  #               opacity=0.5
-                  #             )
+                            fig_displacement.add_hline(
+                                y=ear_unit,
+                                line=dict(color="gray", dash="dot", width=1),
+                                annotation_text="🦻🏼 Volume Memory",
+                                annotation_position="top left",
+                                annotation_font=dict(color="gray", size=13),
+                                opacity=0.5
+                              )
                       
                         
-                  #             # === Overlay: 👃🏽 Nose Line (Top Time Bin)
-                  #   nose_row = profile_df[profile_df["👃🏽"] == "👃🏽"]
+                              # === Overlay: 👃🏽 Nose Line (Top Time Bin)
+                    nose_row = profile_df[profile_df["👃🏽"] == "👃🏽"]
                     
-                    # if not nose_row.empty:
-                    #     nose_level = nose_row["F% Level"].values[0]
+                    if not nose_row.empty:
+                        nose_level = nose_row["F% Level"].values[0]
                     
-                    #     # Find first time this F% Level appeared in intraday
-                    #     nose_time = intraday.loc[intraday["F_Bin"] == str(nose_level), "TimeIndex"].min()
-                    #     nose_row_match = intraday[intraday["TimeIndex"] == nose_time]
+                        # Find first time this F% Level appeared in intraday
+                        nose_time = intraday.loc[intraday["F_Bin"] == str(nose_level), "TimeIndex"].min()
+                        nose_row_match = intraday[intraday["TimeIndex"] == nose_time]
                     
-                    #     if not nose_row_match.empty:
-                    #         nose_unit = nose_row_match["Cumulative_Unit"].values[0]
+                        if not nose_row_match.empty:
+                            nose_unit = nose_row_match["Cumulative_Unit"].values[0]
                     
-                    #         fig_displacement.add_hline(
-                    #             y=nose_unit,
-                    #             line=dict(color="lightpink", dash="dot", width=1),
-                    #             annotation_text="👃🏽 Time Memory",
-                    #             annotation_position="top left",
-                    #             annotation_font=dict(color="#0ff", size=13),
-                    #             opacity=0.5
-                    #         )
+                            fig_displacement.add_hline(
+                                y=nose_unit,
+                                line=dict(color="lightpink", dash="dot", width=1),
+                                annotation_text="👃🏽 Time Memory",
+                                annotation_position="top left",
+                                annotation_font=dict(color="#0ff", size=13),
+                                opacity=0.5
+                            )
                     
-                    #                        # === Plot 🪶 Tail Emoji on Physics Plot (no line)
-                    # tail_rows = profile_df[profile_df["Tail"] == "🪶"]
+                                           # === Plot 🪶 Tail Emoji on Physics Plot (no line)
+                    tail_rows = profile_df[profile_df["Tail"] == "🪶"]
                     
-                    # for _, row in tail_rows.iterrows():
-                    #     tail_level = row["F% Level"]
+                    for _, row in tail_rows.iterrows():
+                        tail_level = row["F% Level"]
                     
-                    #     # Match first appearance in intraday
-                    #     time_index = intraday.loc[intraday["F_Bin"] == str(tail_level), "TimeIndex"].min()
-                    #     match_row = intraday[intraday["TimeIndex"] == time_index]
+                        # Match first appearance in intraday
+                        time_index = intraday.loc[intraday["F_Bin"] == str(tail_level), "TimeIndex"].min()
+                        match_row = intraday[intraday["TimeIndex"] == time_index]
                     
-                    #     if not match_row.empty:
-                    #         y_val = match_row["Cumulative_Unit"].values[0]
+                        if not match_row.empty:
+                            y_val = match_row["Cumulative_Unit"].values[0]
                     
-                    #         fig_displacement.add_trace(go.Scatter(
-                    #             x=[time_index],
-                    #             y=[y_val],
-                    #             mode="text",
-                    #             text=["🪶"],
-                    #             textposition="middle center",
-                    #             textfont=dict(size=20),
-                    #             hovertemplate=(
-                    #                 f"🪶 Tail (Single Letter)<br>Level: {tail_level}<br>Time: {row['Time']}<extra></extra>"
-                    #             ),
-                    #             showlegend=False
-                    #         ))
+                            fig_displacement.add_trace(go.Scatter(
+                                x=[time_index],
+                                y=[y_val],
+                                mode="text",
+                                text=["🪶"],
+                                textposition="middle center",
+                                textfont=dict(size=20),
+                                hovertemplate=(
+                                    f"🪶 Tail (Single Letter)<br>Level: {tail_level}<br>Time: {row['Time']}<extra></extra>"
+                                ),
+                                showlegend=False
+                            ))
                  
                                                            
 
-       # # === Overlay: IB High as Resistance in Cumulative Unit Space ===
-       #              ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
-       #              ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
+       # === Overlay: IB High as Resistance in Cumulative Unit Space ===
+                    ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
+                    ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
                     
-       #              if not ib_high_row.empty:
-       #                  ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
+                    if not ib_high_row.empty:
+                        ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
                     
-       #                  fig_displacement.add_hline(
-       #                      y=ib_high_unit,
-       #                      line=dict(color="gold", dash="dash", width=1),
-       #                      annotation_text="💸 IB High",
-       #                      annotation_position="top left",
-       #                      annotation_font=dict(color="gold", size=13),
-       #                      opacity=0.6
-       #                  )
+                        fig_displacement.add_hline(
+                            y=ib_high_unit,
+                            line=dict(color="gold", dash="dash", width=1),
+                            annotation_text="💸 IB High",
+                            annotation_position="top left",
+                            annotation_font=dict(color="gold", size=13),
+                            opacity=0.6
+                        )
 
 
 
-       #                                # === Overlay: IB Low as Support in Cumulative Unit Space ===
-       #              ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
-       #              ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
+                                      # === Overlay: IB Low as Support in Cumulative Unit Space ===
+                    ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
+                    ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
                     
-       #              if not ib_low_row.empty:
-       #                  ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
+                    if not ib_low_row.empty:
+                        ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
                     
-       #                  fig_displacement.add_hline(
-       #                      y=ib_low_unit,
-       #                      line=dict(color="gold", dash="dash", width=1),
-       #                      annotation_text="🧧 IB Low",
-       #                      annotation_position="bottom left",
-       #                      annotation_font=dict(color="gold", size=13),
-       #                      opacity=0.6
-       #                  )
+                        fig_displacement.add_hline(
+                            y=ib_low_unit,
+                            line=dict(color="gold", dash="dash", width=1),
+                            annotation_text="🧧 IB Low",
+                            annotation_position="bottom left",
+                            annotation_font=dict(color="gold", size=13),
+                            opacity=0.6
+                        )
        #              # Convert power column to numeric just in case
        #              intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
                     
