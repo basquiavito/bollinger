@@ -754,7 +754,7 @@ if st.sidebar.button("Run Analysis"):
                 # ✅ Apply to your dataframe
                 intraday = add_integrated_unit_acceleration(intraday)
 
-                def detect_acceleration_bursts(df, column="Acceleration", window=9, accel_threshold=15):
+                def detect_acceleration_bursts(df, column="Acceleration", window=5, accel_threshold=15):
                     """
                     Detects clusters of acceleration bursts.
                     Flags 🔥 if ≥3 of the last `window` acceleration values exceed `accel_threshold`.
@@ -772,7 +772,7 @@ if st.sidebar.button("Run Analysis"):
                     # Rolling window cluster logic
                     for i in range(window, len(df)):
                         recent = df["Accel_Spike"].iloc[i - window:i]
-                        if recent.sum() >= 4:
+                        if recent.sum() >= 5:
                             df.at[df.index[i], "Acceleration_Alert"] = "🔥"
                 
                     return df
