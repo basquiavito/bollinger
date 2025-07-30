@@ -831,8 +831,26 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_dual_jerk(intraday)
 
-
+                def detect_jerk_bursts(df, column="Jerk_Unit", window=5, jerk_threshold=10, min_spikes=3):
+                    """
+                    Fires 🔧 when ≥`min_spikes` of last `window` jerk values exceed `jerk_threshold`
+                    """
+                    if column not in df.columns:
+                        return df
                 
+                    df["Jerk_Alert"] = ""
+                
+                    jerk_vals = df[column].fillna(0).astype(float)
+                    df["Jerk_Spike"] = jerk_vals.abs() >= jerk_threshold
+                
+                    for i in range(window, len(df)):
+                        if df["Jerk_Spike"].iloc[i - window:i].sum() >= min_spikes:
+                            df.at[df.index[i], "Jerk_Alert"] = "🔧"
+                
+                    return df
+                intraday = detect_jerk_bursts(intraday)
+
+                                
                                  
         
                 def add_market_capacitance(df):
@@ -4783,7 +4801,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","Volatility_Composite","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Volatility_Composite","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Jerk_Alert","Jerk_Spike","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
