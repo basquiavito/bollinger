@@ -831,23 +831,25 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_dual_jerk(intraday)
 
-                def detect_jerk_bursts(df, column="Jerk_Unit", window=5, jerk_threshold=10, min_spikes=3):
-                    """
-                    Fires 🔧 when ≥`min_spikes` of last `window` jerk values exceed `jerk_threshold`
-                    """
-                    if column not in df.columns:
-                        return df
-                
-                    df["Jerk_Alert"] = ""
-                
-                    jerk_vals = df[column].fillna(0).astype(float)
-                    df["Jerk_Spike"] = jerk_vals.abs() >= jerk_threshold
-                
-                    for i in range(window, len(df)):
-                        if df["Jerk_Spike"].iloc[i - window:i].sum() >= min_spikes:
-                            df.at[df.index[i], "Jerk_Alert"] = "🔧"
-                
-                    return df
+                 def detect_jerk_bee(df, column="Jerk_Unit", window=5, threshold=15, min_spikes=3):
+                      """
+                      Mimics 🐝 logic for jerk bursts.
+                      Flags 🔧 when ≥ min_spikes of last `window` jerk values exceed `threshold`.
+                      """
+                      if column not in df.columns:
+                          return df
+                  
+                      df["Jerk_Alert"] = ""
+                      jerk_vals = df[column].fillna(0).astype(float)
+                      df["Jerk_Spike"] = jerk_vals.abs() >= threshold
+                  
+                      for i in range(window, len(df)):
+                          recent = df["Jerk_Spike"].iloc[i - window:i]
+                          if recent.sum() >= min_spikes:
+                              df.at[df.index[i], "Jerk_Alert"] = "🔧"
+                  
+                      return df
+
                 intraday = detect_jerk_bursts(intraday)
 
                                 
