@@ -6276,34 +6276,7 @@ if st.sidebar.button("Run Analysis"):
                 # st.plotly_chart(fig, use_container_width=True)
             
                          
-                with st.expander("🧲 Market Capacitance (Charge Storage & Release)", expanded=False):
-      
-                      fig_capacitance = go.Figure()
-                  
-                      fig_capacitance.add_trace(go.Scatter(
-                          x=intraday["TimeIndex"],
-                          y=intraday["Vector_Capacitance"].rolling(window=3, min_periods=1).mean(),  # Smooth with rolling average
-                          mode="lines",
-                          name="Vector Capacitance",
-                          line=dict(color="orange", width=2),
-                          fill='tozeroy',
-                          hovertemplate="Time: %{x}<br>Capacitance: %{y:.2f}<extra></extra>"
-                      ))
-                  
-                      fig_capacitance.update_layout(
-                          height=300,
-                          title="🧲 Capacitance (Market Charge)",
-                          plot_bgcolor="black",
-                          paper_bgcolor="black",
-                          font=dict(color="white"),
-                          xaxis=dict(title="Time"),
-                          yaxis=dict(title="Capacitance"),
-                          margin=dict(t=40, b=40),
-                          showlegend=True
-                      )
-                  
-                st.plotly_chart(fig_capacitance, use_container_width=True)
-                
+           
 
                 # with st.expander("📉 Volatility Composite (Smoothed)", expanded=False):
                 #           fig_volatility = go.Figure()
@@ -8800,7 +8773,34 @@ if st.sidebar.button("Run Analysis"):
            
                 
 
-
+                with st.expander("🧲 Market Capacitance (Charge Storage & Release)", expanded=False):
+      
+                      fig_capacitance = go.Figure()
+                  
+                      fig_capacitance.add_trace(go.Scatter(
+                          x=intraday["TimeIndex"],
+                          y=intraday["Vector_Capacitance"].rolling(window=3, min_periods=1).mean(),  # Smooth with rolling average
+                          mode="lines",
+                          name="Vector Capacitance",
+                          line=dict(color="orange", width=2),
+                          fill='tozeroy',
+                          hovertemplate="Time: %{x}<br>Capacitance: %{y:.2f}<extra></extra>"
+                      ))
+                  
+                      fig_capacitance.update_layout(
+                          height=300,
+                          title="🧲 Capacitance (Market Charge)",
+                          plot_bgcolor="black",
+                          paper_bgcolor="black",
+                          font=dict(color="white"),
+                          xaxis=dict(title="Time"),
+                          yaxis=dict(title="Capacitance"),
+                          margin=dict(t=40, b=40),
+                          showlegend=True
+                      )
+                  
+                st.plotly_chart(fig_capacitance, use_container_width=True)
+                
           
 
 
