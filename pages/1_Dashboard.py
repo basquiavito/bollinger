@@ -831,7 +831,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_dual_jerk(intraday)
 
-                 def detect_jerk_bee(df, column="Jerk_Unit", window=5, threshold=15, min_spikes=3):
+                def detect_jerk_bee(df, column="Jerk_Unit", window=5, threshold=15, min_spikes=3):
                       """
                       Mimics 🐝 logic for jerk bursts.
                       Flags 🔧 when ≥ min_spikes of last `window` jerk values exceed `threshold`.
