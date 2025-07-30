@@ -5791,50 +5791,50 @@ if st.sidebar.button("Run Analysis"):
                     ))
                     
                                         
-                    #             # Ensure Vector Force is numeric (convert errors to NaN, then drop)
-                    # intraday["Vector Force Clean"] = pd.to_numeric(intraday["Vector Force"], errors="coerce")
+                                # Ensure Vector Force is numeric (convert errors to NaN, then drop)
+                    intraday["Vector Force Clean"] = pd.to_numeric(intraday["Vector Force"], errors="coerce")
                     
-                    # # Top 3 positive
-                    # top_positive_force = intraday.dropna(subset=["Vector Force Clean"]).nlargest(3, "Vector Force Clean")
+                    # Top 3 positive
+                    top_positive_force = intraday.dropna(subset=["Vector Force Clean"]).nlargest(3, "Vector Force Clean")
                     
-                    # # Top 3 negative
-                    # top_negative_force = intraday.dropna(subset=["Vector Force Clean"]).nsmallest(3, "Vector Force Clean")
+                    # Top 3 negative
+                    top_negative_force = intraday.dropna(subset=["Vector Force Clean"]).nsmallest(3, "Vector Force Clean")
                     
-                    #                     # Plotting 💪🏼 markers (top 3 positive)
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=top_positive_force["Time"],
-                    #     y=top_positive_force["Cumulative_Unit"] + 32,
-                    #     mode="text",
-                    #     text=["💪🏼"] * 3,
-                    #     textposition="top center",
-                    #     textfont=dict(size=18),
-                    #     showlegend=False,
-                    #     name="Top Force Up",
-                    #     customdata=top_positive_force[["Vector Force Clean"]],
-                    #     hovertemplate=(
-                    #         "💪🏼 Explosion Up<br>"
-                    #         "Time: %{x|%I:%M %p}<br>"
-                    #         "Force: %{customdata[0]:.1f}<extra></extra>"
-                    #     )
-                    # ))
+                                        # Plotting 💪🏼 markers (top 3 positive)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_positive_force["Time"],
+                        y=top_positive_force["Cumulative_Unit"] + 32,
+                        mode="text",
+                        text=["💪🏼"] * 3,
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        name="Top Force Up",
+                        customdata=top_positive_force[["Vector Force Clean"]],
+                        hovertemplate=(
+                            "💪🏼 Explosion Up<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Force: %{customdata[0]:.1f}<extra></extra>"
+                        )
+                    ))
                     
-                    # # Plotting 🦾 markers (top 3 negative)
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=top_negative_force["Time"],
-                    #     y=top_negative_force["Cumulative_Unit"] - 32,
-                    #     mode="text",
-                    #     text=["🦾"] * 3,
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=18),
-                    #     showlegend=False,
-                    #     name="Top Force Down",
-                    #     customdata=top_negative_force[["Vector Force Clean"]],
-                    #     hovertemplate=(
-                    #         "🦾 Slam Down<br>"
-                    #         "Time: %{x|%I:%M %p}<br>"
-                    #         "Force: %{customdata[0]:.1f}<extra></extra>"
-                    #     )
-                    # ))
+                    # Plotting 🦾 markers (top 3 negative)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_negative_force["Time"],
+                        y=top_negative_force["Cumulative_Unit"] - 32,
+                        mode="text",
+                        text=["🦾"] * 3,
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        name="Top Force Down",
+                        customdata=top_negative_force[["Vector Force Clean"]],
+                        hovertemplate=(
+                            "🦾 Slam Down<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Force: %{customdata[0]:.1f}<extra></extra>"
+                        )
+                    ))
                     # # --- Prepare Top 3 Vector Energy Rows ---
                     # intraday["Vector Energy_numeric"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
                     # top_energy_rows = intraday.nlargest(3, "Vector Energy_numeric").dropna(subset=["Vector Energy_numeric"])
