@@ -6025,43 +6025,43 @@ if st.sidebar.button("Run Analysis"):
                             annotation_font=dict(color="gold", size=13),
                             opacity=0.6
                         )
-       #              # Convert power column to numeric just in case
-       #              intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
+                    # Convert power column to numeric just in case
+                    intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
                     
-       #              # Drop NaNs
-       #              valid_power = intraday.dropna(subset=["Power_numeric", "Cumulative_Unit", "Time"])
+                    # Drop NaNs
+                    valid_power = intraday.dropna(subset=["Power_numeric", "Cumulative_Unit", "Time"])
                     
-       #              # Top 3 positive power
-       #              top3_power_up = valid_power.nlargest(3, "Power_numeric")
+                    # Top 3 positive power
+                    top3_power_up = valid_power.nlargest(3, "Power_numeric")
                     
-       #              # Top 3 negative power
-       #              top3_power_down = valid_power.nsmallest(3, "Power_numeric")
+                    # Top 3 negative power
+                    top3_power_down = valid_power.nsmallest(3, "Power_numeric")
                     
-       #              # === 🔷 Top 3 Power Surges ===
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_power_up["Time"],
-       #                  y=top3_power_up["Cumulative_Unit"] + 72,
-       #                  mode="text",
-       #                  text=["🔷"] * len(top3_power_up),
-       #                  textposition="top center",
-       #                  textfont=dict(size=16),
-       #                  showlegend=False,
-       #                  hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
-       #                  customdata=top3_power_up[["Power_numeric"]].values
-       #              ))
+                    # === 🔷 Top 3 Power Surges ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_power_up["Time"],
+                        y=top3_power_up["Cumulative_Unit"] + 72,
+                        mode="text",
+                        text=["🔷"] * len(top3_power_up),
+                        textposition="top center",
+                        textfont=dict(size=16),
+                        showlegend=False,
+                        hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_power_up[["Power_numeric"]].values
+                    ))
                     
-       #              # === 🔶 Top 3 Power Drops ===
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_power_down["Time"],
-       #                  y=top3_power_down["Cumulative_Unit"] - 104,
-       #                  mode="text",
-       #                  text=["🔶"] * len(top3_power_down),
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=16),
-       #                  showlegend=False,
-       #                  hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
-       #                  customdata=top3_power_down[["Power_numeric"]].values
-       #              ))
+                    # === 🔶 Top 3 Power Drops ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_power_down["Time"],
+                        y=top3_power_down["Cumulative_Unit"] - 104,
+                        mode="text",
+                        text=["🔶"] * len(top3_power_down),
+                        textposition="bottom center",
+                        textfont=dict(size=16),
+                        showlegend=False,
+                        hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_power_down[["Power_numeric"]].values
+                    ))
                     
        #              # Ensure numeric and drop invalids
        #              intraday["Wave_Intensity"] = pd.to_numeric(intraday["Wave_Intensity"], errors="coerce")
