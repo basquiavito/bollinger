@@ -5835,49 +5835,49 @@ if st.sidebar.button("Run Analysis"):
                             "Force: %{customdata[0]:.1f}<extra></extra>"
                         )
                     ))
-                    # # --- Prepare Top 3 Vector Energy Rows ---
-                    # intraday["Vector Energy_numeric"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
-                    # top_energy_rows = intraday.nlargest(3, "Vector Energy_numeric").dropna(subset=["Vector Energy_numeric"])
+                    # --- Prepare Top 3 Vector Energy Rows ---
+                    intraday["Vector Energy_numeric"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
+                    top_energy_rows = intraday.nlargest(3, "Vector Energy_numeric").dropna(subset=["Vector Energy_numeric"])
                     
-                    # # --- Plot Emoji Markers for Top Energy Spikes ---
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=top_energy_rows["Time"],
-                    #     y=top_energy_rows["Cumulative_Unit"] + 40,  # Lift marker above line
-                    #     mode="text",
-                    #     text=["🔋"] * len(top_energy_rows),
-                    #     textposition="top center",
-                    #     textfont=dict(size=18),
-                    #     name="Top Energy Bursts",
-                    #     showlegend=False,
-                    #     hovertemplate=(
-                    #         "🔋 Energy Burst<br>"
-                    #         "Time: %{x|%I:%M %p}<br>"
-                    #         "Vector Energy: %{customdata[0]:,.1f}<extra></extra>"
-                    #     ),
-                    #     customdata=top_energy_rows[["Vector Energy_numeric"]].values
-                    # ))
-                    # # === Find Bottom 3 Vector Energy Spikes ===
-                    # bottom_vector_energy = intraday[intraday["Vector Energy"] != ""].copy()
-                    # bottom_vector_energy["Vector Energy"] = pd.to_numeric(bottom_vector_energy["Vector Energy"], errors="coerce")
-                    # bottom_vector_energy = bottom_vector_energy.dropna(subset=["Vector Energy"])
-                    # bottom_3_energy = bottom_vector_energy.nsmallest(3, "Vector Energy")
+                    # --- Plot Emoji Markers for Top Energy Spikes ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_energy_rows["Time"],
+                        y=top_energy_rows["Cumulative_Unit"] + 40,  # Lift marker above line
+                        mode="text",
+                        text=["🔋"] * len(top_energy_rows),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="Top Energy Bursts",
+                        showlegend=False,
+                        hovertemplate=(
+                            "🔋 Energy Burst<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Vector Energy: %{customdata[0]:,.1f}<extra></extra>"
+                        ),
+                        customdata=top_energy_rows[["Vector Energy_numeric"]].values
+                    ))
+                    # === Find Bottom 3 Vector Energy Spikes ===
+                    bottom_vector_energy = intraday[intraday["Vector Energy"] != ""].copy()
+                    bottom_vector_energy["Vector Energy"] = pd.to_numeric(bottom_vector_energy["Vector Energy"], errors="coerce")
+                    bottom_vector_energy = bottom_vector_energy.dropna(subset=["Vector Energy"])
+                    bottom_3_energy = bottom_vector_energy.nsmallest(3, "Vector Energy")
                     
-                    # # === Plot Bottom 3 Vector Energy 🪫 Markers ===
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=bottom_3_energy["Time"],
-                    #     y=bottom_3_energy["Cumulative_Unit"] - 40,
-                    #     mode="text",
-                    #     text=["🪫"] * len(bottom_3_energy),
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=20),
-                    #     showlegend=False,
-                    #     hovertemplate=(
-                    #         "🪫 Low Energy<br>"
-                    #         "Time: %{x|%I:%M %p}<br>"
-                    #         "Vector Energy: %{customdata[0]:.1f}<extra></extra>"
-                    #     ),
-                    #     customdata=bottom_3_energy[["Vector Energy"]].values
-                    # ))
+                    # === Plot Bottom 3 Vector Energy 🪫 Markers ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=bottom_3_energy["Time"],
+                        y=bottom_3_energy["Cumulative_Unit"] - 40,
+                        mode="text",
+                        text=["🪫"] * len(bottom_3_energy),
+                        textposition="bottom center",
+                        textfont=dict(size=20),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🪫 Low Energy<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Vector Energy: %{customdata[0]:.1f}<extra></extra>"
+                        ),
+                        customdata=bottom_3_energy[["Vector Energy"]].values
+                    ))
                     
 
                   
@@ -6025,43 +6025,43 @@ if st.sidebar.button("Run Analysis"):
                             annotation_font=dict(color="gold", size=13),
                             opacity=0.6
                         )
-                    # Convert power column to numeric just in case
-                    intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
+                    # # Convert power column to numeric just in case
+                    # intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
                     
-                    # Drop NaNs
-                    valid_power = intraday.dropna(subset=["Power_numeric", "Cumulative_Unit", "Time"])
+                    # # Drop NaNs
+                    # valid_power = intraday.dropna(subset=["Power_numeric", "Cumulative_Unit", "Time"])
                     
-                    # Top 3 positive power
-                    top3_power_up = valid_power.nlargest(3, "Power_numeric")
+                    # # Top 3 positive power
+                    # top3_power_up = valid_power.nlargest(3, "Power_numeric")
                     
-                    # Top 3 negative power
-                    top3_power_down = valid_power.nsmallest(3, "Power_numeric")
+                    # # Top 3 negative power
+                    # top3_power_down = valid_power.nsmallest(3, "Power_numeric")
                     
-                    # === 🔷 Top 3 Power Surges ===
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_power_up["Time"],
-                        y=top3_power_up["Cumulative_Unit"] + 72,
-                        mode="text",
-                        text=["🔷"] * len(top3_power_up),
-                        textposition="top center",
-                        textfont=dict(size=16),
-                        showlegend=False,
-                        hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top3_power_up[["Power_numeric"]].values
-                    ))
+                    # # === 🔷 Top 3 Power Surges ===
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top3_power_up["Time"],
+                    #     y=top3_power_up["Cumulative_Unit"] + 72,
+                    #     mode="text",
+                    #     text=["🔷"] * len(top3_power_up),
+                    #     textposition="top center",
+                    #     textfont=dict(size=16),
+                    #     showlegend=False,
+                    #     hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
+                    #     customdata=top3_power_up[["Power_numeric"]].values
+                    # ))
                     
-                    # === 🔶 Top 3 Power Drops ===
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top3_power_down["Time"],
-                        y=top3_power_down["Cumulative_Unit"] - 104,
-                        mode="text",
-                        text=["🔶"] * len(top3_power_down),
-                        textposition="bottom center",
-                        textfont=dict(size=16),
-                        showlegend=False,
-                        hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
-                        customdata=top3_power_down[["Power_numeric"]].values
-                    ))
+                    # # === 🔶 Top 3 Power Drops ===
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top3_power_down["Time"],
+                    #     y=top3_power_down["Cumulative_Unit"] - 104,
+                    #     mode="text",
+                    #     text=["🔶"] * len(top3_power_down),
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=16),
+                    #     showlegend=False,
+                    #     hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
+                    #     customdata=top3_power_down[["Power_numeric"]].values
+                    # ))
                     
        #              # Ensure numeric and drop invalids
        #              intraday["Wave_Intensity"] = pd.to_numeric(intraday["Wave_Intensity"], errors="coerce")
