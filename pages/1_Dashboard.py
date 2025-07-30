@@ -5707,51 +5707,51 @@ if st.sidebar.button("Run Analysis"):
                   #   ))
 
 
-                  #   # --- Jerk Markers: Top 3 Positive (⚙️) and Top 3 Negative (🧱) — below Acceleration layer ---
+                    # --- Jerk Markers: Top 3 Positive (⚙️) and Top 3 Negative (🧱) — below Acceleration layer ---
 
-                  #   # Ensure Jerk_Vector is numeric
-                  #   intraday["Jerk_num"] = pd.to_numeric(intraday["Jerk_Vector"], errors="coerce")
+                    # Ensure Jerk_Vector is numeric
+                    intraday["Jerk_num"] = pd.to_numeric(intraday["Jerk_Vector"], errors="coerce")
                     
-                  #   # Drop any rows without Jerk or Cumulative_Unit or Time
-                  #   valid_jerk = intraday.dropna(subset=["Jerk_num", "Cumulative_Unit", "Time"])
+                    # Drop any rows without Jerk or Cumulative_Unit or Time
+                    valid_jerk = intraday.dropna(subset=["Jerk_num", "Cumulative_Unit", "Time"])
                     
-                  #   # Select top 3 positive jerk and top 3 negative jerk
-                  #   top3_pos_jerk = valid_jerk.nlargest(3, "Jerk_num")
-                  #   top3_neg_jerk = valid_jerk.nsmallest(3, "Jerk_num")
+                    # Select top 3 positive jerk and top 3 negative jerk
+                    top3_pos_jerk = valid_jerk.nlargest(3, "Jerk_num")
+                    top3_neg_jerk = valid_jerk.nsmallest(3, "Jerk_num")
                     
-                  #   # ⚙️ Positive Jerk Markers (above the flight path)
-                  #   fig_displacement.add_trace(go.Scatter(
-                  #       x=top3_pos_jerk["Time"],
-                  #       y=top3_pos_jerk["Cumulative_Unit"] + 56,
-                  #       mode="text",
-                  #       text=["⚙️"] * len(top3_pos_jerk),
-                  #       textposition="top center",
-                  #       textfont=dict(size=18),
-                  #       showlegend=False,
-                  #       hovertemplate=(
-                  #           "⚙️ Jerk Surge<br>"
-                  #           "Time: %{x}<br>"
-                  #           "Jerk: %{customdata[0]:.2f}%<extra></extra>"
-                  #       ),
-                  #       customdata=top3_pos_jerk[["Jerk_num"]].values
-                  #   ))
+                    # ⚙️ Positive Jerk Markers (above the flight path)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_pos_jerk["Time"],
+                        y=top3_pos_jerk["Cumulative_Unit"] + 56,
+                        mode="text",
+                        text=["⚙️"] * len(top3_pos_jerk),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "⚙️ Jerk Surge<br>"
+                            "Time: %{x}<br>"
+                            "Jerk: %{customdata[0]:.2f}%<extra></extra>"
+                        ),
+                        customdata=top3_pos_jerk[["Jerk_num"]].values
+                    ))
                     
-                  #   # 🧱 Negative Jerk Markers (below the flight path)
-                  #   fig_displacement.add_trace(go.Scatter(
-                  #       x=top3_neg_jerk["Time"],
-                  #       y=top3_neg_jerk["Cumulative_Unit"] - 56,
-                  #       mode="text",
-                  #       text=["🧱"] * len(top3_neg_jerk),
-                  #       textposition="bottom center",
-                  #       textfont=dict(size=18),
-                  #       showlegend=False,
-                  #       hovertemplate=(
-                  #           "🧱 Jerk Brake<br>"
-                  #           "Time: %{x}<br>"
-                  #           "Jerk: %{customdata[0]:.2f}%<extra></extra>"
-                  #       ),
-                  #       customdata=top3_neg_jerk[["Jerk_num"]].values
-                  #   ))
+                    # 🧱 Negative Jerk Markers (below the flight path)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_neg_jerk["Time"],
+                        y=top3_neg_jerk["Cumulative_Unit"] - 56,
+                        mode="text",
+                        text=["🧱"] * len(top3_neg_jerk),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🧱 Jerk Brake<br>"
+                            "Time: %{x}<br>"
+                            "Jerk: %{customdata[0]:.2f}%<extra></extra>"
+                        ),
+                        customdata=top3_neg_jerk[["Jerk_num"]].values
+                    ))
 
                     # intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
                     # intraday["Vector Momentum"] = pd.to_numeric(intraday["Vector Momentum"], errors="coerce")
