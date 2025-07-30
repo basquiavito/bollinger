@@ -5731,42 +5731,42 @@ if st.sidebar.button("Run Analysis"):
                   #       customdata=top3_neg_jerk[["Jerk_num"]].values
                   #   ))
 
-                    intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
-                    intraday["Vector Momentum"] = pd.to_numeric(intraday["Vector Momentum"], errors="coerce")
+                    # intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
+                    # intraday["Vector Momentum"] = pd.to_numeric(intraday["Vector Momentum"], errors="coerce")
                     
-                    top_unit_pos = intraday.nlargest(3, "Unit Momentum")
-                    top_unit_neg = intraday.nsmallest(3, "Unit Momentum")
+                    # top_unit_pos = intraday.nlargest(3, "Unit Momentum")
+                    # top_unit_neg = intraday.nsmallest(3, "Unit Momentum")
                     
-                    top_vector_pos = intraday.nlargest(3, "Vector Momentum")
-                    top_vector_neg = intraday.nsmallest(3, "Vector Momentum")
+                    # top_vector_pos = intraday.nlargest(3, "Vector Momentum")
+                    # top_vector_neg = intraday.nsmallest(3, "Vector Momentum")
                     
                     
-                    # === Vector Momentum Markers ===
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top_vector_pos["Time"],
-                        y=top_vector_pos["Cumulative_Unit"] + 24,
-                        mode="text",
-                        text=["💥"] * 3,
-                        textposition="top center",
-                        textfont=dict(size=18),
-                        name="High Vector Momentum",
-                        showlegend=False,
-                        hovertemplate="💥 Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
-                        customdata=top_vector_pos[["Vector Momentum"]].values
-                    ))
+                    # # === Vector Momentum Markers ===
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top_vector_pos["Time"],
+                    #     y=top_vector_pos["Cumulative_Unit"] + 24,
+                    #     mode="text",
+                    #     text=["💥"] * 3,
+                    #     textposition="top center",
+                    #     textfont=dict(size=18),
+                    #     name="High Vector Momentum",
+                    #     showlegend=False,
+                    #     hovertemplate="💥 Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
+                    #     customdata=top_vector_pos[["Vector Momentum"]].values
+                    # ))
                     
-                    fig_displacement.add_trace(go.Scatter(
-                        x=top_vector_neg["Time"],
-                        y=top_vector_neg["Cumulative_Unit"] - 24,
-                        mode="text",
-                        text=["🌪️"] * 3,
-                        textposition="bottom center",
-                        textfont=dict(size=18),
-                        name="Low Vector Momentum",
-                        showlegend=False,
-                        hovertemplate="🌪️ Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
-                        customdata=top_vector_neg[["Vector Momentum"]].values
-                    ))
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top_vector_neg["Time"],
+                    #     y=top_vector_neg["Cumulative_Unit"] - 24,
+                    #     mode="text",
+                    #     text=["🌪️"] * 3,
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=18),
+                    #     name="Low Vector Momentum",
+                    #     showlegend=False,
+                    #     hovertemplate="🌪️ Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
+                    #     customdata=top_vector_neg[["Vector Momentum"]].values
+                    # ))
                     
                                         
                     #             # Ensure Vector Force is numeric (convert errors to NaN, then drop)
