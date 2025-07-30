@@ -754,8 +754,31 @@ if st.sidebar.button("Run Analysis"):
                 # ✅ Apply to your dataframe
                 intraday = add_integrated_unit_acceleration(intraday)
 
-    
-                    
+                def detect_acceleration_bursts(df, column="Acceleration", window=5, accel_threshold=10):
+                    """
+                    Detects clusters of acceleration bursts.
+                    Flags 🔥 if ≥3 of the last `window` acceleration values exceed `accel_threshold`.
+                    """
+                    if column not in df.columns:
+                        return df
+                
+                    # Create empty alert column
+                    df["Acceleration_Alert"] = ""
+                
+                    # Clean and convert to numeric
+                    accel_numeric = df[column].str.replace("%", "").replace("", np.nan).astype("float")
+                    df["Accel_Spike"] = accel_numeric.abs() >= accel_threshold
+                
+                    # Rolling window cluster logic
+                    for i in range(window, len(df)):
+                        recent = df["Accel_Spike"].iloc[i - window:i]
+                        if recent.sum() >= 3:
+                            df.at[df.index[i], "Acceleration_Alert"] = "🔥"
+                
+                    return df
+
+                intraday = detect_acceleration_bursts(intraday)
+
     
     
     
@@ -4760,7 +4783,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","Volatility_Composite","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Unit_Acceleration","Integrated_Vector_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Accel_Spike","Volatility_Composite","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Integrated_Unit_Acceleration","Integrated_Vector_Acceleration","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
