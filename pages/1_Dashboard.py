@@ -6998,21 +6998,21 @@ if st.sidebar.button("Run Analysis"):
   #🟢 ADX Expansion
 
 
-                    # mask_adx_alert = intraday["ADX_Alert"] != ""
+                    mask_adx_alert = intraday["ADX_Alert"] != ""
 
-                    # scatter_adx_alert = go.Scatter(
-                    #     x=intraday.loc[mask_adx_alert, "Time"],
-                    #     y=intraday.loc[mask_adx_alert, "F_numeric"] + 10,  # Offset for visibility
-                    #     mode="text",
-                    #     text=intraday.loc[mask_adx_alert, "ADX_Alert"],
-                    #     textposition="top center",
-                    #     textfont=dict(size=11),
-                    #     name="ADX Expansion Alert",
-                    #     hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
-                    #     customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
-                    # )
+                    scatter_adx_alert = go.Scatter(
+                        x=intraday.loc[mask_adx_alert, "Time"],
+                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 10,  # Offset for visibility
+                        mode="text",
+                        text=intraday.loc[mask_adx_alert, "ADX_Alert"],
+                        textposition="top center",
+                        textfont=dict(size=11),
+                        name="ADX Expansion Alert",
+                        hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
+                        customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
+                    )
 
-                    # fig.add_trace(scatter_adx_alert, row=1, col=1)
+                    fig.add_trace(scatter_adx_alert, row=1, col=1)
 
 
 
@@ -7431,28 +7431,28 @@ if st.sidebar.button("Run Analysis"):
                  
 
 
-                                       # Add IB High to MIDAS Option Plot
-             #                   # Loop over the subplot rows: 1 = F%, 2 = Call/Put, 3 = Midas+Option
-             #    fig.add_trace(go.Scatter(
-             #        x=intraday["Time"],
-             #        y=[ib_high] * len(intraday),
-             #        mode="lines",
-             #        line=dict(color="#FFD700", dash="dot", width=0.7),
-             #        name="IB High",
-             #        showlegend=True
-             #    ), row=1, col=1)
+                                       Add IB High to MIDAS Option Plot
+                               # Loop over the subplot rows: 1 = F%, 2 = Call/Put, 3 = Midas+Option
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=[ib_high] * len(intraday),
+                    mode="lines",
+                    line=dict(color="#FFD700", dash="dot", width=0.7),
+                    name="IB High",
+                    showlegend=True
+                ), row=1, col=1)
                 
-             #    # 🟫 IB Low (subtle off-white line)
-             #    fig.add_trace(go.Scatter(
-             #        x=intraday["Time"],
-             #        y=[ib_low] * len(intraday),
-             #        mode="lines",
-             #        line=dict(color="#FFD700", dash="dot", width=0.7),
-             #        name="IB Low",
-             #        showlegend=True
-             #    ), row=1, col=1)
-             #    # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
-             # # Bullish crosses (🚀)
+                # 🟫 IB Low (subtle off-white line)
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=[ib_low] * len(intraday),
+                    mode="lines",
+                    line=dict(color="#FFD700", dash="dot", width=0.7),
+                    name="IB Low",
+                    showlegend=True
+                ), row=1, col=1)
+                # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
+             # Bullish crosses (🚀)
 
               
          
