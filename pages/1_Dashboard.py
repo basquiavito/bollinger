@@ -124,7 +124,7 @@ st.title("VOLMIKE.COM")
 # ======================================
 st.sidebar.header("Input Options")
 
-default_tickers = ["QQQ","SPY","NVDA","MU", "AVGO","MSFT","PLTR","AMD","MRVL","uber","AMZN","AAPL","GOOGL","META","SMCI","TSLA","nke","GM","c","DKNG","wfc","hood","coin","bac","jpm","HIMS","TXM","QCOM","MU","INTC","CRDO","RMBS","ON","ORCL", "CRWD","PANW","APP","MSTR","IBM","AMAT","DELL","WDC","CRM","CHWY","ETSY","CART","W"]
+default_tickers = ["SPY","QQQ","NVDA","MU","AVGO","AMD","MRVL","SMCI","uber","AMZN","AAPL","GOOGL","MSFT","PLTR","META","TSLA","c","wfc","hood","coin","bac","jpm","DKNG","CHWY","ETSY","CART","W","nke","GM"]
 tickers = st.sidebar.multiselect(
     "Select Tickers",
     options=default_tickers,
