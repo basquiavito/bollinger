@@ -7431,7 +7431,7 @@ if st.sidebar.button("Run Analysis"):
                  
 
 
-                                       Add IB High to MIDAS Option Plot
+                                       #Add IB High to MIDAS Option Plot
                                # Loop over the subplot rows: 1 = F%, 2 = Call/Put, 3 = Midas+Option
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
