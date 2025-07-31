@@ -6274,26 +6274,26 @@ if st.sidebar.button("Run Analysis"):
 
 
                   
-                    # === Layout ===
-                    fig_displacement.update_layout(
-                        height=500,
-                        plot_bgcolor="black",
-                        paper_bgcolor="black",
-                        font=dict(color="white"),
-                        title="🧠 Mike's Physics Engine – Flight Path via Cumulative Unit%",
-                        xaxis=dict(title="Time"),
+                #     # === Layout ===
+                #     fig_displacement.update_layout(
+                #         height=500,
+                #         plot_bgcolor="black",
+                #         paper_bgcolor="black",
+                #         font=dict(color="white"),
+                #         title="🧠 Mike's Physics Engine – Flight Path via Cumulative Unit%",
+                #         xaxis=dict(title="Time"),
                    
 
-                        yaxis=dict(title="Cumulative Unit (×10⁻⁴)", zeroline=True),
-                        margin=dict(t=40, b=40),
-                        legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
-                    )
+                #         yaxis=dict(title="Cumulative Unit (×10⁻⁴)", zeroline=True),
+                #         margin=dict(t=40, b=40),
+                #         legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
+                #     )
 
                 
-                    fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
+                #     fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
                 
                
-                st.plotly_chart(fig_displacement, use_container_width=True)
+                # st.plotly_chart(fig_displacement, use_container_width=True)
 
 
 
