@@ -7432,27 +7432,27 @@ if st.sidebar.button("Run Analysis"):
 
 
                                        # Add IB High to MIDAS Option Plot
-                               # Loop over the subplot rows: 1 = F%, 2 = Call/Put, 3 = Midas+Option
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=[ib_high] * len(intraday),
-                    mode="lines",
-                    line=dict(color="#FFD700", dash="dot", width=0.7),
-                    name="IB High",
-                    showlegend=True
-                ), row=1, col=1)
+             #                   # Loop over the subplot rows: 1 = F%, 2 = Call/Put, 3 = Midas+Option
+             #    fig.add_trace(go.Scatter(
+             #        x=intraday["Time"],
+             #        y=[ib_high] * len(intraday),
+             #        mode="lines",
+             #        line=dict(color="#FFD700", dash="dot", width=0.7),
+             #        name="IB High",
+             #        showlegend=True
+             #    ), row=1, col=1)
                 
-                # 🟫 IB Low (subtle off-white line)
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=[ib_low] * len(intraday),
-                    mode="lines",
-                    line=dict(color="#FFD700", dash="dot", width=0.7),
-                    name="IB Low",
-                    showlegend=True
-                ), row=1, col=1)
-                # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
-             # Bullish crosses (🚀)
+             #    # 🟫 IB Low (subtle off-white line)
+             #    fig.add_trace(go.Scatter(
+             #        x=intraday["Time"],
+             #        y=[ib_low] * len(intraday),
+             #        mode="lines",
+             #        line=dict(color="#FFD700", dash="dot", width=0.7),
+             #        name="IB Low",
+             #        showlegend=True
+             #    ), row=1, col=1)
+             #    # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
+             # # Bullish crosses (🚀)
 
               
          
