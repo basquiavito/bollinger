@@ -1,6 +1,9 @@
 import streamlit as st
 import numpy as np
 import string       
+import matplotlib.pyplot as plt
+from math import log, sqrt
+from scipy.stats import norm
 import yfinance as yf
 import pandas as pd
 import plotly.express as px
@@ -9,6 +12,8 @@ from plotly.subplots import make_subplots
 from datetime import date
 from datetime import timedelta, datetime
 import io
+import numbers
+                             
                 
 
 def compute_value_area(
@@ -119,7 +124,7 @@ st.title("VOLMIKE.COM")
 # ======================================
 st.sidebar.header("Input Options")
 
-default_tickers = ["QQQ","SPY","NVDA","MU", "AVGO","MSFT","PLTR","AMD","MRVL","uber","AMZN","AAPL","googl","META","SMCI","nke","GM","c","wfc","hood","coin","bac","jpm","HIMS","TXM","QCOM","MU","INTC","CRDO","RMBS","ON","ORCL", "CRWD","PANW","APP","MSTR","IBM","AMAT","DELL","WDC","CRM","CHWY","ETSY","CART","W"]
+default_tickers = ["QQQ","SPY","NVDA","MU", "AVGO","MSFT","PLTR","AMD","MRVL","uber","AMZN","AAPL","GOOGL","META","SMCI","TSLA","nke","GM","c","DKNG","wfc","hood","coin","bac","jpm","HIMS","TXM","QCOM","MU","INTC","CRDO","RMBS","ON","ORCL", "CRWD","PANW","APP","MSTR","IBM","AMAT","DELL","WDC","CRM","CHWY","ETSY","CART","W"]
 tickers = st.sidebar.multiselect(
     "Select Tickers",
     options=default_tickers,
@@ -359,6 +364,10 @@ if st.sidebar.button("Run Analysis"):
                 # Add a Range column
                 intraday["Range"] = intraday["High"] - intraday["Low"]
 
+
+
+              # 1) Define a helper function to calculate *historical* annualized volatility
+             
                 # ================
                 # 3) Calculate Gap Alerts
                 # ================
@@ -548,7 +557,839 @@ if st.sidebar.button("Run Analysis"):
                     return intraday_df
 
                 intraday = calculate_f_percentage(intraday, prev_close)
+
+
+                def add_unit_percentage(intraday_df):
+                    if intraday_df.empty:
+                        intraday_df["Unit%"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Unit%"] = ""
+                
+                    for i in range(len(intraday_df)):
+                        open_price = intraday_df.iloc[i]["Open"]
+                        close_price = intraday_df.iloc[i]["Close"]
+                
+                        if open_price > 0:
+                            unit_mike = ((close_price - open_price) / open_price) * 10000
+                            unit_mike = round(unit_mike, 0)
+                            unit_mike_str = f"{int(unit_mike)}%"
+                            intraday_df.at[i, "Unit%"] = unit_mike_str
+                        else:
+                            intraday_df.at[i, "Unit%"] = ""
+                
+                    return intraday_df
+                intraday = add_unit_percentage(intraday)
+
+                def calculate_vector_percentage(intraday_df):
+                    if intraday_df.empty:
+                        intraday_df["Vector%"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Vector%"] = ""  # ← blank instead of "N/A"
+                
+                    total_rows = len(intraday_df)
+                    num_vectors = total_rows // 3
+                
+                    for i in range(num_vectors):
+                        i0 = i * 3
+                        i2 = i0 + 2
+                
+                        open_price = intraday_df.iloc[i0]["Open"]
+                        close_price = intraday_df.iloc[i2]["Close"]
+                
+                        vector_mike = ((close_price - open_price) / open_price) * 10000
+                        vector_mike = round(vector_mike, 0)
+                        vector_mike_str = f"{int(vector_mike)}%"
+                
+                        # Assign only to the third (last) bar of the vector
+                        intraday_df.at[i2, "Vector%"] = vector_mike_str
+                
+                    return intraday_df
+
+                intraday = calculate_vector_percentage(intraday)
+
+                def add_unit_velocity(intraday_df):
+                    if intraday_df.empty or "Unit%" not in intraday_df.columns:
+                        intraday_df["Unit Velocity"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Unit Velocity"] = ""
+                
+                    for i in range(1, len(intraday_df)):
+                        prev = intraday_df.iloc[i - 1]["Unit%"]
+                        curr = intraday_df.iloc[i]["Unit%"]
+                
+                        if isinstance(prev, str) and prev.strip().endswith("%") and \
+                           isinstance(curr, str) and curr.strip().endswith("%"):
+                
+                            prev_val = int(prev.strip().replace("%", ""))
+                            curr_val = int(curr.strip().replace("%", ""))
+                            velocity = curr_val - prev_val
+                
+                            intraday_df.at[i, "Unit Velocity"] = f"{velocity:+d}%"
+                        else:
+                            intraday_df.at[i, "Unit Velocity"] = ""
+                
+                    # First row has no previous unit, so remains blank
+                    intraday_df.at[0, "Unit Velocity"] = ""
+                
+                    return intraday_df
+
+                intraday = add_unit_velocity(intraday)
+                def add_vector_velocity(intraday_df):
+                    if intraday_df.empty or "Vector%" not in intraday_df.columns:
+                        intraday_df["Velocity"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Velocity"] = ""
+                
+                    previous_vector_val = None
+                
+                    for i in range(len(intraday_df)):
+                        vector_val = intraday_df.iloc[i]["Vector%"]
+                
+                        if isinstance(vector_val, str) and vector_val.strip().endswith("%") and vector_val.strip() != "":
+                            current_val = int(vector_val.strip().replace("%", ""))
+                
+                            if previous_vector_val is not None:
+                                velocity = current_val - previous_vector_val
+                                intraday_df.at[i, "Velocity"] = f"{velocity:+d}%"
+                            else:
+                                intraday_df.at[i, "Velocity"] = ""
+                
+                            previous_vector_val = current_val
+                
+                    return intraday_df
+
+                intraday = add_vector_velocity(intraday)
+
+
+
+                def add_unit_acceleration(intraday_df):
+                    if intraday_df.empty or "Unit Velocity" not in intraday_df.columns:
+                        intraday_df["Unit Acceleration"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Unit Acceleration"] = ""
+                
+                    for i in range(2, len(intraday_df)):
+                        prev = intraday_df.iloc[i - 1]["Unit Velocity"]
+                        curr = intraday_df.iloc[i]["Unit Velocity"]
+                
+                        if isinstance(prev, str) and prev.strip().endswith("%") and \
+                           isinstance(curr, str) and curr.strip().endswith("%"):
+                
+                            prev_val = int(prev.strip().replace("%", ""))
+                            curr_val = int(curr.strip().replace("%", ""))
+                            accel = curr_val - prev_val
+                
+                            intraday_df.at[i, "Unit Acceleration"] = f"{accel:+d}%"
+                        else:
+                            intraday_df.at[i, "Unit Acceleration"] = ""
+                
+                    return intraday_df
+
+                intraday = add_unit_acceleration(intraday)
+
+
+                
+                def add_vector_acceleration(intraday_df):
+                    if intraday_df.empty or "Velocity" not in intraday_df.columns:
+                        intraday_df["Acceleration"] = ""
+                        return intraday_df
+                
+                    intraday_df = intraday_df.copy()
+                    intraday_df["Acceleration"] = ""
+                
+                    last_vector_row = None
+                    last_velocity_val = None
+                
+                    for i in range(len(intraday_df)):
+                        velocity_str = intraday_df.iloc[i]["Velocity"]
+                
+                        if isinstance(velocity_str, str) and velocity_str.strip().endswith("%") and velocity_str.strip() != "":
+                            current_velocity = int(velocity_str.strip().replace("%", ""))
+                
+                            if last_velocity_val is not None:
+                                acceleration = current_velocity - last_velocity_val
+                                intraday_df.at[i, "Acceleration"] = f"{acceleration:+d}%"
+                            else:
+                                intraday_df.at[i, "Acceleration"] = ""
+                
+                            last_velocity_val = current_velocity
+                            last_vector_row = i
+                
+                    return intraday_df
+
+                intraday = add_vector_acceleration(intraday)
+                def add_integrated_unit_acceleration(df):
+                    """
+                    Adds a column: 'Integrated_Unit_Acceleration'
+                    which is the cumulative sum of Unit Acceleration.
+                    """
+                    df = df.copy()
+                
+                    # Clean Unit Acceleration
+                    unit_accel_clean = (
+                        df["Unit Acceleration"]
+                        .fillna("0%")
+                        .replace("", "0%")
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                    )
+                
+                    df["Unit_Acceleration_numeric"] = pd.to_numeric(unit_accel_clean, errors="coerce").fillna(0)
+                
+                    # Cumulative sum
+                    df["Integrated_Unit_Acceleration"] = df["Unit_Acceleration_numeric"].cumsum()
+                
+                    return df
+                
+                # ✅ Apply to your dataframe
+                intraday = add_integrated_unit_acceleration(intraday)
+
+                def detect_acceleration_bursts(df, column="Acceleration", window=5, accel_threshold=15):
+                    """
+                    Detects clusters of acceleration bursts.
+                    Flags 🔥 if ≥3 of the last `window` acceleration values exceed `accel_threshold`.
+                    """
+                    if column not in df.columns:
+                        return df
+                
+                    # Create empty alert column
+                    df["Acceleration_Alert"] = ""
+                
+                    # Clean and convert to numeric
+                    accel_numeric = df[column].str.replace("%", "").replace("", np.nan).astype("float")
+                    df["Accel_Spike"] = accel_numeric.abs() >= accel_threshold
+                
+                    # Rolling window cluster logic
+                    for i in range(window, len(df)):
+                        recent = df["Accel_Spike"].iloc[i - window:i]
+                        if recent.sum() >= 5:
+                            df.at[df.index[i], "Acceleration_Alert"] = "🔥"
+                
+                    return df
+
+                intraday = detect_acceleration_bursts(intraday)
+
+    
+    
+    
+
               
+                def add_dual_jerk(df):
+                  """
+                  Adds:
+                    - Jerk_Unit   = Δ(Unit Acceleration) on every bar
+                    - Jerk_Vector = Δ(Vector Acceleration) ONLY on the last bar of each 3-bar vector
+                  """
+                  df = df.copy()
+              
+                  # --- Parse Unit Acceleration to numeric ---
+                  ua = (
+                      df["Unit Acceleration"]
+                      .fillna("")           # blanks → ""
+                      .replace("", "0%")    # interpret blank as 0%
+                      .astype(str)
+                      .str.replace("%", "", regex=False)
+                  )
+                  df["Unit_Acc_num"] = pd.to_numeric(ua, errors="coerce").fillna(0)
+              
+                  # --- Parse Vector Acceleration to numeric ---
+                  va = (
+                      df["Acceleration"]
+                      .fillna("")           # blanks → ""
+                      .replace("", "0%")
+                      .astype(str)
+                      .str.replace("%", "", regex=False)
+                  )
+                  df["Vector_Acc_num"] = pd.to_numeric(va, errors="coerce").fillna(0)
+              
+                  # --- Unit Jerk: Δ(Unit Acceleration) every bar ---
+                  df["Jerk_Unit"] = df["Unit_Acc_num"].diff().fillna(0)
+              
+                  # --- Full Vector Jerk diff series ---
+                  full_vec_diff = df["Vector_Acc_num"].diff().fillna(0)
+              
+                  # --- Vector Jerk only on 3rd bar of each vector (0-based idx 2,5,8...) ---
+                  vec_jerk = pd.Series(0.0, index=df.index)
+                  for i in range(len(df)):
+                      if i % 3 == 2:
+                          vec_jerk.iloc[i] = full_vec_diff.iloc[i]
+                  df["Jerk_Vector"] = vec_jerk
+                  df["Snap"] = df["Jerk_Vector"].diff()
+ 
+
+                  return df
+
+                intraday = add_dual_jerk(intraday)
+
+                        
+                                 
+        
+                def add_market_capacitance(df):
+                    """
+                    Computes a vector-style Capacitance:
+                      - Charge = sum of RVOL_5 over 3 bars × direction of Velocity
+                      - Voltage = abs(Vector Velocity)
+                      - Capacitance = Charge / Voltage × 100 (scaled)
+                
+                    Assumes:
+                      - 'RVOL_5' is bar-level volume
+                      - 'Velocity' is already 3-bar vector velocity (in "%")
+                    """
+                    df = df.copy()
+                
+                    # Parse Velocity into numeric and sign
+                    velocity_str = df["Velocity"].astype(str).str.strip()
+                    df["Velocity_Sign"] = velocity_str.str[0].map({"+": 1, "-": -1}).fillna(0)
+                    df["Voltage"] = pd.to_numeric(velocity_str.str.replace("%", "", regex=False), errors="coerce").abs()
+                
+                    # Initialize columns
+                    df["Vector_Charge"] = 0.0
+                    df["Vector_Capacitance"] = 0.0
+                
+                    # Only calculate every 3rd row (assuming Velocity is vector-style)
+                    for i in range(2, len(df), 3):
+                        charge_sum = df.loc[i-2:i, "RVOL_5"].sum()
+                        sign = df.at[i, "Velocity_Sign"]
+                        voltage = df.at[i, "Voltage"]
+                
+                        signed_charge = charge_sum * sign
+                
+                        df.at[i, "Vector_Charge"] = signed_charge
+                        df.at[i, "Vector_Capacitance"] = (signed_charge / voltage * 100) if voltage not in [0, None, float("nan")] else 0
+                
+                    return df
+                intraday =  add_market_capacitance(intraday)
+
+
+                def add_charge_polarity(df):
+                    """
+                    Adds 'Charge_Polarity' and 'Charge_Bias' columns:
+                      - Charge_Bias: 3-bar rolling sum of (Velocity_sign * RVOL_5)
+                      - Charge_Polarity:
+                          '🔴 Protonic'   → positive (bullish charge)
+                          '🔵 Electronic' → negative (bearish charge)
+                          '⚪ Neutral'     → near zero bias
+                    """
+                    df = df.copy()
+                
+                    # Ensure RVOL_5 is numeric
+                    df["RVOL_5"] = pd.to_numeric(df["RVOL_5"], errors="coerce").fillna(0)
+                
+                    # Get sign of vector velocity (from column 'Velocity' as string with '%')
+                    velocity_str = df["Velocity"].astype(str).str.strip()
+                    velocity_sign = velocity_str.str[0].map({"+": 1, "-": -1}).fillna(0)
+                
+                    # Compute signed charge (1 bar)
+                    df["Signed_Charge"] = velocity_sign * df["RVOL_5"]
+                
+                    # 3-bar rolling sum = Charge Bias
+                    df["Charge_Bias"] = df["Signed_Charge"].rolling(window=3, min_periods=1).sum()
+                
+                    # Interpret polarity
+                    def classify_bias(val, threshold=0.5):
+                        if val > threshold:
+                            return "🔵"
+                        elif val < -threshold:
+                            return "🔴"
+                        else:
+                            return "⚪"
+                
+                    df["Charge_Polarity"] = df["Charge_Bias"].apply(classify_bias)
+                
+                    return df
+                intraday = add_charge_polarity(intraday)
+
+
+
+              
+                def add_unit_momentum_rvol(df):
+                    if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
+                        df["Unit Momentum"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Unit Momentum"] = ""
+                
+                    for i in range(len(df)):
+                        v_str  = df.iloc[i]["Unit Velocity"]
+                        rvol   = df.iloc[i]["RVOL_5"]
+                
+                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
+                            try:
+                                v_val = int(v_str.strip().replace("%", ""))
+                                df.at[i, "Unit Momentum"] = v_val * rvol
+                            except ValueError:
+                                df.at[i, "Unit Momentum"] = ""
+                
+                    return df
+                intraday = add_unit_momentum_rvol(intraday)
+
+                def add_vector_momentum_rvol(df):
+                    if df.empty or "Velocity" not in df.columns or "RVOL_5" not in df.columns:
+                        df["Vector Momentum"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Vector Momentum"] = ""
+                
+                    for i in range(2, len(df), 3):  # Every third bar
+                        v_str = df.iloc[i]["Velocity"]
+                        rvol_sum = df.iloc[i-2:i+1]["RVOL_5"].sum()
+                
+                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
+                            try:
+                                v_val = int(v_str.strip().replace("%", ""))
+                                df.at[i, "Vector Momentum"] = v_val * rvol_sum
+                            except ValueError:
+                                df.at[i, "Vector Momentum"] = ""
+                
+                    return df
+
+                intraday = add_vector_momentum_rvol(intraday)
+
+                def add_unit_force(intraday_df):
+                      if intraday_df.empty or "Unit Acceleration" not in intraday_df.columns or "RVOL_5" not in intraday_df.columns:
+                          intraday_df["Unit Force"] = ""
+                          return intraday_df
+                  
+                      intraday_df = intraday_df.copy()
+                      intraday_df["Unit Force"] = ""
+                  
+                      for i in range(len(intraday_df)):
+                          accel_str = intraday_df.iloc[i]["Unit Acceleration"]
+                          rvol = intraday_df.iloc[i]["RVOL_5"]
+                  
+                          if isinstance(accel_str, str) and accel_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
+                              try:
+                                  accel_val = int(accel_str.strip().replace("%", ""))
+                                  force = accel_val * rvol
+                                  intraday_df.at[i, "Unit Force"] = force
+                              except ValueError:
+                                  intraday_df.at[i, "Unit Force"] = ""
+                          else:
+                              intraday_df.at[i, "Unit Force"] = ""
+  
+                      return intraday_df
+                intraday = add_unit_force(intraday)
+  
+                def add_vector_force(intraday_df):
+                  if intraday_df.empty or "Acceleration" not in intraday_df.columns or "RVOL_5" not in intraday_df.columns:
+                      intraday_df["Vector Force"] = ""
+                      return intraday_df
+              
+                  intraday_df = intraday_df.copy()
+                  intraday_df["Vector Force"] = ""
+              
+                  for i in range(2, len(intraday_df), 3):
+                      accel_str = intraday_df.iloc[i]["Acceleration"]
+                      rvol_sum = intraday_df.iloc[i - 2:i + 1]["RVOL_5"].sum()
+              
+                      if isinstance(accel_str, str) and accel_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
+                          try:
+                              accel_val = int(accel_str.strip().replace("%", ""))
+                              force = accel_val * rvol_sum
+                              intraday_df.at[i, "Vector Force"] = force
+                          except ValueError:
+                              intraday_df.at[i, "Vector Force"] = ""
+                      else:
+                          intraday_df.at[i, "Vector Force"] = ""
+              
+                  return intraday_df
+
+                intraday = add_vector_force(intraday)
+
+                def add_mike_power(df):
+                    df = df.copy()
+                
+                    if "Vector Force" not in df.columns or "Velocity" not in df.columns:
+                        df["Power"] = ""
+                        return df
+                
+                    # --- Clean velocity column ---
+                    velocity_clean = (
+                        df["Velocity"]
+                        .fillna("0%")              # fill NaNs
+                        .replace("", "0%")         # replace empty strings
+                        .str.replace("%", "", regex=False)
+                        .astype(float)
+                    )
+                
+                    # --- Clean vector force column ---
+                    force_clean = pd.to_numeric(df["Vector Force"], errors="coerce").fillna(0)
+                
+                    # --- Compute power ---
+                    df["Power"] = force_clean * velocity_clean
+                
+                    return df
+
+                intraday = add_mike_power(intraday)
+
+
+              
+                
+                              
+                def add_unit_energy(df):
+                    if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
+                        df["Unit Energy"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Unit Energy"] = ""
+                
+                    for i in range(len(df)):
+                        v_str = df.iloc[i]["Unit Velocity"]
+                        rvol = df.iloc[i]["RVOL_5"]
+                
+                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
+                            try:
+                                v_val = int(v_str.strip().replace("%", ""))
+                                energy = rvol * (v_val ** 2)
+                                df.at[i, "Unit Energy"] = energy
+                            except ValueError:
+                                df.at[i, "Unit Energy"] = ""
+                        else:
+                            df.at[i, "Unit Energy"] = ""
+                
+                    return df
+
+                intraday = add_unit_energy(intraday)
+                def add_vector_energy(df):
+                    if df.empty or "Velocity" not in df.columns or "RVOL_5" not in df.columns:
+                        df["Vector Energy"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Vector Energy"] = ""
+                
+                    for i in range(2, len(df), 3):
+                        v_str = df.iloc[i]["Velocity"]
+                        rvol_sum = df.iloc[i - 2:i + 1]["RVOL_5"].sum()
+                
+                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
+                            try:
+                                v_val = int(v_str.strip().replace("%", ""))
+                                energy = rvol_sum * (v_val ** 2)
+                                df.at[i, "Vector Energy"] = energy
+                            except ValueError:
+                                df.at[i, "Vector Energy"] = ""
+                        else:
+                            df.at[i, "Vector Energy"] = ""
+                
+                    return df
+
+                intraday = add_vector_energy(intraday)
+
+
+
+ 
+
+                def add_force_efficiency(df):
+                    """
+                    Adds two columns:
+                      - Force_per_Range: Vector Force divided by last bar's Range
+                      - Force_per_3bar_Range: Vector Force divided by 3-bar cumulative Range
+                    """
+                    if df.empty or "Vector Force" not in df.columns or "Range" not in df.columns:
+                        df["Force_per_Range"] = ""
+                        df["Force_per_3bar_Range"] = ""
+                        return df
+                
+                    df = df.copy()
+                    df["Force_per_Range"] = ""
+                    df["Force_per_3bar_Range"] = ""
+                
+                    for i in range(2, len(df), 3):  # Only vector rows
+                        force = df.iloc[i]["Vector Force"]
+                        last_range = df.iloc[i]["Range"]
+                        three_bar_range = df.iloc[i - 2:i + 1]["Range"].sum()
+                
+                        # Force / last bar range
+                        if isinstance(force, numbers.Number) and isinstance(last_range, numbers.Number) and last_range != 0:
+                            df.at[i, "Force_per_Range"] = force / last_range
+                
+                        # Force / 3-bar range
+                        if isinstance(force, numbers.Number) and isinstance(three_bar_range, numbers.Number) and three_bar_range != 0:
+                            df.at[i, "Force_per_3bar_Range"] = force / three_bar_range
+                
+                    return df
+                
+                # Apply it
+                intraday = add_force_efficiency(intraday)
+
+
+                
+                def add_energy_efficiency(df):
+                    """
+                    Adds:
+                    - Unit_Energy_per_Range: Unit Energy ÷ Range (each bar)
+                    - Vector_Energy_per_3bar_Range: Vector Energy ÷ 3-bar cumulative Range (every 3rd bar)
+                    """
+                    df = df.copy()
+                
+                    # Initialize new columns
+                    df["Unit_Energy_per_Range"] = ""
+                    df["Vector_Energy_per_3bar_Range"] = ""
+                
+                    # --- Unit Energy per single-bar Range ---
+                    for i in range(len(df)):
+                        energy = df.iloc[i].get("Unit Energy")
+                        rng = df.iloc[i].get("Range")
+                
+                        if isinstance(energy, numbers.Number) and isinstance(rng, numbers.Number) and rng != 0:
+                            df.at[i, "Unit_Energy_per_Range"] = energy / rng
+                
+                    # --- Vector Energy per 3-bar Range ---
+                    for i in range(2, len(df), 3):
+                        energy = df.iloc[i].get("Vector Energy")
+                        rng_sum = df.iloc[i - 2:i + 1]["Range"].sum()
+                
+                        if isinstance(energy, numbers.Number) and isinstance(rng_sum, numbers.Number) and rng_sum != 0:
+                            df.at[i, "Vector_Energy_per_3bar_Range"] = energy / rng_sum
+                
+                    return df
+                
+                # Apply to intraday
+                intraday = add_energy_efficiency(intraday)
+
+
+
+
+                def calculate_kijun_sen(df, period=26):
+                    highest_high = df["High"].rolling(window=period, min_periods=1).max()
+                    lowest_low = df["Low"].rolling(window=period, min_periods=1).min()
+                    df["Kijun_sen"] = (highest_high + lowest_low) / 2
+                    return df
+
+                intraday = calculate_kijun_sen(intraday, period=26)
+                # Use the previous close (prev_close) from your daily data
+                intraday["Kijun_F"] = ((intraday["Kijun_sen"] - prev_close) / prev_close) * 10000
+
+
+                # Apply the function to your intraday data
+                intraday = calculate_kijun_sen(intraday, period=26)
+
+             
+
+                intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
+ 
+                            # Convert Unit% to numeric
+                intraday["Unit%_Numeric"] = (
+                    intraday["Unit%"].str.replace("%", "", regex=False).replace("", "0").astype(float)
+                )
+                
+                # Calculate cumulative sum
+                intraday["Cumulative_Unit"] = intraday["Unit%_Numeric"].cumsum()
+
+
+                def add_kijun_displacement(df, period=26):
+                    """
+                    Adds 'Kijun_Cumulative' column to df:
+                    Midpoint of highest and lowest Cumulative_Unit over a rolling period.
+                    This is the Ichimoku Kijun-sen, but computed in displacement space.
+                    """
+                    df = df.copy()
+                
+                    # Ensure Cumulative_Unit is numeric
+                    df["Cumulative_Unit"] = pd.to_numeric(df["Cumulative_Unit"], errors="coerce")
+                
+                    # Rolling midpoint of displacement
+                    df["Kijun_Cumulative"] = (
+                        df["Cumulative_Unit"]
+                        .rolling(window=period, min_periods=1)
+                        .apply(lambda x: (x.max() + x.min()) / 2)
+                    )
+                
+                    return df
+                
+                # Apply to your intraday DataFrame
+                intraday = add_kijun_displacement(intraday)
+
+                def add_wave_intensity(df):
+                    """
+                    Adds 'Intensity' column to represent wave energy intensity:
+                        Intensity = Power / Distance
+                    where:
+                        - Power is from your physics engine (already computed)
+                        - Distance is the absolute change in Cumulative_Unit (price movement)
+                
+                    Notes:
+                        - Handles division by zero or missing values gracefully.
+                        - Outputs 0 when Power is 0 or no movement occurred.
+                    """
+                    df = df.copy()
+                
+                    # Ensure required columns are present and clean
+                    df["Power"] = pd.to_numeric(df["Power"], errors="coerce").fillna(0)
+                    df["Cumulative_Unit"] = pd.to_numeric(df["Cumulative_Unit"], errors="coerce")
+                
+                    # Calculate distance = movement of price (like amplitude)
+                    df["Distance"] = df["Cumulative_Unit"].diff().abs().fillna(0)
+                
+                    # Avoid divide-by-zero by replacing 0 distances with np.nan temporarily
+                    df["Intensity"] = df.apply(
+                        lambda row: row["Power"] / row["Distance"] if row["Distance"] != 0 else 0,
+                        axis=1
+                    )
+                
+                    return df
+                
+                intraday = add_wave_intensity(intraday)
+
+                def add_market_field_force(df, resistance_col="Kijun_F"):
+                            df = df.copy()
+                            
+                            # Voltage = Velocity (numeric)
+                            df["V_numeric"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
+                            
+                            # Charge = RVOL_5
+                            Q = df["RVOL_5"]
+                            
+                            # Distance = |resistance - current level|
+                            d = (df[resistance_col] - df["Cumulative_Unit"]).abs().replace(0, np.nan)
+                            
+                            # Field = V / d
+                            df["Field_Intensity"] = df["V_numeric"] / d
+                            
+                            # Force = Q * (V / d)
+                            df["Electric_Force"] = Q * df["Field_Intensity"]
+                            
+                            return df
+                        
+                                  
+                intraday = add_market_field_force(intraday)
+     
+                def add_wave_intensity(df):
+                    """
+                    Adds 'Wave_Intensity' = Power / Range, representing how much power is delivered per unit price movement.
+                    Assumes 'Power' and 'Range' columns are already in df.
+                    """
+                    df = df.copy()
+                    
+                    # Ensure numeric values
+                    power = pd.to_numeric(df["Power"], errors="coerce")
+                    range_ = pd.to_numeric(df["Range"], errors="coerce").replace(0, np.nan)  # avoid div-by-zero
+                
+                    # Compute intensity
+                    df["Wave_Intensity"] = power / range_
+                    
+                    return df
+                
+                intraday = add_wave_intensity(intraday)
+
+                def add_integrated_accelerations(df):
+                    """
+                    Adds cumulative (integrated) acceleration:
+                      - 'Acceleration_numeric' and 'Unit_Acceleration_numeric' = cleaned % values
+                      - 'Integrated_Vector_Acceleration' = cumsum of vector acceleration
+                      - 'Integrated_Unit_Acceleration' = cumsum of unit acceleration
+                    """
+                    df = df.copy()
+                
+                    # --- Clean Vector Acceleration ---
+                    vec_accel = (
+                        df["Acceleration"]
+                        .fillna("0%")
+                        .replace("", "0%")
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                    )
+                    df["Acceleration_numeric"] = pd.to_numeric(vec_accel, errors="coerce").fillna(0)
+                
+                    # --- Clean Unit Acceleration ---
+                    unit_accel = (
+                        df["Unit Acceleration"]
+                        .fillna("0%")
+                        .replace("", "0%")
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                    )
+                    df["Unit_Acceleration_numeric"] = pd.to_numeric(unit_accel, errors="coerce").fillna(0)
+                
+                    # --- Integrals (Cumulative Sums) ---
+                    df["Integrated_Vector_Acceleration"] = df["Acceleration_numeric"].cumsum()
+                    df["Integrated_Unit_Acceleration"] = df["Unit_Acceleration_numeric"].cumsum()
+                
+                    return df
+                
+                # ✅ Apply it
+                intraday = add_integrated_accelerations(intraday)
+                
+
+ 
+                def add_volatility_composite(df, window=10, alpha=1.0, beta=1.0, gamma=1.0):
+                    """
+                    Adds rolling volatility measures and a composite Volatility_Composite to the DataFrame.
+                    
+                    New columns:
+                      - Range                    = High − Low
+                      - Acceleration_numeric     = cleaned acceleration values as float
+                      - Jerk_numeric             = cleaned jerk values as float
+                      - Volatility_Range         = rolling std of Range
+                      - Volatility_Acceleration  = rolling std of Acceleration_numeric
+                      - Volatility_Jerk          = rolling std of Jerk_numeric
+                      - Volatility_Composite     = alpha*Volatility_Range + beta*Volatility_Acceleration + gamma*Volatility_Jerk
+                    """
+                    df = df.copy()
+                    
+                    # 1) Compute Range
+                    df["Range"] = pd.to_numeric(df["High"], errors="coerce") - pd.to_numeric(df["Low"], errors="coerce")
+                    
+                    # 2) Prepare Acceleration_numeric
+                    if "Acceleration_numeric" in df.columns:
+                        accel_raw = df["Acceleration_numeric"].astype(float)
+                    else:
+                        accel_raw = df.get("Acceleration", pd.Series("0%", index=df.index))
+                    # Clean and convert to float
+                    accel_series = (
+                        accel_raw
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                        .replace("", "0")
+                        .astype(float)
+                    )
+                    df["Acceleration_numeric"] = accel_series.fillna(0)
+                    
+                    # 3) Prepare Jerk_numeric
+                    jerk_raw = df.get("Jerk", pd.Series("0%", index=df.index))
+                    jerk_series = (
+                        jerk_raw
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                        .replace("", "0")
+                        .astype(float)
+                    )
+                    df["Jerk_numeric"] = jerk_series.fillna(0)
+                    
+                    # 4) Rolling standard deviations
+                    df["Volatility_Range"] = df["Range"].rolling(window, min_periods=1).std()
+                    df["Volatility_Acceleration"] = df["Acceleration_numeric"].rolling(window, min_periods=1).std()
+                    df["Volatility_Jerk"] = df["Jerk_numeric"].rolling(window, min_periods=1).std()
+                    
+                    # 5) Composite score
+                    df["Volatility_Composite"] = (
+                        alpha * df["Volatility_Range"]
+                        + beta * df["Volatility_Acceleration"]
+                        + gamma * df["Volatility_Jerk"]
+                    )
+                    
+                    return df
+
+# Example usage:
+# intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
+
+                # Apply to intraday
+                intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
+
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -894,6 +1735,8 @@ if st.sidebar.button("Run Analysis"):
 
 
 
+
+                
 
 
                 def calculate_f_bbw(df, scale_factor=10):
@@ -1295,6 +2138,11 @@ if st.sidebar.button("Run Analysis"):
 
                 # Apply the function to your intraday data
                 intraday = calculate_kijun_sen(intraday, period=26)
+
+
+
+              
+         
 
                 def f_ichimoku_confirmation(row):
                     if row["Close"] > row["Kijun_sen"]:
@@ -3784,8 +4632,29 @@ if st.sidebar.button("Run Analysis"):
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_bee_emoji(intraday)
 
+           # Identify Top 3 Positive and Negative Velocity Vectors
+                def extract_top_velocity_markers(df, col_name="Velocity", time_col="Time"):
+                    # Convert to numeric (strip "%")
+                    df = df.copy()
+                    df["Velocity_Num"] = pd.to_numeric(df[col_name].str.replace("%", ""), errors="coerce")
+                    
+                    # Drop rows with NaNs
+                    df_clean = df.dropna(subset=["Velocity_Num"])
+                
+                    # Get top 3 positive and negative
+                    top_pos = df_clean.nlargest(3, "Velocity_Num")
+                    top_neg = df_clean.nsmallest(3, "Velocity_Num")
+                
+                    return top_pos, top_neg
+                
+                # Get markers
+                top_pos_vel, top_neg_vel = extract_top_velocity_markers(intraday)
+
+     
+             
 
 
+              
                 def add_mike_kijun_atr_emoji(df, atr_col="ATR"):
                     """
                     Adds 🌋 emoji at the point Mike (F_numeric) crosses Kijun_F,
@@ -3886,19 +4755,13 @@ if st.sidebar.button("Run Analysis"):
                     intraday.loc[last_swimmer_idx, "Swimmer_Emoji"] = "🦑"
 
 
+                
+               
+                
+                
 
-
-
-
-
-
-
-
-
-
-
-
-
+                    
+                    
 
 
 
@@ -3919,7 +4782,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "Time","Volume","F_numeric","RVOL_5","Range","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
+                                    "RVOL_5","Range","Time","Volume","Volatility_Composite","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
@@ -4067,6 +4930,9 @@ if st.sidebar.button("Run Analysis"):
                   profile_df["%Vol"] = profile_df["F% Level"].astype(str).map(vol_percent).fillna(0)
 
 
+                  # Define most volume bin level (used in resistance)
+                  max_vol_level = profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level']
+                  max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
 
                   
                                     # Add earliest Time seen in each F% bin
@@ -4081,7 +4947,21 @@ if st.sidebar.button("Run Analysis"):
                   va_min = min(value_area_levels)
                   va_max = max(value_area_levels)
                   
-
+                  # === STEP 1: Create Resistance Reference Data ===
+                  resistance_lines = {
+                      "IB_High": ib_high,
+                      "IB_Low": ib_low,
+                      "High_Vol_Bin": max_vol_level,
+                      "High_Letter_Bin": max_letter_level,
+                      "VA_High": va_max,
+                      "VA_Low": va_min
+                  }
+                  
+                  res_df = pd.DataFrame({
+                      "Level": list(resistance_lines.values()),
+                      "Label": list(resistance_lines.keys())
+                  }).sort_values(by="Level", ascending=False).reset_index(drop=True)
+                  
 
 
                          # Step 1: Identify the volume-dominant F% level
@@ -4117,40 +4997,39 @@ if st.sidebar.button("Run Analysis"):
                   profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
 
                   
-                                   # Add the Ear_Emoji column to intraday based on the profile logic
  
-                  #  # Define Initial Balance from first 12 candles
-                  # ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
+                   # Define Initial Balance from first 12 candles
+                  ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
                   
-                  # ib_high = ib_data["F_numeric"].max()
-                  # ib_low = ib_data["F_numeric"].min()
+                  ib_high = ib_data["F_numeric"].max()
+                  ib_low = ib_data["F_numeric"].min()
                   
-                  # # Add to intraday as constant columns
-                  # intraday["IB_High"] = ib_high
-                  # intraday["IB_Low"] = ib_low
+                  # Add to intraday as constant columns
+                  intraday["IB_High"] = ib_high
+                  intraday["IB_Low"] = ib_low
                   
                                 
-                  #                   # Initialize IB breakout emojis
-                  # intraday["IB_High_Break"] = ""
-                  # intraday["IB_Low_Break"] = ""
+                                    # Initialize IB breakout emojis
+                  intraday["IB_High_Break"] = ""
+                  intraday["IB_Low_Break"] = ""
                   
-                  # # Track prior state (inside/outside IB)
-                  # intraday["Inside_IB"] = (intraday["F_numeric"] >= intraday["IB_Low"]) & (intraday["F_numeric"] <= intraday["IB_High"])
-                  # intraday["Prior_Inside_IB"] = intraday["Inside_IB"].shift(1)
+                  # Track prior state (inside/outside IB)
+                  intraday["Inside_IB"] = (intraday["F_numeric"] >= intraday["IB_Low"]) & (intraday["F_numeric"] <= intraday["IB_High"])
+                  intraday["Prior_Inside_IB"] = intraday["Inside_IB"].shift(1)
                   
-                  # # 💸 Breakout above IB High
-                  # ib_high_break = (
-                  #     (intraday["F_numeric"] > intraday["IB_High"]) &  # now above
-                  #     (intraday["Prior_Inside_IB"] == True)            # came from inside
-                  # )
-                  # intraday.loc[ib_high_break, "IB_High_Break"] = "💸"
+                  # 💸 Breakout above IB High
+                  ib_high_break = (
+                      (intraday["F_numeric"] > intraday["IB_High"]) &  # now above
+                      (intraday["Prior_Inside_IB"] == True)            # came from inside
+                  )
+                  intraday.loc[ib_high_break, "IB_High_Break"] = "💸"
                   
-                  # # 🧧 Breakdown below IB Low
-                  # ib_low_break = (
-                  #     (intraday["F_numeric"] < intraday["IB_Low"]) &   # now below
-                  #     (intraday["Prior_Inside_IB"] == True)            # came from inside
-                  # )
-                  # intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
+                  # 🧧 Breakdown below IB Low
+                  ib_low_break = (
+                      (intraday["F_numeric"] < intraday["IB_Low"]) &   # now below
+                      (intraday["Prior_Inside_IB"] == True)            # came from inside
+                  )
+                  intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
                      
 
@@ -4158,16 +5037,16 @@ if st.sidebar.button("Run Analysis"):
 
 
                   
-                                    # === Top Dot Logic by 15-Minute Block ===
-                  # top_dots = (
-                  #     intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
-                  #     .sort_values("LetterIndex")
-                  #     .reset_index(drop=True)
-                  # )
-                  # top_dots = (
-                  #     intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
-                  #     .reset_index(drop=True)
-                  # )
+                  #                   # === Top Dot Logic by 15-Minute Block ===
+                  top_dots = (
+                      intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
+                      .sort_values("LetterIndex")
+                      .reset_index(drop=True)
+                  )
+                  top_dots = (
+                      intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
+                      .reset_index(drop=True)
+                  )
                   # top_dots["Time"] = intraday.groupby("LetterIndex")["Time"].max().values  # Force dot to close of bracket
 
                   # Step 1: Get row of max F% per 15-min block (actual auction moment)
@@ -4199,18 +5078,88 @@ if st.sidebar.button("Run Analysis"):
                   top_dots["DotColor"] = top_dots.apply(assign_dot_color, axis=1)
                   
                
-                
-
-
-
+               
                   
                   
 
 
-                  # Show DataFrame
+                  # # Show DataFrame
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
-
+    
+                  def compute_ib_volume_weights(intraday, ib_high, ib_low):
+                        """
+                        Split the Initial Balance range into 3 equal compartments: Cellar, Core, Loft.
+                        For each, compute:
+                          - Total volume
+                          - Volume per area (pressure)
+                          - Weight (assuming unit gravity, w = mg)
+                        """
+                        df = intraday.copy()
+                        
+                        # Define IB levels
+                        ib_range = ib_high - ib_low
+                        third = ib_range / 3
+                    
+                        # Define compartment boundaries
+                        cellar_top = ib_low + third
+                        core_top = ib_low + 2 * third
+                    
+                        # Tag zones
+                        def tag_zone(row):
+                            price = row["Close"]
+                            if price < cellar_top:
+                                return "Cellar"
+                            elif price < core_top:
+                                return "Core"
+                            else:
+                                return "Loft"
+                    
+                        df["IB_Zone"] = df.apply(tag_zone, axis=1)
+                    
+                        # Compute zone stats
+                        zone_stats = df.groupby("IB_Zone")["Volume"].agg(
+                            Total_Volume="sum",
+                            Bar_Count="count"
+                        ).reset_index()
+                    
+                        # Assume equal area for all zones
+                        zone_stats["Area"] = 1  # normalized
+                    
+                        # Volume per area = pressure
+                        zone_stats["Volume_Pressure"] = zone_stats["Total_Volume"] / zone_stats["Area"]
+                    
+                        # Weight (w = m * g); here mass ~ volume, and gravity g = 1
+                        zone_stats["Weight"] = zone_stats["Total_Volume"]  # since g = 1
+                    
+                        return zone_stats
+  
+                  ib_stats = compute_ib_volume_weights(intraday, ib_high=ib_high, ib_low=ib_low)
                 
+
+
+                  
+
+                  
+                  def add_ib_field_force(df, resistance_col="IB_High"):
+                      df = df.copy()
+                  
+                      # 1. Convert Velocity to numeric (Voltage)
+                      df["V_numeric"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
+                  
+                      # 2. Charge = RVOL_5
+                      Q = df["RVOL_5"]
+                  
+                      # 3. Distance from IB High to current level
+                      d = (df[resistance_col] - df["Cumulative_Unit"]).abs().replace(0, np.nan)  # avoid div-by-zero
+                  
+                      # 4. Field = Voltage / Distance
+                      df["IB_Field_Intensity"] = df["V_numeric"] / d
+                  
+                      # 5. Electric Force = Q * Field
+                      df["IB_Electric_Force"] = Q * df["IB_Field_Intensity"]
+                  
+                      return df
+                  intraday = add_ib_field_force(intraday)
                                          # Initialize columns
                   intraday["🪘"] = ""
                   intraday["Drum_Y"] = np.nan
@@ -4244,6 +5193,16 @@ if st.sidebar.button("Run Analysis"):
                           intraday.at[intraday.index[i], "Drum_Y"] = now["F_numeric"] - 16
                           above = False
 
+
+                # --- Display inside an Expander ---
+                  with st.expander("🏛️ Initial Balance Volume Control Chambers", expanded=False):
+                      st.dataframe(ib_stats.style.format({
+                          "Total_Volume": "{:,.0f}",
+                          "Volume_Pressure": "{:,.2f}",
+                          "Weight": "{:,.0f}"
+                      }))        
+                            
+                
                   with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
                       # Detect price column
@@ -4296,8 +5255,130 @@ if st.sidebar.button("Run Analysis"):
                           midas_curve_bull.append(midas_price)
                   
                       intraday["MIDAS_Bull"] = [np.nan] * anchor_idx_bull + midas_curve_bull
+                      intraday["Bear_Displacement"] = intraday["MIDAS_Bear"] - intraday["F_numeric"]
+                      intraday["Bull_Displacement"] = intraday["F_numeric"] - intraday["MIDAS_Bull"]
+
+                      intraday["Bear_Displacement_Change"] = intraday["Bear_Displacement"].diff()
+                      intraday["Bull_Displacement_Change"] = intraday["Bull_Displacement"].diff()
+
+                      intraday["Hold_Put"] = (
+                          (intraday["Bear_Displacement_Change"] > 0) |
+                          (intraday["Bear_Displacement"].rolling(3).min() > 20)  # stays deep
+                      )
+                      
+                      intraday["Hold_Call"] = (
+                          (intraday["Bull_Displacement_Change"] > 0) |
+                          (intraday["Bull_Displacement"].rolling(3).min() > 20)
+                      )
+
+
+                      intraday["Bear_Displacement_Double"] = ""
+                      
+                      for i in range(1, len(intraday)):
+                          prev = intraday["Bear_Displacement"].iloc[i - 1]
+                          curr = intraday["Bear_Displacement"].iloc[i]
+                          
+                          if pd.notna(prev) and prev > 0 and pd.notna(curr):
+                              if curr >= 2 * prev:
+                                  intraday.at[intraday.index[i], "Bear_Displacement_Double"] = "💀"
+
+                      intraday["Bull_Displacement_Double"] = ""
+  
+                      for i in range(1, len(intraday)):
+                          prev = intraday["Bull_Displacement"].iloc[i - 1]
+                          curr = intraday["Bull_Displacement"].iloc[i]
+                          
+                          if pd.notna(prev) and prev > 0 and pd.notna(curr):
+                              if curr >= 2 * prev:
+                                  intraday.at[intraday.index[i], "Bull_Displacement_Double"] = "👑"
+
+
+                      intraday["Bear_Lethal_Accel"] = ""
+                      
+                      for i in range(2, len(intraday)):
+                          prev = intraday["Bear_Displacement"].iloc[i - 1]
+                          curr = intraday["Bear_Displacement"].iloc[i]
+                          delta = curr - prev
+                          recent_min = intraday["Bear_Displacement"].iloc[i-3:i].min()
+                          
+                          # Lethal if all 3 conditions met
+                          if (
+                              pd.notna(curr)
+                              and curr > 1.5 * recent_min  # explosive growth in displacement
+                              and delta > 5               # sharp jump in a single bar
+                              and curr > 20               # absolute distance confirms real separation
+                          ):
+                              intraday.at[intraday.index[i], "Bear_Lethal_Accel"] = "🥊"
+                      
+                      intraday["Bull_Lethal_Accel"] = ""
+
+                      for i in range(2, len(intraday)):
+                          prev = intraday["Bull_Displacement"].iloc[i - 1]
+                          curr = intraday["Bull_Displacement"].iloc[i]
+                          delta = curr - prev
+                          recent_min = intraday["Bull_Displacement"].iloc[i-3:i].min()
+                          
+                          if (
+                              pd.notna(curr)
+                              and curr > 1.5 * recent_min
+                              and delta > 5
+                              and curr > 20
+                          ):
+                              intraday.at[intraday.index[i], "Bull_Lethal_Accel"] = "🚀"
+
+
+
+
+
+
+                              
                   
-                      # Add emojis
+                      def check_midas_3delta_trigger(df):
+                                    """
+                                    Detects conditions to trigger a 3-delta buy alert:
+                                    - A Midas Bull or Bear anchor appears
+                                    - Price crosses a TD Supply or Demand line
+                                    - The cross is in the same direction as Midas slope
+                                    Returns the dataframe with Bull3DeltaTrigger and Bear3DeltaTrigger columns
+                                    """
+                                
+                                    # 1. Detect anchor appearance
+                                    df["BullAnchor"] = df["MIDAS_Bull"].notna() & df["MIDAS_Bull"].shift(1).isna()
+                                    df["BearAnchor"] = df["MIDAS_Bear"].notna() & df["MIDAS_Bear"].shift(1).isna()
+                                
+                                    # 2. Detect price crossing TD lines
+                                    df["Crossed_TD_Demand"] = (df["F_numeric"].shift(1) < df['TD Demand Line F']) & (df["F_numeric"] >= df['TD Demand Line F'])
+                                    df["Crossed_TD_Supply"] = (df["F_numeric"].shift(1) > df['TD Supply Line F']) & (df["F_numeric"] <= df['TD Supply Line F'])
+                                
+                                    # 3. Calculate slope direction of Midas lines
+                                    df["BullSlope"] = df["MIDAS_Bull"].diff()
+                                    df["BearSlope"] = df["MIDAS_Bear"].diff()
+                                
+                                    df["BullSlopeUp"] = df["BullSlope"] > 0
+                                    df["BearSlopeDown"] = df["BearSlope"] < 0
+                                
+                                    # 4. Final trigger logic
+                                    df["Bull3DeltaTrigger"] = (
+                                        df["BullAnchor"] &
+                                        df["Crossed_TD_Demand"] &
+                                        df["BullSlopeUp"]
+                                    )
+                                
+                                    df["Bear3DeltaTrigger"] = (
+                                        df["BearAnchor"] &
+                                        df["Crossed_TD_Supply"] &
+                                        df["BearSlopeDown"]
+                                    )
+                                
+                                    return df
+                
+                      intraday = check_midas_3delta_trigger(intraday)
+
+
+
+
+
+                    
                       def add_mike_midas_cross_emojis(df, price_col):
                           if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
                               return df, None, None
@@ -4412,22 +5493,13 @@ if st.sidebar.button("Run Analysis"):
                 # Display anchor info
                 st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
                 st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
-            
-        
-                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
-                    st.dataframe(
-                        intraday[[
-                            'Time', price_col, 'Volume',
-                            'MIDAS_Bear', 'MIDAS_Bull',
-                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',
-                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
-                        ]]
-                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
-                        .reset_index(drop=True)
-                    )
+  
+  
+  
+  
 
 
-             
+
                 # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
                 #               fig_ichimoku = go.Figure()
               
@@ -4472,8 +5544,864 @@ if st.sidebar.button("Run Analysis"):
               
                 #               st.plotly_chart(fig_ichimoku, use_container_width=True)
 
+                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
+                                    st.dataframe(
+                                        intraday[[
+                                            'Time', price_col, 'Volume',
+                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
+                                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
+                                        ]]
+                                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+                                        .reset_index(drop=True)
+                                    )
+                
+                
+                                   
+   
+             
+                with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
+                   
+                    fig_displacement = go.Figure()
 
+                  # --- Create a 2-row layout (row 1 = main engine, row 2 = volatility)
+                    fig = make_subplots(
+                        rows=1, cols=1,
+                        shared_xaxes=True,
+               
+                        subplot_titles=("🧠 Mike's Physics Engine")
+                    )
+
+                    # === Cumulative Unit% Line ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Cumulative_Unit"],
+                        mode="lines",
+                        name="Cumulative Unit%",
+                        line=dict(color="dodgerblue", width=2),
+                        hovertemplate="Time: %{x}<br>Cumulative Unit%: %{y:.1f}<extra></extra>"
+                    ))
+                
+                    # === Zero Reference Line ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=[0] * len(intraday),
+                        mode="lines",
+                        name="Zero Line",
+                        line=dict(color="gray", width=1, dash="dot"),
+                        showlegend=False
+                    ))
+
+                   # === ADD: Vector% Markers ===
+                    vector_rows = intraday[intraday["Vector%"].str.endswith("%")].copy()
+                    vector_rows["Vector%_numeric"] = vector_rows["Vector%"].str.replace("%", "").astype(int)
+                    
+                    fig_displacement.add_trace(go.Scatter(
+                        x=vector_rows["Time"],
+                        y=vector_rows["Cumulative_Unit"],
+                        mode="markers+text",
+                        name="Vector%",
+                        marker=dict(
+                            size=9,
+                            color=["limegreen" if val > 0 else "orangered" for val in vector_rows["Vector%_numeric"]],
+                            symbol="circle"
+                        ),
+                        text=[f"{val:+}%" for val in vector_rows["Vector%_numeric"]],
+                        textposition="top center",
+                        textfont=dict(size=13),
+                        hovertemplate="Vector%: %{text}<br>Time: %{x}<extra></extra>"
+                    ))
+     
+                    #                     # --- Extract top 3 positive and negative Velocity points ---
+                    # velocity_data = intraday.copy()
+                    # velocity_data["Velocity_Num"] = pd.to_numeric(velocity_data["Velocity"].str.replace("%", ""), errors="coerce")
+                    
+                    # # Drop NaNs
+                    # velocity_data = velocity_data.dropna(subset=["Velocity_Num", "Cumulative_Unit", "Time"])
+                    
+                    # # Top 3 positive
+                    # top3_pos = velocity_data.nlargest(3, "Velocity_Num")
+                    
+                    # # Top 3 negative
+                    # top3_neg = velocity_data.nsmallest(3, "Velocity_Num")
+                    
+                    # # --- Plot 🚀 markers for top positive velocities ---
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top3_pos["Time"],
+                    #     y=top3_pos["Cumulative_Unit"] + 10,
+                    #     mode="text",
+                    #     text=["🚀"] * 3,
+                    #     textposition="top center",
+                    #     textfont=dict(size=18),
+                    #     showlegend=False,
+ 
+                    #     hovertemplate=(
+                    #                   "🚀 Vector Burst<br>"
+                    #                   "Time: %{x|%I:%M %p}<br>"
+                    #                   "Velocity: %{customdata[0]}%<br>"
+                    #               ),
+                    # ))
+                    
+                    # # --- Plot 🪂 markers for top negative velocities ---
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top3_neg["Time"],
+                    #     y=top3_neg["Cumulative_Unit"] - 10,
+                    #     mode="text",
+                    #     text=["🪂"] * 3,
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=18),
+                    #     showlegend=False,
+
+                    #     hovertemplate=(
+                    #                   "🪂 Crash Down<br>"
+                    #                   "Time: %{x|%I:%M %p}<br>"
+                    #                   "Velocity: %{customdata[0]}%<br>"
+                    #               )
+                    # ))
+
+
+
+
+                  # # --- ACCELERATION MARKERS: Top 2 Positive (⚡) and Top 2 Negative (🐢) ---
+
+                  #   # Clean and convert Acceleration to numeric
+                  #   intraday["Acceleration_numeric"] = pd.to_numeric(
+                  #       intraday["Acceleration"].str.replace("%", ""), errors="coerce"
+                  #   )
+                    
+                  #   # Drop NaNs
+                  #   valid_accel = intraday.dropna(subset=["Acceleration_numeric"])
+                    
+                  #   # Sort and pick top 2 positive
+                  #   top2_pos_accel = valid_accel.nlargest(2, "Acceleration_numeric")
+                    
+                  #   # Sort and pick top 2 negative
+                  #   top2_neg_accel = valid_accel.nsmallest(2, "Acceleration_numeric")
+                    
+                  #   # === Add ⚡ markers (top 2 positive)
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top2_pos_accel["Time"],
+                  #       y=top2_pos_accel["Cumulative_Unit"] + 16,
+                  #       mode="text",
+                  #       text=["⚡"] * len(top2_pos_accel),
+                  #       textposition="top center",
+                  #       textfont=dict(size=18),
+                  #       name="High Acceleration",
+                  #       hovertemplate="⚡ Surge Up<br>Time: %{x}<br>Accel: %{customdata[0]}%<extra></extra>",
+                  #       customdata=top2_pos_accel[["Acceleration"]],
+                  #       showlegend=False
+                  #   ))
+                    
+                  #   # === Add 🐢 markers (top 2 negative)
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top2_neg_accel["Time"],
+                  #       y=top2_neg_accel["Cumulative_Unit"] - 16,
+                  #       mode="text",
+                  #       text=["🐢"] * len(top2_neg_accel),
+                  #       textposition="bottom center",
+                  #       textfont=dict(size=18),
+                  #       name="Slowdown",
+                  #       hovertemplate="🐢 Slow Down<br>Time: %{x}<br>Accel: %{customdata[0]}%<extra></extra>",
+                  #       customdata=top2_neg_accel[["Acceleration"]],
+                  #       showlegend=False
+                  #   ))
+
+
+                    # --- Jerk Markers: Top 3 Positive (⚙️) and Top 3 Negative (🧱) — below Acceleration layer ---
+
+                    # Ensure Jerk_Vector is numeric
+                    intraday["Jerk_num"] = pd.to_numeric(intraday["Jerk_Vector"], errors="coerce")
+                    
+                    # Drop any rows without Jerk or Cumulative_Unit or Time
+                    valid_jerk = intraday.dropna(subset=["Jerk_num", "Cumulative_Unit", "Time"])
+                    
+                    # Select top 3 positive jerk and top 3 negative jerk
+                    top3_pos_jerk = valid_jerk.nlargest(3, "Jerk_num")
+                    top3_neg_jerk = valid_jerk.nsmallest(3, "Jerk_num")
+                    
+                    # ⚙️ Positive Jerk Markers (above the flight path)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_pos_jerk["Time"],
+                        y=top3_pos_jerk["Cumulative_Unit"] + 56,
+                        mode="text",
+                        text=["⚙️"] * len(top3_pos_jerk),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "⚙️ Jerk Surge<br>"
+                            "Time: %{x}<br>"
+                            "Jerk: %{customdata[0]:.2f}%<extra></extra>"
+                        ),
+                        customdata=top3_pos_jerk[["Jerk_num"]].values
+                    ))
+                    
+                    # 🧱 Negative Jerk Markers (below the flight path)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_neg_jerk["Time"],
+                        y=top3_neg_jerk["Cumulative_Unit"] - 56,
+                        mode="text",
+                        text=["🧱"] * len(top3_neg_jerk),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🧱 Jerk Brake<br>"
+                            "Time: %{x}<br>"
+                            "Jerk: %{customdata[0]:.2f}%<extra></extra>"
+                        ),
+                        customdata=top3_neg_jerk[["Jerk_num"]].values
+                    ))
+
+                    intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
+                    intraday["Vector Momentum"] = pd.to_numeric(intraday["Vector Momentum"], errors="coerce")
+                    
+                    top_unit_pos = intraday.nlargest(3, "Unit Momentum")
+                    top_unit_neg = intraday.nsmallest(3, "Unit Momentum")
+                    
+                    top_vector_pos = intraday.nlargest(3, "Vector Momentum")
+                    top_vector_neg = intraday.nsmallest(3, "Vector Momentum")
+                    
+                    
+                    # === Vector Momentum Markers ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_vector_pos["Time"],
+                        y=top_vector_pos["Cumulative_Unit"] + 24,
+                        mode="text",
+                        text=["💥"] * 3,
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="High Vector Momentum",
+                        showlegend=False,
+                        hovertemplate="💥 Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
+                        customdata=top_vector_pos[["Vector Momentum"]].values
+                    ))
+                    
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_vector_neg["Time"],
+                        y=top_vector_neg["Cumulative_Unit"] - 24,
+                        mode="text",
+                        text=["🌪️"] * 3,
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        name="Low Vector Momentum",
+                        showlegend=False,
+                        hovertemplate="🌪️ Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
+                        customdata=top_vector_neg[["Vector Momentum"]].values
+                    ))
+                    
+                                        
+                                # Ensure Vector Force is numeric (convert errors to NaN, then drop)
+                    intraday["Vector Force Clean"] = pd.to_numeric(intraday["Vector Force"], errors="coerce")
+                    
+                    # Top 3 positive
+                    top_positive_force = intraday.dropna(subset=["Vector Force Clean"]).nlargest(3, "Vector Force Clean")
+                    
+                    # Top 3 negative
+                    top_negative_force = intraday.dropna(subset=["Vector Force Clean"]).nsmallest(3, "Vector Force Clean")
+                    
+                                        # Plotting 💪🏼 markers (top 3 positive)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_positive_force["Time"],
+                        y=top_positive_force["Cumulative_Unit"] + 32,
+                        mode="text",
+                        text=["💪🏼"] * 3,
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        name="Top Force Up",
+                        customdata=top_positive_force[["Vector Force Clean"]],
+                        hovertemplate=(
+                            "💪🏼 Explosion Up<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Force: %{customdata[0]:.1f}<extra></extra>"
+                        )
+                    ))
+                    
+                    # Plotting 🦾 markers (top 3 negative)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_negative_force["Time"],
+                        y=top_negative_force["Cumulative_Unit"] - 32,
+                        mode="text",
+                        text=["🦾"] * 3,
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        name="Top Force Down",
+                        customdata=top_negative_force[["Vector Force Clean"]],
+                        hovertemplate=(
+                            "🦾 Slam Down<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Force: %{customdata[0]:.1f}<extra></extra>"
+                        )
+                    ))
+                    # --- Prepare Top 3 Vector Energy Rows ---
+                    intraday["Vector Energy_numeric"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
+                    top_energy_rows = intraday.nlargest(3, "Vector Energy_numeric").dropna(subset=["Vector Energy_numeric"])
+                    
+                    # --- Plot Emoji Markers for Top Energy Spikes ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_energy_rows["Time"],
+                        y=top_energy_rows["Cumulative_Unit"] + 40,  # Lift marker above line
+                        mode="text",
+                        text=["🔋"] * len(top_energy_rows),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="Top Energy Bursts",
+                        showlegend=False,
+                        hovertemplate=(
+                            "🔋 Energy Burst<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Vector Energy: %{customdata[0]:,.1f}<extra></extra>"
+                        ),
+                        customdata=top_energy_rows[["Vector Energy_numeric"]].values
+                    ))
+                    # === Find Bottom 3 Vector Energy Spikes ===
+                    bottom_vector_energy = intraday[intraday["Vector Energy"] != ""].copy()
+                    bottom_vector_energy["Vector Energy"] = pd.to_numeric(bottom_vector_energy["Vector Energy"], errors="coerce")
+                    bottom_vector_energy = bottom_vector_energy.dropna(subset=["Vector Energy"])
+                    bottom_3_energy = bottom_vector_energy.nsmallest(3, "Vector Energy")
+                    
+                    # === Plot Bottom 3 Vector Energy 🪫 Markers ===
+                    fig_displacement.add_trace(go.Scatter(
+                        x=bottom_3_energy["Time"],
+                        y=bottom_3_energy["Cumulative_Unit"] - 40,
+                        mode="text",
+                        text=["🪫"] * len(bottom_3_energy),
+                        textposition="bottom center",
+                        textfont=dict(size=20),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🪫 Low Energy<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Vector Energy: %{customdata[0]:.1f}<extra></extra>"
+                        ),
+                        customdata=bottom_3_energy[["Vector Energy"]].values
+                    ))
+                    
+
+                  
+                  # Ensure column is numeric
+                    intraday["Vector_Energy_Eff"] = pd.to_numeric(intraday["Vector_Energy_per_3bar_Range"], errors="coerce")
+                    
+                    # --- Top 3 Most Efficient (🔌) ---
+                    top_eff = intraday.nlargest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
+                    
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_eff["Time"],
+                        y=top_eff["Cumulative_Unit"] +64,
+                        mode="text",
+                        text=["🔌"] * len(top_eff),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        name="High Energy Efficiency",
+                        showlegend=False,
+                        hovertemplate="🔌 Efficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top_eff[["Vector_Energy_Eff"]].values
+                    ))
+                    
+                    # --- Bottom 3 Least Efficient (⚠️) ---
+                    bottom_eff = intraday.nsmallest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
+                    
+                    fig_displacement.add_trace(go.Scatter(
+                        x=bottom_eff["Time"],
+                        y=bottom_eff["Cumulative_Unit"] - 64,
+                        mode="text",
+                        text=["⚠️"] * len(bottom_eff),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        name="Low Energy Efficiency",
+                        showlegend=False,
+                        hovertemplate="⚠️ Inefficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=bottom_eff[["Vector_Energy_Eff"]].values
+                    ))
+
+                  
+                  
+                  # Pick the first 🦻🏼 ear row
+                  # === Overlay: 🦻🏼 Ear Line (Top %Vol Bin No Longer Active)
+                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                    
+                    if not ear_row.empty:
+                        ear_level = ear_row["F% Level"].values[0]
+                    
+                        # Find first time this F% Level appeared in intraday
+                        ear_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
+                        ear_row_match = intraday[intraday["TimeIndex"] == ear_time]
+                    
+                        if not ear_row_match.empty:
+                            ear_unit = ear_row_match["Cumulative_Unit"].values[0]
+                    
+                            fig_displacement.add_hline(
+                                y=ear_unit,
+                                line=dict(color="gray", dash="dot", width=1),
+                                annotation_text="🦻🏼 Volume Memory",
+                                annotation_position="top left",
+                                annotation_font=dict(color="gray", size=13),
+                                opacity=0.5
+                              )
+                      
+                        
+                              # === Overlay: 👃🏽 Nose Line (Top Time Bin)
+                    nose_row = profile_df[profile_df["👃🏽"] == "👃🏽"]
+                    
+                    if not nose_row.empty:
+                        nose_level = nose_row["F% Level"].values[0]
+                    
+                        # Find first time this F% Level appeared in intraday
+                        nose_time = intraday.loc[intraday["F_Bin"] == str(nose_level), "TimeIndex"].min()
+                        nose_row_match = intraday[intraday["TimeIndex"] == nose_time]
+                    
+                        if not nose_row_match.empty:
+                            nose_unit = nose_row_match["Cumulative_Unit"].values[0]
+                    
+                            fig_displacement.add_hline(
+                                y=nose_unit,
+                                line=dict(color="lightpink", dash="dot", width=1),
+                                annotation_text="👃🏽 Time Memory",
+                                annotation_position="top left",
+                                annotation_font=dict(color="#0ff", size=13),
+                                opacity=0.5
+                            )
+                    
+                                           # === Plot 🪶 Tail Emoji on Physics Plot (no line)
+                    tail_rows = profile_df[profile_df["Tail"] == "🪶"]
+                    
+                    for _, row in tail_rows.iterrows():
+                        tail_level = row["F% Level"]
+                    
+                        # Match first appearance in intraday
+                        time_index = intraday.loc[intraday["F_Bin"] == str(tail_level), "TimeIndex"].min()
+                        match_row = intraday[intraday["TimeIndex"] == time_index]
+                    
+                        if not match_row.empty:
+                            y_val = match_row["Cumulative_Unit"].values[0]
+                    
+                            fig_displacement.add_trace(go.Scatter(
+                                x=[time_index],
+                                y=[y_val],
+                                mode="text",
+                                text=["🪶"],
+                                textposition="middle center",
+                                textfont=dict(size=20),
+                                hovertemplate=(
+                                    f"🪶 Tail (Single Letter)<br>Level: {tail_level}<br>Time: {row['Time']}<extra></extra>"
+                                ),
+                                showlegend=False
+                            ))
+                 
+                                                           
+
+       # === Overlay: IB High as Resistance in Cumulative Unit Space ===
+                    ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
+                    ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
+                    
+                    if not ib_high_row.empty:
+                        ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
+                    
+                        fig_displacement.add_hline(
+                            y=ib_high_unit,
+                            line=dict(color="gold", dash="dash", width=1),
+                            annotation_text="💸 IB High",
+                            annotation_position="top left",
+                            annotation_font=dict(color="gold", size=13),
+                            opacity=0.6
+                        )
+
+
+
+                                      # === Overlay: IB Low as Support in Cumulative Unit Space ===
+                    ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
+                    ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
+                    
+                    if not ib_low_row.empty:
+                        ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
+                    
+                        fig_displacement.add_hline(
+                            y=ib_low_unit,
+                            line=dict(color="gold", dash="dash", width=1),
+                            annotation_text="🧧 IB Low",
+                            annotation_position="bottom left",
+                            annotation_font=dict(color="gold", size=13),
+                            opacity=0.6
+                        )
+                    # # Convert power column to numeric just in case
+                    # intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
+                    
+                    # # Drop NaNs
+                    # valid_power = intraday.dropna(subset=["Power_numeric", "Cumulative_Unit", "Time"])
+                    
+                    # # Top 3 positive power
+                    # top3_power_up = valid_power.nlargest(3, "Power_numeric")
+                    
+                    # # Top 3 negative power
+                    # top3_power_down = valid_power.nsmallest(3, "Power_numeric")
+                    
+                    # # === 🔷 Top 3 Power Surges ===
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top3_power_up["Time"],
+                    #     y=top3_power_up["Cumulative_Unit"] + 72,
+                    #     mode="text",
+                    #     text=["🔷"] * len(top3_power_up),
+                    #     textposition="top center",
+                    #     textfont=dict(size=16),
+                    #     showlegend=False,
+                    #     hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
+                    #     customdata=top3_power_up[["Power_numeric"]].values
+                    # ))
+                    
+                    # # === 🔶 Top 3 Power Drops ===
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=top3_power_down["Time"],
+                    #     y=top3_power_down["Cumulative_Unit"] - 104,
+                    #     mode="text",
+                    #     text=["🔶"] * len(top3_power_down),
+                    #     textposition="bottom center",
+                    #     textfont=dict(size=16),
+                    #     showlegend=False,
+                    #     hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
+                    #     customdata=top3_power_down[["Power_numeric"]].values
+                    # ))
+                    
+       #              # Ensure numeric and drop invalids
+       #              intraday["Wave_Intensity"] = pd.to_numeric(intraday["Wave_Intensity"], errors="coerce")
+       #              valid_intensity = intraday.dropna(subset=["Wave_Intensity", "Cumulative_Unit", "TimeIndex"])
+                    
+       #              # Top 3 positive intensity spikes (🌟)
+       #              top3_intensity_up = valid_intensity.nlargest(3, "Wave_Intensity")
+                    
+       #              # Top 3 negative (low intensity zones – 🫧)
+       #              top3_intensity_down = valid_intensity.nsmallest(3, "Wave_Intensity")
+                    
+       #              # 🌟 High Intensity markers
+       #              fig_displacement.add_trace(go.Scatter(
+       #                  x=top3_intensity_up["TimeIndex"],
+       #                  y=top3_intensity_up["Cumulative_Unit"] + 104,
+       #                  mode="text",
+       #                  text=["🌟"] * len(top3_intensity_up),
+       #                  textposition="top center",
+       #                  textfont=dict(size=18),
+       #                  showlegend=False,
+       #                  hovertemplate="🌟 Intensity Spike<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
+       #                  customdata=top3_intensity_up[["Wave_Intensity"]].values
+       #              ))
+                    
+       #              # 🫧 Low Intensity markers
+       #              fig_displacement.add_trace(go.Scatter(
+       #                  x=top3_intensity_down["TimeIndex"],
+       #                  y=top3_intensity_down["Cumulative_Unit"] - 48,
+       #                  mode="text",
+       #                  text=["🫧"] * len(top3_intensity_down),
+       #                  textposition="bottom center",
+       #                  textfont=dict(size=18),
+       #                  showlegend=False,
+       #                  hovertemplate="🫧 Weak Intensity<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
+       #                  customdata=top3_intensity_down[["Wave_Intensity"]].values
+       #              ))
+                    
+
+       #                                # Drop NaNs or invalid entries
+                    valid_capacitance = intraday.dropna(subset=["Vector_Capacitance"])
+                    
+                    # Top 3 positive Capacitance (high potential for breakout pressure being stored)
+                    top3_cap_up = valid_capacitance.nlargest(3, "Vector_Capacitance")
+                    
+                    # Top 3 negative Capacitance (possibly reactive rejection or imbalance)
+                    top3_cap_down = valid_capacitance.nsmallest(3, "Vector_Capacitance")
+                    # ⚡ High Capacitance markers (storage building)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_cap_up["TimeIndex"],
+                        y=top3_cap_up["Cumulative_Unit"] + 80,
+                        mode="text",
+                        text=["🧲"] * len(top3_cap_up),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🧲 High Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_cap_up[["Vector_Capacitance"]].values
+                    ))
+                    
+                    # 🪹 Low Capacitance markers (release, unstable)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_cap_down["TimeIndex"],
+                        y=top3_cap_down["Cumulative_Unit"] - 80,
+                        mode="text",
+                        text=["🪹"] * len(top3_cap_down),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🪹 Low Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_cap_down[["Vector_Capacitance"]].values
+                    ))
+
+                    
+                                        # Ensure Capacitance is numeric
+                    # Ensure Vector Capacitance is numeric
+                    intraday["Capacitance_numeric"] = pd.to_numeric(intraday["Vector_Capacitance"], errors="coerce")
+                                        
+                    # Get top 3 positive and negative indices
+                    top_pos = intraday.nlargest(3, "Capacitance_numeric").index
+                    top_neg = intraday.nsmallest(3, "Capacitance_numeric").index
+                    
+                    # Combine and add ±1 context
+                    all_indices = set()
+                    for idx in list(top_pos) + list(top_neg):
+                        all_indices.update([idx - 1, idx, idx + 1])
+                    
+                    # Filter valid indices
+                    context_indices = [i for i in all_indices if 0 <= i < len(intraday)]
+                    cap_context_df = intraday.iloc[context_indices].copy()
+                    
+                    # Drop NaNs and keep only rows with polarity
+                    cap_context_df = cap_context_df.dropna(subset=["Charge_Polarity", "Cumulative_Unit", "TimeIndex"])
+                    
+                    # Plot them
+                    fig_displacement.add_trace(go.Scatter(
+                        x=cap_context_df["TimeIndex"],
+                        y=cap_context_df["Cumulative_Unit"] + 3,
+                        mode="text",
+                        text=cap_context_df["Charge_Polarity"],
+                        textposition="top center",
+                        textfont=dict(size=4),
+                        showlegend=False,
+                        hovertemplate="Charge Polarity: %{text}<br>Time: %{x|%I:%M %p}<extra></extra>",
+                    ))
+
+
+                  # # # Clean up electric force column
+                  #   intraday["Electric_Force"] = pd.to_numeric(intraday["Electric_Force"], errors='coerce')
+                    
+                  #   # Drop NaNs
+                  #   valid_force = intraday.dropna(subset=["Electric_Force", "Cumulative_Unit", "Time"])
+                    
+                  #   # Top 3 Positive Forces (🐼)
+                  #   top3_force_up = valid_force.nlargest(3, "Electric_Force")
+                    
+                  #   # Top 3 Negative Forces (🔌)
+                  #   top3_force_down = valid_force.nsmallest(3, "Electric_Force")
+                    
+                  #   # Plot 🐼 Positive Forces
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top3_force_up["Time"],
+                  #       y=top3_force_up["Cumulative_Unit"] + 88,
+                  #       mode="text",
+                  #       text=["🐼"] * len(top3_force_up),
+                  #       textposition="top center",
+                  #       textfont=dict(size=16),
+                  #       hovertemplate=(
+                  #           "🐼 Electric Force Up<br>"
+                  #           "Time: %{x}<br>"
+                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
+                  #       ),
+                  #       customdata=top3_force_up[["Electric_Force"]],
+                  #       showlegend=False
+                  #   ))
+                    
+                  #   # Plot 🐻 Negative Forces
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top3_force_down["Time"],
+                  #       y=top3_force_down["Cumulative_Unit"] - 88,
+                  #       mode="text",
+                  #       text=["🐻"] * len(top3_force_down),
+                  #       textposition="bottom center",
+                  #       textfont=dict(size=16),
+                  #       hovertemplate=(
+                  #           "🐻 Electric Force Down<br>"
+                  #           "Time: %{x}<br>"
+                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
+                  #       ),
+                  #       customdata=top3_force_down[["Electric_Force"]],
+                  #       showlegend=False
+                  #   ))
+
+
+                  # # Ensure IB_Electric_Force is numeric
+                  #   intraday["IB_Electric_Force"] = pd.to_numeric(intraday["IB_Electric_Force"], errors='coerce')
+                    
+                  #   # Drop rows with missing values
+                  #   valid_ib_force = intraday.dropna(subset=["IB_Electric_Force", "Cumulative_Unit", "Time"])
+                    
+                  #   # Top 3 positive and negative
+                  #   top3_ib_force_up = valid_ib_force.nlargest(3, "IB_Electric_Force")
+                  #   top3_ib_force_down = valid_ib_force.nsmallest(3, "IB_Electric_Force")
+                    
+                  #   # === 💡 Markers (Top 3 Positive IB Force)
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top3_ib_force_up["Time"],
+                  #       y=top3_ib_force_up["Cumulative_Unit"] + 96,
+                  #       mode="text",
+                  #       text=["💡"] * len(top3_ib_force_up),
+                  #       textposition="top center",
+                  #       textfont=dict(size=18),
+                  #       showlegend=False,
+                  #       hovertemplate=(
+                  #           "💡 IB Electric Force (UP)<br>"
+                  #           "Time: %{x}<br>"
+                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
+                  #       ),
+                  #       customdata=top3_ib_force_up[["IB_Electric_Force"]].values
+                  #   ))
+                    
+                  #   # === 🕯️ Markers (Top 3 Negative IB Force)
+                  #   fig_displacement.add_trace(go.Scatter(
+                  #       x=top3_ib_force_down["Time"],
+                  #       y=top3_ib_force_down["Cumulative_Unit"] - 96,
+                  #       mode="text",
+                  #       text=["🕯️"] * len(top3_ib_force_down),
+                  #       textposition="bottom center",
+                  #       textfont=dict(size=18),
+                  #       showlegend=False,
+                  #       hovertemplate=(
+                  #           "🕯️ IB Electric Force (DOWN)<br>"
+                  #           "Time: %{x}<br>"
+                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
+                  #       ),
+                  #       customdata=top3_ib_force_down[["IB_Electric_Force"]].values
+                  #   ))
+                 
+                    fig_displacement.add_trace(go.Scatter(
+                      x=intraday["TimeIndex"],
+                      y=intraday["Kijun_Cumulative"],
+                      mode="lines",
+                      line=dict(color="green", dash="solid", width=1.5),
+                      name="Kijun (Cumulative)",
+                      hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
+                      ))
+
+
+
+                  
+
+
+                  
+                    # === Layout ===
+                    fig_displacement.update_layout(
+                        height=500,
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        title="🧠 Mike's Physics Engine – Flight Path via Cumulative Unit%",
+                        xaxis=dict(title="Time"),
+                   
+
+                        yaxis=dict(title="Cumulative Unit (×10⁻⁴)", zeroline=True),
+                        margin=dict(t=40, b=40),
+                        legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
+                    )
+
+                
+                    fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
+                
+               
+                st.plotly_chart(fig_displacement, use_container_width=True)
+
+
+
+
+
+
+         
+
+                # with st.expander("🧲 Market Capacitance (Charge Storage & Release)", expanded=False):
+      
+                #       fig_capacitance = go.Figure()
+                  
+                #       fig_capacitance.add_trace(go.Scatter(
+                #           x=intraday["TimeIndex"],
+                #           y=intraday["Vector_Capacitance"].rolling(window=3, min_periods=1).mean(),  # Smooth with rolling average
+                #           mode="lines",
+                #           name="Vector Capacitance",
+                #           line=dict(color="orange", width=2),
+                #           fill='tozeroy',
+                #           hovertemplate="Time: %{x}<br>Capacitance: %{y:.2f}<extra></extra>"
+                #       ))
+                  
+                #       fig_capacitance.update_layout(
+                #           height=300,
+                #           title="🧲 Capacitance (Market Charge)",
+                #           plot_bgcolor="black",
+                #           paper_bgcolor="black",
+                #           font=dict(color="white"),
+                #           xaxis=dict(title="Time"),
+                #           yaxis=dict(title="Capacitance"),
+                #           margin=dict(t=40, b=40),
+                #           showlegend=True
+                #       )
+                  
+                # st.plotly_chart(fig_capacitance, use_container_width=True)
+                
+                # # st.plotly_chart(fig, use_container_width=True)
+            
+                         
            
+
+                # with st.expander("📉 Volatility Composite (Smoothed)", expanded=False):
+                #           fig_volatility = go.Figure()
+                      
+                #           fig_volatility.add_trace(go.Scatter(
+                #               x=intraday["TimeIndex"],
+                #               y=intraday["Volatility_Composite"].rolling(window=3, min_periods=1).mean(),
+                #               mode="lines",
+                #               name="Volatility",
+                #               line=dict(color="violet", width=2),
+                #               fill='tozeroy',
+                #               hovertemplate="Time: %{x}<br>Volatility: %{y:.2f}<extra></extra>"
+                #           ))
+                      
+                #           fig_volatility.update_layout(
+                #               height=300,
+                #               title="📉 Volatility Composite (Smoothed)",
+                #               plot_bgcolor="black",
+                #               paper_bgcolor="black",
+                #               font=dict(color="white"),
+                #               xaxis=dict(title="Time"),
+                #               yaxis=dict(title="Volatility"),
+                #               margin=dict(t=40, b=40),
+                #               showlegend=True
+                #           )
+                      
+                # st.plotly_chart(fig_volatility, use_container_width=True)
+                # # Create a smoothed version of Unit Velocity
+                # # Clean and convert Unit Velocity to numeric
+                # intraday["Unit_Velocity_Numeric"] = (
+                #     intraday["Unit Velocity"]
+                #     .astype(str)
+                #     .str.replace("%", "", regex=False)
+                #     .replace("", "0")
+                #     .astype(float)
+                # )
+                
+                # # Apply rolling mean
+                # intraday["Velocity_SMA"] = intraday["Unit_Velocity_Numeric"].rolling(window=5, min_periods=1).mean()
+                                
+                # with st.expander("⚡ Velocity Line Plot", expanded=False):
+                #     fig_velocity = go.Figure()
+                
+                #     fig_velocity.add_trace(go.Scatter(
+                #         x=intraday["TimeIndex"],
+                #         y=intraday["Velocity_SMA"],
+                #         mode="lines",
+                #         name="Smoothed Velocity",
+                #         line=dict(color="orange", width=2)
+                #     ))
+                
+                #     fig_velocity.add_hline(y=20, line=dict(color="green", dash="dash"))
+                #     fig_velocity.add_hline(y=-20, line=dict(color="red", dash="dash"))
+                
+                #     fig_velocity.update_layout(
+                #         height=300,
+                #         title="⚡ Velocity Flow",
+                #         plot_bgcolor="black",
+                #         paper_bgcolor="black",
+                #         font=dict(color="white"),
+                #         xaxis_title="Time",
+                #         yaxis_title="Velocity (%)",
+                #     )
+                
+                #     st.plotly_chart(fig_velocity, use_container_width=True)
+
+
+
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
@@ -4631,16 +6559,16 @@ if st.sidebar.button("Run Analysis"):
                     # # Drop rows where Chikou_F is NaN (due to shifting)
                     chikou_plot = intraday.dropna(subset=["Chikou_F"])
 
-                    # Plot without shifting time
-                    chikou_line = go.Scatter(
-                        x=chikou_plot["Time"],
-                        y=chikou_plot["Chikou_F"],
-                        mode="lines",
+                    # # Plot without shifting time
+                    # chikou_line = go.Scatter(
+                    #     x=chikou_plot["Time"],
+                    #     y=chikou_plot["Chikou_F"],
+                    #     mode="lines",
                       
-                        name="Chikou (F%)",
-                        line=dict(color="purple", dash="dash", width=1)
-                    )
-                    fig.add_trace(chikou_line, row=1, col=1)
+                    #     name="Chikou (F%)",
+                    #     line=dict(color="purple", dash="dash", width=1)
+                    # )
+                    # fig.add_trace(chikou_line, row=1, col=1)
 
                     intraday["Chikou"] = intraday["Close"].shift(-26)
 
@@ -4717,45 +6645,45 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                                        # Span A – Yellow Line
-                    span_a_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanA_F"],
-                        mode="lines",
-                        line=dict(color="yellow", width=0.4),
-                        name="Span A (F%)"
-                    )
-                    fig.add_trace(span_a_line, row=1, col=1)
+                    #                     # Span A – Yellow Line
+                    # span_a_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanA_F"],
+                    #     mode="lines",
+                    #     line=dict(color="yellow", width=0.4),
+                    #     name="Span A (F%)"
+                    # )
+                    # fig.add_trace(span_a_line, row=1, col=1)
 
-                    # Span B – Blue Line
-                    span_b_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanB_F"],
-                        mode="lines",
-                        line=dict(color="blue", width=0.4),
-                        name="Span B (F%)"
-                    )
-                    fig.add_trace(span_b_line, row=1, col=1)
+                    # # Span B – Blue Line
+                    # span_b_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanB_F"],
+                    #     mode="lines",
+                    #     line=dict(color="blue", width=0.4),
+                    #     name="Span B (F%)"
+                    # )
+                    # fig.add_trace(span_b_line, row=1, col=1)
 
-                    # Invisible SpanA for cloud base
-                    fig.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanA_F"],
-                        line=dict(width=0),
-                        mode='lines',
-                        showlegend=False
-                    ), row=1, col=1)
+                    # # Invisible SpanA for cloud base
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanA_F"],
+                    #     line=dict(width=0),
+                    #     mode='lines',
+                    #     showlegend=False
+                    # ), row=1, col=1)
 
-                    # SpanB with fill → grey Kumo
-                    fig.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanB_F"],
-                        fill='tonexty',
-                        fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                        line=dict(width=0),
-                        mode='lines',
-                        name='Kumo Cloud'
-                    ), row=1, col=1)
+                    # # SpanB with fill → grey Kumo
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanB_F"],
+                    #     fill='tonexty',
+                    #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                    #     line=dict(width=0),
+                    #     mode='lines',
+                    #     name='Kumo Cloud'
+                    # ), row=1, col=1)
 
 
                                     # Mask for different RVOL thresholds
@@ -4816,7 +6744,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="solid", color="#bebebe",width=0.4),
+                        line=dict(dash="solid", color="#bebebe",width=1),
                         name="Upper Band"
                     )
 
@@ -4825,7 +6753,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Lower"],
                         mode="lines",
-                        line=dict(dash="solid", color="#bebebe",width=0.4),
+                        line=dict(dash="solid", color="#bebebe",width=1),
                         name="Lower Band"
                     )
 
@@ -4834,7 +6762,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% MA"],
                         mode="lines",
-                        line=dict(dash="dash",color="#d3d3d3",width=0.4),  # Set dash style
+                        line=dict(dash="dash",color="#d3d3d3",width=1),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
 
@@ -4863,61 +6791,61 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(shift_bubbles, row=1, col=1)
 
                    
-                    # Create a Boolean mask for rows with surge emojis
-                    mask_compliance_surge = intraday["Compliance Surge"] != ""
+                    # # Create a Boolean mask for rows with surge emojis
+                    # mask_compliance_surge = intraday["Compliance Surge"] != ""
                     
-                    # Plot Surge Emojis using same structure as BBW Alert
-                    scatter_compliance_surge = go.Scatter(
-                        x=intraday.loc[mask_compliance_surge, "Time"],
-                        y=intraday.loc[mask_compliance_surge, "F_numeric"] - 24,  # Offset slightly below F%
-                        mode="text",
-                        text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
-                        textposition="top center",
-                        textfont=dict(size=14),
-                        name="Compliance Surge",
-                        hovertemplate="Time: %{x}<br>Surge: %{text}<extra></extra>"
-                    )
+                    # # Plot Surge Emojis using same structure as BBW Alert
+                    # scatter_compliance_surge = go.Scatter(
+                    #     x=intraday.loc[mask_compliance_surge, "Time"],
+                    #     y=intraday.loc[mask_compliance_surge, "F_numeric"] - 24,  # Offset slightly below F%
+                    #     mode="text",
+                    #     text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=14),
+                    #     name="Compliance Surge",
+                    #     hovertemplate="Time: %{x}<br>Surge: %{text}<extra></extra>"
+                    # )
                     
-                    fig.add_trace(scatter_compliance_surge, row=1, col=1)
+                    # fig.add_trace(scatter_compliance_surge, row=1, col=1)
 
 
                     # (G) Distensibility Alert on Main Plot
                     
-                    # Mask bars that triggered the 🪟 emoji
-                    mask_distensibility = intraday["Distensibility Alert"] != ""
+                    # # Mask bars that triggered the 🪟 emoji
+                    # mask_distensibility = intraday["Distensibility Alert"] != ""
                     
-                    # Plot emoji above price (or F_numeric)but rangebut range
-                    scatter_distensibility = go.Scatter(
-                        x=intraday.loc[mask_distensibility, "Time"],
-                        y=intraday.loc[mask_distensibility, "F_numeric"] + 70,  # Slight offset upward
-                        mode="text",
-                        text=intraday.loc[mask_distensibility, "Distensibility Alert"],
-                        textposition="top center",
-                        textfont=dict(size=24),
-                        name="Distensibility 🪟",
-                        hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
-                        customdata=intraday.loc[mask_distensibility, "Distensibility"]
-                    )
+                    # # Plot emoji above price (or F_numeric)but rangebut range
+                    # scatter_distensibility = go.Scatter(
+                    #     x=intraday.loc[mask_distensibility, "Time"],
+                    #     y=intraday.loc[mask_distensibility, "F_numeric"] + 70,  # Slight offset upward
+                    #     mode="text",
+                    #     text=intraday.loc[mask_distensibility, "Distensibility Alert"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=24),
+                    #     name="Distensibility 🪟",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
+                    #     customdata=intraday.loc[mask_distensibility, "Distensibility"]
+                    # )
                     
-                    fig.add_trace(scatter_distensibility, row=1, col=1)
+                    # fig.add_trace(scatter_distensibility, row=1, col=1)
 
 
                     # Create a Boolean mask for rows with Stroke Growth ⭐ emojis
-                    mask_stroke_growth = intraday["Stroke Growth ⭐"] != ""
+                    # mask_stroke_growth = intraday["Stroke Growth ⭐"] != ""
                     
-                    # Plot Stroke Growth ⭐ emojis just below the F_numeric line
-                    scatter_stroke_growth = go.Scatter(
-                        x=intraday.loc[mask_stroke_growth, "Time"],
-                        y=intraday.loc[mask_stroke_growth, "F_numeric"] + 38,  # Adjust vertical offset if needed
-                        mode="text",
-                        text=intraday.loc[mask_stroke_growth, "Stroke Growth ⭐"],
-                        textposition="top center",
-                        textfont=dict(size=16),
-                        name="Stroke Growth ⭐",
-                        hovertemplate="Time: %{x}<br>⭐ Stroke Volume Growth<extra></extra>"
-                    )
+                    # # Plot Stroke Growth ⭐ emojis just below the F_numeric line
+                    # scatter_stroke_growth = go.Scatter(
+                    #     x=intraday.loc[mask_stroke_growth, "Time"],
+                    #     y=intraday.loc[mask_stroke_growth, "F_numeric"] + 38,  # Adjust vertical offset if needed
+                    #     mode="text",
+                    #     text=intraday.loc[mask_stroke_growth, "Stroke Growth ⭐"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=16),
+                    #     name="Stroke Growth ⭐",
+                    #     hovertemplate="Time: %{x}<br>⭐ Stroke Volume Growth<extra></extra>"
+                    # )
                     
-                    fig.add_trace(scatter_stroke_growth, row=1, col=1)
+                    # fig.add_trace(scatter_stroke_growth, row=1, col=1)
 
                   
 
@@ -5070,21 +6998,21 @@ if st.sidebar.button("Run Analysis"):
   #🟢 ADX Expansion
 
 
-                    mask_adx_alert = intraday["ADX_Alert"] != ""
+                    # mask_adx_alert = intraday["ADX_Alert"] != ""
 
-                    scatter_adx_alert = go.Scatter(
-                        x=intraday.loc[mask_adx_alert, "Time"],
-                        y=intraday.loc[mask_adx_alert, "F_numeric"] + 10,  # Offset for visibility
-                        mode="text",
-                        text=intraday.loc[mask_adx_alert, "ADX_Alert"],
-                        textposition="top center",
-                        textfont=dict(size=11),
-                        name="ADX Expansion Alert",
-                        hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
-                        customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
-                    )
+                    # scatter_adx_alert = go.Scatter(
+                    #     x=intraday.loc[mask_adx_alert, "Time"],
+                    #     y=intraday.loc[mask_adx_alert, "F_numeric"] + 10,  # Offset for visibility
+                    #     mode="text",
+                    #     text=intraday.loc[mask_adx_alert, "ADX_Alert"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=11),
+                    #     name="ADX Expansion Alert",
+                    #     hovertemplate="Time: %{x}<br>ADX Ratio: %{customdata:.2f}<extra></extra>",
+                    #     customdata=intraday.loc[mask_adx_alert, "ADX_Ratio"]
+                    # )
 
-                    fig.add_trace(scatter_adx_alert, row=1, col=1)
+                    # fig.add_trace(scatter_adx_alert, row=1, col=1)
 
 
 
@@ -5129,32 +7057,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # fig.add_trace(
-                    #     go.Scatter(
-                    #         x=intraday['Time'],
-                    #         y=intraday['TD Supply Line F'],
-                    #         mode='lines',
-                    #         line=dict(width=0.5, color="#8A2BE2", dash='dot'),
-                    #         name='TD Supply F%',
-                    #         hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
-                    #     ),
-                    #     row=1, col=1
-                    # )
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday['Time'],
+                            y=intraday['TD Supply Line F'],
+                            mode='lines',
+                            line=dict(width=0.5, color="#8A2BE2", dash='dot'),
+                            name='TD Supply F%',
+                            hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
+                        ),
+                        row=1, col=1
+                    )
 
 
 
  
-                    # fig.add_trace(
-                    #     go.Scatter(
-                    #         x=intraday['Time'],
-                    #         y=intraday['TD Demand Line F'],
-                    #         mode='lines',
-                    #         line=dict(width=0.5, color="#5DADE2", dash='dot'),
-                    #         name='TD Demand F%',
-                    #         hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
-                    #     ),
-                    #     row=1, col=1
-                    # )
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday['Time'],
+                            y=intraday['TD Demand Line F'],
+                            mode='lines',
+                            line=dict(width=0.5, color="#5DADE2", dash='dot'),
+                            name='TD Demand F%',
+                            hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
+                        ),
+                        row=1, col=1
+                    )
             
             
 
@@ -5299,32 +7227,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # short_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
-                #     textposition="bottom left",
-                #     textfont=dict(size=13, color="lime"),
-                #     name="Short Entry (✅)"
-                # )
-                # fig.add_trace(short_entry_trace, row=1, col=1)
+                short_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
+                    textposition="bottom left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Short Entry (✅)"
+                )
+                fig.add_trace(short_entry_trace, row=1, col=1)
 
 
 
 
 
 
-                # long_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
-                #     textposition="top left",
-                #     textfont=dict(size=13, color="lime"),
-                #     name="Long Entry (✅)"
-                # )
-                # fig.add_trace(long_entry_trace, row=1, col=1)
+                long_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
+                    textposition="top left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Long Entry (✅)"
+                )
+                fig.add_trace(long_entry_trace, row=1, col=1)
 
 
                 # 🔍 First Wake-Up Detection
@@ -5486,19 +7414,19 @@ if st.sidebar.button("Run Analysis"):
                 #     name="Tiger"
                 # ), row=2, col=1)
                 
-                horse_df = intraday[intraday["Mike_Kijun_Horse_Emoji"] == "🏇🏽"]
+                # horse_df = intraday[intraday["Mike_Kijun_Horse_Emoji"] == "🏇🏽"]
                 
-                # Add trace to your figure
-                fig.add_trace(go.Scatter(
-                    x=horse_df["TimeIndex"],
-                    y=horse_df["F_numeric"] + 10,
-                    mode="text",
-                    text=horse_df["Mike_Kijun_Horse_Emoji"],
-                    textposition="bottom left",
-                    textfont=dict(size=30),
-                    name="Mike x Kijun + Horse",
-                    showlegend=True
-                ))
+                # # Add trace to your figure
+                # fig.add_trace(go.Scatter(
+                #     x=horse_df["TimeIndex"],
+                #     y=horse_df["F_numeric"] + 10,
+                #     mode="text",
+                #     text=horse_df["Mike_Kijun_Horse_Emoji"],
+                #     textposition="bottom left",
+                #     textfont=dict(size=30),
+                #     name="Mike x Kijun + Horse",
+                #     showlegend=True
+                # ))
 
                  
 
@@ -5590,22 +7518,22 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
             
-                # Filter only rows where oxygen quality is rich
-                lungs_only = intraday[intraday["O2 Quality"] == "🫁"]
+                # # Filter only rows where oxygen quality is rich
+                # lungs_only = intraday[intraday["O2 Quality"] == "🫁"]
 
 
-                scatter_lungs = go.Scatter(
-                x=lungs_only["Time"],
-                y=lungs_only["F_numeric"] - 8,
-                mode="text",
-                text=lungs_only["O2 Quality"],  # Will just be 🫁
-                textposition="middle center",
-                textfont=dict(size=9),
-                name="Lungs Only",
-                hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
-                  )
+                # scatter_lungs = go.Scatter(
+                # x=lungs_only["Time"],
+                # y=lungs_only["F_numeric"] - 8,
+                # mode="text",
+                # text=lungs_only["O2 Quality"],  # Will just be 🫁
+                # textposition="middle center",
+                # textfont=dict(size=9),
+                # name="Lungs Only",
+                # hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
+                #   )
 
-                fig.add_trace(scatter_lungs, row=1, col=1)
+                # fig.add_trace(scatter_lungs, row=1, col=1)
 
              
 
@@ -5792,18 +7720,18 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
-                bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
-                fig.add_trace(go.Scatter(
-                    x=bullish_df["TimeIndex"] ,
-                    y=bullish_df["F_numeric"] + 14,
-                    mode="text",
-                    text=bullish_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="top right",
-                    textfont=dict(size=20),
-                    name="Bullish Mike x Kijun + ATR 🚀",
-                    showlegend=True
-                ))
+                # # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
+                # bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                # fig.add_trace(go.Scatter(
+                #     x=bullish_df["TimeIndex"] ,
+                #     y=bullish_df["F_numeric"] + 14,
+                #     mode="text",
+                #     text=bullish_df["Mike_Kijun_ATR_Emoji"],
+                #     textposition="top right",
+                #     textfont=dict(size=20),
+                #     name="Bullish Mike x Kijun + ATR 🚀",
+                #     showlegend=True
+                # ))
 
 
            
@@ -5850,40 +7778,75 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=True
                 ))
 
-                                # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
-                bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                fig.add_trace(go.Scatter(
-                    x=bull_hand_rows["TimeIndex"],
-                    y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
-                    mode="text",
-                    text=["👋🏽"] * len(bull_hand_rows),
-                    textposition="top right",
-                    textfont=dict(size=22),
-                    showlegend=False,
-                    hovertemplate=(
-                        "👋🏽 Bull MIDAS Breakout<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        f"Bear MIDAS: {{y:.2f}}<extra></extra>"
-                    )
-                ), row=1, col=1)
+                #                 # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
+                # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                # fig.add_trace(go.Scatter(
+                #     x=bull_hand_rows["TimeIndex"],
+                #     y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
+                #     mode="text",
+                #     text=["👋🏽"] * len(bull_hand_rows),
+                #     textposition="top right",
+                #     textfont=dict(size=22),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "👋🏽 Bull MIDAS Breakout<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         f"Bear MIDAS: {{y:.2f}}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
                 
-                # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
-                bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                # # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
+                # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                # fig.add_trace(go.Scatter(
+                #     x=bear_glove_rows["TimeIndex"],
+                #     y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
+                #     mode="text",
+                #     text=["🧤"] * len(bear_glove_rows),
+                #     textposition="bottom right",
+                #     textfont=dict(size=22),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "🧤 Bear MIDAS Breakdown<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
+
+                # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
+                bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
                 fig.add_trace(go.Scatter(
-                    x=bear_glove_rows["TimeIndex"],
-                    y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
+                    x=bear_lethal_rows["TimeIndex"],
+                    y=bear_lethal_rows["F_numeric"] - 20,  # Offset below Mike for clarity
                     mode="text",
-                    text=["🧤"] * len(bear_glove_rows),
+                    text=["🥊"] * len(bear_lethal_rows),
                     textposition="bottom right",
-                    textfont=dict(size=22),
+                    textfont=dict(size=20),
                     showlegend=False,
                     hovertemplate=(
-                        "🧤 Bear MIDAS Breakdown<br>"
+                        "🥊 Bear Lethal Acceleration<br>"
                         "Time: %{x|%I:%M %p}<br>"
-                        f"Bull MIDAS: {{y:.2f}}<extra></extra>"
+                        "F%: %{y:.2f}<extra></extra>"
                     )
                 ), row=1, col=1)
-                
+
+                # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
+                bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
+                fig.add_trace(go.Scatter(
+                    x=bull_lethal_rows["TimeIndex"],
+                    y=bull_lethal_rows["F_numeric"] + 20,  # Offset above Mike for clarity
+                    mode="text",
+                    text=["🚀"] * len(bull_lethal_rows),
+                    textposition="top right",
+                    textfont=dict(size=20),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🚀 Bull Lethal Acceleration<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        "F%: %{y:.2f}<extra></extra>"
+                    )
+                ), row=1, col=1)
+
+
                 # Wake-up Emojis 📈
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
@@ -6115,7 +8078,7 @@ if st.sidebar.button("Run Analysis"):
                     # Upward Cross Trace (♕)
                     up_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_up, "Time"],
-                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 40,  # Offset upward (adjust as needed)
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 89,  # Offset upward (adjust as needed)
                         mode="text",
                         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
                         textposition="top center",  # Positioned above the point
@@ -6127,7 +8090,7 @@ if st.sidebar.button("Run Analysis"):
                     # Downward Cross Trace (♛)
                     down_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_down, "Time"],
-                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 40,  # Offset downward
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 89,  # Offset downward
                         mode="text",
                         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
                         textposition="bottom center",  # Positioned below the point
@@ -6147,7 +8110,7 @@ if st.sidebar.button("Run Analysis"):
                 # Buy Horse (♘) → normal above
                 scatter_horse_buy = go.Scatter(
                     x=intraday.loc[mask_horse_buy, "Time"],
-                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 82,
+                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 45,
                     mode="text",
                     text=["♘"] * mask_horse_buy.sum(),
                     textposition="top left",
@@ -6159,7 +8122,7 @@ if st.sidebar.button("Run Analysis"):
                 # Sell Horse (♞) → below and red
                 scatter_horse_sell = go.Scatter(
                     x=intraday.loc[mask_horse_sell, "Time"],
-                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 82,
+                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 45,
                     mode="text",
                     text=["♞"] * mask_horse_sell.sum(),
                     textposition="bottom left",
@@ -6178,7 +8141,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Up (♗)
                 scatter_bishop_up = go.Scatter(
                     x=intraday.loc[mask_bishop_up, "Time"],
-                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 50,
+                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
                     mode="text",
                     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
                     textposition="top center",
@@ -6190,7 +8153,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Down (♝)
                 scatter_bishop_down = go.Scatter(
                     x=intraday.loc[mask_bishop_down, "Time"],
-                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 50,
+                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
                     mode="text",
                     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
                     textposition="bottom center",
@@ -6209,7 +8172,7 @@ if st.sidebar.button("Run Analysis"):
                 # White rook (up cross)
                 scatter_rook_up = go.Scatter(
                     x=intraday.loc[mask_rook_up, "Time"],
-                    y=intraday.loc[mask_rook_up, "F_numeric"] + 16,  # Offset upward
+                    y=intraday.loc[mask_rook_up, "F_numeric"] + 13,  # Offset upward
                     mode="text",
                     text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
                     textposition="top left",
@@ -6221,7 +8184,7 @@ if st.sidebar.button("Run Analysis"):
                 # Black rook (down cross)
                 scatter_rook_down = go.Scatter(
                     x=intraday.loc[mask_rook_down, "Time"],
-                    y=intraday.loc[mask_rook_down, "F_numeric"] - 16,  # Offset downward
+                    y=intraday.loc[mask_rook_down, "F_numeric"] - 13,  # Offset downward
                     mode="text",
                     text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
                     textposition="bottom left",
@@ -6239,23 +8202,23 @@ if st.sidebar.button("Run Analysis"):
                     (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
                 )
                 
-                # Create a new column with the emoji (optional but clean)
-                intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
+                # # Create a new column with the emoji (optional but clean)
+                # intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
                 
-                # Scatter plot for 🫆 (slightly above F_numeric)
-                scatter_tenkan_cross_up = go.Scatter(
-                    x=intraday.loc[mask_tenkan_cross_up, "Time"],
-                    y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
-                    mode="text",
-                    text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
-                    textposition="top right",
-                    textfont=dict(size=24, color="orange"),
-                    name="Tenkan Cross MIDAS Bull (🧲)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
-                )
+                # # Scatter plot for 🫆 (slightly above F_numeric)
+                # scatter_tenkan_cross_up = go.Scatter(
+                #     x=intraday.loc[mask_tenkan_cross_up, "Time"],
+                #     y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
+                #     mode="text",
+                #     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
+                #     textposition="top right",
+                #     textfont=dict(size=24, color="orange"),
+                #     name="Tenkan Cross MIDAS Bull (🧲)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
+                # )
                 
-                # Add to figure
-                fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
+                # # Add to figure
+                # fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
 
 
  
@@ -6265,7 +8228,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♙ Upward pawn
                 pawn_up = go.Scatter(
                     x=intraday.loc[mask_pawn_up, "Time"],
-                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 18,
+                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 8,
                     mode="text",
                     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
                     textposition="top center",
@@ -6277,7 +8240,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♟️ Downward pawn
                 pawn_down = go.Scatter(
                     x=intraday.loc[mask_pawn_down, "Time"],
-                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 18,
+                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 8,
                     mode="text",
                     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
                     textposition="bottom center",
@@ -6336,7 +8299,7 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[cloud_mask, "Time"],
-                    y=intraday.loc[cloud_mask, "F_numeric"] +63,
+                    y=intraday.loc[cloud_mask, "F_numeric"] + 89,
                     mode="text",
                     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
                     textposition="top center",
@@ -6368,7 +8331,7 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[drizzle_mask, "Time"],
-                    y=intraday.loc[drizzle_mask, "F_numeric"] + 63,  # Position below the bar
+                    y=intraday.loc[drizzle_mask, "F_numeric"] + 89,  # Position below the bar
                     mode="text",
                     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
                     textposition="bottom center",
@@ -6377,29 +8340,29 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
   
-                         # Mask for Tenkan_F crossing down through MIDAS_Bear
-                mask_tenkan_cross_down = (
-                    (intraday["Tenkan_F"].shift(1) > intraday["MIDAS_Bear"].shift(1)) &
-                    (intraday["Tenkan_F"] <= intraday["MIDAS_Bear"])
-                )
+                #          # Mask for Tenkan_F crossing down through MIDAS_Bear
+                # mask_tenkan_cross_down = (
+                #     (intraday["Tenkan_F"].shift(1) > intraday["MIDAS_Bear"].shift(1)) &
+                #     (intraday["Tenkan_F"] <= intraday["MIDAS_Bear"])
+                # )
                 
-                # Create a new column with the emoji (optional but clean)
-                intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
+                # # Create a new column with the emoji (optional but clean)
+                # intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
                 
-                # Scatter plot for 🕸️ (slightly below F_numeric)
-                scatter_tenkan_cross_down = go.Scatter(
-                    x=intraday.loc[mask_tenkan_cross_down, "Time"],
-                    y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 12,
-                    mode="text",
-                    text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
-                    textposition="bottom right",
-                    textfont=dict(size=28, color="black"),
-                    name="Tenkan Cross MIDAS Bear (🕸️)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
-                )
+                # # Scatter plot for 🕸️ (slightly below F_numeric)
+                # scatter_tenkan_cross_down = go.Scatter(
+                #     x=intraday.loc[mask_tenkan_cross_down, "Time"],
+                #     y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 20,
+                #     mode="text",
+                #     text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
+                #     textposition="bottom right",
+                #     textfont=dict(size=28, color="black"),
+                #     name="Tenkan Cross MIDAS Bear (🕸️)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
+                # )
                 
-                # Add to figure
-                fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
+                # # Add to figure
+                # fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
 
 
    
@@ -6436,62 +8399,67 @@ if st.sidebar.button("Run Analysis"):
 
               
 
-              #               # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
-              #   wing_mask = intraday["wing_emoji"] == "🪽"
-              #   fig.add_trace(go.Scatter(
-              #       x=intraday.loc[wing_mask, "TimeIndex"],
-              #       y=intraday.loc[wing_mask, "F_numeric"] + 35,
-              #       mode="text",
-              #       text=intraday.loc[wing_mask, "wing_emoji"],
-              #       textposition="top center",
-              #       textfont=dict(size=26, color="green"),
-              #       name="Wing 🪽",
-              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
-              #   ), row=1, col=1)
-              # # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
+                            # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
+                wing_mask = intraday["wing_emoji"] == "🪽"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[wing_mask, "TimeIndex"],
+                    y=intraday.loc[wing_mask, "F_numeric"] + 35,
+                    mode="text",
+                    text=intraday.loc[wing_mask, "wing_emoji"],
+                    textposition="top center",
+                    textfont=dict(size=26, color="green"),
+                    name="Wing 🪽",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
+                ), row=1, col=1)
+              # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
 
 
 
-              #   bat_mask = intraday["bat_emoji"] == "🪽"
-              #   fig.add_trace(go.Scatter(
-              #       x=intraday.loc[bat_mask, "TimeIndex"],
-              #       y=intraday.loc[bat_mask, "F_numeric"] - 35,
-              #       mode="text",
-              #       text=intraday.loc[bat_mask, "bat_emoji"],
-              #       textposition="bottom center",
-              #       textfont=dict(size=26, color="red"),
-              #       name="Bat 🪽",
-              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
-              #   ), row=1, col=1)
+                bat_mask = intraday["bat_emoji"] == "🪽"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[bat_mask, "TimeIndex"],
+                    y=intraday.loc[bat_mask, "F_numeric"] - 35,
+                    mode="text",
+                    text=intraday.loc[bat_mask, "bat_emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=26, color="red"),
+                    name="Bat 🪽",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
+                ), row=1, col=1)
 
   
         
-                # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
-                # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
+                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
+                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
-                # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                # scatter_tk_sun = go.Scatter(
-                #     x=intraday.loc[mask_tk_sun, "Time"],
-                #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 40,  # Offset for visibility
-                #     mode="text",
-                #     text="🌞",
-                #     textposition="top center",
-                #     textfont=dict(size=24),
-                #     name="Tenkan-Kijun Bullish Cross",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                # )
+                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                scatter_tk_sun = go.Scatter(
+                    x=intraday.loc[mask_tk_sun, "Time"],
+                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 99,  # Offset for visibility
+                    mode="text",
+                    text="🌞",
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Tenkan-Kijun Bullish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                )
 
-                # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                # scatter_tk_moon = go.Scatter(
-                #     x=intraday.loc[mask_tk_moon, "Time"],
-                #     y=intraday.loc[mask_tk_moon, "F_numeric"] + 40,  # Offset for visibility
-                #     mode="text",
-                #     text="🌙",
-                #     textposition="bottom center",
-                #     textfont=dict(size=24),
-                #     name="Tenkan-Kijun Bearish Cross",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                # )
+                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                scatter_tk_moon = go.Scatter(
+                    x=intraday.loc[mask_tk_moon, "Time"],
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 99,  # Offset for visibility
+                    mode="text",
+                    text="🌙",
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="Tenkan-Kijun Bearish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                )
+
+
+   # # Add to the F% Plot
+                fig.add_trace(scatter_tk_sun, row=1, col=1)
+                fig.add_trace(scatter_tk_moon, row=1, col=1)
                 # # 👼🏻 Bullish Sanyaku Kouten
                 # mask_sanyaku_kouten = intraday["Sanyaku_Kouten"] == "🟩"
                 
@@ -6502,11 +8470,11 @@ if st.sidebar.button("Run Analysis"):
                 # # 👼🏻 Sanyaku Kouten marker (Bullish)
                 # scatter_sanyaku_kouten = go.Scatter(
                 #     x=intraday.loc[mask_sanyaku_kouten, "Time"],
-                #     y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] - 60,  # Lower offset
+                #     y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] + 233,  # Lower offset
                 #     mode="text",
                 #     text="👼🏻",
                 #     textposition="bottom center",
-                #     textfont=dict(size=82),
+                #     textfont=dict(size=55),
                 #     name="Sanyaku Kouten",
                 #     hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
                 # )
@@ -6514,16 +8482,16 @@ if st.sidebar.button("Run Analysis"):
                 # # 👺 Sanyaku Gyakuten marker (Bearish)
                 # scatter_sanyaku_gyakuten = go.Scatter(
                 #     x=intraday.loc[mask_sanyaku_gyakuten, "Time"],
-                #     y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 60,  # Lower offset
+                #     y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 233,  # Lower offset
                 #     mode="text",
                 #     text="👺",
                 #     textposition="top center",
-                #     textfont=dict(size=82),
+                #     textfont=dict(size=55),
                 #     name="Sanyaku Gyakuten",
                 #     hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
                 # )
                 
-                # # Add to figure
+                # # # Add to figure
                 # fig.add_trace(scatter_sanyaku_kouten, row=1, col=1)
                 # fig.add_trace(scatter_sanyaku_gyakuten, row=1, col=1)
 
@@ -6531,35 +8499,188 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # # Add to the F% Plot
-                # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+             
 
-                cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
-                fig.add_trace(go.Scatter(
-                    x=cross_points["Time"],
-                    y=cross_points[price_col] + 20,
-                    textfont=dict(size=34),
+                # cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
+                # fig.add_trace(go.Scatter(
+                #     x=cross_points["Time"],
+                #     y=cross_points[price_col] + 20,
+                #     textfont=dict(size=34),
+                #     mode="text",
+                #     text=cross_points["Midas_Cross_IB_High"],
+                #     textposition="top center",
+                #     showlegend=True
+                # ))
+                
+                # # 🎻 plot for Bear MIDAS crossing IB Low
+                # bear_cross_points = intraday[intraday["Midas_Bear_Cross_IB_Low"] == "🎻"]
+                # fig.add_trace(go.Scatter(
+                #     x=bear_cross_points["Time"],
+                #     y=bear_cross_points[price_col] - 20,
+                #     textfont=dict(size=34),
+                #     mode="text",
+                #     text=bear_cross_points["Midas_Bear_Cross_IB_Low"],
+                #     textposition="bottom center",
+                #     showlegend=True
+                # ))
+
+
+          
+
+
+                # # Get y-range from F_numeric (or your price_col)
+                # y_min = intraday[price_col].min()
+                # y_max = intraday[price_col].max()
+                # margin = (y_max - y_min) * 0.05  # 15% buffer
+                
+                # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
+                
+                #Columns: price_col = 'F_numeric', BB_upper = 'BB_upper'
+
+                # #Step 1: Get data range including Bollinger Bands
+                # y_min = min(intraday[[price_col, 'F% Lower']].min())
+                # y_max_data = max(intraday[[price_col, 'F% Upper']].max())
+                
+                # # Step 2: Account for emoji buffer (emojis plotted at y + 3)
+                # emoji_buffer = 4
+                # y_max = y_max_data + emoji_buffer
+                
+                # # Step 3: Margin
+                # margin = (y_max - y_min) * 0.05
+                
+                # # Final update (only apply to first subplot)
+                # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
+
+                                            
+                                
+                
+
+
+                # # 💀 plot for Bear Displacement Doubling
+                # bear_double_points = intraday[intraday["Bear_Displacement_Double"] == "💀"]
+                # fig.add_trace(go.Scatter(
+                #     x=bear_double_points["Time"],
+                #     y=bear_double_points[price_col] - 12,  # Lower than 🎻 to avoid overlap
+                #     text=bear_double_points["Bear_Displacement_Double"],
+                #     mode="text",
+                #     textfont=dict(size=18),
+                #     textposition="bottom center",
+                #     showlegend=True,
+                #     hovertemplate="Time: %{x}<br>Bear_Displacement_Double: %{y}<br>💀 Bear_Displacement_Double<extra></extra>"
+                # ))
+                # # 👑 plot for Bull Displacement Doubling
+                # bull_double_points = intraday[intraday["Bull_Displacement_Double"] == "👑"]
+                # fig.add_trace(go.Scatter(
+                #     x=bull_double_points["Time"],
+                #     y=bull_double_points[price_col] + 12,  # Lower than 💀 and 🎻 to avoid clutter
+                #     text=bull_double_points["Bull_Displacement_Double"],
+                #     mode="text",
+                #     textfont=dict(size=10),
+                #     textposition="bottom center",
+                #     showlegend=False
+                # ))
+
+
+   # (A.1) 40ish Reversal (star markers)
+                mask_40ish = intraday["40ish"] != ""
+                scatter_40ish = go.Scatter(
+                    x=intraday.loc[mask_40ish, "Time"],
+                    y=intraday.loc[mask_40ish, "F_numeric"] + 89,
+                    mode="markers",
+                    marker_symbol="star",
+                    marker_size=18,
+                    marker_color="gold",
+                    name="40ish Reversal",
+                    text=intraday.loc[mask_40ish, "40ish"],
+
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                )
+                fig.add_trace(scatter_40ish, row=1, col=1)
+
+                up_high_mask = intraday["Y_High_Cross"] == "✈️"
+                up_high_trace = go.Scatter(
+                    x=intraday.loc[up_high_mask, "Time"],
+                    y=intraday.loc[up_high_mask, "F_numeric"] + 40,
                     mode="text",
-                    text=cross_points["Midas_Cross_IB_High"],
+                    text=intraday.loc[up_high_mask, "Y_High_Cross"],
                     textposition="top center",
-                    showlegend=True
-                ))
-                
-                # 🎻 plot for Bear MIDAS crossing IB Low
-                bear_cross_points = intraday[intraday["Midas_Bear_Cross_IB_Low"] == "🎻"]
-                fig.add_trace(go.Scatter(
-                    x=bear_cross_points["Time"],
-                    y=bear_cross_points[price_col] - 20,
-                    textfont=dict(size=34),
-                    mode="text",
-                    text=bear_cross_points["Midas_Bear_Cross_IB_Low"],
-                    textposition="bottom center",
-                    showlegend=True
-                ))
-                
- # 🟢   SPAN A & SPAN B
+                    textfont=dict(size=28),
+                    name="Cross Above Y-High (✈️)"
+                )
 
+                
+                breach_mask = intraday["Y_Low_Cross"] == "🛟"
+                breach_trace = go.Scatter(
+                    x=intraday.loc[breach_mask, "Time"],
+                    y=intraday.loc[breach_mask, "F_numeric"] - 40,  # Offset downward for clarity
+                    mode="text",
+                    text=intraday.loc[breach_mask, "Y_Low_Cross"],
+                    textposition="bottom center",
+                    textfont=dict(size=28),
+                    name="Cross Below Y-Low (🛟)"
+                )
+                
+                                
+                recovery_mask = intraday["Y_Low_Cross"] == "🚣🏽"
+                recovery_trace = go.Scatter(
+                    x=intraday.loc[recovery_mask, "Time"],
+                    y=intraday.loc[recovery_mask, "F_numeric"] + 40,  # Offset for visibility
+                    mode="text",
+                    text=intraday.loc[recovery_mask, "Y_Low_Cross"],
+                    textposition="top center",
+                    textfont=dict(size=28),
+                    name="Cross Above Y-Low (🚣🏽)"
+                )
+
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
+
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 144,  # Higher offset
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],
+                    textposition="top center",
+                    name="New Highs 👨🏽‍🚀",
+                    textfont=dict(size=21),
+                 )
+ 
+#                     # Add to figure
+                fig.add_trace(up_high_trace, row=1, col=1)
+ 
+
+
+                    # Filter where the Astronaut or Moon emoji exist
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
+
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 144,  # Offset so it floats higher
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
+                    textposition="top center",
+                    name="New Highs 🌒",
+                    textfont=dict(size=21),
+                   
+                )
+
+                fig.add_trace(scatter_astronaut, row=1, col=1)
+
+
+                # Filter where Swimmer or Squid exist
+                swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
+
+                scatter_swimmer = go.Scatter(
+                    x=swimmer_points["Time"],
+                    y=swimmer_points["F_numeric"] - -38,  # Offset downward so it floats below price
+                    mode="text",
+                    text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
+                    textposition="bottom center",
+                    name="New Lows 🏊🏽‍♂️🦑",
+                    textfont=dict(size=24),
+                    showlegend=True
+                )
+
+                fig.add_trace(scatter_swimmer, row=1, col=1)
 
 
   
@@ -6616,26 +8737,26 @@ if st.sidebar.button("Run Analysis"):
                 #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
                        
                       # Show YVA and Yesterday Range
-                if yva_min is not None and yva_max is not None:
-                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
-                if prev_close:
-                    range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
-                    st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+                # if yva_min is not None and yva_max is not None:
+                #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
+                # if prev_close:
+                #     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+                #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
                 
-                # 🧭 Opening Position vs YVA
-                if yva_min is not None and yva_max is not None:
-                    opening_price = intraday["Close"].iloc[0]
+                # # 🧭 Opening Position vs YVA
+                # if yva_min is not None and yva_max is not None:
+                #     opening_price = intraday["Close"].iloc[0]
                 
-                    if yva_min < opening_price < yva_max:
-                        yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
-                    elif opening_price >= yva_max:
-                        yva_position_msg = "⬆️ Opened **above** Yesterday's Value Area"
-                    elif opening_price <= yva_min:
-                        yva_position_msg = "⬇️ Opened **below** Yesterday's Value Area"
-                    else:
-                        yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
+                #     if yva_min < opening_price < yva_max:
+                #         yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
+                #     elif opening_price >= yva_max:
+                #         yva_position_msg = "⬆️ Opened **above** Yesterday's Value Area"
+                #     elif opening_price <= yva_min:
+                #         yva_position_msg = "⬇️ Opened **below** Yesterday's Value Area"
+                #     else:
+                #         yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
                 
-                    st.markdown(f"### {yva_position_msg}")
+                #     st.markdown(f"### {yva_position_msg}")
 
 
                     #   # ✅ Detect Initiative Breakout from Yesterday’s Value Area
@@ -6663,21 +8784,21 @@ if st.sidebar.button("Run Analysis"):
                         # When price opens above yesterday's high OR below yesterday's low
                         # AND remains there throughout the first 30 minutes
                     
-                    opened_above_yh = opening_price > prev_high
-                    opened_below_yl = opening_price < prev_low
+                    # opened_above_yh = opening_price > prev_high
+                    # opened_below_yl = opening_price < prev_low
                     
-                    first_6 = intraday.iloc[:6]
-                    stayed_above_yh = (first_6["Close"] > prev_high).all()
-                    stayed_below_yl = (first_6["Close"] < prev_low).all()
+                    # first_6 = intraday.iloc[:6]
+                    # stayed_above_yh = (first_6["Close"] > prev_high).all()
+                    # stayed_below_yl = (first_6["Close"] < prev_low).all()
                     
-                    if opened_above_yh and stayed_above_yh:
-                        st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
+                    # if opened_above_yh and stayed_above_yh:
+                    #     st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
                     
-                    elif opened_below_yl and stayed_below_yl:
-                        st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
+                    # elif opened_below_yl and stayed_below_yl:
+                    #     st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
                     
-                    elif opened_above_yh or opened_below_yl:
-                        st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
+                    # elif opened_above_yh or opened_below_yl:
+                    #     st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
                         
                         
 
@@ -6685,17 +8806,17 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
    
-                 
+ 
 
                 fig.update_layout(
-                    title=f"{t} – VOLMIKE.COM",
+                    title=f"{t} – VOLMIKE.COM – {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
                     height=1800,  # Increase overall figure height (default ~450-600)
 
                      
                 )
+ 
 
-      
 
 
                 st.plotly_chart(fig, use_container_width=True)
@@ -6706,11 +8827,38 @@ if st.sidebar.button("Run Analysis"):
             except Exception as e:
                 st.error(f"Error fetching data for {t}: {e}")
 
+           
+                
 
-
-
-
-
+                with st.expander("🧲 Market Capacitance (Charge Storage & Release)", expanded=False):
+      
+                      fig_capacitance = go.Figure()
+                  
+                      fig_capacitance.add_trace(go.Scatter(
+                          x=intraday["TimeIndex"],
+                          y=intraday["Vector_Capacitance"].rolling(window=3, min_periods=1).mean(),  # Smooth with rolling average
+                          mode="lines",
+                          name="Vector Capacitance",
+                          line=dict(color="orange", width=2),
+                          fill='tozeroy',
+                          hovertemplate="Time: %{x}<br>Capacitance: %{y:.2f}<extra></extra>"
+                      ))
+                  
+                      fig_capacitance.update_layout(
+                          height=300,
+                          title="🧲 Capacitance (Market Charge)",
+                          plot_bgcolor="black",
+                          paper_bgcolor="black",
+                          font=dict(color="white"),
+                          xaxis=dict(title="Time"),
+                          yaxis=dict(title="Capacitance"),
+                          margin=dict(t=40, b=40),
+                          showlegend=True
+                      )
+                  
+                st.plotly_chart(fig_capacitance, use_container_width=True)
+                
+          
 
 
         #     with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
