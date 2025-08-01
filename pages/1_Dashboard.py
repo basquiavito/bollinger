@@ -5494,8 +5494,14 @@ if st.sidebar.button("Run Analysis"):
                 st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
   
   
-  
-  
+                  # Ensure 👃🏽 and 🦻🏼 columns exist
+                if "👃🏽" not in intraday.columns:
+                    intraday["👃🏽"] = ""
+                
+                if "🦻🏼" not in intraday.columns:
+                    intraday["🦻🏼"] = ""
+                
+                  
                 # Initialize the new column for the 🎯 entry signal
                 intraday["Put_FirstEntry_Emoji"] = ""
                 
