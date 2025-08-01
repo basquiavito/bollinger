@@ -5086,44 +5086,7 @@ if st.sidebar.button("Run Analysis"):
                   # # Show DataFrame
                   st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
-                  # Ensure F_numeric is numeric
-                  intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
                   
-                  # Prepare profile bins for lookup
-                  bin_to_ear = set(profile_df.loc[profile_df["🦻🏼"] == "🦻🏼", "F% Level"])
-                  bin_to_nose = set(profile_df.loc[profile_df["👃🏽"] == "👃🏽", "F% Level"])
-                  
-                  # Compute bin for each row
-                  f_bins = np.arange(-400, 401, 20)
-                  intraday["F_Bin"] = pd.cut(intraday["F_numeric"], bins=f_bins, labels=f_bins[:-1])
-                  
-                  # Aid storage
-                  ear_aid_times = []
-                  ear_aid_prices = []
-                  
-                  nose_aid_times = []
-                  nose_aid_prices = []
-                  
-                  # Loop through each row with 🎯 entry
-                  for i in range(len(intraday)):
-                      if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                          lower = max(i - 5, 0)
-                          upper = min(i + 6, len(intraday))
-                          sub = intraday.iloc[lower:upper]
-                  
-                          if any(sub["F_Bin"].isin(bin_to_ear)):
-                              f_val = intraday["F_numeric"].iloc[i]
-                              if pd.notnull(f_val):
-                                  ear_aid_times.append(intraday["Time"].iloc[i])
-                                  ear_aid_prices.append(f_val + 244)
-                  
-                          if any(sub["F_Bin"].isin(bin_to_nose)):
-                              f_val = intraday["F_numeric"].iloc[i]
-                              if pd.notnull(f_val):
-                                  nose_aid_times.append(intraday["Time"].iloc[i])
-                                  nose_aid_prices.append(f_val + 244)
-
-    
                   def compute_ib_volume_weights(intraday, ib_high, ib_low):
                         """
                         Split the Initial Balance range into 3 equal compartments: Cellar, Core, Loft.
@@ -5704,7 +5667,44 @@ if st.sidebar.button("Run Analysis"):
                                 compliance_aid_times.append(intraday["Time"].iloc[i])
                                 compliance_aid_prices.append(f_val + 244)
 
-          
+        # Ensure F_numeric is numeric
+                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
+                
+                # Prepare profile bins for lookup
+                bin_to_ear = set(profile_df.loc[profile_df["🦻🏼"] == "🦻🏼", "F% Level"])
+                bin_to_nose = set(profile_df.loc[profile_df["👃🏽"] == "👃🏽", "F% Level"])
+                
+                # Compute bin for each row
+                f_bins = np.arange(-400, 401, 20)
+                intraday["F_Bin"] = pd.cut(intraday["F_numeric"], bins=f_bins, labels=f_bins[:-1])
+                
+                # Aid storage
+                ear_aid_times = []
+                ear_aid_prices = []
+                
+                nose_aid_times = []
+                nose_aid_prices = []
+                
+                # Loop through each row with 🎯 entry
+                for i in range(len(intraday)):
+                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))
+                        sub = intraday.iloc[lower:upper]
+                
+                        if any(sub["F_Bin"].isin(bin_to_ear)):
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                ear_aid_times.append(intraday["Time"].iloc[i])
+                                ear_aid_prices.append(f_val + 244)
+                
+                        if any(sub["F_Bin"].isin(bin_to_nose)):
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                nose_aid_times.append(intraday["Time"].iloc[i])
+                                nose_aid_prices.append(f_val + 244)
+  
+
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
