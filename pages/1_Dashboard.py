@@ -5722,7 +5722,7 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 compliance_aid_times.append(intraday["Time"].iloc[i])
-                                compliance_aid_prices.append(f_val + 244)
+                                compliance_aid_prices.append(f_val + 200)
 
         # Ensure F_numeric is numeric
                 intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
