@@ -5559,8 +5559,8 @@ if st.sidebar.button("Run Analysis"):
                     for i in range(i_start + 1, len(intraday) - 1):
                         prev_f = intraday["F_numeric"].iloc[i - 1]
                         curr_f = intraday["F_numeric"].iloc[i]
-                        prev_kijun = intraday["KijunF"].iloc[i - 1]
-                        curr_kijun = intraday["KijunF"].iloc[i]
+                        prev_kijun = intraday["Kijun_F"].iloc[i - 1]
+                        curr_kijun = intraday["Kijun_F"].iloc[i]
                 
                         if prev_f < prev_kijun and curr_f >= curr_kijun:
                             next_close = intraday["F_numeric"].iloc[i + 1]
