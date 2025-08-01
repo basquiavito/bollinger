@@ -8825,7 +8825,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[first_entry_mask, "Time"],
-                    y=intraday.loc[first_entry_mask, "F_numeric"] + 244,
+                    y=intraday.loc[first_entry_mask, "F_numeric"] - 244,
                     mode="text",
                     text=intraday.loc[first_entry_mask, "Put_FirstEntry_Emoji"],
                     textposition="top center",
@@ -8838,7 +8838,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[second_entry_mask, "Time"],
-                    y=intraday.loc[second_entry_mask, "F_numeric"] + 244,
+                    y=intraday.loc[second_entry_mask, "F_numeric"] - 244,
                     mode="text",
                     text=intraday.loc[second_entry_mask, "Put_SecondEntry_Emoji"],
                     textposition="top center",
@@ -8851,7 +8851,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[third_entry_mask, "Time"],
-                    y=intraday.loc[third_entry_mask, "F_numeric"] + 244,
+                    y=intraday.loc[third_entry_mask, "F_numeric"] - 244,
                     mode="text",
                     text=intraday.loc[third_entry_mask, "Put_ThirdEntry_Emoji"],
                     textposition="top center",
@@ -8860,6 +8860,44 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
                 
+                # 🎯 Call Entry 1
+                call1_mask = intraday["Call_FirstEntry_Emoji"] == "🎯"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[call1_mask, "Time"],
+                    y=intraday.loc[call1_mask, "F_numeric"] + 244,
+                    mode="text",
+                    text=intraday.loc[call1_mask, "Call_FirstEntry_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=43),
+                    name="🎯 Call Entry 1",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+                
+                # 🎯2 Call Entry 2
+                call2_mask = intraday["Call_SecondEntry_Emoji"] == "🎯2"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[call2_mask, "Time"],
+                    y=intraday.loc[call2_mask, "F_numeric"] + 244,
+                    mode="text",
+                    text=intraday.loc[call2_mask, "Call_SecondEntry_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=43),
+                    name="🎯2 Call Entry 2",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+                
+                # 🎯3 Call Entry 3
+                call3_mask = intraday["Call_ThirdEntry_Emoji"] == "🎯3"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[call3_mask, "Time"],
+                    y=intraday.loc[call3_mask, "F_numeric"] + 244,
+                    mode="text",
+                    text=intraday.loc[call3_mask, "Call_ThirdEntry_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=43),
+                    name="🎯3 Call Entry 3",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
