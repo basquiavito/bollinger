@@ -8922,7 +8922,7 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_trace(go.Scatter(
                     x=bee_aid_times,
-                    y=[y_val + 244 for y_val in bee_aid_prices],
+                    y=[y_val + 4 for y_val in bee_aid_prices],
                     mode="text",
                     text=["🐝"] * len(bee_aid_times),
                     textposition="top center",
