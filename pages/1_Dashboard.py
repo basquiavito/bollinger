@@ -6790,7 +6790,15 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig.add_trace(shift_bubbles, row=1, col=1)
 
-                   
+                    fig.add_trace(
+                        go.Scatter(
+                          x=intraday["Time"],  # Replace 'Time' with your actual time column
+                          y=intraday["Compliance"],  # Compliance values
+                          mode="lines",  # This will plot a line, rather than markers
+                          name="Compliance",
+                          line=dict(color='green', dash='dot')  # You can customize the color and style
+                      )
+                  )
                     # # Create a Boolean mask for rows with surge emojis
                     # mask_compliance_surge = intraday["Compliance Surge"] != ""
                     
