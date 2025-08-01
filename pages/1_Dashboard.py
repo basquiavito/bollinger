@@ -5761,6 +5761,23 @@ if st.sidebar.button("Run Analysis"):
                                 nose_aid_times.append(intraday["Time"].iloc[i])
                                 nose_aid_prices.append(f_val + 224)
   
+                ember_aid_times = []
+                ember_aid_prices = []
+                
+                # Loop through each bar to find 🎯 call entries
+                for i in range(len(intraday)):
+                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))  # ±5 bars
+                
+                        phoenix_present = (intraday["STD_Alert"].iloc[lower:upper] == "🐦‍🔥").any()
+                        fire_present = (intraday["BBW_Expansion_Emoji"].iloc[lower:upper] == "🔥").any()
+                
+                        if phoenix_present and fire_present:
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                ember_aid_times.append(intraday["Time"].iloc[i])
+                                ember_aid_prices.append(f_val + 288)  # Position above 🎯
 
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
@@ -9108,6 +9125,16 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🦻🏼 Ear Volume Aid<extra></extra>"
                 ), row=1, col=1)
                 
+                fig.add_trace(go.Scatter(
+                    x=ember_aid_times,
+                    y=ember_aid_prices,
+                    mode="text",
+                    text=["🐦‍🔥🔥☁️"] * len(ember_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Ember Prototype",
+                    hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
+                ), row=1, col=1)
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
