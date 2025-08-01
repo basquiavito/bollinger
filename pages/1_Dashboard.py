@@ -5633,20 +5633,25 @@ if st.sidebar.button("Run Analysis"):
                                     if pd.notna(f_next) and f_next > f_curr:
                                         intraday.at[intraday.index[i + 1], "Call_ThirdEntry_Emoji"] = "🎯3"
                                         break
-                                         
+                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
+
                 # Collect indexes of entries (put or call) where 🐝 exists nearby
+                            # Ensure numeric F_numeric
+                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
+                
                 bee_aid_times = []
                 bee_aid_prices = []
                 
                 for i in range(len(intraday)):
                     if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
                         lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))  # +6 to include current + 5 ahead
+                        upper = min(i + 6, len(intraday))
                         if (intraday["BBW_Tight_Emoji"].iloc[lower:upper] == "🐝").any():
-                            bee_aid_times.append(intraday["Time"].iloc[i])
-                            bee_aid_prices.append(intraday["F_numeric"].iloc[i] + 244)  # same as entry emoji offset
-
-
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                bee_aid_times.append(intraday["Time"].iloc[i])
+                                bee_aid_prices.append(f_val + 244)
+                
 
 
 
