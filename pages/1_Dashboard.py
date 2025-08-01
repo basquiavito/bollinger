@@ -8743,11 +8743,11 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[second_entry_mask, "Time"],
-                    y=intraday.loc[second_entry_mask, "F_numeric"] + 89,
+                    y=intraday.loc[second_entry_mask, "F_numeric"] + 244,
                     mode="text",
                     text=intraday.loc[second_entry_mask, "Put_SecondEntry_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=22),
+                    textfont=dict(size=43),
                     name="🎯2 Put Second Entry",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
