@@ -5653,6 +5653,18 @@ if st.sidebar.button("Run Analysis"):
                                 bee_aid_prices.append(f_val + 244)
                 
 
+                compliance_aid_times = []
+                compliance_aid_prices = []
+                
+                for i in range(len(intraday)):
+                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))
+                        if (intraday["Compliance Shift"].iloc[lower:upper] == "🫧").any():
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                compliance_aid_times.append(intraday["Time"].iloc[i])
+                                compliance_aid_prices.append(f_val + 244)
 
           
 
@@ -8931,9 +8943,19 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
                 ), row=1, col=1)
 
-
-           
-
+    
+               fig.add_trace(go.Scatter(
+                    x=compliance_aid_times,
+                    y=compliance_aid_prices,
+                    mode="text",
+                    text=["🫧"] * len(compliance_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Compliance Shift Aid 🫧",
+                    hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
+                ), row=1, col=1)
+            
+            
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
