@@ -8943,19 +8943,19 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
                 ), row=1, col=1)
 
-    
-                 fig.add_trace(go.Scatter(
-                     x=compliance_aid_times,
-                     y=compliance_aid_prices,
-                     mode="text",
-                     text=["🫧"] * len(compliance_aid_times),
-                     textposition="top center",
-                     textfont=dict(size=21),
-                     name="Compliance Shift Aid 🫧",
-                     hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
-                ),   row=1, col=1)
-            
-            
+  
+               fig.add_trace(go.Scatter(
+                   x=compliance_aid_times,
+                   y=compliance_aid_prices,
+                   mode="text",
+                   text=["🫧"] * len(compliance_aid_times),
+                   textposition="top center",
+                   textfont=dict(size=21),
+                   name="Compliance Shift Aid 🫧",
+                   hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
+              ),   row=1, col=1)
+          
+          
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
