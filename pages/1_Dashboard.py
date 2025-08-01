@@ -5538,7 +5538,42 @@ if st.sidebar.button("Run Analysis"):
                                     intraday.at[intraday.index[i + 1], "Put_SecondEntry_Emoji"] = "🎯2"
                                     break  # Only mark first valid second entry
                 
-                                              
+                                 # Initialize third entry column
+                intraday["Put_ThirdEntry_Emoji"] = ""
+                
+                # Step 1: Find 🎯 and 🎯2
+                first_entry_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
+                second_entry_idx = intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]
+                
+                if not first_entry_idx.empty and not second_entry_idx.empty:
+                    first_i = intraday.index.get_loc(first_entry_idx[0])
+                    second_i = intraday.index.get_loc(second_entry_idx[0])
+                
+                    # Step 2: Check if price has crossed below IB_Low by second entry
+                    ib_low_crossed_by_second = False
+                    for i in range(first_i, second_i + 1):
+                        f = intraday["F_numeric"].iloc[i]
+                        ib_low = intraday["IB_Low"].iloc[i]
+                        if pd.notna(f) and pd.notna(ib_low) and f < ib_low:
+                            ib_low_crossed_by_second = True
+                            break
+                
+                    # Step 3: If not yet crossed, search forward for first cross below IB_Low
+                    if not ib_low_crossed_by_second:
+                        for i in range(second_i + 1, len(intraday) - 1):  # Leave space for lookahead
+                            f_prev = intraday["F_numeric"].iloc[i - 1]
+                            f_curr = intraday["F_numeric"].iloc[i]
+                            ib_low_prev = intraday["IB_Low"].iloc[i - 1]
+                            ib_low_curr = intraday["IB_Low"].iloc[i]
+                
+                            if pd.notna(f_prev) and pd.notna(f_curr) and pd.notna(ib_low_prev) and pd.notna(ib_low_curr):
+                                if f_prev > ib_low_prev and f_curr <= ib_low_curr:
+                                    # Crossed below IB_Low
+                                    f_next = intraday["F_numeric"].iloc[i + 1]
+                                    if pd.notna(f_next) and f_next < f_curr:
+                                        intraday.at[intraday.index[i + 1], "Put_ThirdEntry_Emoji"] = "🎯3"
+                                        break  # Only mark one
+                                             
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
@@ -8752,7 +8787,19 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
                 
-
+                third_entry_mask = intraday["Put_ThirdEntry_Emoji"] == "🎯3"
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[third_entry_mask, "Time"],
+                    y=intraday.loc[third_entry_mask, "F_numeric"] + 244,
+                    mode="text",
+                    text=intraday.loc[third_entry_mask, "Put_ThirdEntry_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=43),
+                    name="🎯3 Put Third Entry",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+                
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
