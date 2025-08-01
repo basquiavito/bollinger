@@ -6318,7 +6318,17 @@ if st.sidebar.button("Run Analysis"):
                             line=dict(color='blue', dash='dash')
                         )
                     )
-                
+                                 # ✅ Add 🫧 emoji at Compliance Shift points
+                    shift_indices = intraday["Compliance Shift"] == "🫧"
+                    fig.add_trace(go.Scatter(
+                        x=intraday["Time"][shift_indices],
+                        y=intraday["Compliance"][shift_indices],
+                        mode="text",
+                        text=["🫧"] * shift_indices.sum(),  # repeat emoji for each shift
+                        textposition="top center",
+                        name="Compliance Shift 🫧",
+                        showlegend=True
+                    ))
                     # Add layout details
                     fig.update_layout(
                         title="Compliance and Smoothed Compliance",
