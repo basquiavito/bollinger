@@ -5697,32 +5697,20 @@ if st.sidebar.button("Run Analysis"):
                             if pd.notnull(f_val):
                                 bee_aid_times.append(intraday["Time"].iloc[i])
                                 bee_aid_prices.append(f_val + 244)
-                                
-                bee_aid_times_2 = []
-                bee_aid_prices_2 = []
+          
+                
+                compliance_aid_times = []
+                compliance_aid_prices = []
                 
                 for i in range(len(intraday)):
-                    if intraday["Put_SecondEntry_Emoji"].iloc[i] == "🎯2" or intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯2":
+                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
                         lower = max(i - 5, 0)
                         upper = min(i + 6, len(intraday))
-                        if (intraday["BBW_Tight_Emoji"].iloc[lower:upper] == "🐝").any():
+                        if (intraday["Compliance Shift"].iloc[lower:upper] == "🫧").any():
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
-                                bee_aid_times_2.append(intraday["Time"].iloc[i])
-                                bee_aid_prices_2.append(f_val + 244)
-                
-                                compliance_aid_times = []
-                                compliance_aid_prices = []
-                                
-                                for i in range(len(intraday)):
-                                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                                        lower = max(i - 5, 0)
-                                        upper = min(i + 6, len(intraday))
-                                        if (intraday["Compliance Shift"].iloc[lower:upper] == "🫧").any():
-                                            f_val = intraday["F_numeric"].iloc[i]
-                                            if pd.notnull(f_val):
-                                                compliance_aid_times.append(intraday["Time"].iloc[i])
-                                                compliance_aid_prices.append(f_val + 244)
+                                compliance_aid_times.append(intraday["Time"].iloc[i])
+                                compliance_aid_prices.append(f_val + 244)
 
         # Ensure F_numeric is numeric
                 intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
