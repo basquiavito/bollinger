@@ -5634,6 +5634,22 @@ if st.sidebar.button("Run Analysis"):
                                         intraday.at[intraday.index[i + 1], "Call_ThirdEntry_Emoji"] = "🎯3"
                                         break
                                          
+                  # Collect indexes of entries (put or call) where 🐝 exists nearby
+                  bee_aid_times = []
+                  bee_aid_prices = []
+                  
+                  for i in range(len(intraday)):
+                      if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                          lower = max(i - 5, 0)
+                          upper = min(i + 6, len(intraday))  # +6 to include current + 5 ahead
+                          if (intraday["Bees"].iloc[lower:upper] == "🐝").any():
+                              bee_aid_times.append(intraday["Time"].iloc[i])
+                              bee_aid_prices.append(intraday["F_numeric"].iloc[i] + 244)  # same as entry emoji offset
+
+
+
+
+
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
@@ -8898,6 +8914,22 @@ if st.sidebar.button("Run Analysis"):
                     name="🎯3 Call Entry 3",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
+
+                fig.add_trace(go.Scatter(
+                    x=bee_aid_times,
+                    y=bee_aid_prices + 244 ,
+                    mode="text",
+                    text=["🐝"] * len(bee_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=43),
+                    name="Bees Near Entry",
+                    hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
+                ), row=1, col=1)
+
+
+
+
+
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
