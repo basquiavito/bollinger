@@ -5512,7 +5512,17 @@ if st.sidebar.button("Run Analysis"):
                             drizzle_found = True
                             break  # Only mark the first one
                 
-                                
+                intraday["Call_FirstEntry_Emoji"] = ""
+
+                # Get Bull MIDAS anchor index
+                anchor_idx_bull = intraday["MIDAS_Bull"].first_valid_index()
+                
+                if anchor_idx_bull is not None:
+                    for i in range(intraday.index.get_loc(anchor_idx_bull), len(intraday)):
+                        if intraday.iloc[i]["Heaven_Cloud"] == "☁️":
+                            intraday.at[intraday.index[i], "Call_FirstEntry_Emoji"] = "🎯"
+                            break
+                            
                                 # Initialize column
                 intraday["Put_SecondEntry_Emoji"] = ""
                 
@@ -5538,7 +5548,26 @@ if st.sidebar.button("Run Analysis"):
                                     intraday.at[intraday.index[i + 1], "Put_SecondEntry_Emoji"] = "🎯2"
                                     break  # Only mark first valid second entry
                 
-                                 # Initialize third entry column
+                intraday["Call_SecondEntry_Emoji"] = ""
+
+                # Find 🎯 call entry
+                first_call_idx = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
+                
+                if not first_call_idx.empty:
+                    i_start = intraday.index.get_loc(first_call_idx[0])
+                
+                    for i in range(i_start + 1, len(intraday) - 1):
+                        prev_f = intraday["F_numeric"].iloc[i - 1]
+                        curr_f = intraday["F_numeric"].iloc[i]
+                        prev_kijun = intraday["KijunF"].iloc[i - 1]
+                        curr_kijun = intraday["KijunF"].iloc[i]
+                
+                        if prev_f < prev_kijun and curr_f >= curr_kijun:
+                            next_close = intraday["F_numeric"].iloc[i + 1]
+                            if next_close > curr_f:
+                                intraday.at[intraday.index[i + 1], "Call_SecondEntry_Emoji"] = "🎯2"
+                                break
+                 # Initialize third entry column
                 intraday["Put_ThirdEntry_Emoji"] = ""
                 
                 # Step 1: Find 🎯 and 🎯2
@@ -5573,7 +5602,38 @@ if st.sidebar.button("Run Analysis"):
                                     if pd.notna(f_next) and f_next < f_curr:
                                         intraday.at[intraday.index[i + 1], "Put_ThirdEntry_Emoji"] = "🎯3"
                                         break  # Only mark one
-                                             
+                  intraday["Call_ThirdEntry_Emoji"] = ""
+    
+                  first_call_idx = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
+                  second_call_idx = intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]
+                  
+                  if not first_call_idx.empty and not second_call_idx.empty:
+                      i_first = intraday.index.get_loc(first_call_idx[0])
+                      i_second = intraday.index.get_loc(second_call_idx[0])
+                  
+                      # Check if IB_High was already crossed
+                      crossed_by_second = False
+                      for i in range(i_first, i_second + 1):
+                          f = intraday["F_numeric"].iloc[i]
+                          ib_high = intraday["IB_High"].iloc[i]
+                          if pd.notna(f) and pd.notna(ib_high) and f > ib_high:
+                              crossed_by_second = True
+                              break
+                  
+                      if not crossed_by_second:
+                          for i in range(i_second + 1, len(intraday) - 1):
+                              f_prev = intraday["F_numeric"].iloc[i - 1]
+                              f_curr = intraday["F_numeric"].iloc[i]
+                              ib_high_prev = intraday["IB_High"].iloc[i - 1]
+                              ib_high_curr = intraday["IB_High"].iloc[i]
+                  
+                              if pd.notna(f_prev) and pd.notna(f_curr) and pd.notna(ib_high_prev) and pd.notna(ib_high_curr):
+                                  if f_prev < ib_high_prev and f_curr >= ib_high_curr:
+                                      f_next = intraday["F_numeric"].iloc[i + 1]
+                                      if pd.notna(f_next) and f_next > f_curr:
+                                          intraday.at[intraday.index[i + 1], "Call_ThirdEntry_Emoji"] = "🎯3"
+                                          break
+                                         
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
