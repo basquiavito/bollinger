@@ -5512,9 +5512,33 @@ if st.sidebar.button("Run Analysis"):
                             drizzle_found = True
                             break  # Only mark the first one
                 
+                                
+                                # Initialize column
+                intraday["Put_SecondEntry_Emoji"] = ""
                 
+                # Step 1: Find index of first 🎯
+                first_entry_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
                 
-                              
+                if not first_entry_idx.empty:
+                    start_idx = first_entry_idx[0]  # Get first 🎯
+                    i_start = intraday.index.get_loc(start_idx)
+                
+                    # Step 2: Loop from that index forward
+                    for i in range(i_start + 1, len(intraday) - 1):  # Leave space for lookahead
+                        prev_f = intraday["F_numeric"].iloc[i - 1]
+                        curr_f = intraday["F_numeric"].iloc[i]
+                        prev_kijun = intraday["KijunF"].iloc[i - 1]
+                        curr_kijun = intraday["KijunF"].iloc[i]
+                
+                        # Crossed down KijunF
+                        if pd.notna(prev_f) and pd.notna(prev_kijun) and pd.notna(curr_f) and pd.notna(curr_kijun):
+                            if prev_f > prev_kijun and curr_f <= curr_kijun:
+                                next_close = intraday["F_numeric"].iloc[i + 1]
+                                if next_close < curr_f:
+                                    intraday.at[intraday.index[i + 1], "Put_SecondEntry_Emoji"] = "🎯2"
+                                    break  # Only mark first valid second entry
+                
+                                              
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
@@ -8713,6 +8737,19 @@ if st.sidebar.button("Run Analysis"):
                     textfont=dict(size=43),
                     name="🎯 Put Entry (Midas Bear + First Drizzle)",
                     hovertemplate="Time: %{x}<br>F%%: %{y} Put_FirstEntry_Emoji<extra></extra>"
+                ), row=1, col=1)
+
+                second_entry_mask = intraday["Put_SecondEntry_Emoji"] == "🎯2"
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[second_entry_mask, "Time"],
+                    y=intraday.loc[second_entry_mask, "F_numeric"] + 89,
+                    mode="text",
+                    text=intraday.loc[second_entry_mask, "Put_SecondEntry_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=22),
+                    name="🎯2 Put Second Entry",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
                 
 
