@@ -5602,37 +5602,37 @@ if st.sidebar.button("Run Analysis"):
                                     if pd.notna(f_next) and f_next < f_curr:
                                         intraday.at[intraday.index[i + 1], "Put_ThirdEntry_Emoji"] = "🎯3"
                                         break  # Only mark one
-                  intraday["Call_ThirdEntry_Emoji"] = ""
-    
-                  first_call_idx = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
-                  second_call_idx = intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]
-                  
-                  if not first_call_idx.empty and not second_call_idx.empty:
-                      i_first = intraday.index.get_loc(first_call_idx[0])
-                      i_second = intraday.index.get_loc(second_call_idx[0])
-                  
-                      # Check if IB_High was already crossed
-                      crossed_by_second = False
-                      for i in range(i_first, i_second + 1):
-                          f = intraday["F_numeric"].iloc[i]
-                          ib_high = intraday["IB_High"].iloc[i]
-                          if pd.notna(f) and pd.notna(ib_high) and f > ib_high:
-                              crossed_by_second = True
-                              break
-                  
-                      if not crossed_by_second:
-                          for i in range(i_second + 1, len(intraday) - 1):
-                              f_prev = intraday["F_numeric"].iloc[i - 1]
-                              f_curr = intraday["F_numeric"].iloc[i]
-                              ib_high_prev = intraday["IB_High"].iloc[i - 1]
-                              ib_high_curr = intraday["IB_High"].iloc[i]
-                  
-                              if pd.notna(f_prev) and pd.notna(f_curr) and pd.notna(ib_high_prev) and pd.notna(ib_high_curr):
-                                  if f_prev < ib_high_prev and f_curr >= ib_high_curr:
-                                      f_next = intraday["F_numeric"].iloc[i + 1]
-                                      if pd.notna(f_next) and f_next > f_curr:
-                                          intraday.at[intraday.index[i + 1], "Call_ThirdEntry_Emoji"] = "🎯3"
-                                          break
+                intraday["Call_ThirdEntry_Emoji"] = ""
+  
+                first_call_idx = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
+                second_call_idx = intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]
+                
+                if not first_call_idx.empty and not second_call_idx.empty:
+                    i_first = intraday.index.get_loc(first_call_idx[0])
+                    i_second = intraday.index.get_loc(second_call_idx[0])
+                
+                    # Check if IB_High was already crossed
+                    crossed_by_second = False
+                    for i in range(i_first, i_second + 1):
+                        f = intraday["F_numeric"].iloc[i]
+                        ib_high = intraday["IB_High"].iloc[i]
+                        if pd.notna(f) and pd.notna(ib_high) and f > ib_high:
+                            crossed_by_second = True
+                            break
+                
+                    if not crossed_by_second:
+                        for i in range(i_second + 1, len(intraday) - 1):
+                            f_prev = intraday["F_numeric"].iloc[i - 1]
+                            f_curr = intraday["F_numeric"].iloc[i]
+                            ib_high_prev = intraday["IB_High"].iloc[i - 1]
+                            ib_high_curr = intraday["IB_High"].iloc[i]
+                
+                            if pd.notna(f_prev) and pd.notna(f_curr) and pd.notna(ib_high_prev) and pd.notna(ib_high_curr):
+                                if f_prev < ib_high_prev and f_curr >= ib_high_curr:
+                                    f_next = intraday["F_numeric"].iloc[i + 1]
+                                    if pd.notna(f_next) and f_next > f_curr:
+                                        intraday.at[intraday.index[i + 1], "Call_ThirdEntry_Emoji"] = "🎯3"
+                                        break
                                          
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
