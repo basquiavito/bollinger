@@ -5527,8 +5527,8 @@ if st.sidebar.button("Run Analysis"):
                     for i in range(i_start + 1, len(intraday) - 1):  # Leave space for lookahead
                         prev_f = intraday["F_numeric"].iloc[i - 1]
                         curr_f = intraday["F_numeric"].iloc[i]
-                        prev_kijun = intraday["KijunF"].iloc[i - 1]
-                        curr_kijun = intraday["KijunF"].iloc[i]
+                        prev_kijun = intraday["Kijun_F"].iloc[i - 1]
+                        curr_kijun = intraday["Kijun_F"].iloc[i]
                 
                         # Crossed down KijunF
                         if pd.notna(prev_f) and pd.notna(prev_kijun) and pd.notna(curr_f) and pd.notna(curr_kijun):
