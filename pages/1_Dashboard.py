@@ -5697,20 +5697,32 @@ if st.sidebar.button("Run Analysis"):
                             if pd.notnull(f_val):
                                 bee_aid_times.append(intraday["Time"].iloc[i])
                                 bee_aid_prices.append(f_val + 244)
-                
-
-                compliance_aid_times = []
-                compliance_aid_prices = []
+                                
+                bee_aid_times_2 = []
+                bee_aid_prices_2 = []
                 
                 for i in range(len(intraday)):
-                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                    if intraday["Put_SecondEntry_Emoji"].iloc[i] == "🎯2" or intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯2":
                         lower = max(i - 5, 0)
                         upper = min(i + 6, len(intraday))
-                        if (intraday["Compliance Shift"].iloc[lower:upper] == "🫧").any():
+                        if (intraday["BBW_Tight_Emoji"].iloc[lower:upper] == "🐝").any():
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
-                                compliance_aid_times.append(intraday["Time"].iloc[i])
-                                compliance_aid_prices.append(f_val + 244)
+                                bee_aid_times_2.append(intraday["Time"].iloc[i])
+                                bee_aid_prices_2.append(f_val + 244)
+                
+                                compliance_aid_times = []
+                                compliance_aid_prices = []
+                                
+                                for i in range(len(intraday)):
+                                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                                        lower = max(i - 5, 0)
+                                        upper = min(i + 6, len(intraday))
+                                        if (intraday["Compliance Shift"].iloc[lower:upper] == "🫧").any():
+                                            f_val = intraday["F_numeric"].iloc[i]
+                                            if pd.notnull(f_val):
+                                                compliance_aid_times.append(intraday["Time"].iloc[i])
+                                                compliance_aid_prices.append(f_val + 244)
 
         # Ensure F_numeric is numeric
                 intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
@@ -9034,6 +9046,17 @@ if st.sidebar.button("Run Analysis"):
                     textfont=dict(size=43),
                     name="Bees Near Entry",
                     hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
+                ), row=1, col=1)
+                # 🐝 Bee Aid for 🎯2
+                fig.add_trace(go.Scatter(
+                    x=bee_aid_times_2,
+                    y=bee_aid_prices_2,
+                    mode="text",
+                    text=["🐝"] * len(bee_aid_times_2),
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Bee Aid (BBW Tight for 🎯2)",
+                    hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
                 ), row=1, col=1)
 
                 # 👂 Ear aid
