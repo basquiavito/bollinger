@@ -5696,13 +5696,13 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 ear_aid_times.append(intraday["Time"].iloc[i])
-                                ear_aid_prices.append(f_val + 244)
+                                ear_aid_prices.append(f_val + 224)
                 
                         if any(sub["F_Bin"].isin(bin_to_nose)):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 nose_aid_times.append(intraday["Time"].iloc[i])
-                                nose_aid_prices.append(f_val + 244)
+                                nose_aid_prices.append(f_val + 224)
   
 
 
@@ -9010,7 +9010,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=["👃🏽"] * len(nose_aid_times),
                     textposition="middle center",
-                    textfont=dict(size=21),
+                    textfont=dict(size=43),
                     name="Nose Aid",
                     hovertemplate="Nose Profile Support<extra></extra>"
                 ), row=1, col=1)
