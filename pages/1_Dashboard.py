@@ -5556,45 +5556,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 
                                    
-     # Create a Streamlit expander for the compliance plot
-                with st.expander("Compliance Plot"):
-                    # Create a figure for the compliance plot
-                    fig = go.Figure()
-                
-                    # Plot smooth line for compliance
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday["Time"],  # Time column
-                            y=intraday["Compliance"],  # Compliance values
-                            mode="lines",  # This will plot a line, rather than markers
-                            name="Compliance",
-                            line=dict(color='green', dash='dot')  # Customize color and line style
-                        )
-                    )
-                
-                    # Plot smooth line of negative compliance (if you have it)
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday["Time"],  # Time column
-                            y=intraday["Smoothed_Compliance"],  # Smoothed Compliance values
-                            mode="lines", 
-                            name="Smoothed Compliance",
-                            line=dict(color='blue', dash='dash')
-                        )
-                    )
-                
-                    # Add layout details
-                    fig.update_layout(
-                        title="Compliance and Smoothed Compliance",
-                        xaxis_title="Time",
-                        yaxis_title="Compliance",
-                        legend_title="Legend",
-                        showlegend=True
-                    )
-                
-                    # Display the plot inside the expander
-                    st.plotly_chart(fig)
-             
+     
                 with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
                    
                     fig_displacement = go.Figure()
@@ -6330,7 +6292,45 @@ if st.sidebar.button("Run Analysis"):
                
                 st.plotly_chart(fig_displacement, use_container_width=True)
 
-
+# Create a Streamlit expander for the compliance plot
+                with st.expander("Compliance Plot"):
+                    # Create a figure for the compliance plot
+                    fig = go.Figure()
+                
+                    # Plot smooth line for compliance
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday["Time"],  # Time column
+                            y=intraday["Compliance"],  # Compliance values
+                            mode="lines",  # This will plot a line, rather than markers
+                            name="Compliance",
+                            line=dict(color='green', dash='dot')  # Customize color and line style
+                        )
+                    )
+                
+                    # Plot smooth line of negative compliance (if you have it)
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday["Time"],  # Time column
+                            y=intraday["Smoothed_Compliance"],  # Smoothed Compliance values
+                            mode="lines", 
+                            name="Smoothed Compliance",
+                            line=dict(color='blue', dash='dash')
+                        )
+                    )
+                
+                    # Add layout details
+                    fig.update_layout(
+                        title="Compliance and Smoothed Compliance",
+                        xaxis_title="Time",
+                        yaxis_title="Compliance",
+                        legend_title="Legend",
+                        showlegend=True
+                    )
+                
+                    # Display the plot inside the expander
+                    st.plotly_chart(fig)
+             
 
 
 
