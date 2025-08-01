@@ -5771,7 +5771,7 @@ if st.sidebar.button("Run Analysis"):
                         upper = min(i + 6, len(intraday))  # ±5 bars
                 
                         phoenix_present = (intraday["STD_Alert"].iloc[lower:upper] == "🐦‍🔥").any()
-                        fire_present = (intraday["BBW_Expansion_Emoji"].iloc[lower:upper] == "🔥").any()
+                        fire_present = (intraday["BBW Alert"].iloc[lower:upper] == "🔥").any()
                 
                         if phoenix_present and fire_present:
                             f_val = intraday["F_numeric"].iloc[i]
