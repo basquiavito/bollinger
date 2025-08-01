@@ -5634,17 +5634,17 @@ if st.sidebar.button("Run Analysis"):
                                         intraday.at[intraday.index[i + 1], "Call_ThirdEntry_Emoji"] = "🎯3"
                                         break
                                          
-                  # Collect indexes of entries (put or call) where 🐝 exists nearby
-                  bee_aid_times = []
-                  bee_aid_prices = []
-                  
-                  for i in range(len(intraday)):
-                      if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                          lower = max(i - 5, 0)
-                          upper = min(i + 6, len(intraday))  # +6 to include current + 5 ahead
-                          if (intraday["Bees"].iloc[lower:upper] == "🐝").any():
-                              bee_aid_times.append(intraday["Time"].iloc[i])
-                              bee_aid_prices.append(intraday["F_numeric"].iloc[i] + 244)  # same as entry emoji offset
+                # Collect indexes of entries (put or call) where 🐝 exists nearby
+                bee_aid_times = []
+                bee_aid_prices = []
+                
+                for i in range(len(intraday)):
+                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))  # +6 to include current + 5 ahead
+                        if (intraday["Bees"].iloc[lower:upper] == "🐝").any():
+                            bee_aid_times.append(intraday["Time"].iloc[i])
+                            bee_aid_prices.append(intraday["F_numeric"].iloc[i] + 244)  # same as entry emoji offset
 
 
 
