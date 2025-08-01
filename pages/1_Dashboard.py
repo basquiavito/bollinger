@@ -5202,7 +5202,47 @@ if st.sidebar.button("Run Analysis"):
                           "Weight": "{:,.0f}"
                       }))        
                             
-                
+                     # Create a Streamlit expander for the compliance plot
+                  with st.expander("Compliance Plot"):
+                      # Create a figure for the compliance plot
+                      fig = go.Figure()
+                  
+                      # Plot smooth line for compliance
+                      fig.add_trace(
+                          go.Scatter(
+                              x=intraday["Time"],  # Time column
+                              y=intraday["Compliance"],  # Compliance values
+                              mode="lines",  # This will plot a line, rather than markers
+                              name="Compliance",
+                              line=dict(color='green', dash='dot')  # Customize color and line style
+                          )
+                      )
+                  
+                      # Plot smooth line of negative compliance (if you have it)
+                      fig.add_trace(
+                          go.Scatter(
+                              x=intraday["Time"],  # Time column
+                              y=intraday["Smoothed_Compliance"],  # Smoothed Compliance values
+                              mode="lines", 
+                              name="Smoothed Compliance",
+                              line=dict(color='blue', dash='dash')
+                          )
+                      )
+                  
+                      # Add layout details
+                      fig.update_layout(
+                          title="Compliance and Smoothed Compliance",
+                          xaxis_title="Time",
+                          yaxis_title="Compliance",
+                          legend_title="Legend",
+                          showlegend=True
+                      )
+                  
+                      # Display the plot inside the expander
+                      st.plotly_chart(fig)
+                  
+                             
+                            
                   with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
                       # Detect price column
@@ -6788,17 +6828,7 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                     )
                     
-                    fig.add_trace(shift_bubbles, row=1, col=1)
-
-                    fig.add_trace(
-                        go.Scatter(
-                          x=intraday["Time"],  # Replace 'Time' with your actual time column
-                          y=intraday["Compliance"],  # Compliance values
-                          mode="lines",  # This will plot a line, rather than markers
-                          name="Compliance",
-                          line=dict(color='green', dash='dot')  # You can customize the color and style
-                      )
-                  )
+           
                     # # Create a Boolean mask for rows with surge emojis
                     # mask_compliance_surge = intraday["Compliance Surge"] != ""
                     
@@ -8836,10 +8866,10 @@ if st.sidebar.button("Run Analysis"):
                 st.error(f"Error fetching data for {t}: {e}")
 
            
-                
-
-           
-                
+  
+            # Assuming you already have 'intraday' DataFrame with 'Compliance' and 'Smoothed_Compliance' columns.
+            
+       
           
 
 
