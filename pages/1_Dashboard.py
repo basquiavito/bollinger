@@ -5194,13 +5194,8 @@ if st.sidebar.button("Run Analysis"):
                           above = False
 
 
-                # --- Display inside an Expander ---
-                  with st.expander("🏛️ Initial Balance Volume Control Chambers", expanded=False):
-                      st.dataframe(ib_stats.style.format({
-                          "Total_Volume": "{:,.0f}",
-                          "Volume_Pressure": "{:,.2f}",
-                          "Weight": "{:,.0f}"
-                      }))        
+                  intraday['Smoothed_Compliance'] = intraday['Compliance'].rolling(window=5, min_periods=1).mean()
+ 
                             
                      # Create a Streamlit expander for the compliance plot
                   with st.expander("Compliance Plot"):
