@@ -5495,52 +5495,26 @@ if st.sidebar.button("Run Analysis"):
   
   
   
-
-
-
-                # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
-                #               fig_ichimoku = go.Figure()
-              
-                #               fig_ichimoku.add_trace(go.Candlestick(
-                #                   x=intraday['Time'],
-                #                   open=intraday['Open'],
-                #                   high=intraday['High'],
-                #                   low=intraday['Low'],
-                #                   close=intraday['Close'],
-                #                   name='Candles'
-                #               ))
-              
-                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'), name='Tenkan-sen'))
-                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'], line=dict(color='green'), name='Kijun-sen'))
-                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
-                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
-                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
-              
-                #               fig_ichimoku.add_trace(go.Scatter(
-                #                   x=intraday['Time'],
-                #                   y=intraday['SpanA'],
-                #                   line=dict(width=0),
-                #                   showlegend=False
-                #               ))
-              
-                #               fig_ichimoku.add_trace(go.Scatter(
-                #                   x=intraday['Time'],
-                #                   y=intraday['SpanB'],
-                #                   fill='tonexty',
-                #                   fillcolor='rgba(128, 128, 128, 0.2)',
-                #                   line=dict(width=0),
-                #                   showlegend=False
-                #               ))
-              
-                #               fig_ichimoku.update_layout(
-                #                   title="Ichimoku Candlestick Chart",
-                #                   height=450,
-                #                   width=450,
-                #                   xaxis_rangeslider_visible=False,
-                #                   margin=dict(l=30, r=30, t=40, b=20)
-                #               )
-              
-                #               st.plotly_chart(fig_ichimoku, use_container_width=True)
+                # Initialize the new column for the 🎯 entry signal
+                intraday["Put_FirstEntry_Emoji"] = ""
+                
+                # Step 1: Find the index of the MIDAS Bear anchor (first non-null value)
+                anchor_idx_bear = intraday["MIDAS_Bear"].first_valid_index()
+                
+                # Defensive check
+                if anchor_idx_bear is not None:
+                    # Step 2: Start scanning from the anchor forward
+                    drizzle_found = False
+                    for i in range(intraday.index.get_loc(anchor_idx_bear), len(intraday)):
+                        if intraday.iloc[i]["Drizzle_Emoji"] == "🌧️":
+                            # Step 3: Mark the first drizzle bar after anchor
+                            intraday.at[intraday.index[i], "Put_FirstEntry_Emoji"] = "🎯"
+                            drizzle_found = True
+                            break  # Only mark the first one
+                
+                
+                
+                              
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
@@ -8728,123 +8702,19 @@ if st.sidebar.button("Run Analysis"):
 
 
   
-                # # intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
-                # # intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
-  
-  
-  
-                #                     # Span A – Yellow Line
-                # span_a_line = go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanA_F"],
-                #     mode="lines",
-                #     line=dict(color="yellow", width=0.4),
-                #     name="Span A (F%)"
-                # )
-                # fig.add_trace(span_a_line, row=1, col=1)
-  
-                # # Span B – Blue Line
-                # span_b_line = go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanB_F"],
-                #     mode="lines",
-                #     line=dict(color="rgba(0, 150, 255, 0.4)", width=0.5),                    
-                #     name="Span B (F%)"
-                # )
-                # fig.add_trace(span_b_line, row=1, col=1)
-  
-                # # Invisible SpanA for cloud base
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanA_F"],
-                #     line=dict(width=0),
-                #     mode='lines',
-                #     showlegend=False
-                # ), row=1, col=1)
-  
-                # # SpanB with fill → grey Kumo
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["SpanB_F"],
-                #     fill='tonexty',
-                #     fillcolor='rgba(20, 20, 30, 0.10)',  # transparent grey
-                #     line=dict(width=0),
-                #     mode='lines',
-                #     name='Kumo Cloud'
-                # ), row=1, col=1)
-
-                # # if yva_min is not None and yva_max is not None:
-                #     # Show in text
-                #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
-                # if prev_close:
-                #     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
-                #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
-                       
-                      # Show YVA and Yesterday Range
-                # if yva_min is not None and yva_max is not None:
-                #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
-                # if prev_close:
-                #     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
-                #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+                first_entry_mask = intraday["Put_FirstEntry_Emoji"] == "🎯"
                 
-                # # 🧭 Opening Position vs YVA
-                # if yva_min is not None and yva_max is not None:
-                #     opening_price = intraday["Close"].iloc[0]
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[first_entry_mask, "Time"],
+                    y=intraday.loc[first_entry_mask, "F_numeric"] + 89,
+                    mode="text",
+                    text=intraday.loc[first_entry_mask, "Put_FirstEntry_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=23),
+                    name="🎯 Put Entry (Midas Bear + First Drizzle)",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
                 
-                #     if yva_min < opening_price < yva_max:
-                #         yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
-                #     elif opening_price >= yva_max:
-                #         yva_position_msg = "⬆️ Opened **above** Yesterday's Value Area"
-                #     elif opening_price <= yva_min:
-                #         yva_position_msg = "⬇️ Opened **below** Yesterday's Value Area"
-                #     else:
-                #         yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
-                
-                #     st.markdown(f"### {yva_position_msg}")
-
-
-                    #   # ✅ Detect Initiative Breakout from Yesterday’s Value Area
-                    # if yva_min is not None and yva_max is not None and not intraday.empty:
-                    #     opening_price = intraday["Close"].iloc[0]
-                    #     opened_inside_yva = yva_min < opening_price < yva_max
-                    
-                    #     # First 30 min = first 6 bars on 5-min timeframe
-                    #     first_6 = intraday.iloc[:6]
-                    #     broke_above_yva = first_6["Close"].max() > yva_max
-                    #     broke_below_yva = first_6["Close"].min() < yva_min
-                    
-                    #     if opened_inside_yva:
-                    #         if broke_above_yva:
-                    #             st.markdown("🚀 **Breakout Alert: Opened *inside* YVA → Broke *above* within 30 min**")
-                    #         elif broke_below_yva:
-                    #             st.markdown("🔻 **Breakout Alert: Opened *inside* YVA → Broke *below* within 30 min**")
-                    #         else:
-                    #             st.markdown("🟨 Opened inside YVA – No early breakout")
-                    
-                    #     else:
-                    #         st.markdown("🟦 Market did *not* open inside YVA")
-  
-                        # ✅ Acceptance Outside of Previous Day's Range
-                        # When price opens above yesterday's high OR below yesterday's low
-                        # AND remains there throughout the first 30 minutes
-                    
-                    # opened_above_yh = opening_price > prev_high
-                    # opened_below_yl = opening_price < prev_low
-                    
-                    # first_6 = intraday.iloc[:6]
-                    # stayed_above_yh = (first_6["Close"] > prev_high).all()
-                    # stayed_below_yl = (first_6["Close"] < prev_low).all()
-                    
-                    # if opened_above_yh and stayed_above_yh:
-                    #     st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
-                    
-                    # elif opened_below_yl and stayed_below_yl:
-                    #     st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
-                    
-                    # elif opened_above_yh or opened_below_yl:
-                    #     st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
-                        
-                        
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
