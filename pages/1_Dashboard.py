@@ -8931,6 +8931,16 @@ if st.sidebar.button("Run Analysis"):
                     name="🎯3 Call Entry 3",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=compliance_aid_times,
+                    y=compliance_aid_prices,
+                    mode="text",
+                    text=["🫧"] * len(compliance_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Compliance Shift Aid 🫧",
+                    hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
+                ), row=1, col=1)
 
                 fig.add_trace(go.Scatter(
                     x=bee_aid_times,
