@@ -6322,7 +6322,7 @@ if st.sidebar.button("Run Analysis"):
                     shift_indices = intraday["Compliance Shift"] == "🫧"
                     fig.add_trace(go.Scatter(
                         x=intraday["Time"][shift_indices],
-                        y=intraday["Compliance"][shift_indices],
+                        y=intraday["Compliance"][shift_indices]  + 10,
                         mode="text",
                         text=["🫧"] * shift_indices.sum(),  # repeat emoji for each shift
                         textposition="top center",
