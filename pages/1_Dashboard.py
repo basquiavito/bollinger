@@ -5568,6 +5568,45 @@ if st.sidebar.button("Run Analysis"):
                             if next_close > curr_f:
                                 intraday.at[intraday.index[i + 1], "Call_SecondEntry_Emoji"] = "🎯2"
                                 break
+
+                # Ensure F_numeric is numeric
+                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
+                
+                # Create container lists
+                nose_aid_times_2 = []
+                nose_aid_prices_2 = []
+                ear_aid_times_2 = []
+                ear_aid_prices_2 = []
+                
+                # Combine both second entries
+                second_entry_mask = (
+                    (intraday["Put_SecondEntry_Emoji"] == "🎯2") |
+                    (intraday["Call_SecondEntry_Emoji"] == "🎯2")
+                )
+                
+                for i in range(len(intraday)):
+                    if second_entry_mask.iloc[i]:
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))
+                        aid_range = intraday.iloc[lower:upper]
+                
+                        # 👃🏽 Nose aid check
+                        if (aid_range["👃🏽"] == "👃🏽").any():
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                nose_aid_times_2.append(intraday["Time"].iloc[i])
+                                nose_aid_prices_2.append(f_val + 244)
+                
+                        # 🦻🏼 Ear aid check
+                        if (aid_range["🦻🏼"] == "🦻🏼").any():
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                ear_aid_times_2.append(intraday["Time"].iloc[i])
+                                ear_aid_prices_2.append(f_val + 244)
+                
+
+
+
                  # Initialize third entry column
                 intraday["Put_ThirdEntry_Emoji"] = ""
                 
@@ -9016,7 +9055,30 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
   
-
+                # 👃🏽 Nose Memory Aid for 🎯2
+                fig.add_trace(go.Scatter(
+                    x=nose_aid_times_2,
+                    y=nose_aid_prices_2,
+                    mode="text",
+                    text=["👃🏽"] * len(nose_aid_times_2),
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Nose Aid (Memory)",
+                    hovertemplate="Time: %{x}<br>👃🏽 Nose Memory Aid<extra></extra>"
+                ), row=1, col=1)
+                
+                # 🦻🏼 Ear Volume Memory Aid for 🎯2
+                fig.add_trace(go.Scatter(
+                    x=ear_aid_times_2,
+                    y=ear_aid_prices_2,
+                    mode="text",
+                    text=["🦻🏼"] * len(ear_aid_times_2),
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Ear Aid (Volume Memory)",
+                    hovertemplate="Time: %{x}<br>🦻🏼 Ear Volume Aid<extra></extra>"
+                ), row=1, col=1)
+                
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
