@@ -5654,7 +5654,21 @@ if st.sidebar.button("Run Analysis"):
                 
 
 
+                def append_compliance_shift_to_entries(df, entry_col, shift_col="Compliance Shift", emoji_shift="🫧", window=5):
+                    shift_indexes = df.index[df[shift_col] == emoji_shift]
+                    entry_indexes = df.index[df[entry_col].str.contains("🎯", na=False)]
+                
+                    for idx in entry_indexes:
+                        nearby_range = range(max(0, idx - window), min(len(df), idx + window + 1))
+                        if any(i in shift_indexes for i in nearby_range):
+                            current = df.at[idx, entry_col]
+                            if emoji_shift not in current:
+                                df.at[idx, entry_col] = f"{current}{emoji_shift}"
+                    return df
 
+                intraday = append_compliance_shift_to_entries(intraday, entry_col="Entry1_Emoji")
+                intraday = append_compliance_shift_to_entries(intraday, entry_col="Entry2_Emoji")
+                intraday = append_compliance_shift_to_entries(intraday, entry_col="Entry3_Emoji")
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
@@ -8932,7 +8946,19 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-
+                entry1_mask = intraday["Entry1_Emoji"].str.contains("🎯1", na=False)
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[entry1_mask, "Time"],
+                    y=intraday.loc[entry1_mask, "F_numeric"] + 244,
+                    mode="text",
+                    text=intraday.loc[entry1_mask, "Entry1_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="🎯1 Entries (w/ Aids)",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+                
 
 
 
