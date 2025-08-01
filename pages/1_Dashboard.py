@@ -6418,54 +6418,54 @@ if st.sidebar.button("Run Analysis"):
                
                 st.plotly_chart(fig_displacement, use_container_width=True)
 
-# Create a Streamlit expander for the compliance plot
-                with st.expander("Compliance Plot"):
-                    # Create a figure for the compliance plot
-                    fig = go.Figure()
+# # Create a Streamlit expander for the compliance plot
+#                 with st.expander("Compliance Plot"):
+#                     # Create a figure for the compliance plot
+#                     fig = go.Figure()
                 
-                    # Plot smooth line for compliance
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday["Time"],  # Time column
-                            y=intraday["Compliance"],  # Compliance values
-                            mode="lines",  # This will plot a line, rather than markers
-                            name="Compliance",
-                            line=dict(color='green', dash='dot')  # Customize color and line style
-                        )
-                    )
+#                     # Plot smooth line for compliance
+#                     fig.add_trace(
+#                         go.Scatter(
+#                             x=intraday["Time"],  # Time column
+#                             y=intraday["Compliance"],  # Compliance values
+#                             mode="lines",  # This will plot a line, rather than markers
+#                             name="Compliance",
+#                             line=dict(color='green', dash='dot')  # Customize color and line style
+#                         )
+#                     )
                 
-                    # Plot smooth line of negative compliance (if you have it)
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday["Time"],  # Time column
-                            y=intraday["Smoothed_Compliance"],  # Smoothed Compliance values
-                            mode="lines", 
-                            name="Smoothed Compliance",
-                            line=dict(color='blue', dash='dash')
-                        )
-                    )
-                                 # ✅ Add 🫧 emoji at Compliance Shift points
-                    shift_indices = intraday["Compliance Shift"] == "🫧"
-                    fig.add_trace(go.Scatter(
-                        x=intraday["Time"][shift_indices],
-                        y=intraday["Compliance"][shift_indices]  + 10,
-                        mode="text",
-                        text=["🫧"] * shift_indices.sum(),  # repeat emoji for each shift
-                        textposition="top center",
-                        name="Compliance Shift 🫧",
-                        showlegend=True
-                    ))
-                    # Add layout details
-                    fig.update_layout(
-                        title="Compliance and Smoothed Compliance",
-                        xaxis_title="Time",
-                        yaxis_title="Compliance",
-                        legend_title="Legend",
-                        showlegend=True
-                    )
+#                     # Plot smooth line of negative compliance (if you have it)
+#                     fig.add_trace(
+#                         go.Scatter(
+#                             x=intraday["Time"],  # Time column
+#                             y=intraday["Smoothed_Compliance"],  # Smoothed Compliance values
+#                             mode="lines", 
+#                             name="Smoothed Compliance",
+#                             line=dict(color='blue', dash='dash')
+#                         )
+#                     )
+#                                  # ✅ Add 🫧 emoji at Compliance Shift points
+#                     shift_indices = intraday["Compliance Shift"] == "🫧"
+#                     fig.add_trace(go.Scatter(
+#                         x=intraday["Time"][shift_indices],
+#                         y=intraday["Compliance"][shift_indices]  + 10,
+#                         mode="text",
+#                         text=["🫧"] * shift_indices.sum(),  # repeat emoji for each shift
+#                         textposition="top center",
+#                         name="Compliance Shift 🫧",
+#                         showlegend=True
+#                     ))
+#                     # Add layout details
+#                     fig.update_layout(
+#                         title="Compliance and Smoothed Compliance",
+#                         xaxis_title="Time",
+#                         yaxis_title="Compliance",
+#                         legend_title="Legend",
+#                         showlegend=True
+#                     )
                 
-                    # Display the plot inside the expander
-                    st.plotly_chart(fig)
+#                     # Display the plot inside the expander
+#                     st.plotly_chart(fig)
              
 
 
