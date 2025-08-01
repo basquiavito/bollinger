@@ -8911,7 +8911,7 @@ if st.sidebar.button("Run Analysis"):
                 call3_mask = intraday["Call_ThirdEntry_Emoji"] == "🎯3"
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[call3_mask, "Time"],
-                    y=intraday.loc[call3_mask, "F_numeric"] ,
+                    y=intraday.loc[call3_mask, "F_numeric"] + 244,
                     mode="text",
                     text=intraday.loc[call3_mask, "Call_ThirdEntry_Emoji"],
                     textposition="top center",
@@ -8922,7 +8922,7 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_trace(go.Scatter(
                     x=bee_aid_times,
-                    y=bee_aid_prices + 244 ,
+                    y=[y_val + 244 for y_val in bee_aid_prices],
                     mode="text",
                     text=["🐝"] * len(bee_aid_times),
                     textposition="top center",
