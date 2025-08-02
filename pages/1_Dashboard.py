@@ -9340,16 +9340,17 @@ if st.sidebar.button("Run Analysis"):
             ), row=1, col=1)
 
                 fig.add_trace(go.Scatter(
-                  x=energy_aid_times,
-                  y=energy_aid_prices,
-                  mode="text",
-                  text=["🔋"] * len(energy_aid_times),
-                  textposition="top center",
-                  textfont=dict(size=22),
-                  name="Energy Aid 🔋",
-                  hovertemplate="Time: %{x|%H:%M}<br>Energy Aid 🔋<br>Value: %{text}<extra></extra>",
-                  text=[f"{val}" for val in energy_aid_vals]
-              ), row=1, col=1)
+                x=energy_aid_times,
+                y=energy_aid_prices,
+                mode="text",
+                text=["🔋"] * len(energy_aid_times),  # Only 1 text keyword allowed
+                textposition="top center",
+                textfont=dict(size=22),
+                name="Energy Aid 🔋",
+                customdata=[[val] for val in energy_aid_vals],  # Use for hover
+                hovertemplate="Time: %{x|%H:%M}<br>Energy Aid 🔋<br>Value: %{customdata[0]}<extra></extra>"
+            ), row=1, col=1)
+
 
                 # Step 2: Add 💨 to the plot like ☄️
                 fig.add_trace(go.Scatter(
