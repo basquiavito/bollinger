@@ -9249,6 +9249,9 @@ if st.sidebar.button("Run Analysis"):
                     name="Ember Prototype",
                     hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
                 ), row=1, col=1)
+
+
+
                 fig.add_trace(go.Scatter(
                     x=momentum_aid_times,
                     y=momentum_aid_prices,
@@ -9293,7 +9296,6 @@ if st.sidebar.button("Run Analysis"):
                     textfont=dict(size=21),
                     name="Force Aid 💪",
                     hovertemplate="Time: %{x|%H:%M}<br>Force Aid 💪<br>Value: %{text}<extra></extra>",
-                    text=[f"{val}" for val in force_aid_vals]
                 ), row=1, col=1)
 
 
