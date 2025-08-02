@@ -5708,7 +5708,7 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 bee_aid_times_2.append(intraday["Time"].iloc[i])
-                                bee_aid_prices_2.append(f_val + 200)
+                                bee_aid_prices_2.append(f_val - 200)
 
                 
                 compliance_aid_times = []
