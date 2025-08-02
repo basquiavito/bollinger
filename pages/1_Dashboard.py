@@ -9350,7 +9350,6 @@ if st.sidebar.button("Run Analysis"):
                   hovertemplate="Time: %{x|%H:%M}<br>Energy Aid 🔋<br>Value: %{text}<extra></extra>",
                   text=[f"{val}" for val in energy_aid_vals]
               ), row=1, col=1)
-              w=1, col=1)
 
                 # Step 2: Add 💨 to the plot like ☄️
                 fig.add_trace(go.Scatter(
