@@ -5818,6 +5818,22 @@ if st.sidebar.button("Run Analysis"):
                 for t, p in zip(vol_aid_times, vol_aid_prices):
                     plt.text(t, p, "💨", fontsize=10, ha="center", va="bottom")
 
+
+
+  
+                momentum_threshold = intraday["Unit Momentum"].quantile(0.97)  # dynamic, top 3%
+                momentum_aid_times = []
+                momentum_aid_prices = []
+                
+                for i in range(len(intraday)):
+                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        momentum_val = intraday["Unit Momentum"].iloc[i]
+                        if pd.notnull(momentum_val) and momentum_val > momentum_threshold:
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                momentum_aid_times.append(intraday["Time"].iloc[i])
+                                momentum_aid_prices.append(f_val)
+
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
                                         intraday[[
@@ -9173,6 +9189,17 @@ if st.sidebar.button("Run Analysis"):
                     name="Ember Prototype",
                     hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
                 ), row=1, col=1)
+                # Plot 💥 momentum aid for Entry 1
+                fig.add_trace(go.Scatter(
+                    x=momentum_aid_times,
+                    y=momentum_aid_prices + 300,  # Offset above price for clarity
+                    mode="text",
+                    text=["💥"] * len(momentum_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Momentum Aid 💥",
+                    hovertemplate="Time: %{x|%H:%M}<br>Momentum Aid 💥<extra></extra>"
+                ))
 
 
                 # Plot ☄️ aid
