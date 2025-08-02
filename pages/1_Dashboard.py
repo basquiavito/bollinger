@@ -5797,6 +5797,23 @@ if st.sidebar.button("Run Analysis"):
                                 comet_aid_times.append(intraday["Time"].iloc[i])
                                 comet_aid_prices.append(f_val + 244)  # Offset for clean stacking
 
+                vol_aid_times = []
+                vol_aid_prices = []
+                
+                for i in range(len(intraday)):
+                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))
+                        if (intraday["Volatility_Composite"].iloc[lower:upper] > 10).any():
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                vol_aid_times.append(intraday["Time"].iloc[i])
+                                vol_aid_prices.append(f_val + 300)  # Physic aid: plot higher
+                
+                # Plot it
+                plt.scatter(vol_aid_times, vol_aid_prices, marker="o", color="black", label="💨 Volatility Spike")
+                for t, p in zip(vol_aid_times, vol_aid_prices):
+                    plt.text(t, p, "💨", fontsize=10, ha="center", va="bottom")
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
@@ -9166,8 +9183,18 @@ if st.sidebar.button("Run Analysis"):
                     name="ATR Expansion Aid ☄️",
                     hovertemplate="Time: %{x|%H:%M}<br>ATR Expansion Aid ☄️<extra></extra>"
                 ), row=1, col=1)
-
-
+                
+                # Step 2: Add 💨 to the plot like ☄️
+                fig.add_trace(go.Scatter(
+                    x=vol_aid_times,
+                    y=vol_aid_prices,
+                    mode="text",
+                    text=["💨"] * len(vol_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Volatility Composite 💨",
+                    hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite 💨<extra></extra>"
+                ), row=1, col=1)
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
    
