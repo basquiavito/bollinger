@@ -5796,19 +5796,22 @@ if st.sidebar.button("Run Analysis"):
                             if pd.notnull(f_val):
                                 comet_aid_times.append(intraday["Time"].iloc[i])
                                 comet_aid_prices.append(f_val + 244)  # Offset for clean stacking
-
+                # Step 1: Collect aid points with Volatility Composite values
                 vol_aid_times = []
                 vol_aid_prices = []
+                vol_aid_values = []
                 
                 for i in range(len(intraday)):
                     if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
                         lower = max(i - 5, 0)
                         upper = min(i + 6, len(intraday))
-                        if (intraday["Volatility_Composite"].iloc[lower:upper] > 10).any():
+                        vol_window = intraday["Volatility_Composite"].iloc[lower:upper]
+                        if (vol_window > 10).any():
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 vol_aid_times.append(intraday["Time"].iloc[i])
-                                vol_aid_prices.append(f_val + 300)  # Physic aid: plot higher
+                                vol_aid_prices.append(f_val + 300)
+                                vol_aid_values.append(vol_window.max())  # highest value in the window
                 
                 # Plot it
                 plt.scatter(vol_aid_times, vol_aid_prices, marker="o", color="black", label="💨 Volatility Spike")
@@ -9194,6 +9197,7 @@ if st.sidebar.button("Run Analysis"):
                     textfont=dict(size=21),
                     name="Volatility Composite 💨",
                     hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite: %{customdata:.2f}<extra></extra>",
+                    customdata=np.array(vol_aid_values).reshape(-1, 1)
 
                 ), row=1, col=1)
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
