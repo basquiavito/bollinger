@@ -5930,7 +5930,7 @@ if st.sidebar.button("Run Analysis"):
                                 peak_idx = energy_window.idxmin()  # Most bearish
                 
                             peak_time = intraday["Time"].loc[peak_idx]
-                            peak_value = intraday["F_numeric"].loc[peak_idx] + 300  # Offset for visibility
+                            peak_value = intraday["F_numeric"].loc[peak_idx] + 100  # Offset for visibility
                             energy_val = energy_window.loc[peak_idx]
                 
                             energy_aid_times.append(peak_time)
