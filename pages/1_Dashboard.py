@@ -5821,25 +5821,51 @@ if st.sidebar.button("Run Analysis"):
 
                 force_aid_times = []
                 force_aid_prices = []
+                force_aid_vals = []
                 
-                # Ensure Vector Force is numeric
-                intraday["Vector Force"] = pd.to_numeric(intraday["Vector Force"], errors="coerce")
+                # Ensure Force column is numeric
+                intraday["Unit Force"] = pd.to_numeric(intraday["Unit Force"], errors="coerce")
                 
+                # Loop through the dataset
                 for i in range(len(intraday)):
-                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
+                    # Check for a 🎯 entry
+                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        # Look for **positive Force** peak in a ±5 bar window
                         lower = max(i - 5, 0)
                         upper = min(i + 6, len(intraday))
-                        force_window = intraday["Vector Force"].iloc[lower:upper]
+                        force_window = intraday["Unit Force"].iloc[lower:upper]
                 
-                        if force_window.notna().any():
+                        # Only keep positive values (aiding bullish)
+                        force_window = force_window[force_window > 0]
+                
+                        if not force_window.empty:
                             peak_idx = force_window.idxmax()
                             peak_time = intraday["Time"].loc[peak_idx]
-                            peak_value = intraday["F_numeric"].loc[peak_idx] + 300  # y-axis offset
+                            peak_val = intraday["F_numeric"].loc[peak_idx] + 360  # offset above Momentum
                             force_val = force_window.loc[peak_idx]
                 
                             force_aid_times.append(peak_time)
-                            force_aid_prices.append(peak_value)
-                            intraday.loc[peak_idx, "Force_Aid_Value"] = force_val
+                            force_aid_prices.append(peak_val)
+                            force_aid_vals.append(int(force_val))
+                
+                    elif intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        # Look for **negative Force** peak in a ±5 bar window
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))
+                        force_window = intraday["Unit Force"].iloc[lower:upper]
+                
+                        # Only keep negative values (aiding bearish)
+                        force_window = force_window[force_window < 0]
+                
+                        if not force_window.empty:
+                            trough_idx = force_window.idxmin()  # most negative = strongest
+                            trough_time = intraday["Time"].loc[trough_idx]
+                            trough_val = intraday["F_numeric"].loc[trough_idx] + 360
+                            force_val = force_window.loc[trough_idx]
+                
+                            force_aid_times.append(trough_time)
+                            force_aid_prices.append(trough_val)
+                            force_aid_vals.append(int(force_val))
 
                 momentum_aid_times = []
                 momentum_aid_prices = []
@@ -9257,19 +9283,18 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                # 💪 Plot
+                               # Plot 💪 Force Aid
                 fig.add_trace(go.Scatter(
                     x=force_aid_times,
                     y=force_aid_prices,
                     mode="text",
                     text=["💪"] * len(force_aid_times),
                     textposition="top center",
-                    textfont=dict(size=22),
+                    textfont=dict(size=21),
                     name="Force Aid 💪",
                     hovertemplate="Time: %{x|%H:%M}<br>Force Aid 💪<br>Value: %{text}<extra></extra>",
+                    text=[f"{val}" for val in force_aid_vals]
                 ), row=1, col=1)
-
-
 
 
                 # Step 2: Add 💨 to the plot like ☄️
