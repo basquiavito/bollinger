@@ -9197,19 +9197,25 @@ if st.sidebar.button("Run Analysis"):
                     name="Ember Prototype",
                     hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
                 ), row=1, col=1)
-
-                # Plot 💥 Momentum Aid
                 fig.add_trace(go.Scatter(
                     x=momentum_aid_times,
                     y=momentum_aid_prices,
                     mode="text",
-                    text=["💥"] * len(momentum_aid_times),
+                    text=["💥"] * len(momentum_aid_times),  # ✅ Only one `text=`
                     textposition="top center",
                     textfont=dict(size=22),
                     name="Momentum Aid 💥",
-                    hovertemplate="Time: %{x|%H:%M}<br>Momentum Aid 💥<br>Value: %{text}<extra></extra>",
-                    text=[f"{int(intraday.loc[intraday['Time'] == t, 'Momentum_Aid_Value'].values[0])}" for t in momentum_aid_times]
+                    hovertemplate=(
+                        "Time: %{x|%H:%M}<br>"
+                        "Momentum Aid 💥<br>"
+                        "Value: %{customdata}<extra></extra>"
+                    ),
+                    customdata=[
+                        int(intraday.loc[intraday['Time'] == t, 'Momentum_Aid_Value'].values[0])
+                        for t in momentum_aid_times
+                    ]
                 ), row=1, col=1)
+
 
 
                 # Plot ☄️ aid
