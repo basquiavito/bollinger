@@ -9284,7 +9284,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # Plot ☄️ aid
+                # Plot ☄️ aidhttps://github.com/basquiavito/bollinger/blob/master/pages/1_Dashboard.py
                 fig.add_trace(go.Scatter(
                     x=comet_aid_times,
                     y=comet_aid_prices,
@@ -9297,17 +9297,17 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                               # Plot 💪 Force Aid
                 fig.add_trace(go.Scatter(
-                    x=force_aid_times,
-                    y=force_aid_prices,
-                    mode="text",
-                    text=["💪"] * len(force_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Force Aid 💪",
-                    hovertemplate="Time: %{x|%H:%M}<br>Force Aid 💪<br>Value: %{text}<extra></extra>",
-                ), row=1, col=1)
+                x=force_aid_times, 
+                y=force_aid_prices,
+                mode="text",
+                text=["💪"] * len(force_aid_times),  # visible emoji on the chart
+                textposition="top center",
+                textfont=dict(size=21),
+                name="Force Aid 💪",
+                customdata=[f"{val}" for val in force_aid_vals],  # hover value
+                hovertemplate="Time: %{x|%H:%M}<br>Force Aid 💪<br>Value: %{customdata}<extra></extra>"
+            ), row=1, col=1)
 
 
                 # Step 2: Add 💨 to the plot like ☄️
