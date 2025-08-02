@@ -5909,7 +5909,37 @@ if st.sidebar.button("Run Analysis"):
                             momentum_aid_prices.append(trough_value)
                             intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
                 
-  
+                  # Initialize containers
+                energy_aid_times = []
+                energy_aid_prices = []
+                energy_aid_vals = []
+                
+                # Ensure Vector Energy is numeric
+                intraday["Vector Energy"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
+                
+                for i in range(len(intraday)):
+                    if intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_SecondEntry_Emoji"].iloc[i] == "🎯":
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))
+                        energy_window = intraday["Vector Energy"].iloc[lower:upper]
+                
+                        if energy_window.notna().any():
+                            if intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯":
+                                peak_idx = energy_window.idxmax()  # Most bullish
+                            else:
+                                peak_idx = energy_window.idxmin()  # Most bearish
+                
+                            peak_time = intraday["Time"].loc[peak_idx]
+                            peak_value = intraday["F_numeric"].loc[peak_idx] + 300  # Offset for visibility
+                            energy_val = energy_window.loc[peak_idx]
+                
+                            energy_aid_times.append(peak_time)
+                            energy_aid_prices.append(peak_value)
+                            energy_aid_vals.append(int(energy_val))
+                
+                            # Optional for hover
+                            intraday.loc[peak_idx, "Energy_Aid_Value"] = energy_val
+
                  
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
