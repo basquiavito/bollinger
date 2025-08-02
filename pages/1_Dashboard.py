@@ -5846,27 +5846,27 @@ if st.sidebar.button("Run Analysis"):
 
 
               
-              force_aid_times = []
-              force_aid_prices = []
-              
-              # Ensure Vector Force is numeric
-              intraday["Vector Force"] = pd.to_numeric(intraday["Vector Force"], errors="coerce")
-              
-              for i in range(len(intraday)):
-                  if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
-                      lower = max(i - 5, 0)
-                      upper = min(i + 6, len(intraday))
-                      force_window = intraday["Vector Force"].iloc[lower:upper]
-              
-                      if force_window.notna().any():
-                          peak_idx = force_window.idxmax()
-                          peak_time = intraday["Time"].loc[peak_idx]
-                          peak_value = intraday["F_numeric"].loc[peak_idx] + 300  # y-axis offset
-                          force_val = force_window.loc[peak_idx]
-              
-                          force_aid_times.append(peak_time)
-                          force_aid_prices.append(peak_value)
-                          intraday.loc[peak_idx, "Force_Aid_Value"] = force_val
+                force_aid_times = []
+                force_aid_prices = []
+                
+                # Ensure Vector Force is numeric
+                intraday["Vector Force"] = pd.to_numeric(intraday["Vector Force"], errors="coerce")
+                
+                for i in range(len(intraday)):
+                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))
+                        force_window = intraday["Vector Force"].iloc[lower:upper]
+                
+                        if force_window.notna().any():
+                            peak_idx = force_window.idxmax()
+                            peak_time = intraday["Time"].loc[peak_idx]
+                            peak_value = intraday["F_numeric"].loc[peak_idx] + 300  # y-axis offset
+                            force_val = force_window.loc[peak_idx]
+                
+                            force_aid_times.append(peak_time)
+                            force_aid_prices.append(peak_value)
+                            intraday.loc[peak_idx, "Force_Aid_Value"] = force_val
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
