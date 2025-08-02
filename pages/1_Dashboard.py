@@ -5778,6 +5778,24 @@ if st.sidebar.button("Run Analysis"):
                             if pd.notnull(f_val):
                                 ember_aid_times.append(intraday["Time"].iloc[i])
                                 ember_aid_prices.append(f_val + 288)  # Position above 🎯
+                # Ensure F_numeric is numeric
+                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
+                
+                # Initialize aid lists
+                comet_aid_times = []
+                comet_aid_prices = []
+                
+                # Search around Entry 2 (Put or Call)
+                for i in range(len(intraday)):
+                    if intraday["Put_SecondEntry_Emoji"].iloc[i] == "🎯2" or intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯2":
+                        lower = max(i - 5, 0)
+                        upper = min(i + 6, len(intraday))
+                        
+                        if (intraday["ATR_Exp_Alert"].iloc[lower:upper] == "☄️").any():
+                            f_val = intraday["F_numeric"].iloc[i]
+                            if pd.notnull(f_val):
+                                comet_aid_times.append(intraday["Time"].iloc[i])
+                                comet_aid_prices.append(f_val + 244)  # Offset for clean stacking
 
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
@@ -9135,6 +9153,20 @@ if st.sidebar.button("Run Analysis"):
                     name="Ember Prototype",
                     hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
                 ), row=1, col=1)
+
+
+                # Plot ☄️ aid
+                fig.add_trace(go.Scatter(
+                    x=comet_aid_times,
+                    y=comet_aid_prices,
+                    mode="text",
+                    text=["☄️"] * len(comet_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="ATR Expansion Aid ☄️",
+                    hovertemplate="Time: %{x|%H:%M}<br>ATR Expansion Aid ☄️<extra></extra>"
+                ), row=1, col=1)
+
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
