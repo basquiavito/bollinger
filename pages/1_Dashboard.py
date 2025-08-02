@@ -5810,7 +5810,7 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 vol_aid_times.append(intraday["Time"].iloc[i])
-                                vol_aid_prices.append(f_val + 300)
+                                vol_aid_prices.append(f_val + 50)
                                 vol_aid_values.append(vol_window.max())  # highest value in the window
                 
                 # Plot it
