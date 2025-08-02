@@ -5842,6 +5842,32 @@ if st.sidebar.button("Run Analysis"):
                             momentum_aid_prices.append(peak_value)
                             # Optional: Store value for hovertemplate
                             intraday.loc[peak_idx, "Momentum_Aid_Value"] = momentum_val
+
+
+
+              
+              force_aid_times = []
+              force_aid_prices = []
+              
+              # Ensure Vector Force is numeric
+              intraday["Vector Force"] = pd.to_numeric(intraday["Vector Force"], errors="coerce")
+              
+              for i in range(len(intraday)):
+                  if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
+                      lower = max(i - 5, 0)
+                      upper = min(i + 6, len(intraday))
+                      force_window = intraday["Vector Force"].iloc[lower:upper]
+              
+                      if force_window.notna().any():
+                          peak_idx = force_window.idxmax()
+                          peak_time = intraday["Time"].loc[peak_idx]
+                          peak_value = intraday["F_numeric"].loc[peak_idx] + 300  # y-axis offset
+                          force_val = force_window.loc[peak_idx]
+              
+                          force_aid_times.append(peak_time)
+                          force_aid_prices.append(peak_value)
+                          intraday.loc[peak_idx, "Force_Aid_Value"] = force_val
+
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
                                         intraday[[
@@ -9229,7 +9255,24 @@ if st.sidebar.button("Run Analysis"):
                     name="ATR Expansion Aid ☄️",
                     hovertemplate="Time: %{x|%H:%M}<br>ATR Expansion Aid ☄️<extra></extra>"
                 ), row=1, col=1)
-                
+
+
+                # 💪 Plot
+                fig.add_trace(go.Scatter(
+                    x=force_aid_times,
+                    y=force_aid_prices,
+                    mode="text",
+                    text=["💪"] * len(force_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=22),
+                    name="Force Aid 💪",
+                    hovertemplate="Time: %{x|%H:%M}<br>Force Aid 💪<br>Value: %{text}<extra></extra>",
+                    text=[f"{int(intraday.loc[intraday['Time'] == t, 'Force_Aid_Value'].values[0])}" for t in force_aid_times]
+                ), row=1, col=1)
+
+
+
+
                 # Step 2: Add 💨 to the plot like ☄️
                 fig.add_trace(go.Scatter(
                     x=vol_aid_times,
