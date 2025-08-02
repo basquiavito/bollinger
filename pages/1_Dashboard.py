@@ -9109,7 +9109,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=["🐝"] * len(bee_aid_times_2),
                     textposition="top center",
-                    textfont=dict(size=18),
+                    textfont=dict(size=21),
                     name="Bee Aid (BBW Tight for 🎯2)",
                     hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
                 ), row=1, col=1)
@@ -9133,7 +9133,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=["👃🏽"] * len(nose_aid_times),
                     textposition="middle center",
-                    textfont=dict(size=43),
+                    textfont=dict(size=21),
                     name="Nose Aid",
                     hovertemplate="Nose Profile Support<extra></extra>"
                 ), row=1, col=1)
@@ -9146,7 +9146,7 @@ if st.sidebar.button("Run Analysis"):
                     mode="text",
                     text=["👃🏽"] * len(nose_aid_times_2),
                     textposition="top center",
-                    textfont=dict(size=18),
+                    textfont=dict(size=21),
                     name="Nose Aid (Memory)",
                     hovertemplate="Time: %{x}<br>👃🏽 Nose Memory Aid<extra></extra>"
                 ), row=1, col=1)
