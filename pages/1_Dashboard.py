@@ -9267,7 +9267,6 @@ if st.sidebar.button("Run Analysis"):
                     textfont=dict(size=22),
                     name="Force Aid 💪",
                     hovertemplate="Time: %{x|%H:%M}<br>Force Aid 💪<br>Value: %{text}<extra></extra>",
-                    text=[f"{int(intraday.loc[intraday['Time'] == t, 'Force_Aid_Value'].values[0])}" for t in force_aid_times]
                 ), row=1, col=1)
 
 
