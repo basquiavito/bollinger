@@ -9193,7 +9193,8 @@ if st.sidebar.button("Run Analysis"):
                     textposition="top center",
                     textfont=dict(size=21),
                     name="Volatility Composite 💨",
-                    hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite 💨<extra></extra>"
+                    hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite: %{customdata:.2f}<extra></extra>",
+
                 ), row=1, col=1)
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
