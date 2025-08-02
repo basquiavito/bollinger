@@ -5722,7 +5722,7 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 compliance_aid_times.append(intraday["Time"].iloc[i])
-                                compliance_aid_prices.append(f_val + 200)
+                                compliance_aid_prices.append(f_val + 240)
 
         # Ensure F_numeric is numeric
                 intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
@@ -5753,13 +5753,13 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 ear_aid_times.append(intraday["Time"].iloc[i])
-                                ear_aid_prices.append(f_val + 224)
+                                ear_aid_prices.append(f_val + 260)
                 
                         if any(sub["F_Bin"].isin(bin_to_nose)):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 nose_aid_times.append(intraday["Time"].iloc[i])
-                                nose_aid_prices.append(f_val + 224)
+                                nose_aid_prices.append(f_val + 260)
   
                 ember_aid_times = []
                 ember_aid_prices = []
@@ -5795,7 +5795,7 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 comet_aid_times.append(intraday["Time"].iloc[i])
-                                comet_aid_prices.append(f_val + 244)  # Offset for clean stacking
+                                comet_aid_prices.append(f_val + 180)  # Offset for clean stacking
                 # Step 1: Collect aid points with Volatility Composite values
                 vol_aid_times = []
                 vol_aid_prices = []
