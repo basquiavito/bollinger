@@ -5601,14 +5601,14 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 nose_aid_times_2.append(intraday["Time"].iloc[i])
-                                nose_aid_prices_2.append(f_val + 300)
+                                nose_aid_prices_2.append(f_val + 100)
                 
                         # 🦻🏼 Ear aid check
                         if (aid_range["🦻🏼"] == "🦻🏼").any():
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 ear_aid_times_2.append(intraday["Time"].iloc[i])
-                                ear_aid_prices_2.append(f_val - 300)
+                                ear_aid_prices_2.append(f_val - 100)
                 
 
 
