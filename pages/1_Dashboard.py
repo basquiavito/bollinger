@@ -9143,7 +9143,7 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_swimmer = go.Scatter(
                     x=swimmer_points["Time"],
-                    y=swimmer_points["F_numeric"] - -38,  # Offset downward so it floats below price
+                    y=swimmer_points["F_numeric"] - 144,  # Offset downward so it floats below price
                     mode="text",
                     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
                     textposition="bottom center",
