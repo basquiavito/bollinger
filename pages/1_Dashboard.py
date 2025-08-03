@@ -7261,7 +7261,7 @@ if st.sidebar.button("Run Analysis"):
                     # Plot emoji above price (or F_numeric)but rangebut range
                     scatter_distensibility = go.Scatter(
                         x=intraday.loc[mask_distensibility, "Time"],
-                        y=intraday.loc[mask_distensibility, "F_numeric"] + 50,  # Slight offset upward
+                        y=intraday.loc[mask_distensibility, "F_numeric"] + 244,  # Slight offset upward
                         mode="text",
                         text=intraday.loc[mask_distensibility, "Distensibility Alert"],
                         textposition="top center",
