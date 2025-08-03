@@ -5978,12 +5978,7 @@ if st.sidebar.button("Run Analysis"):
                                         ]]
                                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
                                         .reset_index(drop=True)
-                                    )
-                
-                
-                                   
-     
-               =True)
+                         
 
 # # Create a Streamlit expander for the compliance plot
 #                 with st.expander("Compliance Plot"):
