@@ -8731,6 +8731,7 @@ if st.sidebar.button("Run Analysis"):
 
                 # # Filter first occurrence and changes
                 # chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
+                intraday["Chikou_Comparison_Price"] = intraday["Close"].shift(+26)
 
                 intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
                                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
@@ -8745,7 +8746,13 @@ if st.sidebar.button("Run Analysis"):
                     textposition="top center",
                     textfont=dict(size=34),
                     name="Chikou Above Price",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
+                    customdata=intraday.loc[mask_chikou_above, "Chikou_Comparison_Price"].values.reshape(-1, 1),
+                    hovertemplate=(
+                        "Time: %{x}<br>"
+                        "F%%: %{y}<br>"
+                        "Chikou ABOVE<br>"
+                        "Future Price Compared: %{customdata:.2f}<extra></extra>"
+                    )
                 ), row=1, col=1)
 
                 mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
@@ -8758,7 +8765,13 @@ if st.sidebar.button("Run Analysis"):
                     textposition="bottom center",
                     textfont=dict(size=34),
                     name="Chikou Below Price",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                    customdata=intraday.loc[mask_chikou_below, "Chikou_Comparison_Price"].values.reshape(-1, 1),
+                    hovertemplate=(
+                      "Time: %{x}<br>"
+                      "F%%: %{y}<br>"
+                      "Chikou BELOW<br>"
+                      "Future Price Compared: %{customdata:.2f}<extra></extra>"
+                  )
                 ), row=1, col=1)
 
 
