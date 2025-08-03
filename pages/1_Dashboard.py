@@ -9266,42 +9266,42 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
                 ), row=1, col=1)
 
-                # # 👂 Ear aid
-                # fig.add_trace(go.Scatter(
-                #     x=ear_aid_times,
-                #     y=ear_aid_prices,
-                #     mode="text",
-                #     text=["🦻🏼"] * len(ear_aid_times),
-                #     textposition="middle center",
-                #     textfont=dict(size=21),
-                #     name="Ear Aid",
-                #     hovertemplate="Ear Profile Support<extra></extra>"
-                # ), row=1, col=1)
+                # 👂 Ear aid
+                fig.add_trace(go.Scatter(
+                    x=ear_aid_times,
+                    y=ear_aid_prices,
+                    mode="text",
+                    text=["🦻🏼"] * len(ear_aid_times),
+                    textposition="middle center",
+                    textfont=dict(size=21),
+                    name="Ear Aid",
+                    hovertemplate="Ear Profile Support<extra></extra>"
+                ), row=1, col=1)
                 
-                # # 👃 Nose aid
-                # fig.add_trace(go.Scatter(
-                #     x=nose_aid_times,
-                #     y=nose_aid_prices,
-                #     mode="text",
-                #     text=["👃🏽"] * len(nose_aid_times),
-                #     textposition="middle center",
-                #     textfont=dict(size=21),
-                #     name="Nose Aid",
-                #     hovertemplate="Nose Profile Support<extra></extra>"
-                # ), row=1, col=1)
+                # 👃 Nose aid
+                fig.add_trace(go.Scatter(
+                    x=nose_aid_times,
+                    y=nose_aid_prices,
+                    mode="text",
+                    text=["👃🏽"] * len(nose_aid_times),
+                    textposition="middle center",
+                    textfont=dict(size=21),
+                    name="Nose Aid",
+                    hovertemplate="Nose Profile Support<extra></extra>"
+                ), row=1, col=1)
 
   
-                # # 👃🏽 Nose Memory Aid for 🎯2
-                # fig.add_trace(go.Scatter(
-                #     x=nose_aid_times_2,
-                #     y=nose_aid_prices_2,
-                #     mode="text",
-                #     text=["👃🏽"] * len(nose_aid_times_2),
-                #     textposition="top center",
-                #     textfont=dict(size=21),
-                #     name="Nose Aid (Memory)",
-                #     hovertemplate="Time: %{x}<br>👃🏽 Nose Memory Aid<extra></extra>"
-                # ), row=1, col=1)
+                # 👃🏽 Nose Memory Aid for 🎯2
+                fig.add_trace(go.Scatter(
+                    x=nose_aid_times_2,
+                    y=nose_aid_prices_2,
+                    mode="text",
+                    text=["👃🏽"] * len(nose_aid_times_2),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Nose Aid (Memory)",
+                    hovertemplate="Time: %{x}<br>👃🏽 Nose Memory Aid<extra></extra>"
+                ), row=1, col=1)
                 
                 # 🦻🏼 Ear Volume Memory Aid for 🎯2
                 fig.add_trace(go.Scatter(
