@@ -1390,6 +1390,32 @@ if st.sidebar.button("Run Analysis"):
                 # Apply to intraday
                 intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
 
+                def add_gravity_break_signal(df, threshold=9.8, source_col="Volatility_Composite"):
+                    """
+                    Detects bars where the volatility composite jumps by more than the gravity threshold (default 9.8).
+                    
+                    Adds:
+                      - Volatility_Composite_Diff: change from previous bar
+                      - Gravity_Break_Alert: emoji 🪂 if diff > threshold
+                    """
+                    df = df.copy()
+                
+                    # Calculate bar-to-bar difference
+                    df["Volatility_Composite_Diff"] = df[source_col].diff()
+                
+                    # Mark gravity break events
+                    df["Gravity_Break_Alert"] = df["Volatility_Composite_Diff"].apply(
+                        lambda x: "🪂" if x > threshold else ""
+                    )
+                
+                    return df
+                intraday = add_gravity_break_signal(intraday)
+
+
+
+
+
+              
                 def compute_option_value(df, premium=64, contracts=100):
                     """
                     Adds realistic Call and Put option simulation columns based on dynamic strike (K).
@@ -4782,7 +4808,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
