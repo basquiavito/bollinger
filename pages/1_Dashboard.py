@@ -8737,11 +8737,11 @@ if st.sidebar.button("Run Analysis"):
                 intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
                                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-                mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                 mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
-                np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+                 np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-                mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                 mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[mask_chikou_above, "Time"],
@@ -8765,7 +8765,7 @@ if st.sidebar.button("Run Analysis"):
                     textfont=dict(size=34),
                     name="Chikou Below Price",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
-                ), row=1, col=1) this is how i plot it 
+                ), row=1, col=1) 
 
                 cloud_mask = intraday["Heaven_Cloud"] == "☁️"
   
