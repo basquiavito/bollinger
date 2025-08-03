@@ -8763,11 +8763,12 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                customdata = np.stack([
-                      intraday.loc[mask_chikou_below, "Chikou_Comparison_Price"],
-                      intraday.loc[mask_chikou_below, "Chikou_Comparison_Time"]
-                  ], axis=-1)
-  
+                customdata_below = np.stack([
+                intraday.loc[mask_chikou_below, "Chikou_Comparison_Price"].values,
+                intraday.loc[mask_chikou_below, "Chikou_Comparison_Time"].values
+                ], axis=-1).astype(object)
+            
+              
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[mask_chikou_below, "Time"],
                     y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
