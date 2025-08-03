@@ -8722,15 +8722,15 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(pawn_up,   row=1, col=1)
                 fig.add_trace(pawn_down, row=1, col=1)
 
-                #             # Calculate Chikou relation to current price
-                # intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
-                #                             np.where(intraday["Chikou"] < intraday["Close"], "below", "equal"))
+                            # Calculate Chikou relation to current price
+                intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
+                                            np.where(intraday["Chikou"] < intraday["Close"], "below", "equal"))
 
-                # # Detect changes in Chikou relation
-                # intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
+                # Detect changes in Chikou relation
+                intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
 
-                # # Filter first occurrence and changes
-                # chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
+                # Filter first occurrence and changes
+                chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
                 intraday["Chikou_Comparison_Price"] = intraday["Close"].shift(+26)
                 intraday["Chikou_Comparison_Time"] = intraday["Time"].shift(+26)
 
