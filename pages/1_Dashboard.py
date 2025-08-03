@@ -8702,7 +8702,7 @@ if st.sidebar.button("Run Analysis"):
                 st.plotly_chart(fig, use_container_width=True)
 
 
- with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
+         with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
                    
                     fig_displacement = go.Figure()
 
