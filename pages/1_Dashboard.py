@@ -7250,15 +7250,15 @@ if st.sidebar.button("Run Analysis"):
                         
                     fig.add_trace(shift_bubbles, row=1, col=1)
                     
-                   # (E) Compliance Shift Bubbles on Main Plot
-                    shift_bubbles = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
-                        mode="markers",
-                        marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
-                        name="🫧 Compliance Shift",
-                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                    )
+                   # # (E) Compliance Shift Bubbles on Main Plot
+                   #  shift_bubbles = go.Scatter(
+                   #      x=intraday["Time"],
+                   #      y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
+                   #      mode="markers",
+                   #      marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                   #      name="🫧 Compliance Shift",
+                   #      hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                   #  )
                     
            
                     # # Create a Boolean mask for rows with surge emojis
@@ -7282,22 +7282,22 @@ if st.sidebar.button("Run Analysis"):
                     # (G) Distensibility Alert on Main Plot
                     
                     # Mask bars that triggered the 🪟 emoji
-                    mask_distensibility = intraday["Distensibility Alert"] != ""
+                    # mask_distensibility = intraday["Distensibility Alert"] != ""
                     
-                    # Plot emoji above price (or F_numeric)but rangebut range
-                    scatter_distensibility = go.Scatter(
-                        x=intraday.loc[mask_distensibility, "Time"],
-                        y=intraday.loc[mask_distensibility, "F_numeric"] + 244,  # Slight offset upward
-                        mode="text",
-                        text=intraday.loc[mask_distensibility, "Distensibility Alert"],
-                        textposition="top center",
-                        textfont=dict(size=24),
-                        name="Distensibility 🪟",
-                        hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
-                        customdata=intraday.loc[mask_distensibility, "Distensibility"]
-                    )
+                    # # Plot emoji above price (or F_numeric)but rangebut range
+                    # scatter_distensibility = go.Scatter(
+                    #     x=intraday.loc[mask_distensibility, "Time"],
+                    #     y=intraday.loc[mask_distensibility, "F_numeric"] + 244,  # Slight offset upward
+                    #     mode="text",
+                    #     text=intraday.loc[mask_distensibility, "Distensibility Alert"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=24),
+                    #     name="Distensibility 🪟",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
+                    #     customdata=intraday.loc[mask_distensibility, "Distensibility"]
+                    # )
                     
-                    fig.add_trace(scatter_distensibility, row=1, col=1)
+                    # fig.add_trace(scatter_distensibility, row=1, col=1)
 
 
                     # Create a Boolean mask for rows with Stroke Growth ⭐ emojis
@@ -9233,16 +9233,16 @@ if st.sidebar.button("Run Analysis"):
                     name="🎯3 Call Entry 3",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
-                fig.add_trace(go.Scatter(
-                    x=compliance_aid_times,
-                    y=compliance_aid_prices,
-                    mode="text",
-                    text=["🫧"] * len(compliance_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Compliance Shift Aid 🫧",
-                    hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=compliance_aid_times,
+                #     y=compliance_aid_prices,
+                #     mode="text",
+                #     text=["🫧"] * len(compliance_aid_times),
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Compliance Shift Aid 🫧",
+                #     hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
+                # ), row=1, col=1)
 
                 fig.add_trace(go.Scatter(
                     x=bee_aid_times,
@@ -9266,42 +9266,42 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
                 ), row=1, col=1)
 
-                # 👂 Ear aid
-                fig.add_trace(go.Scatter(
-                    x=ear_aid_times,
-                    y=ear_aid_prices,
-                    mode="text",
-                    text=["🦻🏼"] * len(ear_aid_times),
-                    textposition="middle center",
-                    textfont=dict(size=21),
-                    name="Ear Aid",
-                    hovertemplate="Ear Profile Support<extra></extra>"
-                ), row=1, col=1)
+                # # 👂 Ear aid
+                # fig.add_trace(go.Scatter(
+                #     x=ear_aid_times,
+                #     y=ear_aid_prices,
+                #     mode="text",
+                #     text=["🦻🏼"] * len(ear_aid_times),
+                #     textposition="middle center",
+                #     textfont=dict(size=21),
+                #     name="Ear Aid",
+                #     hovertemplate="Ear Profile Support<extra></extra>"
+                # ), row=1, col=1)
                 
-                # 👃 Nose aid
-                fig.add_trace(go.Scatter(
-                    x=nose_aid_times,
-                    y=nose_aid_prices,
-                    mode="text",
-                    text=["👃🏽"] * len(nose_aid_times),
-                    textposition="middle center",
-                    textfont=dict(size=21),
-                    name="Nose Aid",
-                    hovertemplate="Nose Profile Support<extra></extra>"
-                ), row=1, col=1)
+                # # 👃 Nose aid
+                # fig.add_trace(go.Scatter(
+                #     x=nose_aid_times,
+                #     y=nose_aid_prices,
+                #     mode="text",
+                #     text=["👃🏽"] * len(nose_aid_times),
+                #     textposition="middle center",
+                #     textfont=dict(size=21),
+                #     name="Nose Aid",
+                #     hovertemplate="Nose Profile Support<extra></extra>"
+                # ), row=1, col=1)
 
   
-                # 👃🏽 Nose Memory Aid for 🎯2
-                fig.add_trace(go.Scatter(
-                    x=nose_aid_times_2,
-                    y=nose_aid_prices_2,
-                    mode="text",
-                    text=["👃🏽"] * len(nose_aid_times_2),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Nose Aid (Memory)",
-                    hovertemplate="Time: %{x}<br>👃🏽 Nose Memory Aid<extra></extra>"
-                ), row=1, col=1)
+                # # 👃🏽 Nose Memory Aid for 🎯2
+                # fig.add_trace(go.Scatter(
+                #     x=nose_aid_times_2,
+                #     y=nose_aid_prices_2,
+                #     mode="text",
+                #     text=["👃🏽"] * len(nose_aid_times_2),
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Nose Aid (Memory)",
+                #     hovertemplate="Time: %{x}<br>👃🏽 Nose Memory Aid<extra></extra>"
+                # ), row=1, col=1)
                 
                 # 🦻🏼 Ear Volume Memory Aid for 🎯2
                 fig.add_trace(go.Scatter(
