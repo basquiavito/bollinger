@@ -8732,11 +8732,17 @@ if st.sidebar.button("Run Analysis"):
                 # # Filter first occurrence and changes
                 # chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
                 intraday["Chikou_Comparison_Price"] = intraday["Close"].shift(+26)
+                intraday["Chikou_Comparison_Time"] = intraday["Time"].shift(+26)
 
                 intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
                                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
                 mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+
+                customdata_above = np.stack([
+                    intraday.loc[mask_chikou_above, "Chikou_Comparison_Price"],
+                    intraday.loc[mask_chikou_above, "Chikou_Comparison_Time"]
+                ], axis=-1)
 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[mask_chikou_above, "Time"],
@@ -8746,17 +8752,22 @@ if st.sidebar.button("Run Analysis"):
                     textposition="top center",
                     textfont=dict(size=34),
                     name="Chikou Above Price",
-                    customdata=intraday.loc[mask_chikou_above, "Chikou_Comparison_Price"].values.reshape(-1, 1),
+                    customdata=customdata_above,
                     hovertemplate=(
-                        "Time: %{x}<br>"
+                        "Chikou Signal Time: %{x}<br>"
                         "F%%: %{y}<br>"
                         "Chikou ABOVE<br>"
-                        "Future Price Compared: %{customdata:.2f}<extra></extra>"
+                        "Compared to Price: %{customdata[0]:.2f}<br>"
+                        "At Time: %{customdata[1]|%H:%M}<extra></extra>"
                     )
                 ), row=1, col=1)
 
-                mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
 
+                customdata = np.stack([
+                      intraday.loc[mask_chikou_below, "Chikou_Comparison_Price"],
+                      intraday.loc[mask_chikou_below, "Chikou_Comparison_Time"]
+                  ], axis=-1)
+  
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[mask_chikou_below, "Time"],
                     y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
@@ -8765,14 +8776,15 @@ if st.sidebar.button("Run Analysis"):
                     textposition="bottom center",
                     textfont=dict(size=34),
                     name="Chikou Below Price",
-                    customdata=intraday.loc[mask_chikou_below, "Chikou_Comparison_Price"].values.reshape(-1, 1),
+                    customdata=customdata,
                     hovertemplate=(
-                      "Time: %{x}<br>"
-                      "F%%: %{y}<br>"
-                      "Chikou BELOW<br>"
-                      "Future Price Compared: %{customdata:.2f}<extra></extra>"
-                  )
-                ), row=1, col=1)
+                        "Chikou Signal Time: %{x}<br>"
+                        "F%%: %{y}<br>"
+                        "Chikou BELOW<br>"
+                        "Compared to Price: %{customdata[0]:.2f}<br>"
+                        "At Time: %{customdata[1]|%H:%M}<extra></extra>"
+                    )
+                 ), row=1, col=1)
 
 
 
