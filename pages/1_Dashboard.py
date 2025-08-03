@@ -9420,7 +9420,7 @@ if st.sidebar.button("Run Analysis"):
 
                      
                 # )
-                 selected_ticker = tickers[0] if tickers else "Ticker"
+                selected_ticker = tickers[0] if tickers else "Ticker"
                 
                 fig.update_layout(
                     title=f"VOLMIKE.COM – {selected_ticker} – {start_date.strftime('%Y-%m-%d')}",
