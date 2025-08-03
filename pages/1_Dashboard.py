@@ -5748,7 +5748,7 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 compliance_aid_times.append(intraday["Time"].iloc[i])
-                                compliance_aid_prices.append(f_val + 240)
+                                compliance_aid_prices.append(f_val + 300)
 
         # Ensure F_numeric is numeric
                 intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
@@ -5836,7 +5836,7 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 vol_aid_times.append(intraday["Time"].iloc[i])
-                                vol_aid_prices.append(f_val + 50)
+                                vol_aid_prices.append(f_val + 300)
                                 vol_aid_values.append(vol_window.max())  # highest value in the window
                 
                 # Plot it
@@ -9395,20 +9395,6 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-
-     # Create y offset for 🪂 Gravity Break
-                # gravity_break_mask = intraday["Gravity_Break_Alert"] == "🪂"
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[gravity_break_mask, "Time"],
-                #     y=intraday.loc[gravity_break_mask, "F_numeric"] - 99,  # 👈 manual y-offset downward
-                #     mode="text",
-                #     text=intraday.loc[gravity_break_mask, "Gravity_Break_Alert"],
-                #     textposition="bottom center",
-                #     textfont=dict(size=30),
-                #     name="🪂 Gravity Break",
-                #     hovertemplate="Time: %{x}<br>ΔVolatility: %{customdata:.2f}<extra></extra>",
-                #     customdata=np.array(intraday.loc[gravity_break_mask, "Volatility_Composite_Diff"]).reshape(-1, 1)
-                # ), row=1, col=1)
 
 
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
