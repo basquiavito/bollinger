@@ -6565,96 +6565,96 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
 
-                  # # # Clean up electric force column
-                  #   intraday["Electric_Force"] = pd.to_numeric(intraday["Electric_Force"], errors='coerce')
+                  # # Clean up electric force column
+                    intraday["Electric_Force"] = pd.to_numeric(intraday["Electric_Force"], errors='coerce')
                     
-                  #   # Drop NaNs
-                  #   valid_force = intraday.dropna(subset=["Electric_Force", "Cumulative_Unit", "Time"])
+                    # Drop NaNs
+                    valid_force = intraday.dropna(subset=["Electric_Force", "Cumulative_Unit", "Time"])
                     
-                  #   # Top 3 Positive Forces (🐼)
-                  #   top3_force_up = valid_force.nlargest(3, "Electric_Force")
+                    # Top 3 Positive Forces (🐼)
+                    top3_force_up = valid_force.nlargest(3, "Electric_Force")
                     
-                  #   # Top 3 Negative Forces (🔌)
-                  #   top3_force_down = valid_force.nsmallest(3, "Electric_Force")
+                    # Top 3 Negative Forces (🔌)
+                    top3_force_down = valid_force.nsmallest(3, "Electric_Force")
                     
-                  #   # Plot 🐼 Positive Forces
-                  #   fig_displacement.add_trace(go.Scatter(
-                  #       x=top3_force_up["Time"],
-                  #       y=top3_force_up["Cumulative_Unit"] + 88,
-                  #       mode="text",
-                  #       text=["🐼"] * len(top3_force_up),
-                  #       textposition="top center",
-                  #       textfont=dict(size=16),
-                  #       hovertemplate=(
-                  #           "🐼 Electric Force Up<br>"
-                  #           "Time: %{x}<br>"
-                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
-                  #       ),
-                  #       customdata=top3_force_up[["Electric_Force"]],
-                  #       showlegend=False
-                  #   ))
+                    # Plot 🐼 Positive Forces
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_force_up["Time"],
+                        y=top3_force_up["Cumulative_Unit"] + 88,
+                        mode="text",
+                        text=["🐼"] * len(top3_force_up),
+                        textposition="top center",
+                        textfont=dict(size=16),
+                        hovertemplate=(
+                            "🐼 Electric Force Up<br>"
+                            "Time: %{x}<br>"
+                            "Force: %{customdata[0]:.2f}<extra></extra>"
+                        ),
+                        customdata=top3_force_up[["Electric_Force"]],
+                        showlegend=False
+                    ))
                     
-                  #   # Plot 🐻 Negative Forces
-                  #   fig_displacement.add_trace(go.Scatter(
-                  #       x=top3_force_down["Time"],
-                  #       y=top3_force_down["Cumulative_Unit"] - 88,
-                  #       mode="text",
-                  #       text=["🐻"] * len(top3_force_down),
-                  #       textposition="bottom center",
-                  #       textfont=dict(size=16),
-                  #       hovertemplate=(
-                  #           "🐻 Electric Force Down<br>"
-                  #           "Time: %{x}<br>"
-                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
-                  #       ),
-                  #       customdata=top3_force_down[["Electric_Force"]],
-                  #       showlegend=False
-                  #   ))
+                    # Plot 🐻 Negative Forces
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_force_down["Time"],
+                        y=top3_force_down["Cumulative_Unit"] - 88,
+                        mode="text",
+                        text=["🐻"] * len(top3_force_down),
+                        textposition="bottom center",
+                        textfont=dict(size=16),
+                        hovertemplate=(
+                            "🐻 Electric Force Down<br>"
+                            "Time: %{x}<br>"
+                            "Force: %{customdata[0]:.2f}<extra></extra>"
+                        ),
+                        customdata=top3_force_down[["Electric_Force"]],
+                        showlegend=False
+                    ))
 
 
-                  # # Ensure IB_Electric_Force is numeric
-                  #   intraday["IB_Electric_Force"] = pd.to_numeric(intraday["IB_Electric_Force"], errors='coerce')
+                  # Ensure IB_Electric_Force is numeric
+                    intraday["IB_Electric_Force"] = pd.to_numeric(intraday["IB_Electric_Force"], errors='coerce')
                     
-                  #   # Drop rows with missing values
-                  #   valid_ib_force = intraday.dropna(subset=["IB_Electric_Force", "Cumulative_Unit", "Time"])
+                    # Drop rows with missing values
+                    valid_ib_force = intraday.dropna(subset=["IB_Electric_Force", "Cumulative_Unit", "Time"])
                     
-                  #   # Top 3 positive and negative
-                  #   top3_ib_force_up = valid_ib_force.nlargest(3, "IB_Electric_Force")
-                  #   top3_ib_force_down = valid_ib_force.nsmallest(3, "IB_Electric_Force")
+                    # Top 3 positive and negative
+                    top3_ib_force_up = valid_ib_force.nlargest(3, "IB_Electric_Force")
+                    top3_ib_force_down = valid_ib_force.nsmallest(3, "IB_Electric_Force")
                     
-                  #   # === 💡 Markers (Top 3 Positive IB Force)
-                  #   fig_displacement.add_trace(go.Scatter(
-                  #       x=top3_ib_force_up["Time"],
-                  #       y=top3_ib_force_up["Cumulative_Unit"] + 96,
-                  #       mode="text",
-                  #       text=["💡"] * len(top3_ib_force_up),
-                  #       textposition="top center",
-                  #       textfont=dict(size=18),
-                  #       showlegend=False,
-                  #       hovertemplate=(
-                  #           "💡 IB Electric Force (UP)<br>"
-                  #           "Time: %{x}<br>"
-                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
-                  #       ),
-                  #       customdata=top3_ib_force_up[["IB_Electric_Force"]].values
-                  #   ))
+                    # === 💡 Markers (Top 3 Positive IB Force)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_ib_force_up["Time"],
+                        y=top3_ib_force_up["Cumulative_Unit"] + 96,
+                        mode="text",
+                        text=["💡"] * len(top3_ib_force_up),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "💡 IB Electric Force (UP)<br>"
+                            "Time: %{x}<br>"
+                            "Force: %{customdata[0]:.2f}<extra></extra>"
+                        ),
+                        customdata=top3_ib_force_up[["IB_Electric_Force"]].values
+                    ))
                     
-                  #   # === 🕯️ Markers (Top 3 Negative IB Force)
-                  #   fig_displacement.add_trace(go.Scatter(
-                  #       x=top3_ib_force_down["Time"],
-                  #       y=top3_ib_force_down["Cumulative_Unit"] - 96,
-                  #       mode="text",
-                  #       text=["🕯️"] * len(top3_ib_force_down),
-                  #       textposition="bottom center",
-                  #       textfont=dict(size=18),
-                  #       showlegend=False,
-                  #       hovertemplate=(
-                  #           "🕯️ IB Electric Force (DOWN)<br>"
-                  #           "Time: %{x}<br>"
-                  #           "Force: %{customdata[0]:.2f}<extra></extra>"
-                  #       ),
-                  #       customdata=top3_ib_force_down[["IB_Electric_Force"]].values
-                  #   ))
+                    # === 🕯️ Markers (Top 3 Negative IB Force)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_ib_force_down["Time"],
+                        y=top3_ib_force_down["Cumulative_Unit"] - 96,
+                        mode="text",
+                        text=["🕯️"] * len(top3_ib_force_down),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🕯️ IB Electric Force (DOWN)<br>"
+                            "Time: %{x}<br>"
+                            "Force: %{customdata[0]:.2f}<extra></extra>"
+                        ),
+                        customdata=top3_ib_force_down[["IB_Electric_Force"]].values
+                    ))
                  
                     fig_displacement.add_trace(go.Scatter(
                       x=intraday["TimeIndex"],
@@ -8706,34 +8706,34 @@ if st.sidebar.button("Run Analysis"):
                 # # Filter first occurrence and changes
                 # chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
 
-                # intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
-                #                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+                intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
+                                            np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-                # mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[mask_chikou_above, "Time"],
-                #     y=intraday.loc[mask_chikou_above, "F_numeric"] + 64,
-                #     mode="text",
-                #     text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
-                #     textposition="top center",
-                #     textfont=dict(size=34),
-                #     name="Chikou Above Price",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
-                # ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[mask_chikou_above, "Time"],
+                    y=intraday.loc[mask_chikou_above, "F_numeric"] + 64,
+                    mode="text",
+                    text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Chikou Above Price",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
+                ), row=1, col=1)
 
-                # mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
+                mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
 
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[mask_chikou_below, "Time"],
-                #     y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
-                #     mode="text",
-                #     text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
-                #     textposition="bottom center",
-                #     textfont=dict(size=34),
-                #     name="Chikou Below Price",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
-                # ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[mask_chikou_below, "Time"],
+                    y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
+                    mode="text",
+                    text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="Chikou Below Price",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                ), row=1, col=1)
 
 
 
