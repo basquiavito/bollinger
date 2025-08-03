@@ -386,15 +386,15 @@ if st.sidebar.button("Run Analysis"):
                     # Calculate the gap percentage
                     gap_percentage = (first_open - prev_close) / prev_close
 
-                    # **Corrected Logic**
-                    if first_open > prev_high:  # Must open *above* previous high to count as gap up
-                        if gap_percentage > gap_threshold_decimal:
-                            gap_alert = "🚀 UP GAP ALERT"
-                            gap_type = "UP"
-                    elif first_open < prev_low:  # Must open *below* previous low to count as gap down
-                        if gap_percentage < -gap_threshold_decimal:
-                            gap_alert = "🔻 DOWN GAP ALERT"
-                            gap_type = "DOWN"
+                    # # **Corrected Logic**
+                    # if first_open > prev_high:  # Must open *above* previous high to count as gap up
+                    #     if gap_percentage > gap_threshold_decimal:
+                    #         gap_alert = "🚀 UP GAP ALERT"
+                    #         gap_type = "UP"
+                    # elif first_open < prev_low:  # Must open *below* previous low to count as gap down
+                    #     if gap_percentage < -gap_threshold_decimal:
+                    #         gap_alert = "🔻 DOWN GAP ALERT"
+                    #         gap_type = "DOWN"
 
 
                            # 4) High of Day / Low of Day
@@ -4812,7 +4812,7 @@ if st.sidebar.button("Run Analysis"):
 
                     st.dataframe(intraday[cols_to_show])
 
-                ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
+                ticker_tabs = st.tabs(["Mike Plot"])
 
 
 
@@ -5110,7 +5110,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                   # # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
+                  # st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
                   
                   def compute_ib_volume_weights(intraday, ib_high, ib_low):
