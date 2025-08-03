@@ -7763,48 +7763,48 @@ if st.sidebar.button("Run Analysis"):
                         name="Put Wake-Up"
                     ), row=1, col=1)
 
-                # ✅ Plot Call Solo Eye 👁️ (No Cross but strong rise)
-                first_call_solo_eye_idx = intraday.index[intraday["Call_Eye_Solo"] == "👁️"]
+                # # ✅ Plot Call Solo Eye 👁️ (No Cross but strong rise)
+                # first_call_solo_eye_idx = intraday.index[intraday["Call_Eye_Solo"] == "👁️"]
                 
-                if not first_call_solo_eye_idx.empty:
-                    first_idx = first_call_solo_eye_idx[0]
-                    fig.add_trace(go.Scatter(
-                        x=[intraday.loc[first_idx, "Time"]],
-                        y=[intraday.loc[first_idx, price_col] + 15],  # Slightly below Wake-Up 👁️
-                        mode="text",
-                        text=["👁️"],
-                        textposition="top center",
-                        textfont=dict(size=21),
-                        showlegend=True,
-                        hoverinfo="text",
-                        hovertemplate="<b>Call Rising (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
-                        name="Call Solo Eye"
-                    ), row=1, col=1)
+                # if not first_call_solo_eye_idx.empty:
+                #     first_idx = first_call_solo_eye_idx[0]
+                #     fig.add_trace(go.Scatter(
+                #         x=[intraday.loc[first_idx, "Time"]],
+                #         y=[intraday.loc[first_idx, price_col] + 15],  # Slightly below Wake-Up 👁️
+                #         mode="text",
+                #         text=["👁️"],
+                #         textposition="top center",
+                #         textfont=dict(size=21),
+                #         showlegend=True,
+                #         hoverinfo="text",
+                #         hovertemplate="<b>Call Rising (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                #         name="Call Solo Eye"
+                #     ), row=1, col=1)
 
 
 
                   
-                    # ✅ Plot Put Solo Eye 🦉 (No Cross but strong drop)
-                    first_put_solo_eye_idx = intraday.index[intraday["Put_Eye_Solo"] == "🦉"]
+                #     # ✅ Plot Put Solo Eye 🦉 (No Cross but strong drop)
+                #     first_put_solo_eye_idx = intraday.index[intraday["Put_Eye_Solo"] == "🦉"]
 
 
 
 
 
-                    if not first_put_solo_eye_idx.empty:
-                        first_idx = first_put_solo_eye_idx[0]
-                        fig.add_trace(go.Scatter(
-                            x=[intraday.loc[first_idx, "Time"]],
-                            y=[intraday.loc[first_idx, price_col] - 15],  # Slightly above Put Wake 🦉
-                            mode="text",
-                            text=["🦉"],
-                            textposition="bottom center",
-                            textfont=dict(size=24),
-                            showlegend=True,
-                            hoverinfo="text",
-                            hovertemplate="<b>Put Falling (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
-                            name="Put Solo Eye"
-                        ), row=1, col=1)
+                #     if not first_put_solo_eye_idx.empty:
+                #         first_idx = first_put_solo_eye_idx[0]
+                #         fig.add_trace(go.Scatter(
+                #             x=[intraday.loc[first_idx, "Time"]],
+                #             y=[intraday.loc[first_idx, price_col] - 15],  # Slightly above Put Wake 🦉
+                #             mode="text",
+                #             text=["🦉"],
+                #             textposition="bottom center",
+                #             textfont=dict(size=24),
+                #             showlegend=True,
+                #             hoverinfo="text",
+                #             hovertemplate="<b>Put Falling (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                #             name="Put Solo Eye"
+                #         ), row=1, col=1)
 
              
                 # Smooth first if needed
