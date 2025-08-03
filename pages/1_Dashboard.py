@@ -8741,7 +8741,7 @@ if st.sidebar.button("Run Analysis"):
 
                 # np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-                # mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[mask_chikou_above, "Time"],
