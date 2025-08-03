@@ -8763,30 +8763,28 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                customdata_below = np.stack([
-                intraday.loc[mask_chikou_below, "Chikou_Comparison_Price"].values,
-                intraday.loc[mask_chikou_below, "Chikou_Comparison_Time"].values
-                ], axis=-1).astype(object)
-            
-              
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[mask_chikou_below, "Time"],
-                    y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
-                    mode="text",
-                    text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
-                    textposition="bottom center",
-                    textfont=dict(size=34),
-                    name="Chikou Below Price",
-                    customdata=customdata,
-                    hovertemplate=(
-                        "Chikou Signal Time: %{x}<br>"
-                        "F%%: %{y}<br>"
-                        "Chikou BELOW<br>"
-                        "Compared to Price: %{customdata[0]:.2f}<br>"
-                        "At Time: %{customdata[1]|%H:%M}<extra></extra>"
-                    )
-                 ), row=1, col=1)
+               customdata_below = np.stack([
+               intraday.loc[mask_chikou_below, "Chikou_Comparison_Price"].values,
+               intraday.loc[mask_chikou_below, "Chikou_Comparison_Time"].values
+               ], axis=-1).astype(object)
 
+               fig.add_trace(go.Scatter(
+                x=intraday.loc[mask_chikou_below, "Time"],
+                y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
+                mode="text",
+                text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
+                textposition="bottom center",
+                textfont=dict(size=34),
+                name="Chikou Below Price",
+                customdata=customdata_below,
+                hovertemplate=(
+                    "Chikou Signal Time: %{x}<br>"
+                    "F%%: %{y}<br>"
+                    "Chikou BELOW<br>"
+                    "Compared to Price: %{customdata[0]:.2f}<br>"
+                    "At Time: %{customdata[1]|%H:%M}<extra></extra>"
+                )
+             ), row=1, col=1)
 
 
 
