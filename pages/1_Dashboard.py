@@ -16,96 +16,96 @@ import numbers
                              
                 
 
-# def compute_value_area(
-#         df: pd.DataFrame,
-#         mike_col: str | None = None,
-#         target_bins: int = 20,       # how many price buckets to aim for
-#         min_bin_width: float = 0.5   # never make a bucket wider than this
-# ) -> tuple[float, float, pd.DataFrame]:
-#     """
-#     Full Market-Profile / Value-Area engine.
-#     Returns: (va_min, va_max, profile_df)
+def compute_value_area(
+        df: pd.DataFrame,
+        mike_col: str | None = None,
+        target_bins: int = 20,       # how many price buckets to aim for
+        min_bin_width: float = 0.5   # never make a bucket wider than this
+) -> tuple[float, float, pd.DataFrame]:
+    """
+    Full Market-Profile / Value-Area engine.
+    Returns: (va_min, va_max, profile_df)
 
-#     • Works with Mike, F_numeric, or any price column you pass in `mike_col`.
-#     • Auto-adjusts bin width so prints never collapse to one bucket.
-#     """
-#     import numpy as np, pandas as pd, string
+    • Works with Mike, F_numeric, or any price column you pass in `mike_col`.
+    • Auto-adjusts bin width so prints never collapse to one bucket.
+    """
+    import numpy as np, pandas as pd, string
 
-#     # 0️⃣ pick column ────────────────────────────────────────────────────────
-#     if mike_col is None:
-#         if "Mike" in df.columns:
-#             mike_col = "Mike"
-#         elif "F_numeric" in df.columns:
-#             mike_col = "F_numeric"
-#         else:
-#             raise ValueError("Need a Mike or F_numeric column.")
+    # 0️⃣ pick column ────────────────────────────────────────────────────────
+    if mike_col is None:
+        if "Mike" in df.columns:
+            mike_col = "Mike"
+        elif "F_numeric" in df.columns:
+            mike_col = "F_numeric"
+        else:
+            raise ValueError("Need a Mike or F_numeric column.")
 
-#     # 1️⃣ adaptive bin array ────────────────────────────────────────────────
-#     lo, hi = df[mike_col].min(), df[mike_col].max()
-#     price_range = max(hi - lo, 1e-6)            # avoid zero divide
-#     step = max(price_range / target_bins, min_bin_width)
-#     f_bins = np.arange(lo - step, hi + step, step)
+    # 1️⃣ adaptive bin array ────────────────────────────────────────────────
+    lo, hi = df[mike_col].min(), df[mike_col].max()
+    price_range = max(hi - lo, 1e-6)            # avoid zero divide
+    step = max(price_range / target_bins, min_bin_width)
+    f_bins = np.arange(lo - step, hi + step, step)
 
-#     df = df.copy()
-#     df["F_Bin"] = pd.cut(
-#         df[mike_col],
-#         bins=f_bins,
-#         labels=[str(x) for x in f_bins[:-1]]
-#     )
+    df = df.copy()
+    df["F_Bin"] = pd.cut(
+        df[mike_col],
+        bins=f_bins,
+        labels=[str(x) for x in f_bins[:-1]]
+    )
 
-#     # 2️⃣ letter assignment (15-min alphabet) ──────────────────────────────
-#     if "Time" not in df.columns:
-#         df["Letter"] = "X"          # fallback if no intraday clock
-#     else:
-#         df = df[df["Time"].notna()]
-#         df["TimeIndex"] = pd.to_datetime(
-#             df["Time"], format="%I:%M %p", errors="coerce"
-#         )
-#         df = df[df["TimeIndex"].notna()]
-#         df["LetterIndex"] = (
-#             (df["TimeIndex"].dt.hour * 60 + df["TimeIndex"].dt.minute) // 15
-#         ).astype(int)
-#         df["LetterIndex"] -= df["LetterIndex"].min()
+    # 2️⃣ letter assignment (15-min alphabet) ──────────────────────────────
+    if "Time" not in df.columns:
+        df["Letter"] = "X"          # fallback if no intraday clock
+    else:
+        df = df[df["Time"].notna()]
+        df["TimeIndex"] = pd.to_datetime(
+            df["Time"], format="%I:%M %p", errors="coerce"
+        )
+        df = df[df["TimeIndex"].notna()]
+        df["LetterIndex"] = (
+            (df["TimeIndex"].dt.hour * 60 + df["TimeIndex"].dt.minute) // 15
+        ).astype(int)
+        df["LetterIndex"] -= df["LetterIndex"].min()
 
-#         letters = string.ascii_uppercase
-#         df["Letter"] = df["LetterIndex"].apply(
-#             lambda n: letters[n] if n < 26
-#             else letters[(n // 26) - 1] + letters[n % 26]
-#         )
+        letters = string.ascii_uppercase
+        df["Letter"] = df["LetterIndex"].apply(
+            lambda n: letters[n] if n < 26
+            else letters[(n // 26) - 1] + letters[n % 26]
+        )
 
-#     # 3️⃣ build Market-Profile dict ────────────────────────────────────────
-#     profile = {}
-#     for b in f_bins[:-1]:
-#         key = str(b)
-#         lets = df.loc[df["F_Bin"] == key, "Letter"].dropna().unique()
-#         if len(lets):
-#             profile[key] = "".join(sorted(lets))
+    # 3️⃣ build Market-Profile dict ────────────────────────────────────────
+    profile = {}
+    for b in f_bins[:-1]:
+        key = str(b)
+        lets = df.loc[df["F_Bin"] == key, "Letter"].dropna().unique()
+        if len(lets):
+            profile[key] = "".join(sorted(lets))
 
-#     profile_df = (pd.DataFrame(profile.items(),
-#                                columns=["F% Level", "Letters"])
-#                     .astype({"F% Level": float}))
-#     profile_df["Letter_Count"] = profile_df["Letters"].str.len().fillna(0)
+    profile_df = (pd.DataFrame(profile.items(),
+                               columns=["F% Level", "Letters"])
+                    .astype({"F% Level": float}))
+    profile_df["Letter_Count"] = profile_df["Letters"].str.len().fillna(0)
 
-#     # 4️⃣ 70 % value-area calc ─────────────────────────────────────────────
-#     tot = profile_df["Letter_Count"].sum()
-#     target = tot * 0.7
-#     poc_sorted = profile_df.sort_values("Letter_Count", ascending=False)
+    # 4️⃣ 70 % value-area calc ─────────────────────────────────────────────
+    tot = profile_df["Letter_Count"].sum()
+    target = tot * 0.7
+    poc_sorted = profile_df.sort_values("Letter_Count", ascending=False)
 
-#     cumulative, va_levels = 0, []
-#     for _, row in poc_sorted.iterrows():
-#         cumulative += row["Letter_Count"]
-#         va_levels.append(row["F% Level"])
-#         if cumulative >= target:
-#             break
+    cumulative, va_levels = 0, []
+    for _, row in poc_sorted.iterrows():
+        cumulative += row["Letter_Count"]
+        va_levels.append(row["F% Level"])
+        if cumulative >= target:
+            break
 
-#     va_min, va_max = min(va_levels), max(va_levels)
+    va_min, va_max = min(va_levels), max(va_levels)
 
-#     # (optional) flag collapse
-#     if va_min == va_max:
-#         st.warning("⚠️ Value area collapsed to one level – "
-#                    "range too narrow, even after adaptive binning.")
+    # (optional) flag collapse
+    if va_min == va_max:
+        st.warning("⚠️ Value area collapsed to one level – "
+                   "range too narrow, even after adaptive binning.")
 
-#     return va_min, va_max, profile_df
+    return va_min, va_max, profile_df
 
  
 # =================
