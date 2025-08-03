@@ -8739,10 +8739,9 @@ if st.sidebar.button("Run Analysis"):
 
                 mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
-                customdata_above = np.stack([
-                    intraday.loc[mask_chikou_above, "Chikou_Comparison_Price"],
-                    intraday.loc[mask_chikou_above, "Chikou_Comparison_Time"]
-                ], axis=-1)
+                np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+
+                mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[mask_chikou_above, "Time"],
@@ -8752,21 +8751,10 @@ if st.sidebar.button("Run Analysis"):
                     textposition="top center",
                     textfont=dict(size=34),
                     name="Chikou Above Price",
-                    customdata=customdata_above,
-                    hovertemplate=(
-                        "Chikou Signal Time: %{x}<br>"
-                        "F%%: %{y}<br>"
-                        "Chikou ABOVE<br>"
-                        "Compared to Price: %{customdata[0]:.2f}<br>"
-                        "At Time: %{customdata[1]|%H:%M}<extra></extra>"
-                    )
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
                 ), row=1, col=1)
 
-
-                customdata_below = np.stack([
-                   intraday.loc[mask_chikou_below, "Chikou_Comparison_Price"].values,
-                   intraday.loc[mask_chikou_below, "Chikou_Comparison_Time"].values
-                   ], axis=-1).astype(object)
+                mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[mask_chikou_below, "Time"],
@@ -8776,18 +8764,8 @@ if st.sidebar.button("Run Analysis"):
                     textposition="bottom center",
                     textfont=dict(size=34),
                     name="Chikou Below Price",
-                    customdata=customdata_below,
-                    hovertemplate=(
-                        "Chikou Signal Time: %{x}<br>"
-                        "F%%: %{y}<br>"
-                        "Chikou BELOW<br>"
-                        "Compared to Price: %{customdata[0]:.2f}<br>"
-                        "At Time: %{customdata[1]|%H:%M}<extra></extra>"
-                    )
-                 ), row=1, col=1)
-
-
-
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                ), row=1, col=1) this is how i plot it 
 
                 cloud_mask = intraday["Heaven_Cloud"] == "☁️"
   
