@@ -6135,7 +6135,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
+                with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
                    
                     fig_displacement = go.Figure()
 
