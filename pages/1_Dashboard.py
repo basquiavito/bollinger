@@ -8662,11 +8662,9 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
    
-                selected_ticker = st.sidebar.selectbox("View Ticker", tickers)
-
-
+           
                 fig.update_layout(
-                    title=f"VOLMIKE.COM –  {selected_ticker}  - {start_date.strftime('%Y-%m-%d')}",
+                    title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
                     height=1800,  # Increase overall figure height (default ~450-600)
                     showlegend=False
