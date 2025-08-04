@@ -8662,7 +8662,8 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_yaxes(title_text="Option Value", row=2, col=1)
 
    
- 
+                selected_ticker = st.sidebar.selectbox("View Ticker", tickers)
+
 
                 fig.update_layout(
                     title=f"VOLMIKE.COM –  {selected_ticker}  - {start_date.strftime('%Y-%m-%d')}",
