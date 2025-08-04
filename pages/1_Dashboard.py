@@ -9239,140 +9239,140 @@ if st.sidebar.button("Run Analysis"):
                 #     hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
                 # ), row=1, col=1)
 
-                fig.add_trace(go.Scatter(
-                    x=bee_aid_times,
-                    y=[y_val + 4 for y_val in bee_aid_prices],
-                    mode="text",
-                    text=["🐝"] * len(bee_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=43),
-                    name="Bees Near Entry",
-                    hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
-                ), row=1, col=1)
-                # 🐝 Bee Aid for 🎯2
-                fig.add_trace(go.Scatter(
-                    x=bee_aid_times_2,
-                    y=bee_aid_prices_2,
-                    mode="text",
-                    text=["🐝"] * len(bee_aid_times_2),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Bee Aid (BBW Tight for 🎯2)",
-                    hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
-                ), row=1, col=1)
+            #     fig.add_trace(go.Scatter(
+            #         x=bee_aid_times,
+            #         y=[y_val + 4 for y_val in bee_aid_prices],
+            #         mode="text",
+            #         text=["🐝"] * len(bee_aid_times),
+            #         textposition="top center",
+            #         textfont=dict(size=43),
+            #         name="Bees Near Entry",
+            #         hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
+            #     ), row=1, col=1)
+            #     # 🐝 Bee Aid for 🎯2
+            #     fig.add_trace(go.Scatter(
+            #         x=bee_aid_times_2,
+            #         y=bee_aid_prices_2,
+            #         mode="text",
+            #         text=["🐝"] * len(bee_aid_times_2),
+            #         textposition="top center",
+            #         textfont=dict(size=21),
+            #         name="Bee Aid (BBW Tight for 🎯2)",
+            #         hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
+            #     ), row=1, col=1)
 
-                # 👂 Ear aid
-                fig.add_trace(go.Scatter(
-                    x=ear_aid_times,
-                    y=ear_aid_prices,
-                    mode="text",
-                    text=["🦻🏼"] * len(ear_aid_times),
-                    textposition="middle center",
-                    textfont=dict(size=21),
-                    name="Ear Aid",
-                    hovertemplate="Ear Profile Support<extra></extra>"
-                ), row=1, col=1)
+            #     # 👂 Ear aid
+            #     fig.add_trace(go.Scatter(
+            #         x=ear_aid_times,
+            #         y=ear_aid_prices,
+            #         mode="text",
+            #         text=["🦻🏼"] * len(ear_aid_times),
+            #         textposition="middle center",
+            #         textfont=dict(size=21),
+            #         name="Ear Aid",
+            #         hovertemplate="Ear Profile Support<extra></extra>"
+            #     ), row=1, col=1)
                 
-                # 👃 Nose aid
-                fig.add_trace(go.Scatter(
-                    x=nose_aid_times,
-                    y=nose_aid_prices,
-                    mode="text",
-                    text=["👃🏽"] * len(nose_aid_times),
-                    textposition="middle center",
-                    textfont=dict(size=21),
-                    name="Nose Aid",
-                    hovertemplate="Nose Profile Support<extra></extra>"
-                ), row=1, col=1)
+            #     # 👃 Nose aid
+            #     fig.add_trace(go.Scatter(
+            #         x=nose_aid_times,
+            #         y=nose_aid_prices,
+            #         mode="text",
+            #         text=["👃🏽"] * len(nose_aid_times),
+            #         textposition="middle center",
+            #         textfont=dict(size=21),
+            #         name="Nose Aid",
+            #         hovertemplate="Nose Profile Support<extra></extra>"
+            #     ), row=1, col=1)
 
   
-                # 👃🏽 Nose Memory Aid for 🎯2
-                fig.add_trace(go.Scatter(
-                    x=nose_aid_times_2,
-                    y=nose_aid_prices_2,
-                    mode="text",
-                    text=["👃🏽"] * len(nose_aid_times_2),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Nose Aid (Memory)",
-                    hovertemplate="Time: %{x}<br>👃🏽 Nose Memory Aid<extra></extra>"
-                ), row=1, col=1)
+            #     # 👃🏽 Nose Memory Aid for 🎯2
+            #     fig.add_trace(go.Scatter(
+            #         x=nose_aid_times_2,
+            #         y=nose_aid_prices_2,
+            #         mode="text",
+            #         text=["👃🏽"] * len(nose_aid_times_2),
+            #         textposition="top center",
+            #         textfont=dict(size=21),
+            #         name="Nose Aid (Memory)",
+            #         hovertemplate="Time: %{x}<br>👃🏽 Nose Memory Aid<extra></extra>"
+            #     ), row=1, col=1)
                 
-                # 🦻🏼 Ear Volume Memory Aid for 🎯2
-                fig.add_trace(go.Scatter(
-                    x=ear_aid_times_2,
-                    y=ear_aid_prices_2,
-                    mode="text",
-                    text=["🦻🏼"] * len(ear_aid_times_2),
-                    textposition="top center",
-                    textfont=dict(size=18),
-                    name="Ear Aid (Volume Memory)",
-                    hovertemplate="Time: %{x}<br>🦻🏼 Ear Volume Aid<extra></extra>"
-                ), row=1, col=1)
+            #     # 🦻🏼 Ear Volume Memory Aid for 🎯2
+            #     fig.add_trace(go.Scatter(
+            #         x=ear_aid_times_2,
+            #         y=ear_aid_prices_2,
+            #         mode="text",
+            #         text=["🦻🏼"] * len(ear_aid_times_2),
+            #         textposition="top center",
+            #         textfont=dict(size=18),
+            #         name="Ear Aid (Volume Memory)",
+            #         hovertemplate="Time: %{x}<br>🦻🏼 Ear Volume Aid<extra></extra>"
+            #     ), row=1, col=1)
                 
-                fig.add_trace(go.Scatter(
-                    x=ember_aid_times,
-                    y=ember_aid_prices,
-                    mode="text",
-                    text=["🐦‍🔥🔥☁️"] * len(ember_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Ember Prototype",
-                    hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
-                ), row=1, col=1)
+            #     fig.add_trace(go.Scatter(
+            #         x=ember_aid_times,
+            #         y=ember_aid_prices,
+            #         mode="text",
+            #         text=["🐦‍🔥🔥☁️"] * len(ember_aid_times),
+            #         textposition="top center",
+            #         textfont=dict(size=21),
+            #         name="Ember Prototype",
+            #         hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
+            #     ), row=1, col=1)
 
                 
-                fig.add_trace(go.Scatter(
-                    x=momentum_aid_times,
-                    y=momentum_aid_prices,
-                    mode="text",
-                    text=["💥"] * len(momentum_aid_times),  # ✅ this is your visual emoji
-                    textposition="top center",
-                    textfont=dict(size=22),
-                    name="Momentum Aid 💥",
-                    hovertemplate="Time: %{x|%H:%M}<br>Momentum Aid 💥<br>Value: %{customdata}<extra></extra>",
-                    customdata=[int(intraday.loc[intraday['Time'] == t, 'Momentum_Aid_Value'].values[0]) for t in momentum_aid_times]
-                ), row=1, col=1)
+            #     fig.add_trace(go.Scatter(
+            #         x=momentum_aid_times,
+            #         y=momentum_aid_prices,
+            #         mode="text",
+            #         text=["💥"] * len(momentum_aid_times),  # ✅ this is your visual emoji
+            #         textposition="top center",
+            #         textfont=dict(size=22),
+            #         name="Momentum Aid 💥",
+            #         hovertemplate="Time: %{x|%H:%M}<br>Momentum Aid 💥<br>Value: %{customdata}<extra></extra>",
+            #         customdata=[int(intraday.loc[intraday['Time'] == t, 'Momentum_Aid_Value'].values[0]) for t in momentum_aid_times]
+            #     ), row=1, col=1)
                 
 
 
 
-                # Plot ☄️ aidhttps://github.com/basquiavito/bollinger/blob/master/pages/1_Dashboard.py
-                fig.add_trace(go.Scatter(
-                    x=comet_aid_times,
-                    y=comet_aid_prices,
-                    mode="text",
-                    text=["☄️"] * len(comet_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="ATR Expansion Aid ☄️",
-                    hovertemplate="Time: %{x|%H:%M}<br>ATR Expansion Aid ☄️<extra></extra>"
-                ), row=1, col=1)
+            #     # Plot ☄️ aidhttps://github.com/basquiavito/bollinger/blob/master/pages/1_Dashboard.py
+            #     fig.add_trace(go.Scatter(
+            #         x=comet_aid_times,
+            #         y=comet_aid_prices,
+            #         mode="text",
+            #         text=["☄️"] * len(comet_aid_times),
+            #         textposition="top center",
+            #         textfont=dict(size=21),
+            #         name="ATR Expansion Aid ☄️",
+            #         hovertemplate="Time: %{x|%H:%M}<br>ATR Expansion Aid ☄️<extra></extra>"
+            #     ), row=1, col=1)
 
 
-                fig.add_trace(go.Scatter(
-                x=force_aid_times, 
-                y=force_aid_prices,
-                mode="text",
-                text=["💪"] * len(force_aid_times),  # visible emoji on the chart
-                textposition="top center",
-                textfont=dict(size=21),
-                name="Force Aid 💪",
-                customdata=[f"{val}" for val in force_aid_vals],  # hover value
-                hovertemplate="Time: %{x|%H:%M}<br>Force Aid 💪<br>Value: %{customdata}<extra></extra>"
-            ), row=1, col=1)
+            #     fig.add_trace(go.Scatter(
+            #     x=force_aid_times, 
+            #     y=force_aid_prices,
+            #     mode="text",
+            #     text=["💪"] * len(force_aid_times),  # visible emoji on the chart
+            #     textposition="top center",
+            #     textfont=dict(size=21),
+            #     name="Force Aid 💪",
+            #     customdata=[f"{val}" for val in force_aid_vals],  # hover value
+            #     hovertemplate="Time: %{x|%H:%M}<br>Force Aid 💪<br>Value: %{customdata}<extra></extra>"
+            # ), row=1, col=1)
 
-                fig.add_trace(go.Scatter(
-                x=energy_aid_times,
-                y=energy_aid_prices,
-                mode="text",
-                text=["🔋"] * len(energy_aid_times),  # Only 1 text keyword allowed
-                textposition="top center",
-                textfont=dict(size=22),
-                name="Energy Aid 🔋",
-                customdata=[[val] for val in energy_aid_vals],  # Use for hover
-                hovertemplate="Time: %{x|%H:%M}<br>Energy Aid 🔋<br>Value: %{customdata[0]}<extra></extra>"
-            ), row=1, col=1)
+            #     fig.add_trace(go.Scatter(
+            #     x=energy_aid_times,
+            #     y=energy_aid_prices,
+            #     mode="text",
+            #     text=["🔋"] * len(energy_aid_times),  # Only 1 text keyword allowed
+            #     textposition="top center",
+            #     textfont=dict(size=22),
+            #     name="Energy Aid 🔋",
+            #     customdata=[[val] for val in energy_aid_vals],  # Use for hover
+            #     hovertemplate="Time: %{x|%H:%M}<br>Energy Aid 🔋<br>Value: %{customdata[0]}<extra></extra>"
+            # ), row=1, col=1)
 
 
                 # Step 2: Add 💨 to the plot like ☄️
