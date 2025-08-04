@@ -8664,36 +8664,17 @@ if st.sidebar.button("Run Analysis"):
    
  
 
-                # fig.update_layout(
-                #     title=f"{t}  VOLMIKE.COM – {start_date.strftime('%Y-%m-%d')}",
-                #     margin=dict(l=30, r=30, t=50, b=30),
-                #     height=1800,  # Increase overall figure height (default ~450-600)
-                #     showlegend=False
-
-                     
-                # )
-
-
-                # fig.update_layout(
-                #     title=f" VOLMIKE.COM – {start_date.strftime('%Y-%m-%d')}",
-                #     margin=dict(l=30, r=30, t=50, b=30),
-                #     height=1800,  # Increase overall figure height (default ~450-600)
-                #     showlegend=False
-
-                     
-                # )
-                selected_ticker = st.sidebar.selectbox("Currently Viewing", tickers) if tickers else None
-                
                 fig.update_layout(
-                    title=f"VOLMIKE.COM – {selected_ticker} – {start_date.strftime('%Y-%m-%d')}",
+                    title=f"VOLMIKE.COM –  Ticker: {selected_ticker}  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=1800,
+                    height=1800,  # Increase overall figure height (default ~450-600)
                     showlegend=False
+
+                     
                 )
-                
-                
 
 
+            
                 st.plotly_chart(fig, use_container_width=True)
 
 
