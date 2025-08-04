@@ -8202,80 +8202,80 @@ if st.sidebar.button("Run Analysis"):
            
 
 
-                # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
-                bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
-                fig.add_trace(go.Scatter(
-                    x=bearish_df["TimeIndex"],
-                    y=bearish_df["F_numeric"] - 14,
-                    mode="text",
-                    text=bearish_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="bottom right",
-                    textfont=dict(size=24),
-                    name="Bearish Mike x Kijun + ATR ⚓️",
-                    showlegend=True
-                ))
+                # # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
+                # bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
+                # fig.add_trace(go.Scatter(
+                #     x=bearish_df["TimeIndex"],
+                #     y=bearish_df["F_numeric"] - 14,
+                #     mode="text",
+                #     text=bearish_df["Mike_Kijun_ATR_Emoji"],
+                #     textposition="bottom right",
+                #     textfont=dict(size=24),
+                #     name="Bearish Mike x Kijun + ATR ⚓️",
+                #     showlegend=True
+                # ))
 
-                emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
+                # emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
   
-                fig.add_trace(go.Scatter(
-                    x=emoji_df["TimeIndex"],
-                    y=emoji_df["F_numeric"] - 24,
-                    mode="text",
-                    text=emoji_df["Mike_Kijun_Bee_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=18),
-                    name="Mike x Kijun + Bees",
-                    showlegend=True
-                ))
+                # fig.add_trace(go.Scatter(
+                #     x=emoji_df["TimeIndex"],
+                #     y=emoji_df["F_numeric"] - 24,
+                #     mode="text",
+                #     text=emoji_df["Mike_Kijun_Bee_Emoji"],
+                #     textposition="top center",
+                #     textfont=dict(size=18),
+                #     name="Mike x Kijun + Bees",
+                #     showlegend=True
+                # ))
           
                 # 🌋 Magma Pass Plot (Mike x Kijun + ATR Expansion)
 
-                volcano_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🌋"]
+                # volcano_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🌋"]
                 
-                fig.add_trace(go.Scatter(
-                    x=volcano_df["TimeIndex"],
-                    y=volcano_df["F_numeric"] - 32,  # Slightly lower to avoid overlap with 🍯
-                    mode="text",
-                    text=volcano_df["Mike_Kijun_ATR_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=18),
-                    name="Mike x Kijun + ATR Expansion",
-                    showlegend=True
-                ))
+                # fig.add_trace(go.Scatter(
+                #     x=volcano_df["TimeIndex"],
+                #     y=volcano_df["F_numeric"] - 32,  # Slightly lower to avoid overlap with 🍯
+                #     mode="text",
+                #     text=volcano_df["Mike_Kijun_ATR_Emoji"],
+                #     textposition="top center",
+                #     textfont=dict(size=18),
+                #     name="Mike x Kijun + ATR Expansion",
+                #     showlegend=True
+                # ))
 
-                                # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
-                bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                fig.add_trace(go.Scatter(
-                    x=bull_hand_rows["TimeIndex"],
-                    y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
-                    mode="text",
-                    text=["👋🏽"] * len(bull_hand_rows),
-                    textposition="top right",
-                    textfont=dict(size=22),
-                    showlegend=False,
-                    hovertemplate=(
-                        "👋🏽 Bull MIDAS Breakout<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        f"Bear MIDAS: {{y:.2f}}<extra></extra>"
-                    )
-                ), row=1, col=1)
+                #                 # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
+                # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                # fig.add_trace(go.Scatter(
+                #     x=bull_hand_rows["TimeIndex"],
+                #     y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
+                #     mode="text",
+                #     text=["👋🏽"] * len(bull_hand_rows),
+                #     textposition="top right",
+                #     textfont=dict(size=22),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "👋🏽 Bull MIDAS Breakout<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         f"Bear MIDAS: {{y:.2f}}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
                 
-                # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
-                bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                fig.add_trace(go.Scatter(
-                    x=bear_glove_rows["TimeIndex"],
-                    y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
-                    mode="text",
-                    text=["🧤"] * len(bear_glove_rows),
-                    textposition="bottom right",
-                    textfont=dict(size=22),
-                    showlegend=False,
-                    hovertemplate=(
-                        "🧤 Bear MIDAS Breakdown<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        f"Bull MIDAS: {{y:.2f}}<extra></extra>"
-                    )
-                ), row=1, col=1)
+                # # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
+                # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                # fig.add_trace(go.Scatter(
+                #     x=bear_glove_rows["TimeIndex"],
+                #     y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
+                #     mode="text",
+                #     text=["🧤"] * len(bear_glove_rows),
+                #     textposition="bottom right",
+                #     textfont=dict(size=22),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "🧤 Bear MIDAS Breakdown<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
 
                 # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
                 # bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
@@ -8736,31 +8736,31 @@ if st.sidebar.button("Run Analysis"):
 
                 # np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
 
-                mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+                # mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
 
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[mask_chikou_above, "Time"],
-                    y=intraday.loc[mask_chikou_above, "F_numeric"] + 64,
-                    mode="text",
-                    text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="Chikou Above Price",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[mask_chikou_above, "Time"],
+                #     y=intraday.loc[mask_chikou_above, "F_numeric"] + 64,
+                #     mode="text",
+                #     text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
+                #     textposition="top center",
+                #     textfont=dict(size=34),
+                #     name="Chikou Above Price",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
+                # ), row=1, col=1)
 
-                mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
+                # mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
 
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[mask_chikou_below, "Time"],
-                    y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
-                    mode="text",
-                    text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
-                    textposition="bottom center",
-                    textfont=dict(size=34),
-                    name="Chikou Below Price",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
-                ), row=1, col=1) 
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[mask_chikou_below, "Time"],
+                #     y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
+                #     mode="text",
+                #     text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
+                #     textposition="bottom center",
+                #     textfont=dict(size=34),
+                #     name="Chikou Below Price",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                # ), row=1, col=1) 
 
                 cloud_mask = intraday["Heaven_Cloud"] == "☁️"
   
@@ -8866,68 +8866,68 @@ if st.sidebar.button("Run Analysis"):
 
               
 
-                            # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
-                wing_mask = intraday["wing_emoji"] == "🪽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[wing_mask, "TimeIndex"],
-                    y=intraday.loc[wing_mask, "F_numeric"] + 35,
-                    mode="text",
-                    text=intraday.loc[wing_mask, "wing_emoji"],
-                    textposition="top center",
-                    textfont=dict(size=26, color="green"),
-                    name="Wing 🪽",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
-                ), row=1, col=1)
-              # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
+              #               # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
+              #   wing_mask = intraday["wing_emoji"] == "🪽"
+              #   fig.add_trace(go.Scatter(
+              #       x=intraday.loc[wing_mask, "TimeIndex"],
+              #       y=intraday.loc[wing_mask, "F_numeric"] + 35,
+              #       mode="text",
+              #       text=intraday.loc[wing_mask, "wing_emoji"],
+              #       textposition="top center",
+              #       textfont=dict(size=26, color="green"),
+              #       name="Wing 🪽",
+              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
+              #   ), row=1, col=1)
+              # # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
 
 
 
-                bat_mask = intraday["bat_emoji"] == "🪽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[bat_mask, "TimeIndex"],
-                    y=intraday.loc[bat_mask, "F_numeric"] - 35,
-                    mode="text",
-                    text=intraday.loc[bat_mask, "bat_emoji"],
-                    textposition="bottom center",
-                    textfont=dict(size=26, color="red"),
-                    name="Bat 🪽",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
-                ), row=1, col=1)
+              #   bat_mask = intraday["bat_emoji"] == "🪽"
+              #   fig.add_trace(go.Scatter(
+              #       x=intraday.loc[bat_mask, "TimeIndex"],
+              #       y=intraday.loc[bat_mask, "F_numeric"] - 35,
+              #       mode="text",
+              #       text=intraday.loc[bat_mask, "bat_emoji"],
+              #       textposition="bottom center",
+              #       textfont=dict(size=26, color="red"),
+              #       name="Bat 🪽",
+              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
+              #   ), row=1, col=1)
 
   
         
-                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
-                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
+   #              mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
+   #              mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
-                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                scatter_tk_sun = go.Scatter(
-                    x=intraday.loc[mask_tk_sun, "Time"],
-                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 99,  # Offset for visibility
-                    mode="text",
-                    text="🌞",
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bullish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                )
+   #              # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+   #              scatter_tk_sun = go.Scatter(
+   #                  x=intraday.loc[mask_tk_sun, "Time"],
+   #                  y=intraday.loc[mask_tk_sun, "F_numeric"] + 99,  # Offset for visibility
+   #                  mode="text",
+   #                  text="🌞",
+   #                  textposition="top center",
+   #                  textfont=dict(size=34),
+   #                  name="Tenkan-Kijun Bullish Cross",
+   #                  hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+   #              )
 
-                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                scatter_tk_moon = go.Scatter(
-                    x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 99,  # Offset for visibility
-                    mode="text",
-                    text="🌙",
-                    textposition="bottom center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bearish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                )
+   #              # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+   #              scatter_tk_moon = go.Scatter(
+   #                  x=intraday.loc[mask_tk_moon, "Time"],
+   #                  y=intraday.loc[mask_tk_moon, "F_numeric"] - 99,  # Offset for visibility
+   #                  mode="text",
+   #                  text="🌙",
+   #                  textposition="bottom center",
+   #                  textfont=dict(size=34),
+   #                  name="Tenkan-Kijun Bearish Cross",
+   #                  hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+   #              )
 
 
-   # # Add to the F% Plot
-                fig.add_trace(scatter_tk_sun, row=1, col=1)
-                fig.add_trace(scatter_tk_moon, row=1, col=1)
-                # # 👼🏻 Bullish Sanyaku Kouten
+   # # # Add to the F% Plot
+   #              fig.add_trace(scatter_tk_sun, row=1, col=1)
+   #              fig.add_trace(scatter_tk_moon, row=1, col=1)
+   #              # # 👼🏻 Bullish Sanyaku Kouten
                 # mask_sanyaku_kouten = intraday["Sanyaku_Kouten"] == "🟩"
                 
                 # # 👺 Bearish Sanyaku Gyakuten
