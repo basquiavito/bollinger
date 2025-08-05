@@ -8025,26 +8025,26 @@ if st.sidebar.button("Run Analysis"):
                     line=dict(color="#1ac997", dash="dash", width=2),
                     hovertemplate="Time: %{x}<br>MIDAS Bull: %{y:.2f}<extra></extra>"
                 ))
-                # 🦻🏼 Add Ear line if it exists
-                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                # # 🦻🏼 Add Ear line if it exists
+                # ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                 
-                if not ear_row.empty:
-                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
-                    fig.add_hline(
-                        y=ear_level,
-                        line=dict(color="darkgray", dash="dot", width=0.3),
-                        row=1, col=1,
-                        showlegend=True,
-                        annotation_text="🦻🏼 Ear Shift",
-                        annotation_position="top left",
-                        annotation_font=dict(color="black")
-                    )
+                # if not ear_row.empty:
+                #     ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+                #     fig.add_hline(
+                #         y=ear_level,
+                #         line=dict(color="darkgray", dash="dot", width=0.3),
+                #         row=1, col=1,
+                #         showlegend=True,
+                #         annotation_text="🦻🏼 Ear Shift",
+                #         annotation_position="top left",
+                #         annotation_font=dict(color="black")
+                #     )
 
                 
    
 
-                    # Step 1: Get the F% Level marked with 🦻🏼
-                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                    # # Step 1: Get the F% Level marked with 🦻🏼
+                    # ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                     
                     # if not ear_row.empty:
                     #     ear_level = ear_row["F% Level"].values[0]  # numeric
@@ -8073,13 +8073,13 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Step: Add 👃🏽 marker into intraday at the bar where breakout happened
                 # Get the F% level with the most letters
-                max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+                # max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
                 
-                # Get the first row where current Mike broke away from that level
-                breakout_row = intraday[np.digitize(intraday[mike_col], f_bins) - 1 != max_letter_level]
-                if not breakout_row.empty:
-                    first_break = breakout_row.iloc[0].name
-                    intraday.loc[first_break, "Mike_Nose_Emoji"] = "👃🏽"
+                # # Get the first row where current Mike broke away from that level
+                # breakout_row = intraday[np.digitize(intraday[mike_col], f_bins) - 1 != max_letter_level]
+                # if not breakout_row.empty:
+                #     first_break = breakout_row.iloc[0].name
+                #     intraday.loc[first_break, "Mike_Nose_Emoji"] = "👃🏽"
 
 
                 # # Plot 👃🏽 emoji on the intraday plot
@@ -8098,33 +8098,33 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # Get the F% level with the most letters (temporal Point of Control)
-                poc_f_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
-                # Find first row where Mike exits the POC level
-                current_bins = np.digitize(intraday[mike_col], f_bins) - 1
-                intraday["Current_F_Bin"] = f_bins[current_bins]
+                # # Get the F% level with the most letters (temporal Point of Control)
+                # poc_f_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+                # # Find first row where Mike exits the POC level
+                # current_bins = np.digitize(intraday[mike_col], f_bins) - 1
+                # intraday["Current_F_Bin"] = f_bins[current_bins]
                 
-                breakout_row_nose = intraday[intraday["Current_F_Bin"] != poc_f_level]
+                # breakout_row_nose = intraday[intraday["Current_F_Bin"] != poc_f_level]
                 
-                # Place 👃🏽 emoji on the first breakout
-                if not breakout_row_nose.empty:
-                    first_nose_index = breakout_row_nose.iloc[0].name
-                    intraday.loc[first_nose_index, "Mike_Nose_Emoji"] = "👃🏽"
+                # # Place 👃🏽 emoji on the first breakout
+                # if not breakout_row_nose.empty:
+                #     first_nose_index = breakout_row_nose.iloc[0].name
+                #     intraday.loc[first_nose_index, "Mike_Nose_Emoji"] = "👃🏽"
                 
-                nose_df = intraday[intraday["Mike_Nose_Emoji"] == "👃🏽"]
+                # nose_df = intraday[intraday["Mike_Nose_Emoji"] == "👃🏽"]
                 
-                fig.add_trace(go.Scatter(
-                    x=nose_df["TimeIndex"],
-                    y=nose_df["F_numeric"] + 10,
-                    mode="text",
-                    text=nose_df["Mike_Nose_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=18),
-                    hovertemplate="👃🏽 Nose Line: %{y}<extra></extra>",
+                # fig.add_trace(go.Scatter(
+                #     x=nose_df["TimeIndex"],
+                #     y=nose_df["F_numeric"] + 10,
+                #     mode="text",
+                #     text=nose_df["Mike_Nose_Emoji"],
+                #     textposition="top center",
+                #     textfont=dict(size=18),
+                #     hovertemplate="👃🏽 Nose Line: %{y}<extra></extra>",
 
-                    name="Mike breaks from Letter POC 👃🏽",
-                    showlegend=True
-                ))
+                #     name="Mike breaks from Letter POC 👃🏽",
+                #     showlegend=True
+                # ))
                        
 
 
@@ -8133,31 +8133,31 @@ if st.sidebar.button("Run Analysis"):
                 nose_time = nose_row["Time"].values[0] if not nose_row.empty else "N/A"
                 
 
-# 1. Add the pink dotted line as a shape (visual line)
-                fig.add_hline(
-                    y=poc_f_level,
-                    showlegend=True,
+# # 1. Add the pink dotted line as a shape (visual line)
+#                 fig.add_hline(
+#                     y=poc_f_level,
+#                     showlegend=True,
 
-                    line=dict(color="#ff1493", dash="dot", width=0.3),
-                    row=1, col=1
-                )
+#                     line=dict(color="#ff1493", dash="dot", width=0.3),
+#                     row=1, col=1
+#                 )
                 
                 
-                fig.add_trace(go.Scatter(
-                    x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
-                    y=[poc_f_level],
-                    mode="markers+text",
-                    marker=dict(size=0, color="#ff1493"),
-                    text=["👃🏽 Nose (Most Price Acceptance)"],
-                    textposition="top right",
-                    name="👃🏽 Nose Line",
-                    showlegend=True,
-                    hovertemplate=(
-                          "👃🏽 Nose Line<br>"
-                          "F% Level: %{y}<br>"
-                          f"Time: {nose_time}<extra></extra>"
-                      )
-                ), row=1, col=1)
+#                 fig.add_trace(go.Scatter(
+#                     x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
+#                     y=[poc_f_level],
+#                     mode="markers+text",
+#                     marker=dict(size=0, color="#ff1493"),
+#                     text=["👃🏽 Nose (Most Price Acceptance)"],
+#                     textposition="top right",
+#                     name="👃🏽 Nose Line",
+#                     showlegend=True,
+#                     hovertemplate=(
+#                           "👃🏽 Nose Line<br>"
+#                           "F% Level: %{y}<br>"
+#                           f"Time: {nose_time}<extra></extra>"
+#                       )
+#                 ), row=1, col=1)
                 for _, row in profile_df.iterrows():
                     if row["Tail"] == "🪶":
                           # Get actual TimeIndex from intraday at this F% Level
