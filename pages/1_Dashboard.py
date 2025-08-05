@@ -7552,47 +7552,47 @@ if st.sidebar.button("Run Analysis"):
             
 
 
-               # Extract only the rows where TDST just formed
-                    tdst_points = intraday["TDST"].notna()
+               # # Extract only the rows where TDST just formed
+               #      tdst_points = intraday["TDST"].notna()
 
-                    tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-                    tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
-
-
-
-                    tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-                    tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
+               #      tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
+               #      tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
 
 
-                    # Buy TDST marker (⎯)
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday.loc[tdst_buy_mask, "Time"],
-                            y=intraday.loc[tdst_buy_mask, "F_numeric"],
-                            mode="text",
-                            text=["⎯"] * tdst_buy_mask.sum(),
-                            textposition="middle center",
-                            textfont=dict(size=24, color="green"),
-                            name="Buy TDST",
-                            hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                        ),
-                        row=1, col=1
-                    )
 
-                    # Sell TDST marker (⎯)
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday.loc[tdst_sell_mask, "Time"],
-                            y=intraday.loc[tdst_sell_mask, "F_numeric"],
-                            mode="text",
-                            text=["⎯"] * tdst_sell_mask.sum(),
-                            textposition="middle center",
-                            textfont=dict(size=24, color="red"),
-                            name="Sell TDST",
-                            hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                        ),
-                        row=1, col=1
-                    )
+               #      tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
+               #      tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
+
+
+               #      # Buy TDST marker (⎯)
+               #      fig.add_trace(
+               #          go.Scatter(
+               #              x=intraday.loc[tdst_buy_mask, "Time"],
+               #              y=intraday.loc[tdst_buy_mask, "F_numeric"],
+               #              mode="text",
+               #              text=["⎯"] * tdst_buy_mask.sum(),
+               #              textposition="middle center",
+               #              textfont=dict(size=24, color="green"),
+               #              name="Buy TDST",
+               #              hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+               #          ),
+               #          row=1, col=1
+               #      )
+
+               #      # Sell TDST marker (⎯)
+               #      fig.add_trace(
+               #          go.Scatter(
+               #              x=intraday.loc[tdst_sell_mask, "Time"],
+               #              y=intraday.loc[tdst_sell_mask, "F_numeric"],
+               #              mode="text",
+               #              text=["⎯"] * tdst_sell_mask.sum(),
+               #              textposition="middle center",
+               #              textfont=dict(size=24, color="red"),
+               #              name="Sell TDST",
+               #              hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+               #          ),
+               #          row=1, col=1
+               #      )
 
 
                  
@@ -9049,20 +9049,20 @@ if st.sidebar.button("Run Analysis"):
 
 
    # (A.1) 40ish Reversal (star markers)
-                mask_40ish = intraday["40ish"] != ""
-                scatter_40ish = go.Scatter(
-                    x=intraday.loc[mask_40ish, "Time"],
-                    y=intraday.loc[mask_40ish, "F_numeric"] + 89,
-                    mode="markers",
-                    marker_symbol="star",
-                    marker_size=18,
-                    marker_color="gold",
-                    name="40ish Reversal",
-                    text=intraday.loc[mask_40ish, "40ish"],
+                # mask_40ish = intraday["40ish"] != ""
+                # scatter_40ish = go.Scatter(
+                #     x=intraday.loc[mask_40ish, "Time"],
+                #     y=intraday.loc[mask_40ish, "F_numeric"] + 89,
+                #     mode="markers",
+                #     marker_symbol="star",
+                #     marker_size=18,
+                #     marker_color="gold",
+                #     name="40ish Reversal",
+                #     text=intraday.loc[mask_40ish, "40ish"],
 
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                )
-                fig.add_trace(scatter_40ish, row=1, col=1)
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                # )
+                # fig.add_trace(scatter_40ish, row=1, col=1)
 
                 # up_high_mask = intraday["Y_High_Cross"] == "✈️"
                 # up_high_trace = go.Scatter(
