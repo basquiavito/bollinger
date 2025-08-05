@@ -8128,9 +8128,9 @@ if st.sidebar.button("Run Analysis"):
                        
 
 
-                # Get F% level (already stored in `poc_f_level`) and its earliest time
-                nose_row = profile_df[profile_df["F% Level"] == poc_f_level]
-                nose_time = nose_row["Time"].values[0] if not nose_row.empty else "N/A"
+                # # Get F% level (already stored in `poc_f_level`) and its earliest time
+                # nose_row = profile_df[profile_df["F% Level"] == poc_f_level]
+                # nose_time = nose_row["Time"].values[0] if not nose_row.empty else "N/A"
                 
 
 # # 1. Add the pink dotted line as a shape (visual line)
