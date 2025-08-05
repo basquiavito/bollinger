@@ -7626,7 +7626,7 @@ if st.sidebar.button("Run Analysis"):
                         if two_bar_hold.any():
                             ghost_idx = two_bar_hold[two_bar_hold].index[0]  # first valid bar
 
-                            # Plot 👻 emoji on the first bar
+                            # Plot 🔑 emoji on the first bar
                             fig.add_trace(
                                 go.Scatter(
                                     x=[intraday.at[ghost_idx, "Time"]],
@@ -7668,7 +7668,7 @@ if st.sidebar.button("Run Analysis"):
                                     x=[intraday.at[ghost_idx, "Time"]],
                                     y=[intraday.at[ghost_idx, "F_numeric"] - 8],
                                     mode="text",
-                                    text=["👻"],
+                                    text=["🔑"],
                                     textposition="middle center",
                                     textfont=dict(size=20, color="purple"),
                                     name="Confirmed Sell TDST Breakdown",
