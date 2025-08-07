@@ -8071,8 +8071,8 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                             ))
 
                 
-                Step: Add 👃🏽 marker into intraday at the bar where breakout happened
-                Get the F% level with the most letters
+                # Step: Add 👃🏽 marker into intraday at the bar where breakout happened
+                # Get the F% level with the most letters
                 max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
                 
                 # Get the first row where current Mike broke away from that level
