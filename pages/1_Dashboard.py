@@ -8228,7 +8228,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     showlegend=True
                 ))
           
-                🌋 Magma Pass Plot (Mike x Kijun + ATR Expansion)
+                # 🌋 Magma Pass Plot (Mike x Kijun + ATR Expansion)
 
                 volcano_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🌋"]
                 
