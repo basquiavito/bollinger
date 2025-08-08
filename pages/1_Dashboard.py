@@ -8281,11 +8281,11 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
                 fig.add_trace(go.Scatter(
                     x=bear_lethal_rows["TimeIndex"],
-                    y=bear_lethal_rows["F_numeric"] - 20,  # Offset below Mike for clarity
+                    y=bear_lethal_rows["F_numeric"] - 40,  # Offset below Mike for clarity
                     mode="text",
                     text=["🥊"] * len(bear_lethal_rows),
                     textposition="bottom right",
-                    textfont=dict(size=20),
+                    textfont=dict(size=14),
                     showlegend=False,
                     hovertemplate=(
                         "🥊 Bear Lethal Acceleration<br>"
@@ -8298,11 +8298,11 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
                 fig.add_trace(go.Scatter(
                     x=bull_lethal_rows["TimeIndex"],
-                    y=bull_lethal_rows["F_numeric"] + 20,  # Offset above Mike for clarity
+                    y=bull_lethal_rows["F_numeric"] + 40,  # Offset above Mike for clarity
                     mode="text",
                     text=["🚀"] * len(bull_lethal_rows),
                     textposition="top right",
-                    textfont=dict(size=20),
+                    textfont=dict(size=14),
                     showlegend=False,
                     hovertemplate=(
                         "🚀 Bull Lethal Acceleration<br>"
