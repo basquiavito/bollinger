@@ -8243,73 +8243,73 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     showlegend=True
                 ))
 
-                #                 # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
-                # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                # fig.add_trace(go.Scatter(
-                #     x=bull_hand_rows["TimeIndex"],
-                #     y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
-                #     mode="text",
-                #     text=["👋🏽"] * len(bull_hand_rows),
-                #     textposition="top right",
-                #     textfont=dict(size=22),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "👋🏽 Bull MIDAS Breakout<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         f"Bear MIDAS: {{y:.2f}}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                                # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
+                bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                fig.add_trace(go.Scatter(
+                    x=bull_hand_rows["TimeIndex"],
+                    y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
+                    mode="text",
+                    text=["👋🏽"] * len(bull_hand_rows),
+                    textposition="top right",
+                    textfont=dict(size=22),
+                    showlegend=False,
+                    hovertemplate=(
+                        "👋🏽 Bull MIDAS Breakout<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        f"Bear MIDAS: {{y:.2f}}<extra></extra>"
+                    )
+                ), row=1, col=1)
                 
-                # # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
-                # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_glove_rows["TimeIndex"],
-                #     y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
-                #     mode="text",
-                #     text=["🧤"] * len(bear_glove_rows),
-                #     textposition="bottom right",
-                #     textfont=dict(size=22),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🧤 Bear MIDAS Breakdown<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
+                bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                fig.add_trace(go.Scatter(
+                    x=bear_glove_rows["TimeIndex"],
+                    y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
+                    mode="text",
+                    text=["🧤"] * len(bear_glove_rows),
+                    textposition="bottom right",
+                    textfont=dict(size=22),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🧤 Bear MIDAS Breakdown<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        f"Bull MIDAS: {{y:.2f}}<extra></extra>"
+                    )
+                ), row=1, col=1)
 
-                # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
-                # bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_lethal_rows["TimeIndex"],
-                #     y=bear_lethal_rows["F_numeric"] - 20,  # Offset below Mike for clarity
-                #     mode="text",
-                #     text=["🥊"] * len(bear_lethal_rows),
-                #     textposition="bottom right",
-                #     textfont=dict(size=20),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🥊 Bear Lethal Acceleration<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         "F%: %{y:.2f}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
+                bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
+                fig.add_trace(go.Scatter(
+                    x=bear_lethal_rows["TimeIndex"],
+                    y=bear_lethal_rows["F_numeric"] - 20,  # Offset below Mike for clarity
+                    mode="text",
+                    text=["🥊"] * len(bear_lethal_rows),
+                    textposition="bottom right",
+                    textfont=dict(size=20),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🥊 Bear Lethal Acceleration<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        "F%: %{y:.2f}<extra></extra>"
+                    )
+                ), row=1, col=1)
 
-                # # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
-                # bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
-                # fig.add_trace(go.Scatter(
-                #     x=bull_lethal_rows["TimeIndex"],
-                #     y=bull_lethal_rows["F_numeric"] + 20,  # Offset above Mike for clarity
-                #     mode="text",
-                #     text=["🚀"] * len(bull_lethal_rows),
-                #     textposition="top right",
-                #     textfont=dict(size=20),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🚀 Bull Lethal Acceleration<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         "F%: %{y:.2f}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
+                bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
+                fig.add_trace(go.Scatter(
+                    x=bull_lethal_rows["TimeIndex"],
+                    y=bull_lethal_rows["F_numeric"] + 20,  # Offset above Mike for clarity
+                    mode="text",
+                    text=["🚀"] * len(bull_lethal_rows),
+                    textposition="top right",
+                    textfont=dict(size=20),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🚀 Bull Lethal Acceleration<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        "F%: %{y:.2f}<extra></extra>"
+                    )
+                ), row=1, col=1)
 
 
                 # Wake-up Emojis 📈
@@ -8866,33 +8866,33 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
 
               
 
-              #               # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
-              #   wing_mask = intraday["wing_emoji"] == "🪽"
-              #   fig.add_trace(go.Scatter(
-              #       x=intraday.loc[wing_mask, "TimeIndex"],
-              #       y=intraday.loc[wing_mask, "F_numeric"] + 35,
-              #       mode="text",
-              #       text=intraday.loc[wing_mask, "wing_emoji"],
-              #       textposition="top center",
-              #       textfont=dict(size=26, color="green"),
-              #       name="Wing 🪽",
-              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
-              #   ), row=1, col=1)
-              # # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
+                            # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
+                wing_mask = intraday["wing_emoji"] == "🪽"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[wing_mask, "TimeIndex"],
+                    y=intraday.loc[wing_mask, "F_numeric"] + 35,
+                    mode="text",
+                    text=intraday.loc[wing_mask, "wing_emoji"],
+                    textposition="top center",
+                    textfont=dict(size=26, color="green"),
+                    name="Wing 🪽",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
+                ), row=1, col=1)
+              # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
 
 
 
-              #   bat_mask = intraday["bat_emoji"] == "🪽"
-              #   fig.add_trace(go.Scatter(
-              #       x=intraday.loc[bat_mask, "TimeIndex"],
-              #       y=intraday.loc[bat_mask, "F_numeric"] - 35,
-              #       mode="text",
-              #       text=intraday.loc[bat_mask, "bat_emoji"],
-              #       textposition="bottom center",
-              #       textfont=dict(size=26, color="red"),
-              #       name="Bat 🪽",
-              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
-              #   ), row=1, col=1)
+                bat_mask = intraday["bat_emoji"] == "🪽"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[bat_mask, "TimeIndex"],
+                    y=intraday.loc[bat_mask, "F_numeric"] - 35,
+                    mode="text",
+                    text=intraday.loc[bat_mask, "bat_emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=26, color="red"),
+                    name="Bat 🪽",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
+                ), row=1, col=1)
 
   
         
@@ -9239,27 +9239,27 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
                 ), row=1, col=1)
 
-            #     fig.add_trace(go.Scatter(
-            #         x=bee_aid_times,
-            #         y=[y_val + 4 for y_val in bee_aid_prices],
-            #         mode="text",
-            #         text=["🐝"] * len(bee_aid_times),
-            #         textposition="top center",
-            #         textfont=dict(size=43),
-            #         name="Bees Near Entry",
-            #         hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
-            #     ), row=1, col=1)
-            #     # 🐝 Bee Aid for 🎯2
-            #     fig.add_trace(go.Scatter(
-            #         x=bee_aid_times_2,
-            #         y=bee_aid_prices_2,
-            #         mode="text",
-            #         text=["🐝"] * len(bee_aid_times_2),
-            #         textposition="top center",
-            #         textfont=dict(size=21),
-            #         name="Bee Aid (BBW Tight for 🎯2)",
-            #         hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
-            #     ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=bee_aid_times,
+                    y=[y_val + 4 for y_val in bee_aid_prices],
+                    mode="text",
+                    text=["🐝"] * len(bee_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Bees Near Entry",
+                    hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
+                ), row=1, col=1)
+                # 🐝 Bee Aid for 🎯2
+                fig.add_trace(go.Scatter(
+                    x=bee_aid_times_2,
+                    y=bee_aid_prices_2,
+                    mode="text",
+                    text=["🐝"] * len(bee_aid_times_2),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Bee Aid (BBW Tight for 🎯2)",
+                    hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
+                ), row=1, col=1)
 
             #     # 👂 Ear aid
             #     fig.add_trace(go.Scatter(
@@ -9310,16 +9310,16 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
             #         hovertemplate="Time: %{x}<br>🦻🏼 Ear Volume Aid<extra></extra>"
             #     ), row=1, col=1)
                 
-            #     fig.add_trace(go.Scatter(
-            #         x=ember_aid_times,
-            #         y=ember_aid_prices,
-            #         mode="text",
-            #         text=["🐦‍🔥🔥☁️"] * len(ember_aid_times),
-            #         textposition="top center",
-            #         textfont=dict(size=21),
-            #         name="Ember Prototype",
-            #         hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
-            #     ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=ember_aid_times,
+                    y=ember_aid_prices,
+                    mode="text",
+                    text=["🐦‍🔥🔥☁️"] * len(ember_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Ember Prototype",
+                    hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
+                ), row=1, col=1)
 
                 
             #     fig.add_trace(go.Scatter(
