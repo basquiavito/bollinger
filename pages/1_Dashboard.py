@@ -8277,7 +8277,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     )
                 ), row=1, col=1)
 
-                🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
+                # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
                 bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
                 fig.add_trace(go.Scatter(
                     x=bear_lethal_rows["TimeIndex"],
