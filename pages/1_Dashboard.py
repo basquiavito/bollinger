@@ -5836,7 +5836,7 @@ if st.sidebar.button("Run Analysis"):
                             f_val = intraday["F_numeric"].iloc[i]
                             if pd.notnull(f_val):
                                 vol_aid_times.append(intraday["Time"].iloc[i])
-                                vol_aid_prices.append(f_val + 300)
+                                vol_aid_prices.append(f_val + 20)
                                 vol_aid_values.append(vol_window.max())  # highest value in the window
                 
                 # Plot it
@@ -9375,19 +9375,19 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
             # ), row=1, col=1)
 
 
-                # # Step 2: Add 💨 to the plot like ☄️
-                # fig.add_trace(go.Scatter(
-                #     x=vol_aid_times,
-                #     y=vol_aid_prices,
-                #     mode="text",
-                #     text=["💨"] * len(vol_aid_times),
-                #     textposition="top center",
-                #     textfont=dict(size=21),
-                #     name="Volatility Composite 💨",
-                #     hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite: %{customdata:.2f}<extra></extra>",
-                #     customdata=np.array(vol_aid_values).reshape(-1, 1)
+                # Step 2: Add 💨 to the plot like ☄️
+                fig.add_trace(go.Scatter(
+                    x=vol_aid_times,
+                    y=vol_aid_prices,
+                    mode="text",
+                    text=["💨"] * len(vol_aid_times),
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Volatility Composite 💨",
+                    hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite: %{customdata:.2f}<extra></extra>",
+                    customdata=np.array(vol_aid_values).reshape(-1, 1)
 
-                # ), row=1, col=1)
+                ), row=1, col=1)
 
 
 
