@@ -6868,7 +6868,7 @@ if st.sidebar.button("Run Analysis"):
        #              fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
                 
                
-                st.plotly_chart(fig_displacement, use_container_width=True)
+                # st.plotly_chart(fig_displacement, use_container_width=True)
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
