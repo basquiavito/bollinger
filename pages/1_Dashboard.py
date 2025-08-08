@@ -8658,9 +8658,9 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
                 # )
 
-                # Add both to figure
-                fig.add_trace(scatter_rook_up, row=1, col=1)
-                fig.add_trace(scatter_rook_down, row=1, col=1)
+                # # Add both to figure
+                # fig.add_trace(scatter_rook_up, row=1, col=1)
+                # fig.add_trace(scatter_rook_down, row=1, col=1)
 
                 mask_tenkan_cross_up = (
                     (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
@@ -8762,50 +8762,50 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                 #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
                 # ), row=1, col=1) 
 
-                cloud_mask = intraday["Heaven_Cloud"] == "☁️"
+                # cloud_mask = intraday["Heaven_Cloud"] == "☁️"
   
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[cloud_mask, "Time"],
-                    y=intraday.loc[cloud_mask, "F_numeric"] + 144,
-                    mode="text",
-                    text=intraday.loc[cloud_mask, "Heaven_Cloud"],
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Heaven ☁️",
-                    hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[cloud_mask, "Time"],
+                #     y=intraday.loc[cloud_mask, "F_numeric"] + 144,
+                #     mode="text",
+                #     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Heaven ☁️",
+                #     hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
+                # ), row=1, col=1)
   
-                # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
-                intraday["Drizzle_Emoji"] = None
-                below_demand = False
+                # # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
+                # intraday["Drizzle_Emoji"] = None
+                # below_demand = False
   
-                for i in range(1, len(intraday)):
-                    f = intraday["F_numeric"].iloc[i]
-                    demand = intraday["TD Demand Line F"].iloc[i]
+                # for i in range(1, len(intraday)):
+                #     f = intraday["F_numeric"].iloc[i]
+                #     demand = intraday["TD Demand Line F"].iloc[i]
   
-                    if pd.notna(demand) and f < demand:
-                        below_demand = True
-                    elif pd.notna(demand) and f >= demand:
-                        below_demand = False
+                #     if pd.notna(demand) and f < demand:
+                #         below_demand = True
+                #     elif pd.notna(demand) and f >= demand:
+                #         below_demand = False
   
-                    if below_demand:
-                        intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
+                #     if below_demand:
+                #         intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
   
   
   
-                # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
-                drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
+                # # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
+                # drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
   
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[drizzle_mask, "Time"],
-                    y=intraday.loc[drizzle_mask, "F_numeric"] + 144,  # Position below the bar
-                    mode="text",
-                    text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
-                    textposition="bottom center",
-                    textfont=dict(size=21),
-                    name="Price Dropped Below Demand 🌧️",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[drizzle_mask, "Time"],
+                #     y=intraday.loc[drizzle_mask, "F_numeric"] + 144,  # Position below the bar
+                #     mode="text",
+                #     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
+                #     textposition="bottom center",
+                #     textfont=dict(size=21),
+                #     name="Price Dropped Below Demand 🌧️",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
+                # ), row=1, col=1)
   
                 #          # Mask for Tenkan_F crossing down through MIDAS_Bear
                 # mask_tenkan_cross_down = (
@@ -9375,19 +9375,19 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
             # ), row=1, col=1)
 
 
-                # Step 2: Add 💨 to the plot like ☄️
-                fig.add_trace(go.Scatter(
-                    x=vol_aid_times,
-                    y=vol_aid_prices,
-                    mode="text",
-                    text=["💨"] * len(vol_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Volatility Composite 💨",
-                    hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite: %{customdata:.2f}<extra></extra>",
-                    customdata=np.array(vol_aid_values).reshape(-1, 1)
+                # # Step 2: Add 💨 to the plot like ☄️
+                # fig.add_trace(go.Scatter(
+                #     x=vol_aid_times,
+                #     y=vol_aid_prices,
+                #     mode="text",
+                #     text=["💨"] * len(vol_aid_times),
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Volatility Composite 💨",
+                #     hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite: %{customdata:.2f}<extra></extra>",
+                #     customdata=np.array(vol_aid_values).reshape(-1, 1)
 
-                ), row=1, col=1)
+                # ), row=1, col=1)
 
 
 
