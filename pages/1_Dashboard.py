@@ -9159,7 +9159,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     mode="text",
                     text=intraday.loc[first_entry_mask, "Put_FirstEntry_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=14),
+                    textfont=dict(size=18),
                     name="🎯 Put Entry (Midas Bear + First Drizzle)",
                     hovertemplate="Time: %{x}<br>F%%: %{y} Put_FirstEntry_Emoji<extra></extra>"
                 ), row=1, col=1)
@@ -9172,7 +9172,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     mode="text",
                     text=intraday.loc[second_entry_mask, "Put_SecondEntry_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=14),
+                    textfont=dict(size=18),
                     name="🎯2 Put Second Entry",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
@@ -9185,7 +9185,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     mode="text",
                     text=intraday.loc[third_entry_mask, "Put_ThirdEntry_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=14),
+                    textfont=dict(size=18),
                     name="🎯3 Put Third Entry",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
@@ -9198,7 +9198,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     mode="text",
                     text=intraday.loc[call1_mask, "Call_FirstEntry_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=14),
+                    textfont=dict(size=18),
                     name="🎯 Call Entry 1",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
@@ -9211,7 +9211,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     mode="text",
                     text=intraday.loc[call2_mask, "Call_SecondEntry_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=14),
+                    textfont=dict(size=18),
                     name="🎯2 Call Entry 2",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
@@ -9224,7 +9224,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     mode="text",
                     text=intraday.loc[call3_mask, "Call_ThirdEntry_Emoji"],
                     textposition="top center",
-                    textfont=dict(size=14),
+                    textfont=dict(size=18),
                     name="🎯3 Call Entry 3",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
