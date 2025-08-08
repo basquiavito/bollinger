@@ -7243,17 +7243,17 @@ if st.sidebar.button("Run Analysis"):
                             hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                         )
                         
-                    # fig.add_trace(shift_bubbles, row=1, col=1)
+                    fig.add_trace(shift_bubbles, row=1, col=1)
                     
-                   # # (E) Compliance Shift Bubbles on Main Plot
-                   #  shift_bubbles = go.Scatter(
-                   #      x=intraday["Time"],
-                   #      y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
-                   #      mode="markers",
-                   #      marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
-                   #      name="🫧 Compliance Shift",
-                   #      hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                   #  )
+                   # (E) Compliance Shift Bubbles on Main Plot
+                    shift_bubbles = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
+                        mode="markers",
+                        marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                        name="🫧 Compliance Shift",
+                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                    )
                     
            
                     # # Create a Boolean mask for rows with surge emojis
@@ -9228,16 +9228,16 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                     name="🎯3 Call Entry 3",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
-                fig.add_trace(go.Scatter(
-                    x=compliance_aid_times,
-                    y=compliance_aid_prices,
-                    mode="text",
-                    text=["🫧"] * len(compliance_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Compliance Shift Aid 🫧",
-                    hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=compliance_aid_times,
+                #     y=compliance_aid_prices,
+                #     mode="text",
+                #     text=["🫧"] * len(compliance_aid_times),
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Compliance Shift Aid 🫧",
+                #     hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
+                # ), row=1, col=1)
 
                 fig.add_trace(go.Scatter(
                     x=bee_aid_times,
