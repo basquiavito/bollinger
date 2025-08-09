@@ -8171,7 +8171,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
                                 mode="text",
                                 text=["🪶"],
                                 textposition="middle right",
-                                textfont=dict(size=20),
+                                textfont=dict(size=50),
                                 showlegend=True,
                                 name="🪶 Tail",  # <-- Add this line
 
