@@ -5104,8 +5104,19 @@ if st.sidebar.button("Run Analysis"):
                   top_dots["DotColor"] = top_dots.apply(assign_dot_color, axis=1)
                   
                
-               
+                                 # If your intraday index is already a Timestamp with date+time, reuse it.
+                  if isinstance(intraday.index, pd.DatetimeIndex):
+                      intraday["DT"] = intraday.index
+                  else:
+                      # Otherwise, combine session date + Time string
+                      # (adjust 'Date' col name to whatever you have for the session date)
+                      intraday["DT"] = pd.to_datetime(intraday["Date"].astype(str) + " " + intraday["Time"],
+                                                      errors="coerce")
                   
+                  # Keep a numeric F bin for joins
+                  intraday["F_Bin_int"] = pd.to_numeric(intraday["F_Bin"], errors="coerce")
+                  
+                                    
                   
 
 
