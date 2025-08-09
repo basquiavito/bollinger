@@ -558,79 +558,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = calculate_f_percentage(intraday, prev_close)
  
-                def detect_volume_spikes_vs_open(df, market_open=time(9,30), window=1, top_n=3):
-                    """
-                    Detect volume spikes relative to the first bar after market open.
-                
-                    - market_open: time of the first reference bar (usually 09:30)
-                    - window: local peak check (1 = higher than previous & next bar)
-                    - top_n: how many biggest spikes to rank
-                    """
-                    if df.empty or "Volume" not in df.columns:
-                        return df
-                
-                    d = df.copy()
-                    if not isinstance(d.index, pd.DatetimeIndex):
-                        raise ValueError("Index must be a DatetimeIndex")
-                
-                    # Slice from market open to end of data
-                    session = d.between_time(market_open, time(23,59))
-                    if session.empty:
-                        return d
-                
-                    # Reference open bar volume
-                    open_bar = session.iloc[0]
-                    open_vol = float(open_bar["Volume"]) if pd.notna(open_bar["Volume"]) else 0.0
-                    d["Open_Volume_Ref"] = open_vol
-                
-                    # Multiple vs open
-                    d["Vol_vs_Open"] = d["Volume"] / open_vol if open_vol > 0 else np.nan
-                
-                    # Local spike detection
-                    vol = d["Volume"]
-                    is_peak = (vol > vol.shift(1)) & (vol > vol.shift(-1))
-                    if window > 1:
-                        for k in range(2, window+1):
-                            is_peak &= (vol > vol.shift(k)) & (vol > vol.shift(-k))
-                    d["Vol_Spike"] = is_peak.fillna(False)
-                
-                    # Restrict spike detection to session hours
-                    mask_session = d.index.isin(session.index)
-                    d.loc[~mask_session, "Vol_Spike"] = False
-                
-                    # Exceed open?
-                    d["Exceeds_Open"] = (d["Vol_vs_Open"] > 1.0) & mask_session
-                
-                    # Rank spikes by volume
-                    spikes = d.loc[mask_session & d["Vol_Spike"], ["Volume"]].copy()
-                    spikes = spikes.sort_values("Volume", ascending=False)
-                    spikes["Spike_Rank"] = range(1, len(spikes)+1)
-                    d["Spike_Rank"] = np.nan
-                    d.loc[spikes.index, "Spike_Rank"] = spikes["Spike_Rank"]
-                
-                    # Second spike > open?
-                    spikes_time = d.loc[mask_session & d["Vol_Spike"]].sort_index()
-                    spikes_time["Exceeds_Open"] = spikes_time["Vol_vs_Open"] > 1.0
-                    d["Second_Spike_Above_Open"] = False
-                    if (spikes_time["Exceeds_Open"].sum() >= 2):
-                        second_idx = spikes_time.index[spikes_time["Exceeds_Open"]].to_list()[1]
-                        d.loc[second_idx, "Second_Spike_Above_Open"] = True
-                
-                    # If nothing exceeds open, mark the closest (max volume)
-                    d["Closest_to_Open_By_Volume"] = False
-                    if not d["Exceeds_Open"].any():
-                        closest_idx = session["Volume"].idxmax()
-                        d.loc[closest_idx, "Closest_to_Open_By_Volume"] = True
-                
-                    # Alerts
-                    d["Vol_Spike_Alert"] = ""
-                    d.loc[d["Vol_Spike"] & (d["Vol_vs_Open"] > 1.0), "Vol_Spike_Alert"] = "💥>Open"
-                    d.loc[d["Second_Spike_Above_Open"], "Vol_Spike_Alert"] = "💥💥 Second>Open"
-                    d.loc[d["Closest_to_Open_By_Volume"], "Vol_Spike_Alert"] = "📈 Closest"
-                
-                    return d
-                intraday_with_spikes = detect_volume_spikes_vs_open(intraday)
-
+              
 
                 def add_unit_percentage(intraday_df):
                     if intraday_df.empty:
@@ -4881,7 +4809,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Vol_Spike_Alert","Range","Time","Volume","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
