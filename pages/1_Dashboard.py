@@ -8968,28 +8968,28 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
 
              
 
-                # cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
-                # fig.add_trace(go.Scatter(
-                #     x=cross_points["Time"],
-                #     y=cross_points[price_col] + 20,
-                #     textfont=dict(size=34),
-                #     mode="text",
-                #     text=cross_points["Midas_Cross_IB_High"],
-                #     textposition="top center",
-                #     showlegend=True
-                # ))
+                cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
+                fig.add_trace(go.Scatter(
+                    x=cross_points["Time"],
+                    y=cross_points[price_col] + 20,
+                    textfont=dict(size=34),
+                    mode="text",
+                    text=cross_points["Midas_Cross_IB_High"],
+                    textposition="top center",
+                    showlegend=True
+                ))
                 
-                # # 🎻 plot for Bear MIDAS crossing IB Low
-                # bear_cross_points = intraday[intraday["Midas_Bear_Cross_IB_Low"] == "🎻"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_cross_points["Time"],
-                #     y=bear_cross_points[price_col] - 20,
-                #     textfont=dict(size=34),
-                #     mode="text",
-                #     text=bear_cross_points["Midas_Bear_Cross_IB_Low"],
-                #     textposition="bottom center",
-                #     showlegend=True
-                # ))
+                # 🎻 plot for Bear MIDAS crossing IB Low
+                bear_cross_points = intraday[intraday["Midas_Bear_Cross_IB_Low"] == "🎻"]
+                fig.add_trace(go.Scatter(
+                    x=bear_cross_points["Time"],
+                    y=bear_cross_points[price_col] - 20,
+                    textfont=dict(size=34),
+                    mode="text",
+                    text=bear_cross_points["Midas_Bear_Cross_IB_Low"],
+                    textposition="bottom center",
+                    showlegend=True
+                ))
 
 
           
