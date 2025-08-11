@@ -5978,54 +5978,6 @@ if st.sidebar.button("Run Analysis"):
                                         .reset_index(drop=True))
                          
 
-# # Create a Streamlit expander for the compliance plot
-#                 with st.expander("Compliance Plot"):
-#                     # Create a figure for the compliance plot
-#                     fig = go.Figure()
-                
-#                     # Plot smooth line for compliance
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday["Time"],  # Time column
-#                             y=intraday["Compliance"],  # Compliance values
-#                             mode="lines",  # This will plot a line, rather than markers
-#                             name="Compliance",
-#                             line=dict(color='green', dash='dot')  # Customize color and line style
-#                         )
-#                     )
-                
-#                     # Plot smooth line of negative compliance (if you have it)
-#                     fig.add_trace(
-#                         go.Scatter(
-#                             x=intraday["Time"],  # Time column
-#                             y=intraday["Smoothed_Compliance"],  # Smoothed Compliance values
-#                             mode="lines", 
-#                             name="Smoothed Compliance",
-#                             line=dict(color='blue', dash='dash')
-#                         )
-#                     )
-#                                  # ✅ Add 🫧 emoji at Compliance Shift points
-#                     shift_indices = intraday["Compliance Shift"] == "🫧"
-#                     fig.add_trace(go.Scatter(
-#                         x=intraday["Time"][shift_indices],
-#                         y=intraday["Compliance"][shift_indices]  + 10,
-#                         mode="text",
-#                         text=["🫧"] * shift_indices.sum(),  # repeat emoji for each shift
-#                         textposition="top center",
-#                         name="Compliance Shift 🫧",
-#                         showlegend=True
-#                     ))
-#                     # Add layout details
-#                     fig.update_layout(
-#                         title="Compliance and Smoothed Compliance",
-#                         xaxis_title="Time",
-#                         yaxis_title="Compliance",
-#                         legend_title="Legend",
-#                         showlegend=True
-#                     )
-                
-#                     # Display the plot inside the expander
-#                     st.plotly_chart(fig)
              
 
 
@@ -6033,103 +5985,10 @@ if st.sidebar.button("Run Analysis"):
 
          
 
-                # with st.expander("🧲 Market Capacitance (Charge Storage & Release)", expanded=False):
-      
-                #       fig_capacitance = go.Figure()
-                  
-                #       fig_capacitance.add_trace(go.Scatter(
-                #           x=intraday["TimeIndex"],
-                #           y=intraday["Vector_Capacitance"].rolling(window=3, min_periods=1).mean(),  # Smooth with rolling average
-                #           mode="lines",
-                #           name="Vector Capacitance",
-                #           line=dict(color="orange", width=2),
-                #           fill='tozeroy',
-                #           hovertemplate="Time: %{x}<br>Capacitance: %{y:.2f}<extra></extra>"
-                #       ))
-                  
-                #       fig_capacitance.update_layout(
-                #           height=300,
-                #           title="🧲 Capacitance (Market Charge)",
-                #           plot_bgcolor="black",
-                #           paper_bgcolor="black",
-                #           font=dict(color="white"),
-                #           xaxis=dict(title="Time"),
-                #           yaxis=dict(title="Capacitance"),
-                #           margin=dict(t=40, b=40),
-                #           showlegend=True
-                #       )
-                  
-                # st.plotly_chart(fig_capacitance, use_container_width=True)
-                
-                # st.plotly_chart(fig, use_container_width=True)
-            
                          
            
 
-                # with st.expander("📉 Volatility Composite (Smoothed)", expanded=False):
-                #           fig_volatility = go.Figure()
-                      
-                #           fig_volatility.add_trace(go.Scatter(
-                #               x=intraday["TimeIndex"],
-                #               y=intraday["Volatility_Composite"].rolling(window=3, min_periods=1).mean(),
-                #               mode="lines",
-                #               name="Volatility",
-                #               line=dict(color="violet", width=2),
-                #               fill='tozeroy',
-                #               hovertemplate="Time: %{x}<br>Volatility: %{y:.2f}<extra></extra>"
-                #           ))
-                      
-                #           fig_volatility.update_layout(
-                #               height=300,
-                #               title="📉 Volatility Composite (Smoothed)",
-                #               plot_bgcolor="black",
-                #               paper_bgcolor="black",
-                #               font=dict(color="white"),
-                #               xaxis=dict(title="Time"),
-                #               yaxis=dict(title="Volatility"),
-                #               margin=dict(t=40, b=40),
-                #               showlegend=True
-                #           )
-                      
-                # st.plotly_chart(fig_volatility, use_container_width=True)
-                # # Create a smoothed version of Unit Velocity
-                # Clean and convert Unit Velocity to numeric
-                # intraday["Unit_Velocity_Numeric"] = (
-                #     intraday["Unit Velocity"]
-                #     .astype(str)
-                #     .str.replace("%", "", regex=False)
-                #     .replace("", "0")
-                #     .astype(float)
-                # )
-                
-                # # Apply rolling mean
-                # intraday["Velocity_SMA"] = intraday["Unit_Velocity_Numeric"].rolling(window=5, min_periods=1).mean()
-                                
-                # with st.expander("⚡ Velocity Line Plot", expanded=False):
-                #     fig_velocity = go.Figure()
-                
-                #     fig_velocity.add_trace(go.Scatter(
-                #         x=intraday["TimeIndex"],
-                #         y=intraday["Velocity_SMA"],
-                #         mode="lines",
-                #         name="Smoothed Velocity",
-                #         line=dict(color="orange", width=2)
-                #     ))
-                
-                #     fig_velocity.add_hline(y=20, line=dict(color="green", dash="dash"))
-                #     fig_velocity.add_hline(y=-20, line=dict(color="red", dash="dash"))
-                
-                #     fig_velocity.update_layout(
-                #         height=300,
-                #         title="⚡ Velocity Flow",
-                #         plot_bgcolor="black",
-                #         paper_bgcolor="black",
-                #         font=dict(color="white"),
-                #         xaxis_title="Time",
-                #         yaxis_title="Velocity (%)",
-                #     )
-                
-                #     st.plotly_chart(fig_velocity, use_container_width=True)
+
 
 
 
