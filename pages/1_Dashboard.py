@@ -5983,10 +5983,40 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-         
-
                          
-           
+                def score_velocity_row(row, midas_bias, kijun_line, ib_high, ib_low, va_high, va_low):
+                    score = 0
+                
+                    # Directional alignment
+                    if midas_bias == "Bull" and row["Velocity_Num"] > 0:
+                        score += 2
+                    elif midas_bias == "Bear" and row["Velocity_Num"] < 0:
+                        score += 2
+                
+                    # Round table location
+                    if ib_low <= row["Price"] <= ib_high:
+                        score += 2  # Core
+                    elif ib_high < row["Price"] <= va_high or ib_low >= row["Price"] >= va_low:
+                        score += 1  # Loft or Cellar
+                
+                    # Boundary crossings
+                    if abs(row["Price"] - kijun_line) <= 0.5:
+                        score += 1
+                    if abs(row["Price"] - ib_high) <= 0.5 or abs(row["Price"] - ib_low) <= 0.5:
+                        score += 1
+                    if abs(row["Price"] - va_high) <= 0.5 or abs(row["Price"] - va_low) <= 0.5:
+                        score += 1
+                
+                    # Volume or Force support
+                    if row["Force"] > threshold_force or row["Volume"] > threshold_volume:
+                        score += 1
+                
+                    return score
+
+                velocity_data["Score"] = velocity_data.apply(lambda row: score_velocity_row(row, midas_bias, kijun, ib_high, ib_low, va_high, va_low), axis=1)
+                top3_meaningful = velocity_data.sort_values("Score", ascending=False).head(3)
+
+         
 
 
 
