@@ -2432,47 +2432,47 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def generate_market_snapshot(df, current_time, current_price, prev_close, symbol):
-                    """
-                    Generates a concise market snapshot:
-                    - Time and current price
-                    - Opening price & where it stands now
-                    - F% change in raw dollars
-                    - Price position relative to Kijun and Bollinger Mid
-                    - Latest Buy/Sell Signal
-                    """
+                # def generate_market_snapshot(df, current_time, current_price, prev_close, symbol):
+                #     """
+                #     Generates a concise market snapshot:
+                #     - Time and current price
+                #     - Opening price & where it stands now
+                #     - F% change in raw dollars
+                #     - Price position relative to Kijun and Bollinger Mid
+                #     - Latest Buy/Sell Signal
+                #     """
 
-                    # Convert time to 12-hour format (e.g., "03:55 PM")
-                    current_time_str = pd.to_datetime(current_time).strftime("%I:%M %p")
+                #     # Convert time to 12-hour format (e.g., "03:55 PM")
+                #     current_time_str = pd.to_datetime(current_time).strftime("%I:%M %p")
 
-                    # Get today's opening price
-                    open_price = df["Open"].iloc[0]
+                #     # Get today's opening price
+                #     open_price = df["Open"].iloc[0]
 
-                    # Calculate today's price changes
-                    price_change = current_price - prev_close
-                    f_percent_change = (price_change / prev_close) * 10000  # F%
+                #     # Calculate today's price changes
+                #     price_change = current_price - prev_close
+                #     f_percent_change = (price_change / prev_close) * 10000  # F%
 
-                    # Identify price position relative to Kijun and Bollinger Middle
-                    last_kijun = df["Kijun_sen"].iloc[-1]
-                    last_mid_band = df["F% MA"].iloc[-1]
+                #     # Identify price position relative to Kijun and Bollinger Middle
+                #     last_kijun = df["Kijun_sen"].iloc[-1]
+                #     last_mid_band = df["F% MA"].iloc[-1]
 
-                    position_kijun = "above Kijun" if current_price > last_kijun else "below Kijun"
-                    position_mid = "above Mid Band" if current_price > last_mid_band else "below Mid Band"
+                #     position_kijun = "above Kijun" if current_price > last_kijun else "below Kijun"
+                #     position_mid = "above Mid Band" if current_price > last_mid_band else "below Mid Band"
 
-                    # Get the latest Buy/Sell signal
-                    latest_signal = df.loc[df["Wealth Signal"] != "", ["Wealth Signal"]].tail(1)
-                    signal_text = latest_signal["Wealth Signal"].values[0] if not latest_signal.empty else "No Signal"
+                #     # Get the latest Buy/Sell signal
+                #     latest_signal = df.loc[df["Wealth Signal"] != "", ["Wealth Signal"]].tail(1)
+                #     signal_text = latest_signal["Wealth Signal"].values[0] if not latest_signal.empty else "No Signal"
 
-                    # Construct the message
-                    snapshot = (
-                        f"📌 {current_time_str} – **{symbol}** is trading at **${current_price:.2f}**\n\n"
-                        f"• Opened at **${open_price:.2f}** and is now sitting at **${current_price:.2f}**\n"
-                        f"• F% Change: **{f_percent_change:.0f} F%** (${price_change:.2f})\n"
-                        f"• Price is **{position_kijun}** & **{position_mid}**\n"
-                        f"• **Latest Signal**: {signal_text}\n"
-                    )
+                #     # Construct the message
+                #     snapshot = (
+                #         f"📌 {current_time_str} – **{symbol}** is trading at **${current_price:.2f}**\n\n"
+                #         f"• Opened at **${open_price:.2f}** and is now sitting at **${current_price:.2f}**\n"
+                #         f"• F% Change: **{f_percent_change:.0f} F%** (${price_change:.2f})\n"
+                #         f"• Price is **{position_kijun}** & **{position_mid}**\n"
+                #         f"• **Latest Signal**: {signal_text}\n"
+                #     )
 
-                    return snapshot
+                #     return snapshot
  
               
                 def _sparkline(series, bins="▁▂▃▄▅▆▇█"):
