@@ -7213,47 +7213,47 @@ if st.sidebar.button("Run Analysis"):
 
 # # ------------------------
 
-                    # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
-                    y_high_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
-                        mode="lines",
-                        line=dict(color="green", dash="dash",width=0.3),
-                        name="Yesterday High (F%)",
-                        yaxis="y2",              # << ✅ this is key
-                        showlegend=False,
-                        hoverinfo='skip'
-                    )
+                    # # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
+                    # y_high_f_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
+                    #     mode="lines",
+                    #     line=dict(color="green", dash="dash",width=0.3),
+                    #     name="Yesterday High (F%)",
+                    #     yaxis="y2",              # << ✅ this is key
+                    #     showlegend=False,
+                    #     hoverinfo='skip'
+                    # )
 
-                    # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
-                    y_low_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
-                        mode="lines",
-                        line=dict(color="red", dash="dash", width=0.3),
-                        name="Yesterday Low (F%)",
-                        yaxis="y2",              # << ✅ this is key
-                        showlegend=False,
-                        hoverinfo='skip'
-                    )
+                    # # ✅ Yesterday's Low - Green Dashed Line (F% Scale)
+                    # y_low_f_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
+                    #     mode="lines",
+                    #     line=dict(color="red", dash="dash", width=0.3),
+                    #     name="Yesterday Low (F%)",
+                    #     yaxis="y2",              # << ✅ this is key
+                    #     showlegend=False,
+                    #     hoverinfo='skip'
+                    # )
 
-                    # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
-                    y_close_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[0] * len(intraday),
-                        mode="lines",
-                        line=dict(color="blue", dash="dash", width=0.3),
-                        name="Yesterday Close (F%)",
-                        yaxis="y2",              # << ✅ this is key
-                        showlegend=False,
-                        hoverinfo='skip'
-                    )
+                    # # ✅ Yesterday's Close - Red Dashed Line (F% Scale) (Always at 0)
+                    # y_close_f_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=[0] * len(intraday),
+                    #     mode="lines",
+                    #     line=dict(color="blue", dash="dash", width=0.3),
+                    #     name="Yesterday Close (F%)",
+                    #     yaxis="y2",              # << ✅ this is key
+                    #     showlegend=False,
+                    #     hoverinfo='skip'
+                    # )
 
-                     # 🎯 Add all lines to the F% plot
-                    # fig.add_trace(y_open_f_line, row=1, col=1)
-                    fig.add_trace(y_high_f_line, row=1, col=1)
-                    fig.add_trace(y_low_f_line, row=1, col=1)
-                    fig.add_trace(y_close_f_line, row=1, col=1)
+                    #  # 🎯 Add all lines to the F% plot
+                    # # fig.add_trace(y_open_f_line, row=1, col=1)
+                    # fig.add_trace(y_high_f_line, row=1, col=1)
+                    # fig.add_trace(y_low_f_line, row=1, col=1)
+                    # fig.add_trace(y_close_f_line, row=1, col=1)
 
                     # scatter_drum = go.Scatter(
                     # x=intraday.loc[intraday["🪘"] != "", "Time"],
