@@ -6721,7 +6721,7 @@ if st.sidebar.button("Run Analysis"):
                     fig = make_subplots(
                         rows=1,
                         cols=1,
-                        # vertical_spacing=0.03,
+                        vertical_spacing=0.1,
                         # row_heights=[0.60],  
                         subplot_titles=("Mike Volatility"),
                         shared_xaxes=True,
@@ -9239,9 +9239,7 @@ line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
 
 
 
-                fig.update_yaxes(title_text="Option Value", row=2, col=1)
-
-   
+  
            
                 fig.update_layout(
                     title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
