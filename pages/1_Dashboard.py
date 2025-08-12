@@ -100,10 +100,10 @@ def compute_value_area(
 
     va_min, va_max = min(va_levels), max(va_levels)
 
-    # (optional) flag collapse
-    if va_min == va_max:
-        st.warning("⚠️ Value area collapsed to one level – "
-                   "range too narrow, even after adaptive binning.")
+    # # (optional) flag collapse
+    # if va_min == va_max:
+    #     st.warning("⚠️ Value area collapsed to one level – "
+    #                "range too narrow, even after adaptive binning.")
 
     return va_min, va_max, profile_df
 
