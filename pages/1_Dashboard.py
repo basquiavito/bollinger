@@ -6719,12 +6719,14 @@ if st.sidebar.button("Run Analysis"):
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
-                        rows=1,
+                        rows=3,
                         cols=1,
-                        vertical_spacing=0.1,
-                        # row_heights=[0.60],  
-                        subplot_titles=("Mike Volatility"),
+                        vertical_spacing=0.03,
+                        row_heights=[0.60, 0.20, 0.20],  
+                        subplot_titles=("Mike Volatility", "Option Flow (Call/Put)","Option vs MIDAS"),
                         shared_xaxes=True,
+                       
+                         
                        
                          
                     )
