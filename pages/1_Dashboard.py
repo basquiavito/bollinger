@@ -2473,8 +2473,116 @@ if st.sidebar.button("Run Analysis"):
                     )
 
                     return snapshot
-
-
+ 
+              
+                def _sparkline(series, bins="▁▂▃▄▅▆▇█"):
+                    s = pd.Series(series).astype(float)
+                    if len(s) == 0 or s.nunique() == 1:
+                        return "—"
+                    x = (s - s.min()) / (s.max() - s.min())
+                    idx = np.clip((x * (len(bins)-1)).round().astype(int), 0, len(bins)-1)
+                    return "".join(bins[i] for i in idx)
+                
+                def _fmt_delta(x, pos="▲", neg="▼", zero="→", unit=""):
+                    if x > 0:  return f"{pos}{abs(x):.2f}{unit}"
+                    if x < 0:  return f"{neg}{abs(x):.2f}{unit}"
+                    return f"{zero}{abs(x):.2f}{unit}"
+                
+                def generate_market_snapshot(df, current_time, current_price, prev_close, symbol, last_n=15):
+                    """
+                    Vibrant, glanceable snapshot with:
+                    - Time, price, arrows & F%
+                    - Open & day range context
+                    - Distance to Kijun & Mid (in $ and %)
+                    - Latest signal (time ago)
+                    - Mini sparkline of last N closes
+                    """
+                    # time
+                    current_time_str = pd.to_datetime(current_time).strftime("%I:%M %p")
+                
+                    # core refs
+                    open_price = float(df["Open"].iloc[0]) if "Open" in df else np.nan
+                    day_high  = float(df["High"].max()) if "High" in df else np.nan
+                    day_low   = float(df["Low"].min())  if "Low"  in df else np.nan
+                
+                    price_change = current_price - prev_close
+                    f_percent_change = (price_change / prev_close) * 10000 if prev_close else np.nan
+                
+                    # structure
+                    last_kijun = float(df["Kijun_sen"].iloc[-1]) if "Kijun_sen" in df else np.nan
+                    last_mid   = float(df["F% MA"].iloc[-1])      if "F% MA" in df else np.nan
+                
+                    # distances
+                    def pct_dist(a, b):
+                        return ((a - b) / b * 100) if (b and not np.isnan(b)) else np.nan
+                
+                    d_kijun = current_price - last_kijun if not np.isnan(last_kijun) else np.nan
+                    d_mid   = current_price - last_mid   if not np.isnan(last_mid)   else np.nan
+                
+                    d_kijun_pct = pct_dist(current_price, last_kijun) if not np.isnan(last_kijun) else np.nan
+                    d_mid_pct   = pct_dist(current_price, last_mid)   if not np.isnan(last_mid)   else np.nan
+                
+                    pos_kijun = "🟢 above Kijun" if not np.isnan(last_kijun) and current_price > last_kijun else ("🔴 below Kijun" if not np.isnan(last_kijun) else "— Kijun n/a")
+                    pos_mid   = "🟢 above Mid"   if not np.isnan(last_mid)   and current_price > last_mid   else ("🔴 below Mid"   if not np.isnan(last_mid)   else "— Mid n/a")
+                
+                    # signal + recency
+                    signal_text, signal_age = "No Signal", ""
+                    if "Wealth Signal" in df:
+                        sig_rows = df.loc[df["Wealth Signal"].astype(str).str.len() > 0, ["Wealth Signal"]].tail(1)
+                        if not sig_rows.empty:
+                            signal_text = sig_rows["Wealth Signal"].values[0]
+                            # if you have a time column, show staleness
+                            time_col = None
+                            for cand in ["Time", "Datetime", "DateTime", "Timestamp"]:
+                                if cand in df.columns:
+                                    time_col = cand
+                                    break
+                            if time_col:
+                                last_sig_idx = df.loc[df["Wealth Signal"].astype(str).str.len() > 0].index[-1]
+                                t_sig = pd.to_datetime(df.loc[last_sig_idx, time_col])
+                                t_now = pd.to_datetime(current_time)
+                                mins = int((t_now - t_sig).total_seconds() // 60)
+                                if mins >= 0:
+                                    signal_age = f" • {mins}m ago"
+                
+                    # sparkline of last closes
+                    closes = df["Close"].tail(last_n) if "Close" in df else pd.Series([])
+                    spark = _sparkline(closes)
+                
+                    # day context
+                    range_line = "—"
+                    if not np.isnan(day_high) and not np.isnan(day_low):
+                        rng = day_high - day_low
+                        from_low = current_price - day_low
+                        pct_thru = (from_low / rng * 100) if rng != 0 else np.nan
+                        if not np.isnan(pct_thru):
+                            range_line = f"🧭 Day: {day_low:.2f} → {day_high:.2f} • {_fmt_delta(rng, pos='Δ', neg='Δ', zero='Δ', unit='$')} • {pct_thru:.0f}% thru"
+                
+                    # directional badges
+                    arrow_price = _fmt_delta(price_change, unit="$")
+                    arrow_f     = _fmt_delta(f_percent_change, unit=" F%") if not np.isnan(f_percent_change) else "—"
+                    bias_badge  = "📈" if price_change > 0 else ("📉" if price_change < 0 else "⏸️")
+                
+                    # distance lines
+                    def dist_line(label, d_abs, d_pct):
+                        if np.isnan(d_abs) or np.isnan(d_pct):
+                            return f"{label}: n/a"
+                        return f"{label}: {_fmt_delta(d_abs, unit='$')} ({_fmt_delta(d_pct, unit='%', pos='▲', neg='▼', zero='→')})"
+                
+                    kijun_line = dist_line("📐 Kijun dist", d_kijun, d_kijun_pct)
+                    mid_line   = dist_line("〰️ Mid dist",   d_mid,   d_mid_pct)
+                
+                    snapshot = (
+                        f"📌 {current_time_str} — **{symbol}** {bias_badge} **${current_price:.2f}**  "
+                        f"({arrow_price} | {arrow_f})\n"
+                        f"{range_line}\n"
+                        f"🧠 Position: {pos_kijun} • {pos_mid}\n"
+                        f"{kijun_line} • {mid_line}\n"
+                        f"🪙 Signal: **{signal_text}**{signal_age}\n"
+                        f"📈 {spark}\n"
+                    )
+                    return snapshot
+                
 
 
 
