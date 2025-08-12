@@ -5980,8 +5980,13 @@ if st.sidebar.button("Run Analysis"):
 
              
 
-
-
+                velocity_data = intraday.copy()
+                velocity_data["Velocity_Num"] = pd.to_numeric(
+                    velocity_data["Velocity"].str.replace("%", ""), errors="coerce"
+                )
+                velocity_data = velocity_data.dropna(subset=["Velocity_Num", "Cumulative_Unit", "Time", "Price"])
+                
+                
 
                          
                 def score_velocity_row(row, midas_bias, kijun_line, ib_high, ib_low, va_high, va_low):
