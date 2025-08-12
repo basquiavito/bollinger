@@ -118,6 +118,14 @@ st.set_page_config(
 
 
 st.title("VOLMIKE.COM")
+st.markdown("""
+| VIXY Midas | SPY/QQQ Midas | Action Bias                                |
+|------------|--------------|--------------------------------------------|
+| Bull       | Bull         | **Risky!** Longs need quick profits or avoid |
+| Bull       | Bear         | **Strong put environment**                 |
+| Bear       | Bull         | **Strong call environment**                |
+| Bear       | Bear         | **Weak put environment** *(fade only)*     |
+""")
 
 # ======================================
 # Sidebar - User Inputs & Advanced Options
