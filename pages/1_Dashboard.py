@@ -117,16 +117,6 @@ st.set_page_config(
 )
 
 
-st.title("VOLMIKE.COM")
-st.markdown("""
-| VIXY Midas | SPY/QQQ Midas | Action Bias                                |
-|------------|--------------|--------------------------------------------|
-| Bull       | Bull         | **Risky!** Longs need quick profits or avoid |
-| Bull       | Bear         | **Strong put environment**                 |
-| Bear       | Bull         | **Strong call environment**                |
-| Bear       | Bear         | **Weak put environment** *(fade only)*     |
-""")
-
 # ======================================
 # Sidebar - User Inputs & Advanced Options
 # ======================================
@@ -140,7 +130,7 @@ tickers = st.sidebar.multiselect(
 )
 
 # Date range inputs
-start_date = st.sidebar.date_input("Start Date", value=date(2025, 5, 1))
+start_date = st.sidebar.date_input("Start Date", value=date(2025, 8, 1))
 end_date = st.sidebar.date_input("End Date", value=date.today())
 
 # Timeframe selection
@@ -5115,8 +5105,8 @@ if st.sidebar.button("Run Analysis"):
       
 
 
-                  # # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
+                  # # # Show DataFrame
+                  # st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
                   
                   def compute_ib_volume_weights(intraday, ib_high, ib_low):
@@ -5521,9 +5511,9 @@ if st.sidebar.button("Run Analysis"):
 
                 
  
-                # Display anchor info
-                st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
-                st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
+                # # Display anchor info
+                # st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
+                # st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
   
   
                   # Ensure 👃🏽 and 🦻🏼 columns exist
@@ -5974,16 +5964,16 @@ if st.sidebar.button("Run Analysis"):
 
                  
 
-                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
-                                    st.dataframe(
-                                        intraday[[
-                                            'Time', price_col, 'Volume',
-                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
-                                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
-                                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
-                                        ]]
-                                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
-                                        .reset_index(drop=True))
+                # with st.expander("🪞 MIDAS Anchor Table", expanded=False):
+                #                     st.dataframe(
+                #                         intraday[[
+                #                             'Time', price_col, 'Volume',
+                #                             'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                #                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
+                #                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
+                #                         ]]
+                #                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+                #                         .reset_index(drop=True))
                          
 
        
