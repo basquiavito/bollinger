@@ -2464,15 +2464,15 @@ if st.sidebar.button("Run Analysis"):
                     signal_text = latest_signal["Wealth Signal"].values[0] if not latest_signal.empty else "No Signal"
 
                     # Construct the message
-                    snapshot = (
-                        f"📌 {current_time_str} – **{symbol}** is trading at **${current_price:.2f}**\n\n"
-                        f"• Opened at **${open_price:.2f}** and is now sitting at **${current_price:.2f}**\n"
-                        f"• F% Change: **{f_percent_change:.0f} F%** (${price_change:.2f})\n"
-                        f"• Price is **{position_kijun}** & **{position_mid}**\n"
-                        f"• **Latest Signal**: {signal_text}\n"
-                    )
+                    # snapshot = (
+                    #     f"📌 {current_time_str} – **{symbol}** is trading at **${current_price:.2f}**\n\n"
+                    #     f"• Opened at **${open_price:.2f}** and is now sitting at **${current_price:.2f}**\n"
+                    #     f"• F% Change: **{f_percent_change:.0f} F%** (${price_change:.2f})\n"
+                    #     f"• Price is **{position_kijun}** & **{position_mid}**\n"
+                    #     f"• **Latest Signal**: {signal_text}\n"
+                    # )
 
-                    return snapshot
+                    # return snapshot
 
 
 
