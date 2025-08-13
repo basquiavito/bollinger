@@ -2576,7 +2576,7 @@ if st.sidebar.button("Run Analysis"):
                         f"📌 {current_time_str} — **{symbol}** {bias_badge} **${current_price:.2f}**  "
                         f"({arrow_price} | {arrow_f})\n"
                         f"{range_line}\n"
-                        f"🧠 Position: {pos_kijun} • {pos_mid}\n"
+                        f"🧠 Position: {pos_kijun} \n"
                         f"{kijun_line} \n"
                         f"🪙 Signal: **{signal_text}**{signal_age}\n"
                         f"📈 {spark}\n"
