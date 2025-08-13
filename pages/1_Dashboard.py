@@ -9267,16 +9267,16 @@ if st.sidebar.button("Run Analysis"):
             #         hovertemplate="Time: %{x}<br>🦻🏼 Ear Volume Aid<extra></extra>"
             #     ), row=1, col=1)
                 
-                fig.add_trace(go.Scatter(
-                    x=ember_aid_times,
-                    y=ember_aid_prices,
-                    mode="text",
-                    text=["🐦‍🔥🔥☁️"] * len(ember_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Ember Prototype",
-                    hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=ember_aid_times,
+                #     y=ember_aid_prices,
+                #     mode="text",
+                #     text=["🐦‍🔥🔥☁️"] * len(ember_aid_times),
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Ember Prototype",
+                #     hovertemplate="Time: %{x}<br>Ember Confirmed<extra></extra>"
+                # ), row=1, col=1)
 
                 
             #     fig.add_trace(go.Scatter(
