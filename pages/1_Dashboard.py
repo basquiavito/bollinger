@@ -8927,7 +8927,7 @@ if st.sidebar.button("Run Analysis"):
                 # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
                 scatter_tk_sun = go.Scatter(
                     x=intraday.loc[mask_tk_sun, "Time"],
-                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 99,  # Offset for visibility
+                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 104,  # Offset for visibility
                     mode="text",
                     text="🌞",
                     textposition="top center",
@@ -8939,7 +8939,7 @@ if st.sidebar.button("Run Analysis"):
                 # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
                 scatter_tk_moon = go.Scatter(
                     x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 99,  # Offset for visibility
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 104,  # Offset for visibility
                     mode="text",
                     text="🌙",
                     textposition="bottom center",
@@ -8962,11 +8962,11 @@ if st.sidebar.button("Run Analysis"):
                 # 👼🏻 Sanyaku Kouten marker (Bullish)
                 scatter_sanyaku_kouten = go.Scatter(
                     x=intraday.loc[mask_sanyaku_kouten, "Time"],
-                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] + 133,  # Lower offset
+                    y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] + 103,  # Lower offset
                     mode="text",
                     text="👼🏻",
                     textposition="bottom center",
-                    textfont=dict(size=55),
+                    textfont=dict(size=34),
                     name="Sanyaku Kouten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
                 )
@@ -8974,11 +8974,11 @@ if st.sidebar.button("Run Analysis"):
                 # 👺 Sanyaku Gyakuten marker (Bearish)
                 scatter_sanyaku_gyakuten = go.Scatter(
                     x=intraday.loc[mask_sanyaku_gyakuten, "Time"],
-                    y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 133,  # Lower offset
+                    y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 103,  # Lower offset
                     mode="text",
                     text="👺",
                     textposition="top center",
-                    textfont=dict(size=55),
+                    textfont=dict(size=34),
                     name="Sanyaku Gyakuten",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
                 )
@@ -9101,16 +9101,16 @@ if st.sidebar.button("Run Analysis"):
                 )
 
                 
-                breach_mask = intraday["Y_Low_Cross"] == "🛟"
-                breach_trace = go.Scatter(
-                    x=intraday.loc[breach_mask, "Time"],
-                    y=intraday.loc[breach_mask, "F_numeric"] - 40,  # Offset downward for clarity
-                    mode="text",
-                    text=intraday.loc[breach_mask, "Y_Low_Cross"],
-                    textposition="bottom center",
-                    textfont=dict(size=28),
-                    name="Cross Below Y-Low (🛟)"
-                )
+                # breach_mask = intraday["Y_Low_Cross"] == "🛟"
+                # breach_trace = go.Scatter(
+                #     x=intraday.loc[breach_mask, "Time"],
+                #     y=intraday.loc[breach_mask, "F_numeric"] - 40,  # Offset downward for clarity
+                #     mode="text",
+                #     text=intraday.loc[breach_mask, "Y_Low_Cross"],
+                #     textposition="bottom center",
+                #     textfont=dict(size=28),
+                #     name="Cross Below Y-Low (🛟)"
+                # )
                 
                                 
                 # recovery_mask = intraday["Y_Low_Cross"] == "🚣🏽"
@@ -9128,7 +9128,7 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_astronaut = go.Scatter(
                     x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 144,  # Higher offset
+                    y=astronaut_points["F_numeric"] + 124,  # Higher offset
                     mode="text",
                     text=astronaut_points["Astronaut_Emoji"],
                     textposition="top center",
@@ -9146,7 +9146,7 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_astronaut = go.Scatter(
                     x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 144,  # Offset so it floats higher
+                    y=astronaut_points["F_numeric"] + 124,  # Offset so it floats higher
                     mode="text",
                     text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
                     textposition="top center",
@@ -9163,7 +9163,7 @@ if st.sidebar.button("Run Analysis"):
 
                 scatter_swimmer = go.Scatter(
                     x=swimmer_points["Time"],
-                    y=swimmer_points["F_numeric"] - 144,  # Offset downward so it floats below price
+                    y=swimmer_points["F_numeric"] - 104,  # Offset downward so it floats below price
                     mode="text",
                     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
                     textposition="bottom center",
@@ -9264,27 +9264,27 @@ if st.sidebar.button("Run Analysis"):
                 #     hovertemplate="Time: %{x}<br>Compliance Support Nearby<extra></extra>"
                 # ), row=1, col=1)
 
-                fig.add_trace(go.Scatter(
-                    x=bee_aid_times,
-                    y=[y_val + 4 for y_val in bee_aid_prices],
-                    mode="text",
-                    text=["🐝"] * len(bee_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Bees Near Entry",
-                    hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
-                ), row=1, col=1)
-                # 🐝 Bee Aid for 🎯2
-                fig.add_trace(go.Scatter(
-                    x=bee_aid_times_2,
-                    y=bee_aid_prices_2,
-                    mode="text",
-                    text=["🐝"] * len(bee_aid_times_2),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Bee Aid (BBW Tight for 🎯2)",
-                    hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=bee_aid_times,
+                #     y=[y_val + 4 for y_val in bee_aid_prices],
+                #     mode="text",
+                #     text=["🐝"] * len(bee_aid_times),
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Bees Near Entry",
+                #     hovertemplate="Time: %{x}<br>🐝 Volatility Compression Aid<extra></extra>"
+                # ), row=1, col=1)
+                # # 🐝 Bee Aid for 🎯2
+                # fig.add_trace(go.Scatter(
+                #     x=bee_aid_times_2,
+                #     y=bee_aid_prices_2,
+                #     mode="text",
+                #     text=["🐝"] * len(bee_aid_times_2),
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Bee Aid (BBW Tight for 🎯2)",
+                #     hovertemplate="Time: %{x}<br>🐝 Bee Volatility Aid<extra></extra>"
+                # ), row=1, col=1)
 
             #     # 👂 Ear aid
             #     fig.add_trace(go.Scatter(
