@@ -8132,7 +8132,7 @@ if st.sidebar.button("Run Analysis"):
                                 mode="text",
                                 text=["🪶"],
                                 textposition="middle right",
-                                textfont=dict(size=14),
+                                textfont=dict(size=22),
                                 showlegend=True,
                                 name="🪶 Tail",
                                 hovertemplate=(
