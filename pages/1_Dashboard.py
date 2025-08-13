@@ -2488,7 +2488,7 @@ if st.sidebar.button("Run Analysis"):
                     if x < 0:  return f"{neg}{abs(x):.2f}{unit}"
                     return f"{zero}{abs(x):.2f}{unit}"
                 
-                def generate_market_snapshot(df, current_time, current_price, prev_close, symbol, last_n=15):
+                def generate_market_snapshot(df, current_time, current_price, prev_close, symbol, last_n=26):
                     """
                     Vibrant, glanceable snapshot with:
                     - Time, price, arrows & F%
@@ -2577,7 +2577,7 @@ if st.sidebar.button("Run Analysis"):
                         f"({arrow_price} | {arrow_f})\n"
                         f"{range_line}\n"
                         f"🧠 Position: {pos_kijun} • {pos_mid}\n"
-                        f"{kijun_line} • {mid_line}\n"
+                        f"{kijun_line} \n"
                         f"🪙 Signal: **{signal_text}**{signal_age}\n"
                         f"📈 {spark}\n"
                     )
