@@ -8115,29 +8115,73 @@ if st.sidebar.button("Run Analysis"):
                           f"Time: {nose_time}<extra></extra>"
                       )
                 ), row=1, col=1)
-                for _, row in profile_df.iterrows():
-                    if row["Tail"] == "🪶":
-                          # Get actual TimeIndex from intraday at this F% Level
-                        time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
-                        if not time_row.empty:
-                            time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
-                
-                            fig.add_trace(go.Scatter(
-                                x=[time_at_level],
-                                y=[row["F% Level"]],
-                                mode="text",
-                                text=["🪶"],
-                                textposition="middle right",
-                                textfont=dict(size=50),
-                                showlegend=True,
-                                name="🪶 Tail",  # <-- Add this line
 
-                                hovertemplate=(
-                                    "🪶 Tail<br>"
-                                    f"F% Level: {row['F% Level']}<br>"
-                                    f"Time: {row['Time']}<extra></extra>"
-                                )
-                            ), row=1, col=1)
+
+
+# 1) Build a single map from bin -> earliest TimeIndex
+                first_timeindex_by_bin = (
+                    intraday
+                    .dropna(subset=["F_Bin", "TimeIndex"])
+                    .groupby("F_Bin")["TimeIndex"]
+                    .min()
+                )
+                
+                # 2) Attach a TimeIndex to each profile row using the SAME string key type
+                profile_df["F_Bin_key"] = profile_df["F% Level"].astype(str)
+                profile_df["Tail_TimeIndex"] = profile_df["F_Bin_key"].map(first_timeindex_by_bin)
+                
+                # (Optional) If your chart’s x-axis is using strings, add a string time too:
+                first_timestr_by_bin = (
+                    intraday
+                    .dropna(subset=["F_Bin", "Time"])
+                    .groupby("F_Bin")["Time"]
+                    .min()
+                )
+                profile_df["Tail_TimeStr"] = profile_df["F_Bin_key"].map(first_timestr_by_bin)
+                
+                # 3) Now plot in one go (choose ONE x: TimeIndex or Time)
+                mask = profile_df["Tail"].eq("🪶") & profile_df["Tail_TimeIndex"].notna()
+                
+                fig.add_trace(go.Scatter(
+                    x=profile_df.loc[mask, "Tail_TimeIndex"],  # or "Tail_TimeStr" if the figure uses string x
+                    y=profile_df.loc[mask, "F% Level"],
+                    mode="text",
+                    text=["🪶"] * mask.sum(),
+                    textposition="middle right",
+                    textfont=dict(size=50),
+                    name="🪶 Tail",
+                    hovertemplate=(
+                        "🪶 Tail<br>" +
+                        "F% Level: %{y}<br>" +
+                        # If you kept 'Time' from the merge, show it; else show the x value:
+                        "Time: %{x}<extra></extra>"
+                    ),
+                    showlegend=True,
+                ), row=1, col=1)
+
+                # for _, row in profile_df.iterrows():
+                #     if row["Tail"] == "🪶":
+                #           # Get actual TimeIndex from intraday at this F% Level
+                #         time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
+                #         if not time_row.empty:
+                #             time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
+                
+                #             fig.add_trace(go.Scatter(
+                #                 x=[time_at_level],
+                #                 y=[row["F% Level"]],
+                #                 mode="text",
+                #                 text=["🪶"],
+                #                 textposition="middle right",
+                #                 textfont=dict(size=50),
+                #                 showlegend=True,
+                #                 name="🪶 Tail",  # <-- Add this line
+
+                #                 hovertemplate=(
+                #                     "🪶 Tail<br>"
+                #                     f"F% Level: {row['F% Level']}<br>"
+                #                     f"Time: {row['Time']}<extra></extra>"
+                #                 )
+                #             ), row=1, col=1)
   
 
 
