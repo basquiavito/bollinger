@@ -4117,56 +4117,45 @@ if st.sidebar.button("Run Analysis"):
                     return intraday
 
                 intraday = detect_new_highs_above_yesterday_high(intraday)
-                def calculate_live_e_ratio(intraday, atr_col="ATR_14"):
+                def calculate_e_ratio_intraday(intraday, atr_period=14, lookahead=10):
                     """
-                    Calculates E-Ratio for 🎯1 and 🎯2 entries bar by bar.
-                    Tracks MFE and MAE normalized by ATR at entry.
-                    Adds E_Ratio_Alert column with 🌕, ☁️, 🐌 based on strength.
+                    Calculates the Edge Ratio (E-ratio) bar-by-bar using 🎯1 and 🎯2 entries.
+                    The ratio is based on MFE and MAE over the next `lookahead` bars.
+                    MFE and MAE are normalized by ATR calculated from F_numeric.
                     """
-                    intraday["E_Ratio_Alert"] = ""
-                    
-                    # Find all Entry 1 and Entry 2 signals
-                    entry_indices = intraday[intraday["Entry_Emoji"].isin(["🎯", "🎯2"])].index.tolist()
                 
-                    for entry_index in entry_indices:
-                        f_entry = intraday.loc[entry_index, "F_numeric"]
-                        atr_entry = intraday.loc[entry_index, atr_col]
+                    # Prep
+                    intraday["ATR"] = intraday["F_numeric"].rolling(atr_period).std()  # Approximate ATR using F_numeric STD
+                    intraday["E_Ratio"] = None
+                    mfe_list = []
+                    mae_list = []
                 
-                        # Initialize max/min tracking
-                        max_f = f_entry
-                        min_f = f_entry
+                    for i in range(len(intraday) - lookahead):
+                        entry = intraday["Entry_Emoji"].iloc[i]
                 
-                        # Loop from entry bar forward
-                        for i in range(entry_index + 1, len(intraday)):
-                            curr_f = intraday.loc[i, "F_numeric"]
-                            max_f = max(max_f, curr_f)
-                            min_f = min(min_f, curr_f)
+                        # Only process 🎯1 or 🎯2
+                        if entry in ["🎯1", "🎯2"]:
+                            entry_price = intraday["F_numeric"].iloc[i]
+                            atr = intraday["ATR"].iloc[i]
                 
-                            mfe = max_f - f_entry
-                            mae = f_entry - min_f
+                            if atr == 0 or pd.isna(atr):
+                                continue  # Avoid division by zero
                 
-                            # Normalize both by ATR
-                            norm_mfe = mfe / atr_entry if atr_entry != 0 else 0
-                            norm_mae = mae / atr_entry if atr_entry != 0 else 0
+                            future_window = intraday["F_numeric"].iloc[i:i + lookahead]
+                            mfe = (future_window.max() - entry_price) / atr
+                            mae = (entry_price - future_window.min()) / atr
                 
-                            # Avoid division by zero
-                            if norm_mae == 0:
-                                e_ratio = float('inf') if norm_mfe > 0 else 0
-                            else:
-                                e_ratio = norm_mfe / norm_mae
+                            mfe_list.append(mfe)
+                            mae_list.append(mae)
                 
-                            # Decide emoji
-                            if e_ratio >= 2:
-                                emoji = "🌕"
-                            elif e_ratio >= 1.2:
-                                emoji = "☁️"
-                            else:
-                                emoji = "🐌"
-                
-                            intraday.loc[i, "E_Ratio_Alert"] += emoji
+                            # Update current bar with live E-ratio (mean so far)
+                            if len(mae_list) > 0 and sum(mae_list) > 0:
+                                e_ratio = sum(mfe_list) / sum(mae_list)
+                                intraday.loc[intraday.index[i], "E_Ratio"] = round(e_ratio, 2)
                 
                     return intraday
-                intraday = calculate_live_e_ratio(intraday)
+
+                    intraday = calculate_e_ratio_intraday(intraday)
 
 
                 # Find the last astronaut (new high) row
