@@ -701,7 +701,7 @@ if st.sidebar.button("Run Analysis"):
                         'Short_Stop': short_stop,
                         'Contracts': contracts
                     }
-                intraday = turtle_atr_risk(intraday)
+                turtle_atr_risk(data, entry_price, account_size)
 
                 def add_unit_acceleration(intraday_df):
                     if intraday_df.empty or "Unit Velocity" not in intraday_df.columns:
