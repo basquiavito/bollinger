@@ -4123,45 +4123,6 @@ if st.sidebar.button("Run Analysis"):
                 intraday.loc[intraday["Your_Entry_Signal_Column"] == "🎯1", "Entry_Emoji"] = "🎯1"
                 intraday.loc[intraday["Your_Entry_Signal_Column"] == "🎯2", "Entry_Emoji"] = "🎯2"
 
-                def calculate_e_ratio_intraday(intraday, atr_period=14, lookahead=10):
-                    """
-                    Calculates the Edge Ratio (E-ratio) bar-by-bar using 🎯1 and 🎯2 entries.
-                    The ratio is based on MFE and MAE over the next `lookahead` bars.
-                    MFE and MAE are normalized by ATR calculated from F_numeric.
-                    """
-                
-                    # Prep
-                    intraday["ATR"] = intraday["F_numeric"].rolling(atr_period).std()  # Approximate ATR using F_numeric STD
-                    intraday["E_Ratio"] = None
-                    mfe_list = []
-                    mae_list = []
-                
-                    for i in range(len(intraday) - lookahead):
-                        entry = intraday["Entry_Emoji"].iloc[i]
-                
-                        # Only process 🎯1 or 🎯2
-                        if entry in ["🎯1", "🎯2"]:
-                            entry_price = intraday["F_numeric"].iloc[i]
-                            atr = intraday["ATR"].iloc[i]
-                
-                            if atr == 0 or pd.isna(atr):
-                                continue  # Avoid division by zero
-                
-                            future_window = intraday["F_numeric"].iloc[i:i + lookahead]
-                            mfe = (future_window.max() - entry_price) / atr
-                            mae = (entry_price - future_window.min()) / atr
-                
-                            mfe_list.append(mfe)
-                            mae_list.append(mae)
-                
-                            # Update current bar with live E-ratio (mean so far)
-                            if len(mae_list) > 0 and sum(mae_list) > 0:
-                                e_ratio = sum(mfe_list) / sum(mae_list)
-                                intraday.loc[intraday.index[i], "E_Ratio"] = round(e_ratio, 2)
-                
-                    return intraday
-
-                intraday = calculate_e_ratio_intraday(intraday)
 
 
                 # Find the last astronaut (new high) row
@@ -4961,7 +4922,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","E_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
