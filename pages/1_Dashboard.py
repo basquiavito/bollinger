@@ -9269,18 +9269,16 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
 
-                # 📈 Sharpe Ratio Line (same row/col)
                 fig.add_trace(go.Scatter(
-                    x=intraday.index,
-                    y=intraday["Sharpe_Ratio"],
-                    mode="lines",
-                    name="Sharpe Ratio",
-                    line=dict(color="purple", width=2, dash="dot"),
-                    hovertemplate="Time: %{x}<br>Sharpe: %{y:.2f}<extra></extra>"
-                ), row=1, col=1)
-                                
-                                
-
+                x=intraday.index,
+                y=intraday["Sharpe_Ratio"],
+                mode="lines",
+                name="Sharpe Ratio",
+                line=dict(color="purple", width=2, dash="dot"),
+                hovertemplate="Time: %{x}<br>Sharpe: %{y:.2f}<extra></extra>",
+                yaxis="y2"  # Key: use secondary axis
+              ),row=1, col=1)
+  
 
 
 
@@ -9454,7 +9452,12 @@ if st.sidebar.button("Run Analysis"):
                     title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
                     height=800,  # Increase overall figure height (default ~450-600)
-                    showlegend=False
+                    showlegend=False,
+                    yaxis2=dict(
+                    title="Sharpe Ratio",
+                    overlaying='y',
+                    side='right',
+                    showgrid=False
 
                      
                 )
