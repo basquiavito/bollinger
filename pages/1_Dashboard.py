@@ -4117,13 +4117,7 @@ if st.sidebar.button("Run Analysis"):
                     return intraday
 
                 intraday = detect_new_highs_above_yesterday_high(intraday)
-              # STEP 1: Create Entry_Emoji manually from your true entry signal column
-                # Replace 'Your_Entry_Signal_Column' with whatever you actually use
-                intraday["Entry_Emoji"] = ""
-                intraday.loc[intraday["Your_Entry_Signal_Column"] == "🎯1", "Entry_Emoji"] = "🎯1"
-                intraday.loc[intraday["Your_Entry_Signal_Column"] == "🎯2", "Entry_Emoji"] = "🎯2"
-
-
+     
 
                 # Find the last astronaut (new high) row
                 last_astronaut_idx = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"].index.max()
