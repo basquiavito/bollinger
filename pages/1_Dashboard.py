@@ -9442,11 +9442,7 @@ if st.sidebar.button("Run Analysis"):
                     margin=dict(l=30, r=30, t=50, b=30),
                     height=800,  # Increase overall figure height (default ~450-600)
                     showlegend=False,
-                    yaxis2=dict(
-                    title="Sharpe Ratio",
-                    overlaying='y',
-                    side='right',
-                    showgrid=False
+                
 
                      
                 )
