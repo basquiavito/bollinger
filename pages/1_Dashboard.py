@@ -667,7 +667,41 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = add_vector_velocity(intraday)
 
-
+                
+                def turtle_atr_risk(data, entry_price, account_size, risk_percent=0.02, atr_length=20):
+                    """
+                    Calculate ATR (N) and Turtle 2N stop + position size.
+                    data: DataFrame with columns ['High','Low','Close']
+                    entry_price: price at trade entry
+                    account_size: total trading account value
+                    risk_percent: fraction of account risked per trade (default 2%)
+                    atr_length: ATR lookback length (default 20)
+                    """
+                
+                    # True Range for each bar
+                    data['H-L'] = data['High'] - data['Low']
+                    data['H-PC'] = (data['High'] - data['Close'].shift(1)).abs()
+                    data['L-PC'] = (data['Low'] - data['Close'].shift(1)).abs()
+                    data['TR'] = data[['H-L', 'H-PC', 'L-PC']].max(axis=1)
+                
+                    # Average True Range (N)
+                    N = data['TR'].rolling(window=atr_length).mean().iloc[-1]
+                
+                    # 2N stop levels
+                    long_stop = entry_price - (2 * N)
+                    short_stop = entry_price + (2 * N)
+                
+                    # Position sizing: risk = 2 × N × contracts
+                    dollar_risk_per_contract = 2 * N
+                    contracts = (account_size * risk_percent) / dollar_risk_per_contract
+                
+                    return {
+                        'ATR_N': N,
+                        'Long_Stop': long_stop,
+                        'Short_Stop': short_stop,
+                        'Contracts': contracts
+                    }
+                intraday = turtle_atr_risk(intraday)
 
                 def add_unit_acceleration(intraday_df):
                     if intraday_df.empty or "Unit Velocity" not in intraday_df.columns:
@@ -4912,12 +4946,12 @@ if st.sidebar.button("Run Analysis"):
 
 
                     
-                # with st.expander("Show/Hide Data Table",  expanded=False):
-                #                 # Show data table, including new columns
-                #     cols_to_show = [
-                #                     "RVOL_5","Range","Time","Volume","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                with st.expander("Show/Hide Data Table",  expanded=False):
+                                # Show data table, including new columns
+                    cols_to_show = [
+                                    "RVOL_5","Range","Time","Volume","Long_Stop","Short_Stop","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
-                #     st.dataframe(intraday[cols_to_show])
+                    st.dataframe(intraday[cols_to_show])
 
                 ticker_tabs = st.tabs(["Mike Plot"])
 
