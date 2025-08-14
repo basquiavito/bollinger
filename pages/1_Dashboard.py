@@ -4117,64 +4117,57 @@ if st.sidebar.button("Run Analysis"):
                     return intraday
 
                 intraday = detect_new_highs_above_yesterday_high(intraday)
+                def calculate_live_e_ratio(intraday, atr_col="ATR_14"):
+                    """
+                    Calculates E-Ratio for 🎯1 and 🎯2 entries bar by bar.
+                    Tracks MFE and MAE normalized by ATR at entry.
+                    Adds E_Ratio_Alert column with 🌕, ☁️, 🐌 based on strength.
+                    """
+                    intraday["E_Ratio_Alert"] = ""
+                    
+                    # Find all Entry 1 and Entry 2 signals
+                    entry_indices = intraday[intraday["Entry_Emoji"].isin(["🎯", "🎯2"])].index.tolist()
+                
+                    for entry_index in entry_indices:
+                        f_entry = intraday.loc[entry_index, "F_numeric"]
+                        atr_entry = intraday.loc[entry_index, atr_col]
+                
+                        # Initialize max/min tracking
+                        max_f = f_entry
+                        min_f = f_entry
+                
+                        # Loop from entry bar forward
+                        for i in range(entry_index + 1, len(intraday)):
+                            curr_f = intraday.loc[i, "F_numeric"]
+                            max_f = max(max_f, curr_f)
+                            min_f = min(min_f, curr_f)
+                
+                            mfe = max_f - f_entry
+                            mae = f_entry - min_f
+                
+                            # Normalize both by ATR
+                            norm_mfe = mfe / atr_entry if atr_entry != 0 else 0
+                            norm_mae = mae / atr_entry if atr_entry != 0 else 0
+                
+                            # Avoid division by zero
+                            if norm_mae == 0:
+                                e_ratio = float('inf') if norm_mfe > 0 else 0
+                            else:
+                                e_ratio = norm_mfe / norm_mae
+                
+                            # Decide emoji
+                            if e_ratio >= 2:
+                                emoji = "🌕"
+                            elif e_ratio >= 1.2:
+                                emoji = "☁️"
+                            else:
+                                emoji = "🐌"
+                
+                            intraday.loc[i, "E_Ratio_Alert"] += emoji
+                
+                    return intraday
+                intraday = calculate_live_e_ratio(intraday)
 
-                def compute_e_ratio_from_intraday(intraday, entry_col='Delta_Entry', lookahead=10, atr_period=14):
-                    """
-                    Computes E-Ratio for entries in 'intraday' DataFrame using normalized MFE/MAE over N bars.
-                
-                    Parameters:
-                    - intraday: DataFrame with OHLC and entry signals
-                    - entry_col: Column marking valid entries (non-NaN entries)
-                    - lookahead: Bars forward to measure MFE and MAE (e.g. 10 for E10)
-                    - atr_period: Lookback period for ATR calculation (default 14)
-                
-                    Returns:
-                    - e_ratio: float
-                    - excursions_df: DataFrame with normalized MFE/MAE per entry
-                    """
-                
-                    # --- ATR Calculation ---
-                    high_low = intraday['High'] - intraday['Low']
-                    high_close = (intraday['High'] - intraday['Close'].shift()).abs()
-                    low_close = (intraday['Low'] - intraday['Close'].shift()).abs()
-                    tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
-                    intraday['ATR'] = tr.rolling(window=atr_period).mean()
-                
-                    # --- Entry Detection ---
-                    entries = intraday[intraday[entry_col].notna()]
-                    mfe_list, mae_list, idx_list = [], [], []
-                
-                    for idx in entries.index:
-                        entry_price = intraday.loc[idx, 'Close']
-                        atr = intraday.loc[idx, 'ATR']
-                        
-                        if pd.isna(atr) or idx + lookahead >= len(intraday):
-                            continue
-                
-                        future = intraday.loc[idx + 1 : idx + lookahead]
-                        max_up = future['High'].max()
-                        max_down = future['Low'].min()
-                
-                        mfe = (max_up - entry_price) / atr
-                        mae = (entry_price - max_down) / atr
-                
-                        mfe_list.append(mfe)
-                        mae_list.append(mae)
-                        idx_list.append(idx)
-                
-                    excursions_df = pd.DataFrame({
-                        'Index': idx_list,
-                        'MFE/ATR': mfe_list,
-                        'MAE/ATR': mae_list
-                    })
-                
-                    avg_mfe = excursions_df['MFE/ATR'].mean()
-                    avg_mae = excursions_df['MAE/ATR'].mean()
-                
-                    e_ratio = round(avg_mfe / avg_mae, 2) if avg_mae != 0 else float('inf')
-                
-                    return e_ratio, excursions_df
-                e_ratio, excursion_stats = compute_e_ratio_from_intraday(intraday, entry_col="Delta_12_Entry", lookahead=10)
 
                 # Find the last astronaut (new high) row
                 last_astronaut_idx = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"].index.max()
