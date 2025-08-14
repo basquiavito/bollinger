@@ -9269,18 +9269,7 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
 
-                fig.add_trace(go.Scatter(
-                x=intraday.index,
-                y=intraday["Sharpe_Ratio"],
-                mode="lines",
-                name="Sharpe Ratio",
-                line=dict(color="purple", width=2, dash="dot"),
-                hovertemplate="Time: %{x}<br>Sharpe: %{y:.2f}<extra></extra>",
-                yaxis="y2"  # Key: use secondary axis
-              ),row=1, col=1)
-  
-
-
+             
 
                 # fig.add_trace(go.Scatter(
                 #     x=compliance_aid_times,
