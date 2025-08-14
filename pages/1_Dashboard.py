@@ -4844,7 +4844,31 @@ if st.sidebar.button("Run Analysis"):
                     return df
                 intraday = add_mike_kijun_atr_emoji(intraday)
                 
-              
+                def add_sharpe_column(intraday, window=26):
+                    """
+                    Adds a rolling Sharpe Ratio column based on F_numeric over a given window.
+                    Designed for intraday (e.g. 5-min) data.
+                
+                    - Uses F_numeric (% change) converted to decimal.
+                    - Applies rolling mean/std with min_periods=1 to avoid NaNs early on.
+                    - Adds 'Sharpe_Ratio' column rounded to 2 decimals.
+                    """
+                    # Convert % change to decimal form (e.g., 34 becomes 0.34)
+                    returns = intraday["F_numeric"] / 100
+                
+                    # Rolling mean and std with early minimum support
+                    rolling_mean = returns.rolling(window=window, min_periods=1).mean()
+                    rolling_std = returns.rolling(window=window, min_periods=1).std()
+                
+                    # Avoid division by zero (early std can be 0)
+                    sharpe = rolling_mean / (rolling_std + 1e-9)
+                
+                    # Add result to DataFrame
+                    intraday["Sharpe_Ratio"] = sharpe.round(2)
+                
+                    return intraday
+                intraday = add_sharpe_column(intraday)
+
                              # --- CROSS CONDITIONS ---
                 tenkan_above_kijun = (
                     (intraday["Tenkan"].shift(1) < intraday["Kijun"].shift(1)) &
