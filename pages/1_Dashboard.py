@@ -4475,8 +4475,22 @@ if st.sidebar.button("Run Analysis"):
                 intraday = mark_mike_check(intraday)
 
 
+                def add_sharpe_column(intraday, window=10):
+                    """
+                    Adds a rolling Sharpe Ratio column based on F_numeric over a given window.
+                    """
+                    returns = intraday["F_numeric"] / 100  # Convert from percent to decimal
+                    rolling_mean = returns.rolling(window=window).mean()
+                    rolling_std = returns.rolling(window=window).std()
+                
+                    # Avoid division by zero
+                    sharpe = rolling_mean / (rolling_std + 1e-9)
+                
+                    intraday["Sharpe_Ratio"] = sharpe.round(2)
+                    return intraday
 
-              
+                intraday = add_sharpe_column(intraday, window=10)
+
 
                 def detect_fortress_bee_clusters(df):
                     """
@@ -4916,7 +4930,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
