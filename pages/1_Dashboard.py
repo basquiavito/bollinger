@@ -9457,7 +9457,79 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-
+  
+       # if yva_min is not None and yva_max is not None:
+                    # Show in text
+                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
+                if prev_close:
+                    range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+                    st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+                       
+                      Show YVA and Yesterday Range
+                if yva_min is not None and yva_max is not None:
+                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
+                if prev_close:
+                    range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+                    st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+                
+                # 🧭 Opening Position vs YVA
+                if yva_min is not None and yva_max is not None:
+                    opening_price = intraday["Close"].iloc[0]
+                
+                    if yva_min < opening_price < yva_max:
+                        yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
+                    elif opening_price >= yva_max:
+                        yva_position_msg = "⬆️ Opened **above** Yesterday's Value Area"
+                    elif opening_price <= yva_min:
+                        yva_position_msg = "⬇️ Opened **below** Yesterday's Value Area"
+                    else:
+                        yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
+                
+                    st.markdown(f"### {yva_position_msg}")
+  
+  
+                      # ✅ Detect Initiative Breakout from Yesterday’s Value Area
+                    if yva_min is not None and yva_max is not None and not intraday.empty:
+                        opening_price = intraday["Close"].iloc[0]
+                        opened_inside_yva = yva_min < opening_price < yva_max
+                    
+                        # First 30 min = first 6 bars on 5-min timeframe
+                        first_6 = intraday.iloc[:6]
+                        broke_above_yva = first_6["Close"].max() > yva_max
+                        broke_below_yva = first_6["Close"].min() < yva_min
+                    
+                        if opened_inside_yva:
+                            if broke_above_yva:
+                                st.markdown("🚀 **Breakout Alert: Opened *inside* YVA → Broke *above* within 30 min**")
+                            elif broke_below_yva:
+                                st.markdown("🔻 **Breakout Alert: Opened *inside* YVA → Broke *below* within 30 min**")
+                            else:
+                                st.markdown("🟨 Opened inside YVA – No early breakout")
+                    
+                        else:
+                            st.markdown("🟦 Market did *not* open inside YVA")
+  
+                        ✅ Acceptance Outside of Previous Day's Range
+                        When price opens above yesterday's high OR below yesterday's low
+                        AND remains there throughout the first 30 minutes
+                    
+                    opened_above_yh = opening_price > prev_high
+                    opened_below_yl = opening_price < prev_low
+                    
+                    first_6 = intraday.iloc[:6]
+                    stayed_above_yh = (first_6["Close"] > prev_high).all()
+                    stayed_below_yl = (first_6["Close"] < prev_low).all()
+                    
+                    if opened_above_yh and stayed_above_yh:
+                        st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
+                    
+                    elif opened_below_yl and stayed_below_yl:
+                        st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
+                    
+                    elif opened_above_yh or opened_below_yl:
+                        st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
+                        
+                        
 
   
            
