@@ -4872,7 +4872,7 @@ if st.sidebar.button("Run Analysis"):
                 def calculate_n_wilder(intraday, window=20):
                     intraday['H-L'] = intraday['High'] - intraday['Low']
                     intraday['H-PDC'] = abs(intraday['High'] - intraday['Prev_Close'])
-                    intraday['PDC-L'] = abs(intraday['Prev_Close'] - intraday['Low'])
+                    intraday['PDC-L'] = abs(intraday['prev_close'] - intraday['Low'])
                 
                     intraday['TR'] = intraday[['H-L', 'H-PDC', 'PDC-L']].max(axis=1)
                 
