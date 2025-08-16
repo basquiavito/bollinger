@@ -4868,6 +4868,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     return intraday
                 intraday = add_sharpe_column(intraday)
+                intraday["prev_close"] = prev_close
 
                 def calculate_n_wilder(intraday, window=20):
                     intraday['H-L'] = intraday['High'] - intraday['Low']
