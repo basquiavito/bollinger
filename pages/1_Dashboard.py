@@ -4889,16 +4889,29 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_n_wilder(intraday)
                 
                 
-                def detect_n_compression(intraday, lookback=5, threshold=0.7):
+                def detect_n_tight(intraday, window=5, percentile_threshold=10):
                     """
-                    Assigns 🐝 when N compresses below a threshold relative to N[lookback bars ago]
+                    Detects N Tight Compression using dynamic threshold based on ticker's own N distribution.
+                    Fires 🐝 when at least 3 of last 5 N values are below the Xth percentile.
                     """
-                    intraday['N_Ratio_Compress'] = intraday['N'] / intraday['N'].shift(lookback)
-                    intraday['N_Compress_Alert'] = ''
+                    if "N" not in intraday.columns:
+                        return intraday
                 
-                    intraday.loc[intraday['N_Ratio_Compress'] <= threshold, 'N_Compress_Alert'] = '🐝'
-                    
+                    # Dynamic threshold: e.g., 10th percentile of all N values
+                    dynamic_threshold = np.percentile(intraday["N"].dropna(), percentile_threshold)
+                
+                    # Mark bars where N is below threshold
+                    intraday["N_Tight"] = intraday["N"] < dynamic_threshold
+                
+                    # Detect clusters: At least 3 of last 5 bars are tight
+                    intraday["N_Tight_Emoji"] = ""
+                    for i in range(window, len(intraday)):
+                        recent = intraday["N_Tight"].iloc[i-window:i]
+                        if recent.sum() >= 3:
+                            intraday.at[intraday.index[i], "N_Tight_Emoji"] = "🐝"
+                
                     return intraday
+
                 intraday = detect_n_compression(intraday)
 
 
