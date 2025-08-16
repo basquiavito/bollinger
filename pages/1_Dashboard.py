@@ -4899,7 +4899,7 @@ if st.sidebar.button("Run Analysis"):
                     intraday.loc[intraday['N_Ratio_Compress'] <= threshold, 'N_Compress_Alert'] = '🐝'
                     
                     return intraday
-                intraday = detect_n_compressionr(intraday)
+                intraday = detect_n_compression(intraday)
 
 
 
