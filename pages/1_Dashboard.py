@@ -4923,9 +4923,9 @@ if st.sidebar.button("Run Analysis"):
                 def n_alert(row):
                     if pd.isna(row["N_Ratio"]):
                         return ""
-                    if row["N_Ratio"] >= 3:
+                    if row["N_Ratio"] >= 1.2:
                         return "🔥"  # Triple Expansion
-                    elif row["N_Ratio"] >= 2:
+                    elif row["N_Ratio"] >= 1.1:
                         return "🔥"  # Double Expansion
                     return ""
                 
