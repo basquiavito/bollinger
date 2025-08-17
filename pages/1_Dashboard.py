@@ -1416,49 +1416,48 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def detect_velocity_spikes(intraday_df, bull_anchor_col="bar_since_midas_bull", bear_anchor_col="bar_since_midas_bear"):
-                      if intraday_df.empty or "Velocity" not in intraday_df.columns:
-                          return intraday_df
-                  
-                      df = intraday_df.copy()
-                  
-                      # --- Clean and convert Velocity ---
-                      df["Velocity_Num"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
-                  
-                      # --- Rolling Mean & Std ---
-                      df["Vel_Mean"] = df["Velocity_Num"].rolling(window=20, min_periods=10).mean()
-                      df["Vel_Std"] = df["Velocity_Num"].rolling(window=20, min_periods=10).std()
-                  
-                      # --- Z-Score ---
-                      df["Vel_Z"] = (df["Velocity_Num"] - df["Vel_Mean"]) / df["Vel_Std"]
-                  
-                      # --- Spike Detection ---
-                      df["Velocity_Spike"] = ""
-                      df.loc[df["Vel_Z"] >= 2, "Velocity_Spike"] = "🚀"
-                      df.loc[df["Vel_Z"] <= -2, "Velocity_Spike"] = "🪂"
-                  
-                      # --- Cumulative Velocity from Bull Anchor ---
-                      if bull_anchor_col in df.columns:
-                          df["CumVel_Bull"] = (
-                              df.groupby(df[bull_anchor_col])
-                              .apply(lambda g: g["Velocity_Num"].cumsum())
-                              .reset_index(level=0, drop=True)
-                          )
-                      else:
-                          df["CumVel_Bull"] = None
-                  
-                      # --- Cumulative Velocity from Bear Anchor ---
-                      if bear_anchor_col in df.columns:
-                          df["CumVel_Bear"] = (
-                              df.groupby(df[bear_anchor_col])
-                              .apply(lambda g: g["Velocity_Num"].cumsum())
-                              .reset_index(level=0, drop=True)
-                          )
-                      else:
-                          df["CumVel_Bear"] = None
-                  
-                      return df
-                intraday = detect_velocity_spikes(intraday)
+                def detect_velocity_spikes_optimized(intraday_df, bull_anchor_col="bar_since_midas_bull", bear_anchor_col="bar_since_midas_bear"):
+                    """
+                    Detects velocity spikes and calculates cumulative velocity in an intraday DataFrame.
+                
+                    This optimized version avoids the use of `.apply()` for better performance.
+                    """
+                    # Handles empty or invalid input DataFrame
+                    if intraday_df.empty or "Velocity" not in intraday_df.columns:
+                        return intraday_df
+                
+                    df = intraday_df.copy()
+                
+                    # --- Clean and convert Velocity (efficiently) ---
+                    df["Velocity_Num"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
+                
+                    # --- Rolling Mean & Std ---
+                    df["Vel_Mean"] = df["Velocity_Num"].rolling(window=20, min_periods=10).mean()
+                    df["Vel_Std"] = df["Velocity_Num"].rolling(window=20, min_periods=10).std()
+                
+                    # --- Z-Score & Spike Detection ---
+                    df["Vel_Z"] = (df["Velocity_Num"] - df["Vel_Mean"]) / df["Vel_Std"]
+                    
+                    # Use np.select for cleaner, vectorized spike detection
+                    conditions = [df["Vel_Z"] >= 2, df["Vel_Z"] <= -2]
+                    choices = ["🚀", "🪂"]
+                    df["Velocity_Spike"] = np.select(conditions, choices, default="")
+                
+                    # --- Cumulative Velocity from Bull & Bear Anchors (optimized) ---
+                    if bull_anchor_col in df.columns:
+                        df["CumVel_Bull"] = df.groupby(bull_anchor_col)["Velocity_Num"].cumsum()
+                    else:
+                        df["CumVel_Bull"] = None
+                
+                    if bear_anchor_col in df.columns:
+                        df["CumVel_Bear"] = df.groupby(bear_anchor_col)["Velocity_Num"].cumsum()
+                    else:
+                        df["CumVel_Bear"] = None
+                
+                    return df
+                
+                # Example usage (assuming 'intraday' DataFrame exists)
+                intraday = detect_velocity_spikes_optimized(intraday)
 
               
                 def compute_option_value(df, premium=64, contracts=100):
