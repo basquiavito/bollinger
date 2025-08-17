@@ -1384,7 +1384,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     return df
 
-                 def detect_velocity_spikes(intraday_df, bull_anchor_col="bar_since_midas_bull", bear_anchor_col="bar_since_midas_bear"):
+                  def detect_velocity_spikes(intraday_df, bull_anchor_col="bar_since_midas_bull", bear_anchor_col="bar_since_midas_bear"):
                         if intraday_df.empty or "Velocity" not in intraday_df.columns:
                             return intraday_df
                     
