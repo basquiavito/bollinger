@@ -668,67 +668,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = add_vector_velocity(intraday)
 
 
-                
-                def detect_velocity_edge(intraday_df, velocity_col_name, z_score_threshold=2.5, window=20):
-                    """
-                    Detects statistically significant "edge" events (spikes) in a given velocity column.
-                
-                    An "edge" is defined as a point where the velocity's Z-score exceeds a given
-                    threshold, indicating a sharp, statistically unusual change relative to recent
-                    market movement.
-                
-                    Args:
-                        intraday_df (pd.DataFrame): The input DataFrame containing velocity data.
-                        velocity_col_name (str): The name of the velocity column to analyze
-                                                 (e.g., "Unit Velocity" or "Velocity").
-                        z_score_threshold (float): The number of standard deviations from the mean
-                                                   required to be considered an edge. A higher value
-                                                   (e.g., 3.0) is more conservative.
-                        window (int): The number of bars to use for the rolling average and
-                                      standard deviation calculation.
-                
-                    Returns:
-                        pd.DataFrame: The DataFrame with a new column `f'{velocity_col_name}_Edge'`
-                                      indicating detected edges.
-                    """
-                    # 1. Defensive checks for robust execution
-                    if intraday_df.empty or velocity_col_name not in intraday_df.columns:
-                        # Create an empty column if inputs are invalid to prevent errors
-                        intraday_df[f'{velocity_col_name}_Edge'] = np.nan
-                        return intraday_df
-                
-                    # 2. Convert the velocity column to a clean numeric format
-                    # This is critical as your velocity columns are strings with a "%" sign.
-                    df = intraday_df.copy()
-                    numeric_col_name = f'{velocity_col_name}_Num'
-                    df[numeric_col_name] = pd.to_numeric(
-                        df[velocity_col_name].astype(str).str.replace("%", "").str.replace("+", ""),
-                        errors='coerce'
-                    )
-                    # The .diff() function in pandas is a core way to find an edge. It finds the difference between two data points. 
-                
-                    # 3. Calculate rolling mean and standard deviation for the Z-score
-                    # These metrics provide a dynamic baseline for what's "normal" at any given time.
-                    df[f'Rolling_{window}d_Mean'] = df[numeric_col_name].rolling(window=window, min_periods=10).mean()
-                    df[f'Rolling_{window}d_Std'] = df[numeric_col_name].rolling(window=window, min_periods=10).std()
-                
-                    # 4. Compute the Z-score
-                    # A Z-score quantifies how far a data point is from its average, in standard deviations.
-                    z_score_col_name = f'Z_Score_{velocity_col_name}'
-                    df[z_score_col_name] = (df[numeric_col_name] - df[f'Rolling_{window}d_Mean']) / df[f'Rolling_{window}d_Std']
-                
-                    # 5. Detect edges using the Z-score threshold
-                    # The absolute value handles both positive (upward) and negative (downward) spikes.
-                    edge_col_name = f'{velocity_col_name}_Edge'
-                    df[edge_col_name] = np.where(
-                        df[z_score_col_name].abs() >= z_score_threshold,
-                        '💥',  # Use an emoji to visually tag the edge
-                        ''
-                    )
-                
-                    return df
 
-                intraday = detect_velocity_edge(intraday, "Name of the Velocity Column")
 
                 def add_unit_acceleration(intraday_df):
                     if intraday_df.empty or "Unit Velocity" not in intraday_df.columns:
@@ -5081,7 +5021,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume",'velocity_col_name','N',"Sharpe_Ratio","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume",'N',"Sharpe_Ratio","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
