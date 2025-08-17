@@ -546,15 +546,15 @@ if st.sidebar.button("Run Analysis"):
                 # 7) Calculate F%
                 # ================
                 def calculate_f_percentage_optimized(intraday, prev_close):
-                    if prev_close_val is None or intraday_df.empty:
-                        intraday_df["F%"] = "N/A"
-                        return intraday_df
+                    if prev_close is None or intraday.empty:
+                        intraday["F%"] = "N/A"
+                        return intraday
                     
                     # Vectorized calculation
-                    f_series = ((intraday_df["Close"] - prev_close_val) / prev_close_val) * 10000
-                    intraday_df["F%"] = f_series.round(0).astype(int).astype(str) + "%"
+                    f_series = ((intraday["Close"] - prev_close) / prev_close) * 10000
+                    intraday["F%"] = f_series.round(0).astype(int).astype(str) + "%"
                     
-                    return intraday_df
+                    return intraday
                 intraday = calculate_f_percentage(intraday, prev_close)
  
               
