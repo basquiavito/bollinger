@@ -6187,9 +6187,69 @@ if st.sidebar.button("Run Analysis"):
                 #                         .reset_index(drop=True))
                          
 
-       
+                   
+                def track_cumulative_velocity_midas(df):
+                    """
+                    Tracks cumulative vector velocity for both Midas Bull and Midas Bear anchors.
+                    - Midas Bull: resets on new low, accumulates positive velocity
+                    - Midas Bear: resets on new high, accumulates negative velocity
+                    - Requires 'Low', 'High', and 'Velocity' (%-string) columns
+                    """
+                
+                    df = df.copy()
+                    df["Bull_Anchor"] = ""
+                    df["Bear_Anchor"] = ""
+                    df["CumVel_Bull"] = ""
+                    df["CumVel_Bear"] = ""
+                
+                    bull_low = None
+                    bear_high = None
+                    bull_anchor_idx = None
+                    bear_anchor_idx = None
+                    bull_cum = 0
+                    bear_cum = 0
+                
+                    for i in range(len(df)):
+                        row = df.iloc[i]
+                        low = row["Low"]
+                        high = row["High"]
+                        raw_vel = row.get("Velocity", "")
+                
+                        try:
+                            vel = int(raw_vel.strip().replace("%", "")) if isinstance(raw_vel, str) and "%" in raw_vel else 0
+                        except:
+                            vel = 0
+                
+                        # --- Midas Bull (lower low → reset & 🎯) ---
+                        if bull_low is None or low < bull_low:
+                            bull_low = low
+                            bull_cum = 0
+                            bull_anchor_idx = i
+                            df.at[i, "Bull_Anchor"] = "🎯"
+                
+                        # Accumulate positive velocity post Bull anchor
+                        if bull_anchor_idx is not None and i > bull_anchor_idx and vel > 0:
+                            bull_cum += vel
+                        if bull_anchor_idx is not None and i >= bull_anchor_idx:
+                            df.at[i, "CumVel_Bull"] = f"{bull_cum}%"
+                
+                        # --- Midas Bear (higher high → reset & 🎯) ---
+                        if bear_high is None or high > bear_high:
+                            bear_high = high
+                            bear_cum = 0
+                            bear_anchor_idx = i
+                            df.at[i, "Bear_Anchor"] = "🎯"
+                
+                        # Accumulate negative velocity post Bear anchor
+                        if bear_anchor_idx is not None and i > bear_anchor_idx and vel < 0:
+                            bear_cum += vel
+                        if bear_anchor_idx is not None and i >= bear_anchor_idx:
+                            df.at[i, "CumVel_Bear"] = f"{bear_cum}%"
+                
+                    return df
 
 
+                    intraday = track_cumulative_velocity_midas(intraday)
 
 
 
