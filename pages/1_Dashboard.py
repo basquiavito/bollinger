@@ -6216,19 +6216,57 @@ if st.sidebar.button("Run Analysis"):
                 
                             # Optional for hover
                             intraday.loc[peak_idx, "Energy_Aid_Value"] = energy_val
+ 
+                            def calculate_cumulative_velocity_from_anchor(df, velocity_col, anchor_col):
+                                """
+                                Calculates cumulative velocity that resets at each new anchor.
+                                A new anchor is defined as the first non-NaN value after a NaN.
+                                """
+                                if anchor_col not in df.columns or df[anchor_col].isnull().all():
+                                    # If the anchor column doesn't exist or is all NaNs, return NaNs
+                                    return pd.Series([np.nan] * len(df), index=df.index)
+                            
+                                # Identify the start of each new anchor period
+                                # This is done by finding where the anchor column is not NaN,
+                                # and the previous row was NaN.
+                                is_new_anchor = df[anchor_col].notna() & df[anchor_col].shift(1).isna()
+                            
+                                # Create a group ID for each segment.
+                                # cumsum() on the boolean Series creates a new ID each time there's a new anchor.
+                                group_id = is_new_anchor.cumsum()
+                            
+                                # Calculate the cumulative sum within each group.
+                                # The `groupby` operation will handle the reset automatically.
+                                cum_velocity = df.groupby(group_id)[velocity_col].cumsum()
+                            
+                                return cum_velocity
+                            
+                            # --- Integration into your main script ---
+                            # This part of the code goes after your existing MIDAS calculations.
+                            # You need to have 'intraday["Velocity"]' and 'intraday["Velocity_Num"]' already calculated.
+                            
+                            # Ensure the 'Velocity_Num' column exists from your previous code
+                            if "Velocity_Num" not in intraday.columns:
+                                intraday["Velocity_Num"] = pd.to_numeric(intraday["Velocity"].str.replace("%", ""), errors="coerce")
+                            
+                            # Calculate the cumulative velocity for both bull and bear sides
+                            intraday["CumVel_Bull"] = calculate_cumulative_velocity_from_anchor(
+                                intraday, "Velocity_Num", "MIDAS_Bull"
+                            )
+                            intraday["CumVel_Bear"] = calculate_cumulative_velocity_from_anchor(
+                                intraday, "Velocity_Num", "MIDAS_Bear"
+                            )
 
-                 
-
-                # with st.expander("🪞 MIDAS Anchor Table", expanded=False):
-                #                     st.dataframe(
-                #                         intraday[[
-                #                             'Time', price_col, 'Volume',
-                #                             'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
-                #                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
-                #                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
-                #                         ]]
-                #                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
-                #                         .reset_index(drop=True))
+                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
+                                    st.dataframe(
+                                        intraday[[
+                                            'Time', price_col, 'Volume',
+                                            'MIDAS_Bear', 'MIDAS_Bull',"Velocity_Num","Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
+                                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
+                                        ]]
+                                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+                                        .reset_index(drop=True))
                          
 
                    
