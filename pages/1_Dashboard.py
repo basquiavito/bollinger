@@ -7278,6 +7278,45 @@ if st.sidebar.button("Run Analysis"):
                 
                
                 st.plotly_chart(fig_displacement, use_container_width=True)
+
+
+
+               # # Apply rolling mean
+                intraday["Velocity_SMA"] = intraday["Unit_Velocity_Numeric"].rolling(window=5, min_periods=1).mean()
+                                
+                with st.expander("⚡ Velocity Line Plot", expanded=False):
+                    fig_velocity = go.Figure()
+                
+                    fig_velocity.add_trace(go.Scatter(
+                        x=intraday["TimeIndex"],
+                        y=intraday["Velocity_SMA"],
+                        mode="lines",
+                        name="Smoothed Velocity",
+                        line=dict(color="orange", width=2)
+                    ))
+                
+                    fig_velocity.add_hline(y=20, line=dict(color="green", dash="dash"))
+                    fig_velocity.add_hline(y=-20, line=dict(color="red", dash="dash"))
+                
+                    fig_velocity.update_layout(
+                        height=300,
+                        title="⚡ Velocity Flow",
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        xaxis_title="Time",
+                        yaxis_title="Velocity (%)",
+                    )
+                
+                    st.plotly_chart(fig_velocity, use_container_width=True)
+
+
+
+
+
+
+
+
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
