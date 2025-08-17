@@ -7308,7 +7308,7 @@ if st.sidebar.button("Run Analysis"):
                         yaxis_title="Velocity (%)",
                     )
                 
-                    st.plotly_chart(fig_velocity, use_container_width=True)
+                st.plotly_chart(fig_velocity, use_container_width=True)
 
 
 
