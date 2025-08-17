@@ -1426,16 +1426,13 @@ if st.sidebar.button("Run Analysis"):
                             df["CumVel_Bear"] = None
                     
                         return df
-                 intraday = detect_velocity_spikes(intraday)
+                intraday = detect_velocity_spikes(intraday)
 
 
 
 
               
-# Example usage:
-# intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
 
-                # Apply to intraday
                 intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
 
                 def add_gravity_break_signal(df, threshold=9.8, source_col="Volatility_Composite"):
