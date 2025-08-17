@@ -7280,9 +7280,14 @@ if st.sidebar.button("Run Analysis"):
                 st.plotly_chart(fig_displacement, use_container_width=True)
 
 
-
-               # # Apply rolling mean
-                intraday["Velocity_SMA"] = intraday["Unit Velocity"].rolling(window=5, min_periods=1).mean()
+                
+                # 1️⃣  Strip the % sign and convert to float
+                intraday["UnitVel_Num"] = pd.to_numeric(
+                    intraday["Unit Velocity"].str.replace("%", ""), errors="coerce"
+                )
+                
+                # 2️⃣  Now take the rolling mean on the numeric series
+                intraday["Velocity_SMA"] = intraday["UnitVel_Num"].rolling(window=5, min_periods=1).mean()
                                 
                 with st.expander("⚡ Velocity Line Plot", expanded=False):
                     fig_velocity = go.Figure()
