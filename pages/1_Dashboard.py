@@ -7291,70 +7291,37 @@ if st.sidebar.button("Run Analysis"):
 
                               # --- Adaptive velocity stats ---
                 intraday["UnitVel_Num"] = pd.to_numeric(
-                    intraday["Unit Velocity"].str.replace("%", ""), errors="coerce"
-                )
-                
-                intraday["Vel_Mean20"] = intraday["UnitVel_Num"].rolling(20, min_periods=10).mean()
-                intraday["Vel_Std20"]  = intraday["UnitVel_Num"].rolling(20, min_periods=10).std()
-                intraday["Vel_Z"]      = (intraday["UnitVel_Num"] - intraday["Vel_Mean20"]) / intraday["Vel_Std20"]
-                
-                # --- Cum-velocity tanks tied to your anchor counters ---
-                intraday["CumVel_Bull"] = intraday.groupby("bar_since_midas_bull")["UnitVel_Num"].cumsum()
-                intraday["CumVel_Bear"] = intraday.groupby("bar_since_midas_bear")["UnitVel_Num"].cumsum()
+             
 
+               intraday["Velocity_SMA"] = intraday["Unit Velocity"].rolling(window=5, min_periods=1).mean()
                                 
-                with st.expander("⚡ Adaptive Velocity & Thrust", expanded=False):
-                    fig_vel = go.Figure()
+                with st.expander("⚡ Velocity Line Plot", expanded=False):
+                    fig_velocity = go.Figure()
                 
-                    # Bull thrust shading
-                    fig_vel.add_trace(go.Scatter(
+                    fig_velocity.add_trace(go.Scatter(
                         x=intraday["TimeIndex"],
-                        y=intraday["CumVel_Bull"],
+                        y=intraday["Velocity_SMA"],
                         mode="lines",
-                        line=dict(color="rgba(0,200,0,0.25)", width=0),
-                        fill="tozeroy",
-                        name="CumVel Bull"
+                        name="Smoothed Velocity",
+                        line=dict(color="orange", width=2)
                     ))
                 
-                    # Bear thrust shading
-                    fig_vel.add_trace(go.Scatter(
-                        x=intraday["TimeIndex"],
-                        y=intraday["CumVel_Bear"],
-                        mode="lines",
-                        line=dict(color="rgba(200,0,0,0.25)", width=0),
-                        fill="tozeroy",
-                        name="CumVel Bear"
-                    ))
+                    fig_velocity.add_hline(y=20, line=dict(color="green", dash="dash"))
+                    fig_velocity.add_hline(y=-20, line=dict(color="red", dash="dash"))
                 
-                    # Velocity Z-score line
-                    fig_vel.add_trace(go.Scatter(
-                        x=intraday["TimeIndex"],
-                        y=intraday["Vel_Z"],
-                        mode="lines",
-                        line=dict(color="orange", width=2),
-                        name="Velocity Z"
-                    ))
-                
-                    # Reference bands ±2σ
-                    fig_vel.add_hline(y= 2, line=dict(color="green", dash="dash"))
-                    fig_vel.add_hline(y=-2, line=dict(color="red",   dash="dash"))
-                
-                    fig_vel.update_layout(
-                        height=320,
+                    fig_velocity.update_layout(
+                        height=300,
+                        title="⚡ Velocity Flow",
                         plot_bgcolor="black",
                         paper_bgcolor="black",
                         font=dict(color="white"),
                         xaxis_title="Time",
-                        yaxis_title="Z-Score / CumVelocity"
+                        yaxis_title="Velocity (%)",
                     )
                 
-                st.plotly_chart(fig_vel, use_container_width=True)
-
-
-
-
-
-
+                st.plotly_chart(fig_velocity, use_container_width=True)
+                
+                
 
 
 
