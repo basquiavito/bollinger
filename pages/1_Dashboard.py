@@ -5765,7 +5765,257 @@ if st.sidebar.button("Run Analysis"):
                         if intraday.iloc[i]["Heaven_Cloud"] == "☁️":
                             intraday.at[intraday.index[i], "Call_FirstEntry_Emoji"] = "🎯"
                             break
-                            
+
+
+
+
+
+
+ 
+
+                def compute_post_anchor_velocity_edge(
+                    df: pd.DataFrame,
+                    terrain: str | None = None,                  # "Bull", "Bear", or None to auto-detect the earliest anchor
+                    unit_velocity_col: str = "Unit Velocity",    # e.g. "+12%", "-7%", ""
+                    rvol_col: str = "RVOL_5",                    # if missing, assumes 1.0
+                    open_col: str = "Open",
+                    high_col: str = "High",
+                    low_col: str = "Low",
+                    close_col: str = "Close",
+                    datetime_col: str | None = None,             # if None, uses index (if datetime-like)
+                    anchor_bull_col: str = "MIDAS_Bull",
+                    anchor_bear_col: str = "MIDAS_Bear",
+                    bars_forward_ignition: int = 3,              # ignition window (first N bars after anchor)
+                    atr_window: int = 14,                        # for boundary ratio; computed from TR
+                    boundary_cols: tuple[str, ...] = ("IB_High","IB_Low","VAH","VAL","Kijun"),  # optional; use any that exist
+                    boundary_atr_thresh: float = 0.35,           # min( distance_to_boundary / ATR ) threshold for GO
+                    open_drive_weight: float = 1.25,             # TOD weights (approx)
+                    midday_weight: float = 0.85,
+                    power_hour_weight: float = 1.10,
+                ):
+                    """
+                    Adds the following columns (post-anchor rows only):
+                      - T_Base: abs(UnitVel) * RVOL * Body/TR * TOD_weight
+                      - T: signed throttle (positive if aligned with terrain, negative if against)
+                      - T_State: "GO" (T>0 & T_Base>=P90 & boundary ok), "WAIT" (T>0 but <P90 or boundary tight), "NO-GO" (T<=0 or boundary tight)
+                      - T_P90: session percentile-90 of T_Base on aligned bars (for reference)
+                      - T_Ignition_T1/T2/T3: T_Base for the first N bars after anchor (NaN if not available)
+                      - T_Ignition_MaxBar: which of 1..N had the max T_Base
+                      - T_Ignition_Flip: True if any of the first N bars had T <= 0 (counter-thrust)
+                      - T_RunLength: consecutive bars from anchor with T>0 until first NO-GO
+                      - T_HalfLife: bars from peak T_Base to first time T_Base <= 0.5*peak (post-peak)
+                    Notes:
+                      - Works with string Unit Velocity like "+12%" / "-7%" / "" (blanks become NaN).
+                      - If RVOL_5 is missing, defaults to 1.0.
+                      - Boundary rule only applies if at least one boundary column exists; otherwise treated as ok.
+                      - If both Bull and Bear anchors exist, 'terrain=None' will auto-pick the earliest anchor in time.
+                    """
+                
+                    out = df.copy()
+                
+                    # ---- 0) Parse Unit Velocity to numeric ----------------------------------
+                    if unit_velocity_col not in out.columns:
+                        raise ValueError(f"Missing column '{unit_velocity_col}'")
+                
+                    unitv = (
+                        out[unit_velocity_col]
+                        .astype(str)
+                        .str.replace("%", "", regex=False)
+                        .str.replace("+", "", regex=False)  # keep '-' sign
+                        .replace({"": np.nan})
+                        .astype(float)
+                    )
+                
+                    # ---- 1) Find anchor & terrain -------------------------------------------
+                    bull_anchor = out[anchor_bull_col].first_valid_index() if anchor_bull_col in out.columns else None
+                    bear_anchor = out[anchor_bear_col].first_valid_index() if anchor_bear_col in out.columns else None
+                
+                    def _pick_anchor():
+                        if terrain == "Bull" and bull_anchor is not None:
+                            return bull_anchor, "Bull"
+                        if terrain == "Bear" and bear_anchor is not None:
+                            return bear_anchor, "Bear"
+                        # auto: earliest non-null anchor wins
+                        candidates = []
+                        if bull_anchor is not None:
+                            candidates.append((out.index.get_loc(bull_anchor), bull_anchor, "Bull"))
+                        if bear_anchor is not None:
+                            candidates.append((out.index.get_loc(bear_anchor), bear_anchor, "Bear"))
+                        if not candidates:
+                            return None, None
+                        candidates.sort(key=lambda x: x[0])
+                        return candidates[0][1], candidates[0][2]
+                
+                    anchor_idx, terrain_eff = _pick_anchor()
+                    # Prepare outputs
+                    cols_new = ["T_Base","T","T_State","T_P90",
+                                "T_Ignition_T1","T_Ignition_T2","T_Ignition_T3",
+                                "T_Ignition_MaxBar","T_Ignition_Flip","T_RunLength","T_HalfLife"]
+                    for c in cols_new:
+                        out[c] = np.nan
+                
+                    if anchor_idx is None:
+                        # No anchor → nothing to compute
+                        return out
+                
+                    anchor_pos = out.index.get_loc(anchor_idx)
+                    expected_sign = 1.0 if terrain_eff == "Bull" else -1.0
+                
+                    # ---- 2) Body/TR & ATR (for normalization and boundary logic) ------------
+                    prev_close = out[close_col].shift(1)
+                    tr_components = pd.concat([
+                        (out[high_col] - out[low_col]).rename("hl"),
+                        (out[high_col] - prev_close).abs().rename("hc"),
+                        (out[low_col] - prev_close).abs().rename("lc")
+                    ], axis=1)
+                    TR = tr_components.max(axis=1)
+                    ATR = TR.rolling(atr_window, min_periods=3).mean()
+                
+                    body = (out[close_col] - out[open_col]).abs()
+                    body_over_tr = np.where(TR > 0, np.clip(body / TR, 0.0, 1.0), 0.0)
+                
+                    # ---- 3) RVOL (fallback 1.0 if missing) ----------------------------------
+                    rvol = out[rvol_col] if rvol_col in out.columns else pd.Series(1.0, index=out.index)
+                
+                    # ---- 4) Time-of-day weight ----------------------------------------------
+                    if datetime_col and datetime_col in out.columns:
+                        dt = pd.to_datetime(out[datetime_col])
+                    else:
+                        # Try index
+                        dt = pd.to_datetime(out.index)
+                
+                    # NY session heuristic: boost open & late day, dampen midday
+                    def _tod_weight(ts):
+                        if pd.isna(ts):
+                            return 1.0
+                        hhmm = ts.time()
+                        # crude session bands (ET)
+                        if hhmm >= pd.Timestamp("09:30").time() and hhmm < pd.Timestamp("10:30").time():
+                            return open_drive_weight
+                        if hhmm >= pd.Timestamp("12:00").time() and hhmm < pd.Timestamp("14:00").time():
+                            return midday_weight
+                        if hhmm >= pd.Timestamp("14:00").time() and hhmm < pd.Timestamp("15:30").time():
+                            return power_hour_weight
+                        return 1.0
+                
+                    tod_weight = dt.map(_tod_weight) if dt.notna().any() else pd.Series(1.0, index=out.index)
+                
+                    # ---- 5) Boundary proximity (optional) -----------------------------------
+                    boundary_series = [c for c in boundary_cols if c in out.columns]
+                    if boundary_series and ATR.notna().any():
+                        close = out[close_col]
+                        # min distance to any available boundary
+                        dists = []
+                        for c in boundary_series:
+                            dists.append((close - out[c]).abs())
+                        min_dist = pd.concat(dists, axis=1).min(axis=1)
+                        dist_over_atr = np.where(ATR > 0, min_dist / ATR, np.inf)
+                        boundary_ok = pd.Series(dist_over_atr >= boundary_atr_thresh, index=out.index)
+                    else:
+                        boundary_ok = pd.Series(True, index=out.index)
+                
+                    # ---- 6) Throttle (T) build ----------------------------------------------
+                    # base magnitude (non-directional)
+                    T_Base = (unitv.abs() * rvol * body_over_tr * tod_weight).astype(float)
+                    # sign aligned with terrain
+                    aligned = np.sign(unitv * expected_sign)  # +1 aligned, -1 against, 0 for zeros/NaN
+                    T = T_Base * aligned
+                
+                    # mask out pre-anchor rows
+                    mask_pre = np.arange(len(out)) < anchor_pos
+                    T_Base[mask_pre] = np.nan
+                    T[mask_pre] = np.nan
+                
+                    out["T_Base"] = T_Base
+                    out["T"] = T
+                
+                    # ---- 7) Session percentile for GO threshold (P90 on aligned positives) ---
+                    post = T_Base[(~mask_pre) & (T > 0)]
+                    P90 = np.nan if post.empty else np.nanpercentile(post.values, 90)
+                    out.loc[~mask_pre, "T_P90"] = P90
+                
+                    # ---- 8) State classification --------------------------------------------
+                    # GO: aligned (T>0) & T_Base >= P90 & boundary ok
+                    # WAIT: aligned (T>0) but not GO
+                    # NO-GO: T <= 0 or boundary not ok
+                    state = np.full(len(out), np.nan, dtype=object)
+                    go = (T > 0) & (T_Base >= (P90 if not np.isnan(P90) else np.inf)) & boundary_ok
+                    wait = (T > 0) & ~go
+                    nogo = (T <= 0) | (~boundary_ok)
+                
+                    state[go.values] = "GO"
+                    state[wait.values] = "WAIT"
+                    state[nogo.values] = "NO-GO"
+                    # keep pre-anchor as NaN
+                    state[mask_pre] = np.nan
+                    out["T_State"] = state
+                
+                    # ---- 9) Ignition window summary (first N bars after anchor) --------------
+                    n = int(bars_forward_ignition)
+                    anchor_slice = slice(anchor_pos + 1, min(anchor_pos + 1 + n, len(out)))
+                    ignition_T = T_Base.iloc[anchor_slice].to_list()
+                    # Fill to length n with NaN if fewer bars
+                    ignition_T += [np.nan] * (n - len(ignition_T))
+                
+                    for k in range(n):
+                        out.at[anchor_idx, f"T_Ignition_T{k+1}"] = ignition_T[k]
+                
+                    if all(np.isnan(ignition_T)):
+                        out.at[anchor_idx, "T_Ignition_MaxBar"] = np.nan
+                        out.at[anchor_idx, "T_Ignition_Flip"] = np.nan
+                    else:
+                        # max bar index within available non-NaNs (1..n)
+                        valid_vals = [(i+1, v) for i, v in enumerate(ignition_T) if not np.isnan(v)]
+                        max_bar = max(valid_vals, key=lambda x: x[1])[0] if valid_vals else np.nan
+                        # flip if any of first n bars had T <= 0 (counter-thrust)
+                        flip = bool((T.iloc[anchor_slice] <= 0).any())
+                        out.at[anchor_idx, "T_Ignition_MaxBar"] = max_bar
+                        out.at[anchor_idx, "T_Ignition_Flip"] = flip
+                
+                    # ---- 10) Run-length (durability) -----------------------------------------
+                    # consecutive bars from anchor with T>0 until first NO-GO
+                    post_mask = (~mask_pre)
+                    tpos = (T > 0) & post_mask
+                    # compute run length starting at anchor+1
+                    run = 0
+                    for i in range(anchor_pos + 1, len(out)):
+                        if bool(tpos.iat[i]):
+                            run += 1
+                        else:
+                            break
+                    out.at[anchor_idx, "T_RunLength"] = run if run > 0 else 0
+                
+                    # ---- 11) Half-life of T_Base (bars from peak to first <= 0.5*peak) -------
+                    post_vals = T_Base.iloc[anchor_pos + 1:].values
+                    if post_vals.size == 0 or np.all(np.isnan(post_vals)):
+                        out.at[anchor_idx, "T_HalfLife"] = np.nan
+                    else:
+                        # find first finite peak and its index
+                        finite_idx = np.where(np.isfinite(post_vals))[0]
+                        if finite_idx.size == 0:
+                            out.at[anchor_idx, "T_HalfLife"] = np.nan
+                        else:
+                            peak_idx = finite_idx[np.nanargmax(post_vals[finite_idx])]
+                            peak_val = post_vals[peak_idx]
+                            if not np.isfinite(peak_val) or peak_val <= 0:
+                                out.at[anchor_idx, "T_HalfLife"] = np.nan
+                            else:
+                                # search after the peak
+                                after = post_vals[peak_idx + 1:]
+                                hl = np.where(after <= 0.5 * peak_val)[0]
+                                out.at[anchor_idx, "T_HalfLife"] = (hl[0] + 1) if hl.size > 0 else np.nan
+                
+                    return out
+
+
+
+
+                intraday = compute_post_anchor_velocity_edge(intraday)
+
+
+
+
+
                                 # Initialize column
                 intraday["Put_SecondEntry_Emoji"] = ""
                 
