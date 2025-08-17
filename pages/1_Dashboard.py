@@ -545,17 +545,16 @@ if st.sidebar.button("Run Analysis"):
                 # ================
                 # 7) Calculate F%
                 # ================
-               
-                def calculate_f_percentage(intraday_df, prev_close_val):
-                    if prev_close_val is not None and not intraday_df.empty:
-                        intraday_df["F%"] = ((intraday_df["Close"] - prev_close_val) / prev_close_val) * 10000
-                        # Round to nearest integer
-                        intraday_df["F%"] = intraday_df["F%"].round(0).astype(int).astype(str) + "%"
-                    else:
-                        intraday_df["F%"] = "N/A"
-                    return intraday_df
+                def calculate_f_percentage(intraday_df, prev_close_val):
+                    if prev_close_val is not None and not intraday_df.empty:
+                        intraday_df["F%"] = ((intraday_df["Close"] - prev_close_val) / prev_close_val) * 10000
+                        # Round to nearest integer
+                        intraday_df["F%"] = intraday_df["F%"].round(0).astype(int).astype(str) + "%"
+                    else:
+                        intraday_df["F%"] = "N/A"
+                    return intraday_df
 
-                intraday = calculate_f_percentage(intraday, prev_close)
+                intraday = calculate_f_percentage(intraday, prev_close)
  
               
 
