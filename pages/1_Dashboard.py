@@ -7288,36 +7288,71 @@ if st.sidebar.button("Run Analysis"):
                 
                 # 2️⃣  Now take the rolling mean on the numeric series
                 intraday["Velocity_SMA"] = intraday["UnitVel_Num"].rolling(window=5, min_periods=1).mean()
-                                                
-                with st.expander("⚡ Velocity Line Plot", expanded=False):
+
+
+                # Adaptive velocity bands
+                intraday["Vel_Mean20"] = intraday["UnitVel_Num"].rolling(20, min_periods=10).mean()
+                intraday["Vel_Std20"] = intraday["UnitVel_Num"].rolling(20, min_periods=10).std()
+                intraday["Vel_Z"] = (intraday["UnitVel_Num"] - intraday["Vel_Mean20"]) / intraday["Vel_Std20"]
+                
+                
+
+                # with st.expander("⚡ Velocity Line Plot", expanded=False):
+                #     fig_velocity = go.Figure()
+                
+                #     fig_velocity.add_trace(go.Scatter(
+                #         x=intraday["TimeIndex"],
+                #         y=intraday["Velocity_SMA"],
+                #         mode="lines",
+                #         name="Smoothed Velocity",
+                #         line=dict(color="orange", width=2)
+                #     ))
+                
+                #     fig_velocity.add_hline(y=20, line=dict(color="green", dash="dash"))
+                #     fig_velocity.add_hline(y=-20, line=dict(color="red", dash="dash"))
+                
+                #     fig_velocity.update_layout(
+                #         height=500,
+                #         title="⚡ Velocity Flow",
+                #         plot_bgcolor="black",
+                #         paper_bgcolor="black",
+                #         font=dict(color="white"),
+                #         xaxis_title="Time",
+                #         yaxis_title="Velocity (%)",
+                #     )
+                
+                # st.plotly_chart(fig_velocity, use_container_width=True)
+                
+                with st.expander("⚡ Velocity Thrust Map", expanded=False):
                     fig_velocity = go.Figure()
                 
+                    # Z-score based line
                     fig_velocity.add_trace(go.Scatter(
                         x=intraday["TimeIndex"],
-                        y=intraday["Velocity_SMA"],
+                        y=intraday["Vel_Z"],
                         mode="lines",
-                        name="Smoothed Velocity",
+                        name="Velocity Z-Score",
                         line=dict(color="orange", width=2)
                     ))
                 
-                    fig_velocity.add_hline(y=20, line=dict(color="green", dash="dash"))
-                    fig_velocity.add_hline(y=-20, line=dict(color="red", dash="dash"))
+                    # Highlight high positive burst
+                    fig_velocity.add_hline(y=2, line=dict(color="green", dash="dash"), name="+2σ")
+                    fig_velocity.add_hline(y=-2, line=dict(color="red", dash="dash"), name="-2σ")
                 
                     fig_velocity.update_layout(
                         height=500,
-                        title="⚡ Velocity Flow",
+                        title="⚡ Adaptive Velocity Z-Score",
                         plot_bgcolor="black",
                         paper_bgcolor="black",
                         font=dict(color="white"),
                         xaxis_title="Time",
-                        yaxis_title="Velocity (%)",
+                        yaxis_title="Z-Score (Velocity)",
                     )
                 
-                st.plotly_chart(fig_velocity, use_container_width=True)
-
-
-
-                with ticker_tabs[0]:
+                    st.plotly_chart(fig_velocity, use_container_width=True)
+                
+                
+                                with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
                         rows=1,
