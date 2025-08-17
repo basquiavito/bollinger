@@ -7304,7 +7304,7 @@ if st.sidebar.button("Run Analysis"):
                     fig_velocity.add_hline(y=-20, line=dict(color="red", dash="dash"))
                 
                     fig_velocity.update_layout(
-                        height=300,
+                        height=500,
                         title="⚡ Velocity Flow",
                         plot_bgcolor="black",
                         paper_bgcolor="black",
