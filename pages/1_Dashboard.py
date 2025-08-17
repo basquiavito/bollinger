@@ -9458,24 +9458,7 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
 
-                spikes = intraday[intraday["Velocity_Spike"] != ""]
-                
-                fig_displacement.add_trace(go.Scatter(
-                    x=spikes["Time"],
-                    y=spikes["Cumulative_Unit"],
-                    mode="text",
-                    text=spikes["Velocity_Spike"],
-                    textposition="middle center",
-                    textfont=dict(size=18),
-                    showlegend=False,
-                    hovertemplate=(
-                        "Velocity Spike<br>" +
-                        "Time: %{x|%I:%M %p}<br>" +
-                        "Vel Z: %{customdata[0]:.2f}<br>"
-                    ),
-                customdata=spikes[["Vel_Z"]].values
-                ))
-
+              
 
                 # fig.add_trace(go.Scatter(
                 #     x=compliance_aid_times,
