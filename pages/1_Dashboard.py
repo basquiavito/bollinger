@@ -6470,9 +6470,9 @@ if st.sidebar.button("Run Analysis"):
                                     st.dataframe(
                                         intraday[[
                                             'Time', price_col, 'Volume',
-                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bear', 'MIDAS_Bull',"T","Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
                                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
-                                            'Bull_Midas_Wake',"T", 'Bear_Midas_Wake'
+                                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
                                         ]]
                                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
                                         .reset_index(drop=True))
