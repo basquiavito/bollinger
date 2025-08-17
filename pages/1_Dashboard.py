@@ -1416,48 +1416,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def detect_velocity_spikes_optimized(intraday_df, bull_anchor_col="bar_since_midas_bull", bear_anchor_col="bar_since_midas_bear"):
-                    """
-                    Detects velocity spikes and calculates cumulative velocity in an intraday DataFrame.
-                
-                    This optimized version avoids the use of `.apply()` for better performance.
-                    """
-                    # Handles empty or invalid input DataFrame
-                    if intraday_df.empty or "Velocity" not in intraday_df.columns:
-                        return intraday_df
-                
-                    df = intraday_df.copy()
-                
-                    # --- Clean and convert Velocity (efficiently) ---
-                    df["Velocity_Num"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
-                
-                    # --- Rolling Mean & Std ---
-                    df["Vel_Mean"] = df["Velocity_Num"].rolling(window=20, min_periods=10).mean()
-                    df["Vel_Std"] = df["Velocity_Num"].rolling(window=20, min_periods=10).std()
-                
-                    # --- Z-Score & Spike Detection ---
-                    df["Vel_Z"] = (df["Velocity_Num"] - df["Vel_Mean"]) / df["Vel_Std"]
-                    
-                    # Use np.select for cleaner, vectorized spike detection
-                    conditions = [df["Vel_Z"] >= 2, df["Vel_Z"] <= -2]
-                    choices = ["🚀", "🪂"]
-                    df["Velocity_Spike"] = np.select(conditions, choices, default="")
-                
-                    # --- Cumulative Velocity from Bull & Bear Anchors (optimized) ---
-                    if bull_anchor_col in df.columns:
-                        df["CumVel_Bull"] = df.groupby(bull_anchor_col)["Velocity_Num"].cumsum()
-                    else:
-                        df["CumVel_Bull"] = None
-                
-                    if bear_anchor_col in df.columns:
-                        df["CumVel_Bear"] = df.groupby(bear_anchor_col)["Velocity_Num"].cumsum()
-                    else:
-                        df["CumVel_Bear"] = None
-                
-                    return df
-                
-                # Example usage (assuming 'intraday' DataFrame exists)
-                intraday = detect_velocity_spikes_optimized(intraday)
+            
 
               
                 def compute_option_value(df, premium=64, contracts=100):
@@ -5062,7 +5021,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","CumVel_Bull","CumVel_Bear",'N',"Sharpe_Ratio","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume",'N',"Sharpe_Ratio","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
