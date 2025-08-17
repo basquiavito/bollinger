@@ -7352,7 +7352,7 @@ if st.sidebar.button("Run Analysis"):
                 st.plotly_chart(fig_velocity, use_container_width=True)
                 
                 
-                                with ticker_tabs[0]:
+                with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
                         rows=1,
