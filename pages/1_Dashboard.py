@@ -7282,7 +7282,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                # # Apply rolling mean
-                intraday["Velocity_SMA"] = intraday["Unit_Velocity_Numeric"].rolling(window=5, min_periods=1).mean()
+                intraday["Velocity_SMA"] = intraday["Unit_Velocity"].rolling(window=5, min_periods=1).mean()
                                 
                 with st.expander("⚡ Velocity Line Plot", expanded=False):
                     fig_velocity = go.Figure()
