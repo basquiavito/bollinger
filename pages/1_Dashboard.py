@@ -6625,39 +6625,39 @@ if st.sidebar.button("Run Analysis"):
                  
                                                            
 
-       # # === Overlay: IB High as Resistance in Cumulative Unit Space ===
-       #              ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
-       #              ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
+       # === Overlay: IB High as Resistance in Cumulative Unit Space ===
+                    ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
+                    ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
                     
-       #              if not ib_high_row.empty:
-       #                  ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
+                    if not ib_high_row.empty:
+                        ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
                     
-       #                  fig_displacement.add_hline(
-       #                      y=ib_high_unit,
-       #                      line=dict(color="gold", dash="dash", width=1),
-       #                      annotation_text="💸 IB High",
-       #                      annotation_position="top left",
-       #                      annotation_font=dict(color="gold", size=13),
-       #                      opacity=0.6
-       #                  )
+                        fig_displacement.add_hline(
+                            y=ib_high_unit,
+                            line=dict(color="gold", dash="dash", width=1),
+                            annotation_text="💸 IB High",
+                            annotation_position="top left",
+                            annotation_font=dict(color="gold", size=13),
+                            opacity=0.6
+                        )
 
 
 
-       #                                # === Overlay: IB Low as Support in Cumulative Unit Space ===
-       #              ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
-       #              ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
+                                      # === Overlay: IB Low as Support in Cumulative Unit Space ===
+                    ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
+                    ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
                     
-       #              if not ib_low_row.empty:
-       #                  ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
+                    if not ib_low_row.empty:
+                        ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
                     
-       #                  fig_displacement.add_hline(
-       #                      y=ib_low_unit,
-       #                      line=dict(color="gold", dash="dash", width=1),
-       #                      annotation_text="🧧 IB Low",
-       #                      annotation_position="bottom left",
-       #                      annotation_font=dict(color="gold", size=13),
-       #                      opacity=0.6
-       #                  )
+                        fig_displacement.add_hline(
+                            y=ib_low_unit,
+                            line=dict(color="gold", dash="dash", width=1),
+                            annotation_text="🧧 IB Low",
+                            annotation_position="bottom left",
+                            annotation_font=dict(color="gold", size=13),
+                            opacity=0.6
+                        )
        #              # # Convert power column to numeric just in case
        #              # intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
                     
@@ -6892,14 +6892,14 @@ if st.sidebar.button("Run Analysis"):
        #                  customdata=top3_ib_force_down[["IB_Electric_Force"]].values
        #              ))
                  
-       #              fig_displacement.add_trace(go.Scatter(
-       #                x=intraday["TimeIndex"],
-       #                y=intraday["Kijun_Cumulative"],
-       #                mode="lines",
-       #                line=dict(color="green", dash="solid", width=1.5),
-       #                name="Kijun (Cumulative)",
-       #                hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
-       #                ))
+                    fig_displacement.add_trace(go.Scatter(
+                      x=intraday["TimeIndex"],
+                      y=intraday["Kijun_Cumulative"],
+                      mode="lines",
+                      line=dict(color="green", dash="solid", width=1.5),
+                      name="Kijun (Cumulative)",
+                      hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
+                      ))
 
 
 
