@@ -6720,7 +6720,7 @@ if st.sidebar.button("Run Analysis"):
                         customdata=top3_pos_jerk[["Jerk_num"]].values
                     ))
                     
-                    🧱 Negative Jerk Markers (below the flight path)
+                    # 🧱 Negative Jerk Markers (below the flight path)
                     fig_displacement.add_trace(go.Scatter(
                         x=top3_neg_jerk["Time"],
                         y=top3_neg_jerk["Cumulative_Unit"] - 56,
