@@ -9466,7 +9466,7 @@ if st.sidebar.button("Run Analysis"):
 
    # # 🧭 Opening Position vs YVA
                 if yva_min is not None and yva_max is not None:
-                    opening_price = intraday["Close"].iloc[0]
+                   opening_price = intraday["Close"].iloc[0]
                 
                 if yva_min < opening_price < yva_max:
                         yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
