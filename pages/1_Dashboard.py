@@ -9457,20 +9457,20 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
+  
+                if yva_min is not None and yva_max is not None:
+                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
+                if prev_close:
+                    range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+                    st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
 
-              if yva_min is not None and yva_max is not None:
-                  st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
-              if prev_close:
-                  range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
-                  st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
 
 
-
-              if yva_min is not None and yva_max is not None:
-                  st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
-              if prev_close:
-                  range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
-                  st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+              # if yva_min is not None and yva_max is not None:
+              #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
+              # if prev_close:
+              #     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+              #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
             
 
 
