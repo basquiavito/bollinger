@@ -9503,24 +9503,24 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-                  opened_above_yh = opening_price > prev_high
-                  opened_below_yl = opening_price < prev_low
-                  
-                  first_6 = intraday.iloc[:6]
-                  stayed_above_yh = (first_6["Close"] > prev_high).all()
-                  stayed_below_yl = (first_6["Close"] < prev_low).all()
-                  
-                  if opened_above_yh and stayed_above_yh:
-                      st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
-                  
-                  elif opened_below_yl and stayed_below_yl:
-                      st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
-                  
-                  elif opened_above_yh or opened_below_yl:
-                      st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
-                        
-                        
+  
+                    opened_above_yh = opening_price > prev_high
+                    opened_below_yl = opening_price < prev_low
+                    
+                    first_6 = intraday.iloc[:6]
+                    stayed_above_yh = (first_6["Close"] > prev_high).all()
+                    stayed_below_yl = (first_6["Close"] < prev_low).all()
+                    
+                    if opened_above_yh and stayed_above_yh:
+                        st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
+                    
+                    elif opened_below_yl and stayed_below_yl:
+                        st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
+                    
+                    elif opened_above_yh or opened_below_yl:
+                        st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
+                          
+                          
 
                           
                 fig.update_layout(
