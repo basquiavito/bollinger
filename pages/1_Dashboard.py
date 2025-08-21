@@ -8660,8 +8660,8 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>♞ Horse after Sell<extra></extra>"
                 )
 
-                # fig.add_trace(scatter_horse_buy, row=1, col=1)
-                # fig.add_trace(scatter_horse_sell, row=1, col=1)
+                fig.add_trace(scatter_horse_buy, row=1, col=1)
+                fig.add_trace(scatter_horse_sell, row=1, col=1)
 
 
                 mask_bishop_up = intraday["Kijun_Cross_Bishop"] == "♗"
