@@ -9176,7 +9176,7 @@ if st.sidebar.button("Run Analysis"):
                  )
  
 #                     # Add to figure
-                fig.add_trace(up_high_trace, row=1, col=1)
+                # fig.add_trace(up_high_trace, row=1, col=1)
  
 
 
