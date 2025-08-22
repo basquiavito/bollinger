@@ -9503,11 +9503,11 @@ if st.sidebar.button("Run Analysis"):
 
                 fig.add_trace(go.Scatter(
                 x=intraday.loc[jerk_cross_mask, "TimeIndex"],
-                y=intraday.loc[jerk_cross_mask, "F_numeric"] + 75,
+                y=intraday.loc[jerk_cross_mask, "F_numeric"] + 25,
                 mode="text",
                 text=["🔦"] * jerk_cross_mask.sum(),
                 textposition="top center",
-                textfont=dict(size=14),
+                textfont=dict(size=18),
                 showlegend=False,
                 hovertemplate=(
                     "🔦 Jerk Spike > 100<br>"
