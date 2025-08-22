@@ -851,7 +851,8 @@ if st.sidebar.button("Run Analysis"):
                             armed = True
                 
                     return crosses
-                intraday =  mark_threshold_crosses(intraday)  
+                # Apply threshold logic on Jerk_Vector
+                intraday["Jerk_Spike_Alert"] = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
 
                         
        
