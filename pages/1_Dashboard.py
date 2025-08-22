@@ -851,7 +851,7 @@ if st.sidebar.button("Run Analysis"):
                             armed = True
                 
                     return crosses
-               intraday = add_dual_jerk(intraday)  # your jerk function
+               intraday =  mark_threshold_crosses(intraday)  
 
                         
                def find_threshold_crosses(series, threshold=100):
