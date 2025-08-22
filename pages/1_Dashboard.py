@@ -9024,7 +9024,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 # # # Add to figure
                 # fig.add_trace(scatter_sanyaku_kouten, row=1, col=1)
-                fig.add_trace(scatter_sanyaku_gyakuten, row=1, col=1)
+                # fig.add_trace(scatter_sanyaku_gyakuten, row=1, col=1)
 
 
 
