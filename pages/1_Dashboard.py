@@ -870,7 +870,7 @@ if st.sidebar.button("Run Analysis"):
                           armed = True    # re-arm once we fall back below
 
                   return crosses
-                  
+                  intraday = find_threshold_crosses(intraday)
         
                 def add_market_capacitance(df):
                     """
