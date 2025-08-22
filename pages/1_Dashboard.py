@@ -830,9 +830,47 @@ if st.sidebar.button("Run Analysis"):
                   return df
 
                 intraday = add_dual_jerk(intraday)
+                def mark_threshold_crosses(series, threshold=100):
+                    """
+                    Returns a boolean Series where:
+                    - True at first bar where value crosses above `threshold`
+                    - Ignores sustained values above threshold
+                    - Re-arms after value falls back below
+                    """
+                    crosses = pd.Series(False, index=series.index)
+                    armed = True
+                
+                    for i in range(1, len(series)):
+                        curr = series.iloc[i]
+                        prev = series.iloc[i - 1]
+                
+                        if armed and curr > threshold and prev <= threshold:
+                            crosses.iloc[i] = True
+                            armed = False
+                        elif not armed and curr <= threshold:
+                            armed = True
+                
+                    return crosses
+               intraday = add_dual_jerk(intraday)  # your jerk function
 
                         
-                                 
+               def find_threshold_crosses(series, threshold=100):
+                  """
+                  Returns indices where series crosses above threshold,
+                  only once per cycle (re-arms after dropping back below).
+                  """
+                  crosses = []
+                  armed = True   # start in "armed" state (ready to detect a breakout)
+              
+                  for i in range(1, len(series)):
+                      if armed and series.iloc[i] > threshold and series.iloc[i-1] <= threshold:
+                          crosses.append(series.index[i])
+                          armed = False   # disarm until we go below again
+                      elif not armed and series.iloc[i] <= threshold:
+                          armed = True    # re-arm once we fall back below
+
+                  return crosses
+                  
         
                 def add_market_capacitance(df):
                     """
@@ -9476,7 +9514,25 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-  
+                jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
+
+                fig.add_trace(go.Scatter(
+                x=intraday.loc[jerk_cross_mask, "TimeIndex"],
+                y=intraday.loc[jerk_cross_mask, "F_numeric"] + 75,
+                mode="text",
+                text=["🔦"] * jerk_cross_mask.sum(),
+                textposition="top center",
+                textfont=dict(size=14),
+                showlegend=False,
+                hovertemplate=(
+                    "🔦 Jerk Spike > 100<br>"
+                    "Time: %{x|%I:%M %p}<br>"
+                    "Jerk: %{customdata:.2f}<extra></extra>"
+                ),
+                customdata=intraday.loc[jerk_cross_mask, "Jerk_Vector"]
+                ), row=1, col=1)
+
+
    #              if yva_min is not None and yva_max is not None:
    #                  st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
    #              if prev_close:
