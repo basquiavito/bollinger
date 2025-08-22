@@ -9293,7 +9293,26 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
 
-             
+             # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
+                gb_rows = intraday[intraday["Gravity_Break_Alert"] == "🪂"]
+                
+                fig.add_trace(go.Scatter(
+                    x=gb_rows["TimeIndex"],
+                    y=gb_rows["F_numeric"] + 60,   # Offset above Mike (higher than 🚀 so it doesn’t overlap)
+                    mode="text",
+                    text=["🪂"] * len(gb_rows),
+                    textposition="top center",
+                    textfont=dict(size=14),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🪂 Gravity Break<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        "F%: %{y:.2f}<br>"
+                        "ΔVol: %{customdata:.2f}<extra></extra>"
+                    ),
+                    customdata=gb_rows["Volatility_Composite_Diff"],  # show jump size on hover
+                ), row=1, col=1)
+
 
                 # fig.add_trace(go.Scatter(
                 #     x=compliance_aid_times,
