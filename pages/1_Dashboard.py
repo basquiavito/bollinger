@@ -851,26 +851,10 @@ if st.sidebar.button("Run Analysis"):
                             armed = True
                 
                     return crosses
-               intraday =  mark_threshold_crosses(intraday)  
+                intraday =  mark_threshold_crosses(intraday)  
 
                         
-               def find_threshold_crosses(series, threshold=100):
-                  """
-                  Returns indices where series crosses above threshold,
-                  only once per cycle (re-arms after dropping back below).
-                  """
-                  crosses = []
-                  armed = True   # start in "armed" state (ready to detect a breakout)
-              
-                  for i in range(1, len(series)):
-                      if armed and series.iloc[i] > threshold and series.iloc[i-1] <= threshold:
-                          crosses.append(series.index[i])
-                          armed = False   # disarm until we go below again
-                      elif not armed and series.iloc[i] <= threshold:
-                          armed = True    # re-arm once we fall back below
-
-                  return crosses
-                  intraday = find_threshold_crosses(intraday)
+       
         
                 def add_market_capacitance(df):
                     """
