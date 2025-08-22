@@ -9161,7 +9161,7 @@ if st.sidebar.button("Run Analysis"):
                 #     textposition="top center",
                 #     textfont=dict(size=28),
                 #     name="Cross Above Y-Low (🚣🏽)"
-                # )
+#                 # )
 
                 astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
