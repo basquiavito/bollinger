@@ -7942,8 +7942,36 @@ if st.sidebar.button("Run Analysis"):
 
                 ), row=2, col=1)
 
-
+                # Wake signal columns
+                intraday["Wake_Call"] = (
+                    (intraday["Spread"] > 0) &
+                    (intraday["Spread_Vel"] > intraday["Spread_Vel"].rolling(10).mean() + intraday["Spread_Vel"].rolling(10).std()) &
+                    (intraday["Spread_Z"] > 1)
+                )
                 
+                intraday["Wake_Put"] = (
+                    (intraday["Spread"] < 0) &
+                    (intraday["Spread_Vel"] < intraday["Spread_Vel"].rolling(10).mean() - intraday["Spread_Vel"].rolling(10).std()) &
+                    (intraday["Spread_Z"] < -1)
+                )
+                
+                # Merge into a single emoji column
+                intraday["Option_Wake_Emoji"] = np.where(intraday["Wake_Call"], "🚀", 
+                                                  np.where(intraday["Wake_Put"], "🪓", ""))
+
+                # Plot only the wake emojis
+                wake_points = intraday[intraday["Option_Wake_Emoji"] != ""]
+                
+                fig.add_trace(go.Scatter(
+                    x=wake_points["Time"],
+                    y=wake_points["Call_Option_Smooth"],  # or Put_Option_Smooth or Spread
+                    mode="text",
+                    text=wake_points["Option_Wake_Emoji"],
+                    textposition="top center",
+                    showlegend=False,
+                    hoverinfo="skip"
+                ), row=2, col=1)
+
                 # # 🟣 Spread (Call - Put)
                 # fig.add_trace(go.Scatter(
                 #     x=intraday["Time"],
