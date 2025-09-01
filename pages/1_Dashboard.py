@@ -7945,30 +7945,30 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
-                intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+                # intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                # intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
                 
-                # Plot them in Row 3
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Call_vs_Bull"],
-                    mode="lines",
-                    name="Call vs Midas Bull",
-                    line=dict(color="darkviolet", width=1.5, dash="dot"),
-                    hovertemplate="<b>Call vs Midas Bull</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
-                    showlegend=True,
+                # # Plot them in Row 3
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Call_vs_Bull"],
+                #     mode="lines",
+                #     name="Call vs Midas Bull",
+                #     line=dict(color="darkviolet", width=1.5, dash="dot"),
+                #     hovertemplate="<b>Call vs Midas Bull</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                #     showlegend=True,
  
-                ), row=3, col=1)
+                # ), row=3, col=1)
                 
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Put_vs_Bear"],
-                    mode="lines",
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Put_vs_Bear"],
+                #     mode="lines",
  
-                    name="Put vs Midas Bear",
-                    line=dict(color="darkcyan", width=1.5, dash="dot"),
-                    showlegend=True
-                ), row=3, col=1)
+                #     name="Put vs Midas Bear",
+                #     line=dict(color="darkcyan", width=1.5, dash="dot"),
+                #     showlegend=True
+                # ), row=3, col=1)
 
 
 
