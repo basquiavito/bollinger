@@ -7856,7 +7856,6 @@ if st.sidebar.button("Run Analysis"):
 
                 ), row=2, col=1)
                 
-                Compute displacement from MIDAS curves
                 intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
                 intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
                 
