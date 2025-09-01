@@ -7955,7 +7955,7 @@ if st.sidebar.button("Run Analysis"):
                     hoverinfo="skip"
                 ), row=2, col=1)
 
-                df["Put_BB_Tag_Lower"] = np.where(df["Put_Option_Smooth"] < df["Put_BB_Lower"], "💧", "")
+                intraday["Put_BB_Tag_Lower"] = np.where(intraday["Put_Option_Smooth"] < intraday["Put_BB_Lower"], "💧", "")
 
                 # 💧 Tag lower band breakdowns
                 fig.add_trace(go.Scatter(
