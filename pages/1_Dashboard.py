@@ -1662,6 +1662,48 @@ if st.sidebar.button("Run Analysis"):
                     return df
 
 
+                    def add_spread_features(df, ema_span=3, z_win=50, z_minp=25):
+                        """
+                        Requires:
+                          - df['Call_Option_Smooth'] (CS)
+                          - df['Put_Option_Smooth']  (PS)
+                    
+                        Adds:
+                          - Spread:        CS - PS  ( >0 = call dominance )
+                          - Spread_Put:    PS - CS  ( >0 = put  dominance )
+                          - Spread_Vel:    d(Spread)/dt  (divergence speed)
+                          - Spread_Accel:  d²(Spread)/dt²
+                          - Spread_EMA:    EMA-smoothed spread
+                          - Spread_Vel_EMA:EMA-smoothed divergence speed
+                          - Spread_Z:      rolling z-score of Spread (cross-symbol comparable)
+                          - Spread_Expanding: boolean, True when spread is growing (Vel > 0)
+                        """
+                        CS = df["Call_Option_Smooth"].astype(float)
+                        PS = df["Put_Option_Smooth"].astype(float)
+                    
+                        # Core spreads
+                        df["Spread"]      = CS - PS               # call-dominance view
+                        df["Spread_Put"]  = -df["Spread"]         # put-dominance (PS - CS)
+                    
+                        # Dynamics
+                        df["Spread_Vel"]   = df["Spread"].diff()                              # first derivative
+                        df["Spread_Accel"] = df["Spread_Vel"].diff()                          # second derivative
+                    
+                        # Smoothed views (short memory)
+                        df["Spread_EMA"]      = df["Spread"].ewm(span=ema_span, adjust=False).mean()
+                        df["Spread_Vel_EMA"]  = df["Spread_Vel"].ewm(span=ema_span, adjust=False).mean()
+                    
+                        # Rolling z-score (robust comparison across days/tickers)
+                        roll_mean = df["Spread"].rolling(z_win, min_periods=z_minp).mean()
+                        roll_std  = df["Spread"].rolling(z_win, min_periods=z_minp).std().replace(0, np.nan)
+                        df["Spread_Z"] = (df["Spread"] - roll_mean) / roll_std
+                    
+                        # Simple expanding flag
+                        df["Spread_Expanding"] = df["Spread_Vel"] > 0
+                    
+                        return df
+                    
+
 
                 intraday = compute_option_value(intraday)      
 
@@ -6884,7 +6926,24 @@ if st.sidebar.button("Run Analysis"):
                 
        #              fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
                 
-               
+
+                
+                with st.expander("💎 Option Spread Table", expanded=False):
+                    st.dataframe(
+                        intraday[[
+                            'Time', 'Underlying_Price', 'Volume',
+                            'Call_Smooth', 'Put_Smooth', 'Call_Put_Spread',
+                            'Spread_Velocity', 'Spread_Accel',
+                            'Spread_Change_Signal', 'Spread_Cross_Signal',
+                            'Wake_Call', 'Wake_Put',
+                            'Entry_Call', 'Entry_Put'
+                        ]]
+                        .dropna(subset=['Call_Smooth', 'Put_Smooth'], how='all')
+                        .reset_index(drop=True)
+                    )
+                
+                
+                  
        #          st.plotly_chart(fig_displacement, use_container_width=True)
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
