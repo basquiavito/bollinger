@@ -1526,8 +1526,8 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_BBW_Is_Tight"]  = df["Put_BBW"]  < put_bbw_thresh
                     
                     # 🐝 Mark tight zones if 3 of last 5 are tight
-                    df["Call_BBW_Tight_Emoji"] = df["Call_BBW_Is_Tight"].rolling(5).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
-                    df["Put_BBW_Tight_Emoji"]  = df["Put_BBW_Is_Tight"] .rolling(5).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
+                    df["Call_BBW_Tight_Emoji"] = df["Call_BBW_Is_Tight"].rolling(3).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
+                    df["Put_BBW_Tight_Emoji"]  = df["Put_BBW_Is_Tight"] .rolling(3).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
 
                     # 1️⃣ Raw speed of the call option value
                     df["Call_Option_Speed"] = df["Call_Option_Value"].diff()
