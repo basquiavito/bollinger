@@ -7954,7 +7954,22 @@ if st.sidebar.button("Run Analysis"):
                     showlegend=False,
                     hoverinfo="skip"
                 ), row=2, col=1)
-                
+
+                df["Put_BB_Tag_Lower"] = np.where(df["Put_Option_Smooth"] < df["Put_BB_Lower"], "💧", "")
+
+                # 💧 Tag lower band breakdowns
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
+                    mode="markers+text",
+                    name="💧 Put Breakdown",
+                    text=intraday["Put_BB_Tag_Lower"],
+                    textposition="bottom center",
+                    marker=dict(color="blue", size=5),
+                    showlegend=False,
+                    hoverinfo="skip"
+                ), row=2, col=1)
+
                 # 🐝 Tag tight BBW zones
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
