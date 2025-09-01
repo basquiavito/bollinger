@@ -1662,7 +1662,13 @@ if st.sidebar.button("Run Analysis"):
                     return df
 
 
-                    def add_spread_features(df, ema_span=3, z_win=50, z_minp=25):
+                  
+
+
+
+                intraday = compute_option_value(intraday)      
+
+                def add_spread_features(df, ema_span=3, z_win=50, z_minp=25):
                         """
                         Requires:
                           - df['Call_Option_Smooth'] (CS)
@@ -1703,12 +1709,6 @@ if st.sidebar.button("Run Analysis"):
                     
                         return df
                 intraday = add_spread_features(intraday)
-
-
-
-                intraday = compute_option_value(intraday)      
-
-
               
                 
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
