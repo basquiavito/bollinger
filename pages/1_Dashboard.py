@@ -1702,7 +1702,8 @@ if st.sidebar.button("Run Analysis"):
                         df["Spread_Expanding"] = df["Spread_Vel"] > 0
                     
                         return df
-                    
+                intraday = add_spread_features(intraday)
+
 
 
                 intraday = compute_option_value(intraday)      
