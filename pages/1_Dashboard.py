@@ -8074,8 +8074,8 @@ if st.sidebar.button("Run Analysis"):
 
 
                 # 🦻🏼 Add Ear line if it exists
-  #             fig.add_hline(y=call_ib_high, showlegend=True,     
-                line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
+               # fig.add_hline(y=call_ib_high, showlegend=True,     
+               #  line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
               
 #             # 🟡 Call IB High (hoverable)
                 fig.add_trace(go.Scatter(
