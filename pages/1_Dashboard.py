@@ -8449,41 +8449,41 @@ if st.sidebar.button("Run Analysis"):
                 #         "Time: %{x|%I:%M %p}<br>"
                 #         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
                 #     )
+                # # ), row=1, col=1)
+
+                # # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
+                # bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
+                # fig.add_trace(go.Scatter(
+                #     x=bear_lethal_rows["TimeIndex"],
+                #     y=bear_lethal_rows["F_numeric"] - 40,  # Offset below Mike for clarity
+                #     mode="text",
+                #     text=["🥊"] * len(bear_lethal_rows),
+                #     textposition="bottom right",
+                #     textfont=dict(size=14),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "🥊 Bear Lethal Acceleration<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         "F%: %{y:.2f}<extra></extra>"
+                #     )
                 # ), row=1, col=1)
 
-                # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
-                bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
-                fig.add_trace(go.Scatter(
-                    x=bear_lethal_rows["TimeIndex"],
-                    y=bear_lethal_rows["F_numeric"] - 40,  # Offset below Mike for clarity
-                    mode="text",
-                    text=["🥊"] * len(bear_lethal_rows),
-                    textposition="bottom right",
-                    textfont=dict(size=14),
-                    showlegend=False,
-                    hovertemplate=(
-                        "🥊 Bear Lethal Acceleration<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        "F%: %{y:.2f}<extra></extra>"
-                    )
-                ), row=1, col=1)
-
-                # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
-                bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
-                fig.add_trace(go.Scatter(
-                    x=bull_lethal_rows["TimeIndex"],
-                    y=bull_lethal_rows["F_numeric"] + 40,  # Offset above Mike for clarity
-                    mode="text",
-                    text=["🚀"] * len(bull_lethal_rows),
-                    textposition="top right",
-                    textfont=dict(size=14),
-                    showlegend=False,
-                    hovertemplate=(
-                        "🚀 Bull Lethal Acceleration<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        "F%: %{y:.2f}<extra></extra>"
-                    )
-                ), row=1, col=1)
+                # # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
+                # bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
+                # fig.add_trace(go.Scatter(
+                #     x=bull_lethal_rows["TimeIndex"],
+                #     y=bull_lethal_rows["F_numeric"] + 40,  # Offset above Mike for clarity
+                #     mode="text",
+                #     text=["🚀"] * len(bull_lethal_rows),
+                #     textposition="top right",
+                #     textfont=dict(size=14),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "🚀 Bull Lethal Acceleration<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         "F%: %{y:.2f}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
 
 
                 # Wake-up Emojis 📈
@@ -9403,25 +9403,25 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
 
-             # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
-                gb_rows = intraday[intraday["Gravity_Break_Alert"] == "🪂"]
+             # # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
+             #    gb_rows = intraday[intraday["Gravity_Break_Alert"] == "🪂"]
                 
-                fig.add_trace(go.Scatter(
-                    x=gb_rows["TimeIndex"],
-                    y=gb_rows["F_numeric"] + 60,   # Offset above Mike (higher than 🚀 so it doesn’t overlap)
-                    mode="text",
-                    text=["🪂"] * len(gb_rows),
-                    textposition="top center",
-                    textfont=dict(size=14),
-                    showlegend=False,
-                    hovertemplate=(
-                        "🪂 Gravity Break<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        "F%: %{y:.2f}<br>"
-                        "ΔVol: %{customdata:.2f}<extra></extra>"
-                    ),
-                    customdata=gb_rows["Volatility_Composite_Diff"],  # show jump size on hover
-                ), row=1, col=1)
+             #    fig.add_trace(go.Scatter(
+             #        x=gb_rows["TimeIndex"],
+             #        y=gb_rows["F_numeric"] + 60,   # Offset above Mike (higher than 🚀 so it doesn’t overlap)
+             #        mode="text",
+             #        text=["🪂"] * len(gb_rows),
+             #        textposition="top center",
+             #        textfont=dict(size=14),
+             #        showlegend=False,
+             #        hovertemplate=(
+             #            "🪂 Gravity Break<br>"
+             #            "Time: %{x|%I:%M %p}<br>"
+             #            "F%: %{y:.2f}<br>"
+             #            "ΔVol: %{customdata:.2f}<extra></extra>"
+             #        ),
+             #        customdata=gb_rows["Volatility_Composite_Diff"],  # show jump size on hover
+             #    ), row=1, col=1)
 
 
                 # fig.add_trace(go.Scatter(
@@ -9673,7 +9673,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_layout(
                     title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=1600,  # Increase overall figure height (default ~450-600)
+                    height=2000,  # Increase overall figure height (default ~450-600)
                     showlegend=False,
                 
 
