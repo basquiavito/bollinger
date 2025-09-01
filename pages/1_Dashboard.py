@@ -6943,15 +6943,28 @@ if st.sidebar.button("Run Analysis"):
                 #         .reset_index(drop=True)
                 #     )
                 
+                # with st.expander("💎 Option Spread Table", expanded=False):
+                #     st.dataframe(
+                #         intraday[[
+                #             'Time', 'Underlying_Price', 'Volume',
+                #             'Call_Option_Smooth', 'Put_Option_Smooth', 'Spread',
+                #             'Spread_Vel', 'Spread_Accel',
+                #             'Spread_Change_Signal', 'Spread_Cross_Signal',
+                #             'Wake_Call', 'Wake_Put',
+                #             'Entry_Call', 'Entry_Put'
+                #         ]]
+                #         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
+                #         .reset_index(drop=True)
+                #     )
                 with st.expander("💎 Option Spread Table", expanded=False):
                     st.dataframe(
                         intraday[[
-                            'Time', 'Underlying_Price', 'Volume',
-                            'Call_Option_Smooth', 'Put_Option_Smooth', 'Spread',
+                            'Time', 'Volume',
+                            'Call_Option_Smooth', 'Put_Option_Smooth',
+                            'Spread', 'Spread_Put',
                             'Spread_Vel', 'Spread_Accel',
-                            'Spread_Change_Signal', 'Spread_Cross_Signal',
-                            'Wake_Call', 'Wake_Put',
-                            'Entry_Call', 'Entry_Put'
+                            'Spread_EMA', 'Spread_Vel_EMA',
+                            'Spread_Z', 'Spread_Expanding'
                         ]]
                         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
                         .reset_index(drop=True)
