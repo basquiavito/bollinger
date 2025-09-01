@@ -8096,7 +8096,27 @@ if st.sidebar.button("Run Analysis"):
                     name="Call IB Low",
                     hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
                 ), row=2, col=1)
+
+                # 🔵 Put IB High (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[put_ib_high, put_ib_high],
+                    mode='lines',
+                    line=dict(color="cyan", dash="dot", width=0.6),
+                    name="Put IB High",
+                    hovertemplate="Put IB High: %{y:.2f}<extra></extra>"
+                ), row=2, col=1)
                 
+                # 🔵 Put IB Low (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[put_ib_low, put_ib_low],
+                    mode='lines',
+                    line=dict(color="cyan", dash="dot", width=0.6),
+                    name="Put IB Low",
+                    hovertemplate="Put IB Low: %{y:.2f}<extra></extra>"
+                ), row=2, col=1)
+
                 # # 🔷 Value Area Min (hoverable)
                 # fig.add_trace(go.Scatter(
                 #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
