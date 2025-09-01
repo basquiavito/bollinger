@@ -7942,60 +7942,8 @@ if st.sidebar.button("Run Analysis"):
 
                 ), row=2, col=1)
 
-                # Wake signal columns
-                intraday["Wake_Call"] = (
-                    (intraday["Spread"] > 0) &
-                    (intraday["Spread_Vel"] > intraday["Spread_Vel"].rolling(10).mean() + intraday["Spread_Vel"].rolling(10).std()) &
-                    (intraday["Spread_Z"] > 1)
-                )
-                
-                intraday["Wake_Put"] = (
-                    (intraday["Spread"] < 0) &
-                    (intraday["Spread_Vel"] < intraday["Spread_Vel"].rolling(10).mean() - intraday["Spread_Vel"].rolling(10).std()) &
-                    (intraday["Spread_Z"] < -1)
-                )
-                
-                # Merge into a single emoji column
-                intraday["Option_Wake_Emoji"] = np.where(intraday["Wake_Call"], "🚀", 
-                                                  np.where(intraday["Wake_Put"], "🪓", ""))
 
-                # Plot only the wake emojis
-                wake_points = intraday[intraday["Option_Wake_Emoji"] != ""]
-                
-                fig.add_trace(go.Scatter(
-                    x=wake_points["Time"],
-                    y=wake_points["Call_Option_Smooth"],  # or Put_Option_Smooth or Spread
-                    mode="text",
-                    text=wake_points["Option_Wake_Emoji"],
-                    textposition="top center",
-                    showlegend=False,
-                    hoverinfo="skip"
-                ), row=2, col=1)
 
-                # # 🟣 Spread (Call - Put)
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Spread"],
-                #     mode="lines",
-                #     name="Call-Put Spread",
-                #     line=dict(color="orange", width=1.3, dash="dot"),
-                #     showlegend=True,
-                #     hovertemplate=
-                #     "<b>Time:</b> %{x}<br>" +
-                #     "<b>Spread:</b> %{y:.2f}<extra></extra>"
-                # ), row=2, col=1)
-
-                # fig.add_trace(go.Scatter(
-                #     x=intraday["Time"],
-                #     y=intraday["Spread_Vel"],
-                #     mode="lines",
-                #     name="Spread Velocity",
-                #     line=dict(color="red", width=1, dash="dash"),
-                #     showlegend=True,
-                #     hovertemplate=
-                #     "<b>Time:</b> %{x}<br>" +
-                #     "<b>Spread Velocity:</b> %{y:.2f}<extra></extra>"
-                # ), row=2, col=1)
 
                 intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
                 intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
