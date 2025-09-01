@@ -7944,30 +7944,30 @@ if st.sidebar.button("Run Analysis"):
 
 
                 
-                # 🟣 Spread (Call - Put)
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Spread"],
-                    mode="lines",
-                    name="Call-Put Spread",
-                    line=dict(color="orange", width=1.3, dash="dot"),
-                    showlegend=True,
-                    hovertemplate=
-                    "<b>Time:</b> %{x}<br>" +
-                    "<b>Spread:</b> %{y:.2f}<extra></extra>"
-                ), row=2, col=1)
+                # # 🟣 Spread (Call - Put)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Spread"],
+                #     mode="lines",
+                #     name="Call-Put Spread",
+                #     line=dict(color="orange", width=1.3, dash="dot"),
+                #     showlegend=True,
+                #     hovertemplate=
+                #     "<b>Time:</b> %{x}<br>" +
+                #     "<b>Spread:</b> %{y:.2f}<extra></extra>"
+                # ), row=2, col=1)
 
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Spread_Vel"],
-                    mode="lines",
-                    name="Spread Velocity",
-                    line=dict(color="red", width=1, dash="dash"),
-                    showlegend=True,
-                    hovertemplate=
-                    "<b>Time:</b> %{x}<br>" +
-                    "<b>Spread Velocity:</b> %{y:.2f}<extra></extra>"
-                ), row=2, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Spread_Vel"],
+                #     mode="lines",
+                #     name="Spread Velocity",
+                #     line=dict(color="red", width=1, dash="dash"),
+                #     showlegend=True,
+                #     hovertemplate=
+                #     "<b>Time:</b> %{x}<br>" +
+                #     "<b>Spread Velocity:</b> %{y:.2f}<extra></extra>"
+                # ), row=2, col=1)
 
                 intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
                 intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
