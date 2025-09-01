@@ -7821,7 +7821,6 @@ if st.sidebar.button("Run Analysis"):
                     #     ), row=1, col=1)
 
              
-                Smooth first if needed
                 intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
                 intraday["Put_Option_Smooth"]  = intraday["Put_Option_Value"].rolling(3).mean()
                 
