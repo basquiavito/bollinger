@@ -7942,6 +7942,31 @@ if st.sidebar.button("Run Analysis"):
 
                 ), row=2, col=1)
 
+                # 💨 Tag upper band breakouts
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
+                    mode="markers+text",
+                    name="💨 Put Breakout",
+                    text=intraday["Put_BB_Tag"],
+                    textposition="top center",
+                    marker=dict(color="cyan", size=5),
+                    showlegend=False,
+                    hoverinfo="skip"
+                ), row=2, col=1)
+                
+                # 🐝 Tag tight BBW zones
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
+                    mode="markers+text",
+                    name="🐝 BBW Tight",
+                    text=intraday["Put_BBW_Tight_Emoji"],
+                    textposition="bottom center",
+                    marker=dict(color="orange", size=5),
+                    showlegend=False,
+                    hoverinfo="skip"
+                ), row=2, col=1)
 
 
 
