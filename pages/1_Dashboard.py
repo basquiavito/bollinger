@@ -7955,13 +7955,17 @@ if st.sidebar.button("Run Analysis"):
                     mode="lines",
                     name="Call vs Midas Bull",
                     line=dict(color="darkviolet", width=1.5, dash="dot"),
-                    showlegend=True
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>Call vs Bull: %{y:.2f}<extra></extra>"
+
                 ), row=3, col=1)
                 
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
                     y=intraday["Put_vs_Bear"],
                     mode="lines",
+                    hovertemplate="Time: %{x}<br>Call vs Bull: %{y:.2f}<extra></extra>"
+
                     name="Put vs Midas Bear",
                     line=dict(color="darkcyan", width=1.5, dash="dot"),
                     showlegend=True
