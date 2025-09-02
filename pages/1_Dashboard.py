@@ -1677,7 +1677,7 @@ if st.sidebar.button("Run Analysis"):
                       smooth_window=3,
                       median_window=50,
                       threshold_scale=1.2,
-                      scale_factor=100,
+                      scale_factor=1000,
                       eps_replace_zero=True
                   ):
                       """
