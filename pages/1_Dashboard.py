@@ -1724,48 +1724,54 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = compute_option_price_elasticity(intraday)      
 
-                def add_spread_features(df, ema_span=3, z_win=50, z_minp=25):
-                        """
-                        Requires:
-                          - df['Call_Option_Smooth'] (CS)
-                          - df['Put_Option_Smooth']  (PS)
-                    
-                        Adds:
-                          - Spread:        CS - PS  ( >0 = call dominance )
-                          - Spread_Put:    PS - CS  ( >0 = put  dominance )
-                          - Spread_Vel:    d(Spread)/dt  (divergence speed)
-                          - Spread_Accel:  d²(Spread)/dt²
-                          - Spread_EMA:    EMA-smoothed spread
-                          - Spread_Vel_EMA:EMA-smoothed divergence speed
-                          - Spread_Z:      rolling z-score of Spread (cross-symbol comparable)
-                          - Spread_Expanding: boolean, True when spread is growing (Vel > 0)
-                        """
-                        CS = df["Call_Option_Smooth"].astype(float)
-                        PS = df["Put_Option_Smooth"].astype(float)
-                    
-                        # Core spreads
-                        df["Spread"]      = CS - PS               # call-dominance view
-                        df["Spread_Put"]  = -df["Spread"]         # put-dominance (PS - CS)
-                    
-                        # Dynamics
-                        df["Spread_Vel"]   = df["Spread"].diff()                              # first derivative
-                        df["Spread_Accel"] = df["Spread_Vel"].diff()                          # second derivative
-                    
-                        # Smoothed views (short memory)
-                        df["Spread_EMA"]      = df["Spread"].ewm(span=ema_span, adjust=False).mean()
-                        df["Spread_Vel_EMA"]  = df["Spread_Vel"].ewm(span=ema_span, adjust=False).mean()
-                    
-                        # Rolling z-score (robust comparison across days/tickers)
-                        roll_mean = df["Spread"].rolling(z_win, min_periods=z_minp).mean()
-                        roll_std  = df["Spread"].rolling(z_win, min_periods=z_minp).std().replace(0, np.nan)
-                        df["Spread_Z"] = (df["Spread"] - roll_mean) / roll_std
-                    
-                        # Simple expanding flag
-                        df["Spread_Expanding"] = df["Spread_Vel"] > 0
-                    
-                        return df
-                intraday = add_spread_features(intraday)
-              
+                def compute_option_price_elasticity(
+                    intraday,
+                    fcol="F_numeric",
+                    call_col="Call_Option_Smooth",
+                    put_col="Put_Option_Smooth",
+                    smooth_window=3,
+                    median_window=50,
+                    threshold_scale=1.2,
+                    scale_factor=100,           # 100 ⇒ 1-pt F-move shows PE in option-cents
+                    eps_replace_zero=True
+                ):
+                    """
+                    PE =   ΔOption   /  ΔF_numeric_points
+                           (cents)      (1-pt  = 0.01 %   move in the underlying)
+                    then × scale_factor for readability
+                    """
+                    intraday = intraday.copy()
+                
+                    # 1⃣  ΔF as **point** change (1 pt = 0.01 % price move)
+                    intraday["dF"] = intraday[fcol].diff().abs()
+                    if eps_replace_zero:
+                        intraday["dF"] = intraday["dF"].replace(0, np.nan)
+                
+                    # 2⃣  raw elasticity
+                    intraday["Call_PE_raw"] = intraday[call_col].diff() / intraday["dF"]
+                    intraday["Put_PE_raw"]  = intraday[put_col].diff()  / intraday["dF"]
+                
+                    # 3⃣  smooth
+                    intraday["Call_PE"] = intraday["Call_PE_raw"].rolling(smooth_window, min_periods=1).mean()
+                    intraday["Put_PE"]  = intraday["Put_PE_raw"].rolling(smooth_window, min_periods=1).mean()
+                
+                    # 4⃣  scale for readability (PE now ≈ option-cents per 1-pt F move)
+                    intraday["Call_PE_scaled"] = (intraday["Call_PE"] * scale_factor).round(2)
+                    intraday["Put_PE_scaled"]  = (intraday["Put_PE"]  * scale_factor).round(2)
+                
+                    # 5⃣  rolling-median gates
+                    call_med = intraday["Call_PE_scaled"].rolling(median_window, min_periods=1).median()
+                    put_med  = intraday["Put_PE_scaled"].rolling(median_window, min_periods=1).median()
+                
+                    intraday["call_ok"] = intraday["Call_PE_scaled"] > call_med * threshold_scale
+                    intraday["put_ok"]  = intraday["Put_PE_scaled"]  > put_med  * threshold_scale
+                
+                    intraday["call_ok"] = intraday["call_ok"].fillna(False)
+                    intraday["put_ok"]  = intraday["put_ok"].fillna(False)
+                    return intraday
+
+                intraday = compute_option_price_elasticity(intraday, scale_factor=100)
+
                 
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
                     """
