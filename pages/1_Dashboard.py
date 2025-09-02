@@ -1670,53 +1670,55 @@ if st.sidebar.button("Run Analysis"):
 
 
                 def compute_option_price_elasticity(
-                    intraday,
-                    fcol="F_numeric",
-                    call_col="Call_Option_Smooth",
-                    put_col="Put_Option_Smooth",
-                    smooth_window=3,
-                    median_window=50,
-                    threshold_scale=1.2,
-                    eps_replace_zero=True
-                ):
-                    """
-                    Computes 'price elasticity' for Call and Put option smooth values:
-                      - dF = absolute F_numeric delta (zeros -> NaN to avoid divide-by-zero)
-                      - Call_PE / Put_PE = smoothed (delta option / dF)
-                      - call_ok / put_ok = flags when PE > median(PE, rolling median_window) * threshold_scale
-                
-                    Returns a copy of intraday with new columns:
-                      dF, Call_PE_raw, Put_PE_raw, Call_PE, Put_PE, call_ok, put_ok
-                    """
-                    intraday = intraday.copy()
-                
-                    # 1) dF: absolute F change, replace zeros with NaN to avoid division by zero
-                    intraday["dF"] = intraday[fcol].diff().abs()
-                    if eps_replace_zero:
-                        intraday["dF"] = intraday["dF"].replace(0, np.nan)
-                
-                    # 2) raw PE (delta option value / dF)
-                    intraday["Call_PE_raw"] = intraday[call_col].diff() / intraday["dF"]
-                    intraday["Put_PE_raw"]  = intraday[put_col].diff()  / intraday["dF"]
-                
-                    # 3) smoothed PE (3-bar by default)
-                    intraday["Call_PE"] = intraday["Call_PE_raw"].rolling(window=smooth_window, min_periods=1).mean()
-                    intraday["Put_PE"]  = intraday["Put_PE_raw"].rolling(window=smooth_window, min_periods=1).mean()
-                
-                    # 4) rolling median baseline for gates (50-bar default)
-                    call_median = intraday["Call_PE"].rolling(window=median_window, min_periods=1).median()
-                    put_median  = intraday["Put_PE"].rolling(window=median_window, min_periods=1).median()
-                
-                    # 5) gates: PE > median * scale
-                    intraday["call_ok"] = intraday["Call_PE"] > (call_median * threshold_scale)
-                    intraday["put_ok"]  = intraday["Put_PE"]  > (put_median  * threshold_scale)
-                
-                    # 6) clean up: replace NaNs in boolean columns with False
-                    intraday["call_ok"] = intraday["call_ok"].fillna(False)
-                    intraday["put_ok"]  = intraday["put_ok"].fillna(False)
-                
-                    return intraday
-  
+                      intraday,
+                      fcol="F_numeric",
+                      call_col="Call_Option_Smooth",
+                      put_col="Put_Option_Smooth",
+                      smooth_window=3,
+                      median_window=50,
+                      threshold_scale=1.2,
+                      scale_factor=100,
+                      eps_replace_zero=True
+                  ):
+                      """
+                      Same as before but produces scaled (×scale_factor) PE columns for readability:
+                        - Call_PE, Put_PE (original)
+                        - Call_PE_scaled, Put_PE_scaled (multiplied by scale_factor)
+                        - call_ok / put_ok are computed using the scaled PE and scaled rolling median.
+                      """
+                      intraday = intraday.copy()
+                  
+                      # 1) dF: absolute F change, replace zeros with NaN to avoid division by zero
+                      intraday["dF"] = intraday[fcol].diff().abs()
+                      if eps_replace_zero:
+                          intraday["dF"] = intraday["dF"].replace(0, np.nan)
+                  
+                      # 2) raw PE (delta option value / dF)
+                      intraday["Call_PE_raw"] = intraday[call_col].diff() / intraday["dF"]
+                      intraday["Put_PE_raw"]  = intraday[put_col].diff()  / intraday["dF"]
+                  
+                      # 3) smoothed PE (3-bar by default)
+                      intraday["Call_PE"] = intraday["Call_PE_raw"].rolling(window=smooth_window, min_periods=1).mean()
+                      intraday["Put_PE"]  = intraday["Put_PE_raw"].rolling(window=smooth_window, min_periods=1).mean()
+                  
+                      # 4) scaled versions for readability (e.g. multiply by 100)
+                      intraday["Call_PE_scaled"] = intraday["Call_PE"] * scale_factor
+                      intraday["Put_PE_scaled"]  = intraday["Put_PE"]  * scale_factor
+                  
+                      # 5) rolling median baseline for gates (computed on the scaled series)
+                      call_median_scaled = intraday["Call_PE_scaled"].rolling(window=median_window, min_periods=1).median()
+                      put_median_scaled  = intraday["Put_PE_scaled"].rolling(window=median_window, min_periods=1).median()
+                  
+                      # 6) gates: use the scaled PE and scaled median
+                      intraday["call_ok"] = intraday["Call_PE_scaled"] > (call_median_scaled * threshold_scale)
+                      intraday["put_ok"]  = intraday["Put_PE_scaled"]  > (put_median_scaled  * threshold_scale)
+                  
+                      # 7) clean up: replace NaNs in boolean columns with False
+                      intraday["call_ok"] = intraday["call_ok"].fillna(False)
+                      intraday["put_ok"]  = intraday["put_ok"].fillna(False)
+                  
+                      return intraday
+
                 intraday = compute_option_price_elasticity(intraday)      
 
                 def add_spread_features(df, ema_span=3, z_win=50, z_minp=25):
