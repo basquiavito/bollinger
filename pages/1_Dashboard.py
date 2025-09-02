@@ -1663,54 +1663,50 @@ if st.sidebar.button("Run Analysis"):
 
 
                   
-
-
-
+            
                 intraday = compute_option_value(intraday)      
 
-                def add_spread_features(df, ema_span=3, z_win=50, z_minp=25):
-                        """
-                        Requires:
-                          - df['Call_Option_Smooth'] (CS)
-                          - df['Put_Option_Smooth']  (PS)
-                    
-                        Adds:
-                          - Spread:        CS - PS  ( >0 = call dominance )
-                          - Spread_Put:    PS - CS  ( >0 = put  dominance )
-                          - Spread_Vel:    d(Spread)/dt  (divergence speed)
-                          - Spread_Accel:  d²(Spread)/dt²
-                          - Spread_EMA:    EMA-smoothed spread
-                          - Spread_Vel_EMA:EMA-smoothed divergence speed
-                          - Spread_Z:      rolling z-score of Spread (cross-symbol comparable)
-                          - Spread_Expanding: boolean, True when spread is growing (Vel > 0)
-                        """
-                        CS = df["Call_Option_Smooth"].astype(float)
-                        PS = df["Put_Option_Smooth"].astype(float)
-                    
-                        # Core spreads
-                        df["Spread"]      = CS - PS               # call-dominance view
-                        df["Spread_Put"]  = -df["Spread"]         # put-dominance (PS - CS)
-                    
-                        # Dynamics
-                        df["Spread_Vel"]   = df["Spread"].diff()                              # first derivative
-                        df["Spread_Accel"] = df["Spread_Vel"].diff()                          # second derivative
-                    
-                        # Smoothed views (short memory)
-                        df["Spread_EMA"]      = df["Spread"].ewm(span=ema_span, adjust=False).mean()
-                        df["Spread_Vel_EMA"]  = df["Spread_Vel"].ewm(span=ema_span, adjust=False).mean()
-                    
-                        # Rolling z-score (robust comparison across days/tickers)
-                        roll_mean = df["Spread"].rolling(z_win, min_periods=z_minp).mean()
-                        roll_std  = df["Spread"].rolling(z_win, min_periods=z_minp).std().replace(0, np.nan)
-                        df["Spread_Z"] = (df["Spread"] - roll_mean) / roll_std
-                    
-                        # Simple expanding flag
-                        df["Spread_Expanding"] = df["Spread_Vel"] > 0
-                    
-                        return df
-                intraday = add_spread_features(intraday)
-              
+                def compute_gsi(df, win=20, minp=10, cool=3):
+                    # 1) raw shocks
+                    dCg = df["Call_Gamma"].diff().abs()
+                    dPg = df["Put_Gamma"] .diff().abs()
                 
+                    # 2) typical size (robust denominator)
+                    baseC = dCg.rolling(win, min_periods=minp).median().replace(0, np.nan)
+                    baseP = dPg.rolling(win, min_periods=minp).median().replace(0, np.nan)
+                
+                    # 3) ratio shocks (your formula), clipped to avoid crazy infs
+                    df["GSI_C"] = (dCg / baseC).fillna(0).clip(0, 20)
+                    df["GSI_P"] = (dPg / baseP).fillna(0).clip(0, 20)
+                
+                    # 4) optional robustness: MAD z-score (comment in if you prefer)
+                    # medC = dCg.rolling(win, min_periods=minp).median()
+                    # madC = (dCg - medC).abs().rolling(win, min_periods=minp).median().replace(0, np.nan)
+                    # df["GSI_C"] = (0.6745 * (dCg - medC) / madC).fillna(0)
+                
+                    # 5) directional flavor (useful for labels/filters)
+                    df["GSI_C_dir"] = df["GSI_C"] * np.sign(df["Call_Delta"].diff().fillna(0))
+                    df["GSI_P_dir"] = df["GSI_P"] * np.sign(-df["Put_Delta"].diff().fillna(0))  # negative for puts
+                
+                    # 6) tradeable flags (tight filters for 5m)
+                    atmC = df["Call_Delta"].between(0.3, 0.7)
+                    atmP = df["Put_Delta"] .between(0.3, 0.7)
+                    tape = df["F_velocity"].abs() > df["F_velocity"].rolling(win).median().fillna(0)
+                    rvok = (df.get("RVOL_5", 1) > 1)
+                
+                    shockC = (df["GSI_C"] > 3.5) & atmC & tape & rvok
+                    shockP = (df["GSI_P"] > 3.5) & atmP & tape & rvok
+                
+                    # refractory: don’t spam consecutive bars
+                    refC = shockC & ~shockC.shift(1).rolling(cool).max().fillna(False)
+                    refP = shockP & ~shockP.shift(1).rolling(cool).max().fillna(False)
+                
+                    df["GSI_C_⚡"] = np.where(refC, "⚡", "")
+                    df["GSI_P_⚡"] = np.where(refP, "⚡", "")
+                    return df
+                # assuming compute_gsi is defined in scope
+                intraday = compute_gsi(intraday)
+
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
                     """
                     Detects call/put speed explosions using a ratio test and percentile filter.
@@ -6961,10 +6957,7 @@ if st.sidebar.button("Run Analysis"):
                         intraday[[
                             'Time', 'Volume',
                             'Call_Option_Smooth', 'Put_Option_Smooth',
-                            'Spread', 'Spread_Put',
-                            'Spread_Vel', 'Spread_Accel',
-                            'Spread_EMA', 'Spread_Vel_EMA',
-                            'Spread_Z', 'Spread_Expanding'
+                           "GSI_C","GSI_P"
                         ]]
                         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
                         .reset_index(drop=True)
