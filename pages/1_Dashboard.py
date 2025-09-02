@@ -1689,7 +1689,7 @@ if st.sidebar.button("Run Analysis"):
                       intraday = intraday.copy()
                   
                       # 1) dF: absolute F change, replace zeros with NaN to avoid division by zero
-                      intraday["dF"] = intraday[fcol].diff().abs()
+                      intraday["dF"] = intraday[fcol].pct_change().abs() * 100  # percent movement of F
                       if eps_replace_zero:
                           intraday["dF"] = intraday["dF"].replace(0, np.nan)
                   
