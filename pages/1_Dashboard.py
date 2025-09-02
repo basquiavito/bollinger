@@ -1717,7 +1717,12 @@ if st.sidebar.button("Run Analysis"):
                 
                     intraday["call_ok"] = intraday["call_ok"].fillna(False)
                     intraday["put_ok"]  = intraday["put_ok"].fillna(False)
-                
+
+                    flat = df["dF"] < df["dF"].rolling(20).quantile(0.25)
+                    
+                    df["Call_LF"] = (df["Call_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
+                    df["Put_LF"]  = (df["Put_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
+
                     return intraday
 
 
@@ -6254,7 +6259,7 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(
                         intraday[[
                             'Time', 'Volume',
-                            'Call_Option_Smooth', 'Put_Option_Smooth',"Call_PE","Put_PE"
+                            'Call_Option_Smooth', 'Put_Option_Smooth',"Call_PE","Put_PE","Call_LF","Put_LF"
                           
                         ]]
                         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
