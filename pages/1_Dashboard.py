@@ -6974,7 +6974,7 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(
                         intraday[[
                             'Time', 'Volume',
-                            'Call_Option_Smooth', 'Put_Option_Smooth',"Call_PE"
+                            'Call_Option_Smooth', 'Put_Option_Smooth',"Call_PE","Put_PE"
                           
                         ]]
                         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
