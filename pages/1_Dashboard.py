@@ -6247,7 +6247,8 @@ if st.sidebar.button("Run Analysis"):
                         yaxis_title="¢ per F-pt",
                     )
                 
-              
+              # Main plot (already existing)
+                    fig = go.Figure()
           
                     # ✅ Add emoji markers where Call_LF is True
                     fig.add_trace(go.Scatter(
