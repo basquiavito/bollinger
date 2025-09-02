@@ -6204,772 +6204,90 @@ if st.sidebar.button("Run Analysis"):
                          
 
        
-
-
-
-
-
-       #          with st.expander("🧠 Mike's Physics Engine – Displacement Plot", expanded=False):
-                   
-       #              fig_displacement = go.Figure()
-
-       #            # --- Create a 2-row layout (row 1 = main engine, row 2 = volatility)
-       #              fig = make_subplots(
-       #                  rows=1, cols=1,
-       #                  shared_xaxes=True,
-               
-       #                  subplot_titles=("🧠 Mike's Physics Engine")
-       #              )
-
-       #              # === Cumulative Unit% Line ===
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=intraday["Time"],
-       #                  y=intraday["Cumulative_Unit"],
-       #                  mode="lines",
-       #                  name="Cumulative Unit%",
-       #                  line=dict(color="dodgerblue", width=2),
-       #                  hovertemplate="Time: %{x}<br>Cumulative Unit%: %{y:.1f}<extra></extra>"
-       #              ))
+                with st.expander("📈 Option Price Elasticity (PE)", expanded=True):
                 
-       #              # === Zero Reference Line ===
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=intraday["Time"],
-       #                  y=[0] * len(intraday),
-       #                  mode="lines",
-       #                  name="Zero Line",
-       #                  line=dict(color="gray", width=1, dash="dot"),
-       #                  showlegend=False
-       #              ))
-
-       #             # === ADD: Vector% Markers ===
-       #              vector_rows = intraday[intraday["Vector%"].str.endswith("%")].copy()
-       #              vector_rows["Vector%_numeric"] = vector_rows["Vector%"].str.replace("%", "").astype(int)
-                    
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=vector_rows["Time"],
-       #                  y=vector_rows["Cumulative_Unit"],
-       #                  mode="markers+text",
-       #                  name="Vector%",
-       #                  marker=dict(
-       #                      size=9,
-       #                      color=["limegreen" if val > 0 else "orangered" for val in vector_rows["Vector%_numeric"]],
-       #                      symbol="circle"
-       #                  ),
-       #                  text=[f"{val:+}%" for val in vector_rows["Vector%_numeric"]],
-       #                  textposition="top center",
-       #                  textfont=dict(size=13),
-       #                  hovertemplate="Vector%: %{text}<br>Time: %{x}<extra></extra>"
-       #              ))
-     
-       #              #                     # --- Extract top 3 positive and negative Velocity points ---
-       #              # velocity_data = intraday.copy()
-       #              # velocity_data["Velocity_Num"] = pd.to_numeric(velocity_data["Velocity"].str.replace("%", ""), errors="coerce")
-                    
-       #              # # Drop NaNs
-       #              # velocity_data = velocity_data.dropna(subset=["Velocity_Num", "Cumulative_Unit", "Time"])
-                    
-       #              # # Top 3 positive
-       #              # top3_pos = velocity_data.nlargest(3, "Velocity_Num")
-                    
-       #              # # Top 3 negative
-       #              # top3_neg = velocity_data.nsmallest(3, "Velocity_Num")
-                    
-       #              # # --- Plot 🚀 markers for top positive velocities ---
-       #              # fig_displacement.add_trace(go.Scatter(
-       #              #     x=top3_pos["Time"],
-       #              #     y=top3_pos["Cumulative_Unit"] + 10,
-       #              #     mode="text",
-       #              #     text=["🚀"] * 3,
-       #              #     textposition="top center",
-       #              #     textfont=dict(size=18),
-       #              #     showlegend=False,
- 
-       #              #     hovertemplate=(
-       #              #                   "🚀 Vector Burst<br>"
-       #              #                   "Time: %{x|%I:%M %p}<br>"
-       #              #                   "Velocity: %{customdata[0]}%<br>"
-       #              #               ),
-       #              # ))
-                    
-       #              # # --- Plot 🪂 markers for top negative velocities ---
-       #              # fig_displacement.add_trace(go.Scatter(
-       #              #     x=top3_neg["Time"],
-       #              #     y=top3_neg["Cumulative_Unit"] - 10,
-       #              #     mode="text",
-       #              #     text=["🪂"] * 3,
-       #              #     textposition="bottom center",
-       #              #     textfont=dict(size=18),
-       #              #     showlegend=False,
-
-       #              #     hovertemplate=(
-       #              #                   "🪂 Crash Down<br>"
-       #              #                   "Time: %{x|%I:%M %p}<br>"
-       #              #                   "Velocity: %{customdata[0]}%<br>"
-       #              #               )
-       #              # ))
-
-
-
-
-       #            # # --- ACCELERATION MARKERS: Top 2 Positive (⚡) and Top 2 Negative (🐢) ---
-
-       #            #   # Clean and convert Acceleration to numeric
-       #            #   intraday["Acceleration_numeric"] = pd.to_numeric(
-       #            #       intraday["Acceleration"].str.replace("%", ""), errors="coerce"
-       #            #   )
-                    
-       #            #   # Drop NaNs
-       #            #   valid_accel = intraday.dropna(subset=["Acceleration_numeric"])
-                    
-       #            #   # Sort and pick top 2 positive
-       #            #   top2_pos_accel = valid_accel.nlargest(2, "Acceleration_numeric")
-                    
-       #            #   # Sort and pick top 2 negative
-       #            #   top2_neg_accel = valid_accel.nsmallest(2, "Acceleration_numeric")
-                    
-       #            #   # === Add ⚡ markers (top 2 positive)
-       #            #   fig_displacement.add_trace(go.Scatter(
-       #            #       x=top2_pos_accel["Time"],
-       #            #       y=top2_pos_accel["Cumulative_Unit"] + 16,
-       #            #       mode="text",
-       #            #       text=["⚡"] * len(top2_pos_accel),
-       #            #       textposition="top center",
-       #            #       textfont=dict(size=18),
-       #            #       name="High Acceleration",
-       #            #       hovertemplate="⚡ Surge Up<br>Time: %{x}<br>Accel: %{customdata[0]}%<extra></extra>",
-       #            #       customdata=top2_pos_accel[["Acceleration"]],
-       #            #       showlegend=False
-       #            #   ))
-                    
-       #            #   # === Add 🐢 markers (top 2 negative)
-       #            #   fig_displacement.add_trace(go.Scatter(
-       #            #       x=top2_neg_accel["Time"],
-       #            #       y=top2_neg_accel["Cumulative_Unit"] - 16,
-       #            #       mode="text",
-       #            #       text=["🐢"] * len(top2_neg_accel),
-       #            #       textposition="bottom center",
-       #            #       textfont=dict(size=18),
-       #            #       name="Slowdown",
-       #            #       hovertemplate="🐢 Slow Down<br>Time: %{x}<br>Accel: %{customdata[0]}%<extra></extra>",
-       #            #       customdata=top2_neg_accel[["Acceleration"]],
-       #            #       showlegend=False
-       #            #   ))
-
-
-       #              # --- Jerk Markers: Top 3 Positive (⚙️) and Top 3 Negative (🧱) — below Acceleration layer ---
-
-       #              # Ensure Jerk_Vector is numeric
-       #              intraday["Jerk_num"] = pd.to_numeric(intraday["Jerk_Vector"], errors="coerce")
-                    
-       #              # Drop any rows without Jerk or Cumulative_Unit or Time
-       #              valid_jerk = intraday.dropna(subset=["Jerk_num", "Cumulative_Unit", "Time"])
-                    
-       #              # Select top 3 positive jerk and top 3 negative jerk
-       #              top3_pos_jerk = valid_jerk.nlargest(3, "Jerk_num")
-       #              top3_neg_jerk = valid_jerk.nsmallest(3, "Jerk_num")
-                    
-       #              # ⚙️ Positive Jerk Markers (above the flight path)
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_pos_jerk["Time"],
-       #                  y=top3_pos_jerk["Cumulative_Unit"] + 56,
-       #                  mode="text",
-       #                  text=["⚙️"] * len(top3_pos_jerk),
-       #                  textposition="top center",
-       #                  textfont=dict(size=18),
-       #                  showlegend=False,
-       #                  hovertemplate=(
-       #                      "⚙️ Jerk Surge<br>"
-       #                      "Time: %{x}<br>"
-       #                      "Jerk: %{customdata[0]:.2f}%<extra></extra>"
-       #                  ),
-       #                  customdata=top3_pos_jerk[["Jerk_num"]].values
-       #              ))
-                    
-       #              # 🧱 Negative Jerk Markers (below the flight path)
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_neg_jerk["Time"],
-       #                  y=top3_neg_jerk["Cumulative_Unit"] - 56,
-       #                  mode="text",
-       #                  text=["🧱"] * len(top3_neg_jerk),
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=18),
-       #                  showlegend=False,
-       #                  hovertemplate=(
-       #                      "🧱 Jerk Brake<br>"
-       #                      "Time: %{x}<br>"
-       #                      "Jerk: %{customdata[0]:.2f}%<extra></extra>"
-       #                  ),
-       #                  customdata=top3_neg_jerk[["Jerk_num"]].values
-       #              ))
-
-       #              intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
-       #              intraday["Vector Momentum"] = pd.to_numeric(intraday["Vector Momentum"], errors="coerce")
-                    
-       #              top_unit_pos = intraday.nlargest(3, "Unit Momentum")
-       #              top_unit_neg = intraday.nsmallest(3, "Unit Momentum")
-                    
-       #              top_vector_pos = intraday.nlargest(3, "Vector Momentum")
-       #              top_vector_neg = intraday.nsmallest(3, "Vector Momentum")
-                    
-                    
-       #              # === Vector Momentum Markers ===
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top_vector_pos["Time"],
-       #                  y=top_vector_pos["Cumulative_Unit"] + 24,
-       #                  mode="text",
-       #                  text=["💥"] * 3,
-       #                  textposition="top center",
-       #                  textfont=dict(size=18),
-       #                  name="High Vector Momentum",
-       #                  showlegend=False,
-       #                  hovertemplate="💥 Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
-       #                  customdata=top_vector_pos[["Vector Momentum"]].values
-       #              ))
-                    
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top_vector_neg["Time"],
-       #                  y=top_vector_neg["Cumulative_Unit"] - 24,
-       #                  mode="text",
-       #                  text=["🌪️"] * 3,
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=18),
-       #                  name="Low Vector Momentum",
-       #                  showlegend=False,
-       #                  hovertemplate="🌪️ Vector Momentum<br>Time: %{x}<br>Momentum: %{customdata[0]:.1f}<extra></extra>",
-       #                  customdata=top_vector_neg[["Vector Momentum"]].values
-       #              ))
-                    
-                                        
-       #                          # Ensure Vector Force is numeric (convert errors to NaN, then drop)
-       #              intraday["Vector Force Clean"] = pd.to_numeric(intraday["Vector Force"], errors="coerce")
-                    
-       #              # Top 3 positive
-       #              top_positive_force = intraday.dropna(subset=["Vector Force Clean"]).nlargest(3, "Vector Force Clean")
-                    
-       #              # Top 3 negative
-       #              top_negative_force = intraday.dropna(subset=["Vector Force Clean"]).nsmallest(3, "Vector Force Clean")
-                    
-       #                                  # Plotting 💪🏼 markers (top 3 positive)
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top_positive_force["Time"],
-       #                  y=top_positive_force["Cumulative_Unit"] + 32,
-       #                  mode="text",
-       #                  text=["💪🏼"] * 3,
-       #                  textposition="top center",
-       #                  textfont=dict(size=18),
-       #                  showlegend=False,
-       #                  name="Top Force Up",
-       #                  customdata=top_positive_force[["Vector Force Clean"]],
-       #                  hovertemplate=(
-       #                      "💪🏼 Explosion Up<br>"
-       #                      "Time: %{x|%I:%M %p}<br>"
-       #                      "Force: %{customdata[0]:.1f}<extra></extra>"
-       #                  )
-       #              ))
-                    
-       #              # Plotting 🦾 markers (top 3 negative)
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top_negative_force["Time"],
-       #                  y=top_negative_force["Cumulative_Unit"] - 32,
-       #                  mode="text",
-       #                  text=["🦾"] * 3,
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=18),
-       #                  showlegend=False,
-       #                  name="Top Force Down",
-       #                  customdata=top_negative_force[["Vector Force Clean"]],
-       #                  hovertemplate=(
-       #                      "🦾 Slam Down<br>"
-       #                      "Time: %{x|%I:%M %p}<br>"
-       #                      "Force: %{customdata[0]:.1f}<extra></extra>"
-       #                  )
-       #              ))
-       #              # --- Prepare Top 3 Vector Energy Rows ---
-       #              intraday["Vector Energy_numeric"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
-       #              top_energy_rows = intraday.nlargest(3, "Vector Energy_numeric").dropna(subset=["Vector Energy_numeric"])
-                    
-       #              # --- Plot Emoji Markers for Top Energy Spikes ---
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top_energy_rows["Time"],
-       #                  y=top_energy_rows["Cumulative_Unit"] + 40,  # Lift marker above line
-       #                  mode="text",
-       #                  text=["🔋"] * len(top_energy_rows),
-       #                  textposition="top center",
-       #                  textfont=dict(size=18),
-       #                  name="Top Energy Bursts",
-       #                  showlegend=False,
-       #                  hovertemplate=(
-       #                      "🔋 Energy Burst<br>"
-       #                      "Time: %{x|%I:%M %p}<br>"
-       #                      "Vector Energy: %{customdata[0]:,.1f}<extra></extra>"
-       #                  ),
-       #                  customdata=top_energy_rows[["Vector Energy_numeric"]].values
-       #              ))
-       #              # === Find Bottom 3 Vector Energy Spikes ===
-       #              bottom_vector_energy = intraday[intraday["Vector Energy"] != ""].copy()
-       #              bottom_vector_energy["Vector Energy"] = pd.to_numeric(bottom_vector_energy["Vector Energy"], errors="coerce")
-       #              bottom_vector_energy = bottom_vector_energy.dropna(subset=["Vector Energy"])
-       #              bottom_3_energy = bottom_vector_energy.nsmallest(3, "Vector Energy")
-                    
-       #              # === Plot Bottom 3 Vector Energy 🪫 Markers ===
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=bottom_3_energy["Time"],
-       #                  y=bottom_3_energy["Cumulative_Unit"] - 40,
-       #                  mode="text",
-       #                  text=["🪫"] * len(bottom_3_energy),
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=20),
-       #                  showlegend=False,
-       #                  hovertemplate=(
-       #                      "🪫 Low Energy<br>"
-       #                      "Time: %{x|%I:%M %p}<br>"
-       #                      "Vector Energy: %{customdata[0]:.1f}<extra></extra>"
-       #                  ),
-       #                  customdata=bottom_3_energy[["Vector Energy"]].values
-       #              ))
-                    
-
-                  
-       #            # Ensure column is numeric
-       #              intraday["Vector_Energy_Eff"] = pd.to_numeric(intraday["Vector_Energy_per_3bar_Range"], errors="coerce")
-                    
-       #              # --- Top 3 Most Efficient (🔌) ---
-       #              top_eff = intraday.nlargest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
-                    
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top_eff["Time"],
-       #                  y=top_eff["Cumulative_Unit"] +64,
-       #                  mode="text",
-       #                  text=["🔌"] * len(top_eff),
-       #                  textposition="top center",
-       #                  textfont=dict(size=18),
-       #                  name="High Energy Efficiency",
-       #                  showlegend=False,
-       #                  hovertemplate="🔌 Efficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
-       #                  customdata=top_eff[["Vector_Energy_Eff"]].values
-       #              ))
-                    
-       #              # --- Bottom 3 Least Efficient (⚠️) ---
-       #              bottom_eff = intraday.nsmallest(3, "Vector_Energy_Eff").dropna(subset=["Vector_Energy_Eff"])
-                    
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=bottom_eff["Time"],
-       #                  y=bottom_eff["Cumulative_Unit"] - 64,
-       #                  mode="text",
-       #                  text=["⚠️"] * len(bottom_eff),
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=18),
-       #                  name="Low Energy Efficiency",
-       #                  showlegend=False,
-       #                  hovertemplate="⚠️ Inefficient Energy<br>Time: %{x|%I:%M %p}<br>Efficiency: %{customdata[0]:.2f}<extra></extra>",
-       #                  customdata=bottom_eff[["Vector_Energy_Eff"]].values
-       #              ))
-
-                  
-                  
-       #            # Pick the first 🦻🏼 ear row
-       #            # === Overlay: 🦻🏼 Ear Line (Top %Vol Bin No Longer Active)
-       #              ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
-                    
-       #              if not ear_row.empty:
-       #                  ear_level = ear_row["F% Level"].values[0]
-                    
-       #                  # Find first time this F% Level appeared in intraday
-       #                  ear_time = intraday.loc[intraday["F_Bin"] == str(ear_level), "TimeIndex"].min()
-       #                  ear_row_match = intraday[intraday["TimeIndex"] == ear_time]
-                    
-       #                  if not ear_row_match.empty:
-       #                      ear_unit = ear_row_match["Cumulative_Unit"].values[0]
-                    
-       #                      fig_displacement.add_hline(
-       #                          y=ear_unit,
-       #                          line=dict(color="gray", dash="dot", width=1),
-       #                          annotation_text="🦻🏼 Volume Memory",
-       #                          annotation_position="top left",
-       #                          annotation_font=dict(color="gray", size=13),
-       #                          opacity=0.5
-       #                        )
-                      
-                        
-       #                        # === Overlay: 👃🏽 Nose Line (Top Time Bin)
-       #              nose_row = profile_df[profile_df["👃🏽"] == "👃🏽"]
-                    
-       #              if not nose_row.empty:
-       #                  nose_level = nose_row["F% Level"].values[0]
-                    
-       #                  # Find first time this F% Level appeared in intraday
-       #                  nose_time = intraday.loc[intraday["F_Bin"] == str(nose_level), "TimeIndex"].min()
-       #                  nose_row_match = intraday[intraday["TimeIndex"] == nose_time]
-                    
-       #                  if not nose_row_match.empty:
-       #                      nose_unit = nose_row_match["Cumulative_Unit"].values[0]
-                    
-       #                      fig_displacement.add_hline(
-       #                          y=nose_unit,
-       #                          line=dict(color="lightpink", dash="dot", width=1),
-       #                          annotation_text="👃🏽 Time Memory",
-       #                          annotation_position="top left",
-       #                          annotation_font=dict(color="#0ff", size=13),
-       #                          opacity=0.5
-       #                      )
-                    
-       #                                     # === Plot 🪶 Tail Emoji on Physics Plot (no line)
-       #              tail_rows = profile_df[profile_df["Tail"] == "🪶"]
-                    
-       #              for _, row in tail_rows.iterrows():
-       #                  tail_level = row["F% Level"]
-                    
-       #                  # Match first appearance in intraday
-       #                  time_index = intraday.loc[intraday["F_Bin"] == str(tail_level), "TimeIndex"].min()
-       #                  match_row = intraday[intraday["TimeIndex"] == time_index]
-                    
-       #                  if not match_row.empty:
-       #                      y_val = match_row["Cumulative_Unit"].values[0]
-                    
-       #                      fig_displacement.add_trace(go.Scatter(
-       #                          x=[time_index],
-       #                          y=[y_val],
-       #                          mode="text",
-       #                          text=["🪶"],
-       #                          textposition="middle center",
-       #                          textfont=dict(size=20),
-       #                          hovertemplate=(
-       #                              f"🪶 Tail (Single Letter)<br>Level: {tail_level}<br>Time: {row['Time']}<extra></extra>"
-       #                          ),
-       #                          showlegend=False
-       #                      ))
-                 
-                                                           
-
-       # # === Overlay: IB High as Resistance in Cumulative Unit Space ===
-       #              ib_high_time = intraday.loc[intraday["F_numeric"] == ib_high, "TimeIndex"].min()
-       #              ib_high_row = intraday[intraday["TimeIndex"] == ib_high_time]
-                    
-       #              if not ib_high_row.empty:
-       #                  ib_high_unit = ib_high_row["Cumulative_Unit"].values[0]
-                    
-       #                  fig_displacement.add_hline(
-       #                      y=ib_high_unit,
-       #                      line=dict(color="gold", dash="dash", width=1),
-       #                      annotation_text="💸 IB High",
-       #                      annotation_position="top left",
-       #                      annotation_font=dict(color="gold", size=13),
-       #                      opacity=0.6
-       #                  )
-
-
-
-       #                                # === Overlay: IB Low as Support in Cumulative Unit Space ===
-       #              ib_low_time = intraday.loc[intraday["F_numeric"] == ib_low, "TimeIndex"].min()
-       #              ib_low_row = intraday[intraday["TimeIndex"] == ib_low_time]
-                    
-       #              if not ib_low_row.empty:
-       #                  ib_low_unit = ib_low_row["Cumulative_Unit"].values[0]
-                    
-       #                  fig_displacement.add_hline(
-       #                      y=ib_low_unit,
-       #                      line=dict(color="gold", dash="dash", width=1),
-       #                      annotation_text="🧧 IB Low",
-       #                      annotation_position="bottom left",
-       #                      annotation_font=dict(color="gold", size=13),
-       #                      opacity=0.6
-       #                  )
-       #              # # Convert power column to numeric just in case
-       #              # intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
-                    
-       #              # # Drop NaNs
-       #              # valid_power = intraday.dropna(subset=["Power_numeric", "Cumulative_Unit", "Time"])
-                    
-       #              # # Top 3 positive power
-       #              # top3_power_up = valid_power.nlargest(3, "Power_numeric")
-                    
-       #              # # Top 3 negative power
-       #              # top3_power_down = valid_power.nsmallest(3, "Power_numeric")
-                    
-       #              # # === 🔷 Top 3 Power Surges ===
-       #              # fig_displacement.add_trace(go.Scatter(
-       #              #     x=top3_power_up["Time"],
-       #              #     y=top3_power_up["Cumulative_Unit"] + 72,
-       #              #     mode="text",
-       #              #     text=["🔷"] * len(top3_power_up),
-       #              #     textposition="top center",
-       #              #     textfont=dict(size=16),
-       #              #     showlegend=False,
-       #              #     hovertemplate="🔷 Power Surge<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
-       #              #     customdata=top3_power_up[["Power_numeric"]].values
-       #              # ))
-                    
-       #              # # === 🔶 Top 3 Power Drops ===
-       #              # fig_displacement.add_trace(go.Scatter(
-       #              #     x=top3_power_down["Time"],
-       #              #     y=top3_power_down["Cumulative_Unit"] - 104,
-       #              #     mode="text",
-       #              #     text=["🔶"] * len(top3_power_down),
-       #              #     textposition="bottom center",
-       #              #     textfont=dict(size=16),
-       #              #     showlegend=False,
-       #              #     hovertemplate="🔶 Power Crash<br>Time: %{x}<br>Power: %{customdata[0]:.2f}<extra></extra>",
-       #              #     customdata=top3_power_down[["Power_numeric"]].values
-       #              # ))
-                    
-       # #              # Ensure numeric and drop invalids
-       # #              intraday["Wave_Intensity"] = pd.to_numeric(intraday["Wave_Intensity"], errors="coerce")
-       # #              valid_intensity = intraday.dropna(subset=["Wave_Intensity", "Cumulative_Unit", "TimeIndex"])
-                    
-       # #              # Top 3 positive intensity spikes (🌟)
-       # #              top3_intensity_up = valid_intensity.nlargest(3, "Wave_Intensity")
-                    
-       # #              # Top 3 negative (low intensity zones – 🫧)
-       # #              top3_intensity_down = valid_intensity.nsmallest(3, "Wave_Intensity")
-                    
-       # #              # 🌟 High Intensity markers
-       # #              fig_displacement.add_trace(go.Scatter(
-       # #                  x=top3_intensity_up["TimeIndex"],
-       # #                  y=top3_intensity_up["Cumulative_Unit"] + 104,
-       # #                  mode="text",
-       # #                  text=["🌟"] * len(top3_intensity_up),
-       # #                  textposition="top center",
-       # #                  textfont=dict(size=18),
-       # #                  showlegend=False,
-       # #                  hovertemplate="🌟 Intensity Spike<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
-       # #                  customdata=top3_intensity_up[["Wave_Intensity"]].values
-       # #              ))
-                    
-       # #              # 🫧 Low Intensity markers
-       # #              fig_displacement.add_trace(go.Scatter(
-       # #                  x=top3_intensity_down["TimeIndex"],
-       # #                  y=top3_intensity_down["Cumulative_Unit"] - 48,
-       # #                  mode="text",
-       # #                  text=["🫧"] * len(top3_intensity_down),
-       # #                  textposition="bottom center",
-       # #                  textfont=dict(size=18),
-       # #                  showlegend=False,
-       # #                  hovertemplate="🫧 Weak Intensity<br>Time: %{x|%I:%M %p}<br>Intensity: %{customdata[0]:.2f}<extra></extra>",
-       # #                  customdata=top3_intensity_down[["Wave_Intensity"]].values
-       # #              ))
-                    
-
-       # #                                # Drop NaNs or invalid entries
-       #              valid_capacitance = intraday.dropna(subset=["Vector_Capacitance"])
-                    
-       #              # Top 3 positive Capacitance (high potential for breakout pressure being stored)
-       #              top3_cap_up = valid_capacitance.nlargest(3, "Vector_Capacitance")
-                    
-       #              # Top 3 negative Capacitance (possibly reactive rejection or imbalance)
-       #              top3_cap_down = valid_capacitance.nsmallest(3, "Vector_Capacitance")
-       #              # ⚡ High Capacitance markers (storage building)
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_cap_up["TimeIndex"],
-       #                  y=top3_cap_up["Cumulative_Unit"] + 80,
-       #                  mode="text",
-       #                  text=["🧲"] * len(top3_cap_up),
-       #                  textposition="top center",
-       #                  textfont=dict(size=18),
-       #                  showlegend=False,
-       #                  hovertemplate="🧲 High Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
-       #                  customdata=top3_cap_up[["Vector_Capacitance"]].values
-       #              ))
-                    
-       #              # 🪹 Low Capacitance markers (release, unstable)
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_cap_down["TimeIndex"],
-       #                  y=top3_cap_down["Cumulative_Unit"] - 80,
-       #                  mode="text",
-       #                  text=["🪹"] * len(top3_cap_down),
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=18),
-       #                  showlegend=False,
-       #                  hovertemplate="🪹 Low Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
-       #                  customdata=top3_cap_down[["Vector_Capacitance"]].values
-       #              ))
-
-                    
-       #                                  # Ensure Capacitance is numeric
-       #              # Ensure Vector Capacitance is numeric
-       #              intraday["Capacitance_numeric"] = pd.to_numeric(intraday["Vector_Capacitance"], errors="coerce")
-                                        
-       #              # Get top 3 positive and negative indices
-       #              top_pos = intraday.nlargest(3, "Capacitance_numeric").index
-       #              top_neg = intraday.nsmallest(3, "Capacitance_numeric").index
-                    
-       #              # Combine and add ±1 context
-       #              all_indices = set()
-       #              for idx in list(top_pos) + list(top_neg):
-       #                  all_indices.update([idx - 1, idx, idx + 1])
-                    
-       #              # Filter valid indices
-       #              context_indices = [i for i in all_indices if 0 <= i < len(intraday)]
-       #              cap_context_df = intraday.iloc[context_indices].copy()
-                    
-       #              # Drop NaNs and keep only rows with polarity
-       #              cap_context_df = cap_context_df.dropna(subset=["Charge_Polarity", "Cumulative_Unit", "TimeIndex"])
-                    
-       #              # Plot them
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=cap_context_df["TimeIndex"],
-       #                  y=cap_context_df["Cumulative_Unit"] + 3,
-       #                  mode="text",
-       #                  text=cap_context_df["Charge_Polarity"],
-       #                  textposition="top center",
-       #                  textfont=dict(size=4),
-       #                  showlegend=False,
-       #                  hovertemplate="Charge Polarity: %{text}<br>Time: %{x|%I:%M %p}<extra></extra>",
-       #              ))
-
-
-       #            # # Clean up electric force column
-       #              intraday["Electric_Force"] = pd.to_numeric(intraday["Electric_Force"], errors='coerce')
-                    
-       #              # Drop NaNs
-       #              valid_force = intraday.dropna(subset=["Electric_Force", "Cumulative_Unit", "Time"])
-                    
-       #              # Top 3 Positive Forces (🐼)
-       #              top3_force_up = valid_force.nlargest(3, "Electric_Force")
-                    
-       #              # Top 3 Negative Forces (🔌)
-       #              top3_force_down = valid_force.nsmallest(3, "Electric_Force")
-                    
-       #              # Plot 🐼 Positive Forces
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_force_up["Time"],
-       #                  y=top3_force_up["Cumulative_Unit"] + 88,
-       #                  mode="text",
-       #                  text=["🐼"] * len(top3_force_up),
-       #                  textposition="top center",
-       #                  textfont=dict(size=16),
-       #                  hovertemplate=(
-       #                      "🐼 Electric Force Up<br>"
-       #                      "Time: %{x}<br>"
-       #                      "Force: %{customdata[0]:.2f}<extra></extra>"
-       #                  ),
-       #                  customdata=top3_force_up[["Electric_Force"]],
-       #                  showlegend=False
-       #              ))
-                    
-       #              # Plot 🐻 Negative Forces
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_force_down["Time"],
-       #                  y=top3_force_down["Cumulative_Unit"] - 88,
-       #                  mode="text",
-       #                  text=["🐻"] * len(top3_force_down),
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=16),
-       #                  hovertemplate=(
-       #                      "🐻 Electric Force Down<br>"
-       #                      "Time: %{x}<br>"
-       #                      "Force: %{customdata[0]:.2f}<extra></extra>"
-       #                  ),
-       #                  customdata=top3_force_down[["Electric_Force"]],
-       #                  showlegend=False
-       #              ))
-
-
-       #            # Ensure IB_Electric_Force is numeric
-       #              intraday["IB_Electric_Force"] = pd.to_numeric(intraday["IB_Electric_Force"], errors='coerce')
-                    
-       #              # Drop rows with missing values
-       #              valid_ib_force = intraday.dropna(subset=["IB_Electric_Force", "Cumulative_Unit", "Time"])
-                    
-       #              # Top 3 positive and negative
-       #              top3_ib_force_up = valid_ib_force.nlargest(3, "IB_Electric_Force")
-       #              top3_ib_force_down = valid_ib_force.nsmallest(3, "IB_Electric_Force")
-                    
-       #              # === 💡 Markers (Top 3 Positive IB Force)
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_ib_force_up["Time"],
-       #                  y=top3_ib_force_up["Cumulative_Unit"] + 96,
-       #                  mode="text",
-       #                  text=["💡"] * len(top3_ib_force_up),
-       #                  textposition="top center",
-       #                  textfont=dict(size=18),
-       #                  showlegend=False,
-       #                  hovertemplate=(
-       #                      "💡 IB Electric Force (UP)<br>"
-       #                      "Time: %{x}<br>"
-       #                      "Force: %{customdata[0]:.2f}<extra></extra>"
-       #                  ),
-       #                  customdata=top3_ib_force_up[["IB_Electric_Force"]].values
-       #              ))
-                    
-       #              # === 🕯️ Markers (Top 3 Negative IB Force)
-       #              fig_displacement.add_trace(go.Scatter(
-       #                  x=top3_ib_force_down["Time"],
-       #                  y=top3_ib_force_down["Cumulative_Unit"] - 96,
-       #                  mode="text",
-       #                  text=["🕯️"] * len(top3_ib_force_down),
-       #                  textposition="bottom center",
-       #                  textfont=dict(size=18),
-       #                  showlegend=False,
-       #                  hovertemplate=(
-       #                      "🕯️ IB Electric Force (DOWN)<br>"
-       #                      "Time: %{x}<br>"
-       #                      "Force: %{customdata[0]:.2f}<extra></extra>"
-       #                  ),
-       #                  customdata=top3_ib_force_down[["IB_Electric_Force"]].values
-       #              ))
-                 
-       #              fig_displacement.add_trace(go.Scatter(
-       #                x=intraday["TimeIndex"],
-       #                y=intraday["Kijun_Cumulative"],
-       #                mode="lines",
-       #                line=dict(color="green", dash="solid", width=1.5),
-       #                name="Kijun (Cumulative)",
-       #                hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
-       #                ))
-
-
-
-                  
-
-
-                  
-       #              # # === Layout ===
-       #              fig_displacement.update_layout(
-       #                  height=500,
-       #                  plot_bgcolor="black",
-       #                  paper_bgcolor="black",
-       #                  font=dict(color="white"),
-       #                  title="🧠 Mike's Physics Engine – Flight Path via Cumulative Unit%",
-       #                  xaxis=dict(title="Time"),
-                   
-
-       #                  yaxis=dict(title="Cumulative Unit (×10⁻⁴)", zeroline=True),
-       #                  margin=dict(t=40, b=40),
-       #                  legend=dict(orientation="h", y=1.05, x=1, xanchor="right")
-       #              )
-
+                    fig_pe = go.Figure()
                 
-       #              fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
+                    # Call PE Line
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Call_PE_x100"],
+                        mode="lines",
+                        name="Call PE",
+                        line=dict(color="gold", width=1.3),
+                        hovertemplate="Call PE: %{y:.1f}¢/Fpt<extra></extra>"
+                    ))
                 
+                    # Put PE Line
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Put_PE_x100"],
+                        mode="lines",
+                        name="Put PE",
+                        line=dict(color="cyan", width=1.3),
+                        hovertemplate="Put PE: %{y:.1f}¢/Fpt<extra></extra>"
+                    ))
+                
+                    # Optional Threshold Lines
+                    call_med = intraday["Call_PE_x100"].rolling(50, min_periods=1).median()
+                    put_med  = intraday["Put_PE_x100"].rolling(50, min_periods=1).median()
+                
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=(call_med * 1.2),
+                        mode="lines",
+                        name="Call PE Threshold",
+                        line=dict(color="gold", dash="dash", width=0.8),
+                        showlegend=False
+                    ))
+                
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=(put_med * 1.2),
+                        mode="lines",
+                        name="Put PE Threshold",
+                        line=dict(color="cyan", dash="dash", width=0.8),
+                        showlegend=False
+                    ))
+                
+                    # Optional Emoji Markers
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Call_PE_x100"],
+                        mode="text",
+                        text=["⚡" if x else "" for x in intraday["call_ok"]],
+                        textposition="top center",
+                        textfont=dict(color="gold", size=14),
+                        name="Call PE Spike",
+                        showlegend=False
+                    ))
+                
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Put_PE_x100"],
+                        mode="text",
+                        text=["⚡" if x else "" for x in intraday["put_ok"]],
+                        textposition="top center",
+                        textfont=dict(color="cyan", size=14),
+                        name="Put PE Spike",
+                        showlegend=False
+                    ))
+                
+                    # Layout
+                    fig_pe.update_layout(
+                        height=250,
+                        margin=dict(l=10, r=10, t=30, b=30),
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                        title_text="Option Price Elasticity (¢ per F% point)",
+                        xaxis_title="Time",
+                        yaxis_title="¢ per F-pt",
+                    )
+                
+                    st.plotly_chart(fig_pe, use_container_width=True)
 
-                
-                # with st.expander("💎 Option Spread Table", expanded=False):
-                #     st.dataframe(
-                #         intraday[[
-                #             'Time', 'Underlying_Price', 'Volume',
-                #             'Call_Smooth', 'Put_Smooth', 'Call_Put_Spread',
-                #             'Spread_Velocity', 'Spread_Accel',
-                #             'Spread_Change_Signal', 'Spread_Cross_Signal',
-                #             'Wake_Call', 'Wake_Put',
-                #             'Entry_Call', 'Entry_Put'
-                #         ]]
-                #         .dropna(subset=['Call_Smooth', 'Put_Smooth'], how='all')
-                #         .reset_index(drop=True)
-                #     )
-                
-                # with st.expander("💎 Option Spread Table", expanded=False):
-                #     st.dataframe(
-                #         intraday[[
-                #             'Time', 'Underlying_Price', 'Volume',
-                #             'Call_Option_Smooth', 'Put_Option_Smooth', 'Spread',
-                #             'Spread_Vel', 'Spread_Accel',
-                #             'Spread_Change_Signal', 'Spread_Cross_Signal',
-                #             'Wake_Call', 'Wake_Put',
-                #             'Entry_Call', 'Entry_Put'
-                #         ]]
-                #         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
-                #         .reset_index(drop=True)
-                #     )
+
+
+
                 with st.expander("💎 Option Spread Table", expanded=False):
                     st.dataframe(
                         intraday[[
