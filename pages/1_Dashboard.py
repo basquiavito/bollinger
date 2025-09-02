@@ -1724,56 +1724,7 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = compute_option_price_elasticity(intraday)      
 
-                def compute_option_price_elasticity(
-                    intraday,
-                    fcol="F_numeric",
-                    call_col="Call_Option_Smooth",
-                    put_col="Put_Option_Smooth",
-                    smooth_window=3,
-                    median_window=50,
-                    threshold_scale=1.2,
-                    eps_replace_zero=True,
-                ):
-                    """
-                    PE = ΔOption  /  ΔF_numeric_points
-                         (cents)    (1 pt = 0.01 % move in underlying)
-                
-                    The smoothed PE is multiplied by 100 so a value like 23.4 means:
-                    ~23 ¢ option move for every 1-point change in F_numeric.
-                    """
-                
-                    intraday = intraday.copy()
-                
-                    # 1⃣  ΔF as point change in F_numeric
-                    intraday["dF"] = intraday[fcol].diff().abs()
-                    if eps_replace_zero:
-                        intraday["dF"] = intraday["dF"].replace(0, np.nan)
-                
-                    # 2⃣  raw elasticity
-                    intraday["Call_PE_raw"] = intraday[call_col].diff() / intraday["dF"]
-                    intraday["Put_PE_raw"]  = intraday[put_col].diff()  / intraday["dF"]
-                
-                    # 3⃣  smoothed PE
-                    intraday["Call_PE"] = intraday["Call_PE_raw"].rolling(smooth_window, min_periods=1).mean()
-                    intraday["Put_PE"]  = intraday["Put_PE_raw"].rolling(smooth_window, min_periods=1).mean()
-                
-                    # 4⃣  **readable PE** (×100) ―-> option-cents per F-point
-                    intraday["Call_PE_x10000"] = (intraday["Call_PE"] * 10000).round(0).astype(int)
-                    intraday["Put_PE_x100"]  = (intraday["Put_PE"]  * 10000).round(2)
-                
-                    # 5⃣  rolling-median gates on the ×100 series
-                    call_med = intraday["Call_PE_x10000"].rolling(median_window, min_periods=1).median()
-                    put_med  = intraday["Put_PE_x100"].rolling(median_window, min_periods=1).median()
-                
-                    intraday["call_ok"] = intraday["Call_PE_x10000"] > call_med * threshold_scale
-                    intraday["put_ok"]  = intraday["Put_PE_x100"]  > put_med  * threshold_scale
-                
-                    intraday["call_ok"] = intraday["call_ok"].fillna(False)
-                    intraday["put_ok"]  = intraday["put_ok"].fillna(False)
-                
-                    return intraday
-
-                intraday = compute_option_price_elasticity(intraday)
+           
 
                 
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
