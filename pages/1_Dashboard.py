@@ -1677,7 +1677,7 @@ if st.sidebar.button("Run Analysis"):
                       smooth_window=3,
                       median_window=50,
                       threshold_scale=1.2,
-                      scale_factor=10000,
+                      scale_factor=1000,
                       eps_replace_zero=True
                   ):
                       """
@@ -1719,7 +1719,7 @@ if st.sidebar.button("Run Analysis"):
                   
                       return intraday
 
-                intraday = compute_option_price_elasticity(intraday)      
+                intraday = compute_option_price_elasticity(intraday,  scale_factor=1000)      
 
                 def add_spread_features(df, ema_span=3, z_win=50, z_minp=25):
                         """
