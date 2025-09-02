@@ -6252,10 +6252,10 @@ if st.sidebar.button("Run Analysis"):
           
                     # ✅ Add emoji markers where Call_LF is True
                     fig.add_trace(go.Scatter(
-                        x=df[df["Call_LF"]].index,
-                        y=df[df["Call_LF"]]["Call_PE"],
+                        x=intraday[intraday["Call_LF"]].index,
+                        y=intraday[intraday["Call_LF"]]["Call_PE"],
                         mode='text',
-                        text=["🔋"] * df["Call_LF"].sum(),
+                        text=["🔋"] * intraday["Call_LF"].sum(),
                         textposition="top center",
                         name="Call Fuse",
                         showlegend=False
@@ -6263,10 +6263,10 @@ if st.sidebar.button("Run Analysis"):
                     
                     # ✅ Add emoji markers where Put_LF is True
                     fig.add_trace(go.Scatter(
-                        x=df[df["Put_LF"]].index,
-                        y=df[df["Put_LF"]]["Put_PE"],
+                        x=intraday[intraday["Put_LF"]].index,
+                        y=intraday[intraday["Put_LF"]]["Put_PE"],
                         mode='text',
-                        text=["🧨"] * df["Put_LF"].sum(),
+                        text=["🧨"] * intraday["Put_LF"].sum(),
                         textposition="bottom center",
                         name="Put Fuse",
                         showlegend=False
