@@ -6247,24 +6247,20 @@ if st.sidebar.button("Run Analysis"):
                         yaxis_title="¢ per F-pt",
                     )
                 
-              # Main plot (already existing)
-                    fig = go.Figure()
-          
-                    # ✅ Add emoji markers where Call_LF is True
-                    fig.add_trace(go.Scatter(
-                        x=intraday[intraday["Call_LF"]].index,
-                        y=intraday[intraday["Call_LF"]]["Call_PE"],
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday[intraday["Call_LF"]]["Time"],
+                        y=intraday[intraday["Call_LF"]]["Call_PE_x100"],
                         mode='text',
                         text=["🔋"] * intraday["Call_LF"].sum(),
                         textposition="top center",
                         name="Call Fuse",
                         showlegend=False
-                    ))
+                          ))
+
                     
-                    # ✅ Add emoji markers where Put_LF is True
-                    fig.add_trace(go.Scatter(
-                        x=intraday[intraday["Put_LF"]].index,
-                        y=intraday[intraday["Put_LF"]]["Put_PE"],
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday[intraday["Put_LF"]]["Time"],
+                        y=intraday[intraday["Put_LF"]]["Put_PE_x100"],
                         mode='text',
                         text=["🧨"] * intraday["Put_LF"].sum(),
                         textposition="bottom center",
