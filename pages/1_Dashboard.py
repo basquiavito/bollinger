@@ -1689,7 +1689,7 @@ if st.sidebar.button("Run Analysis"):
                       intraday = intraday.copy()
                   
                       # 1) dF: absolute F change, replace zeros with NaN to avoid division by zero
-                      intraday["dF"] = intraday[fcol].pct_change().abs() * 1000  # percent movement of F
+                      intraday["dF"] = intraday[fcol].pct_change().abs() * 10000  # percent movement of F
                       if eps_replace_zero:
                           intraday["dF"] = intraday["dF"].replace(0, np.nan)
                   
@@ -1719,7 +1719,7 @@ if st.sidebar.button("Run Analysis"):
                   
                       return intraday
 
-                intraday = compute_option_price_elasticity(intraday,  scale_factor=1000)      
+                intraday = compute_option_price_elasticity(intraday)      
 
                 def add_spread_features(df, ema_span=3, z_win=50, z_minp=25):
                         """
