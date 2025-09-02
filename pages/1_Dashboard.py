@@ -6237,15 +6237,7 @@ if st.sidebar.button("Run Analysis"):
                     put_med  = intraday["Put_PE_x100"].rolling(9, min_periods=1).median()
               
                 
-                    # Layout
-                    fig_pe.update_layout(
-                        height=450,
-                        margin=dict(l=10, r=10, t=30, b=30),
-                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                        title_text="Option Price Elasticity (¢ per F% point)",
-                        xaxis_title="Time",
-                        yaxis_title="¢ per F-pt",
-                    )
+               
                 
                     fig_pe.add_trace(go.Scatter(
                         x=intraday[intraday["Call_LF"]]["Time"],
@@ -6268,7 +6260,15 @@ if st.sidebar.button("Run Analysis"):
                         showlegend=False
                     ))
 
-
+     # Layout
+                    fig_pe.update_layout(
+                        height=850,
+                        margin=dict(l=10, r=10, t=30, b=30),
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                        title_text="Option Price Elasticity (¢ per F% point)",
+                        xaxis_title="Time",
+                        yaxis_title="¢ per F-pt",
+                    )
                 
                     st.plotly_chart(fig_pe, use_container_width=True)
 
