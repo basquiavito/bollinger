@@ -1770,7 +1770,7 @@ if st.sidebar.button("Run Analysis"):
                     intraday["put_ok"]  = intraday["put_ok"].fillna(False)
                     return intraday
 
-                intraday = compute_option_price_elasticity(intraday, scale_factor=1000)
+                intraday = compute_option_price_elasticity(intraday, scale_factor=100000)
 
                 
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
