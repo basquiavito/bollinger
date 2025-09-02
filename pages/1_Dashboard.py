@@ -6250,29 +6250,7 @@ if st.sidebar.button("Run Analysis"):
                         showlegend=False
                     ))
                 
-                    # Optional Emoji Markers
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Call_PE_x100"],
-                        mode="text",
-                        text=["⚡" if x else "" for x in intraday["call_ok"]],
-                        textposition="top center",
-                        textfont=dict(color="gold", size=14),
-                        name="Call PE Spike",
-                        showlegend=False
-                    ))
-                
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Put_PE_x100"],
-                        mode="text",
-                        text=["⚡" if x else "" for x in intraday["put_ok"]],
-                        textposition="top center",
-                        textfont=dict(color="cyan", size=14),
-                        name="Put PE Spike",
-                        showlegend=False
-                    ))
-                
+        
                     # Layout
                     fig_pe.update_layout(
                         height=250,
