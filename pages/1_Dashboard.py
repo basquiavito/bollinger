@@ -6952,16 +6952,16 @@ if st.sidebar.button("Run Analysis"):
                 #         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
                 #         .reset_index(drop=True)
                 #     )
-                # with st.expander("💎 Option Spread Table", expanded=False):
-                #     st.dataframe(
-                #         intraday[[
-                #             'Time', 'Volume',
-                #             'Call_Option_Smooth', 'Put_Option_Smooth',
-                #            "GSI_C","GSI_P"
-                #         ]]
-                #         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
-                #         .reset_index(drop=True)
-                #     )
+                with st.expander("💎 Option Spread Table", expanded=False):
+                    st.dataframe(
+                        intraday[[
+                            'Time', 'Volume',
+                            'Call_Option_Smooth', 'Put_Option_Smooth',
+                           "GSI_C","GSI_P"
+                        ]]
+                        .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
+                        .reset_index(drop=True)
+                    )
 
                   
        #          st.plotly_chart(fig_displacement, use_container_width=True)
