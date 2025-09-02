@@ -6228,27 +6228,9 @@ if st.sidebar.button("Run Analysis"):
                     ))
                 
                     # Optional Threshold Lines
-                    call_med = intraday["Call_PE_x100"].rolling(50, min_periods=1).median()
-                    put_med  = intraday["Put_PE_x100"].rolling(50, min_periods=1).median()
-                
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=(call_med * 1.2),
-                        mode="lines",
-                        name="Call PE Threshold",
-                        line=dict(color="gold", dash="dash", width=0.8),
-                        showlegend=False
-                    ))
-                
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=(put_med * 1.2),
-                        mode="lines",
-                        name="Put PE Threshold",
-                        line=dict(color="cyan", dash="dash", width=0.8),
-                        showlegend=False
-                    ))
-                
+                    call_med = intraday["Call_PE_x100"].rolling(9, min_periods=1).median()
+                    put_med  = intraday["Put_PE_x100"].rolling(9, min_periods=1).median()
+              
                     # Optional Emoji Markers
                     fig_pe.add_trace(go.Scatter(
                         x=intraday["Time"],
