@@ -1718,10 +1718,10 @@ if st.sidebar.button("Run Analysis"):
                     intraday["call_ok"] = intraday["call_ok"].fillna(False)
                     intraday["put_ok"]  = intraday["put_ok"].fillna(False)
 
-                    flat = df["dF"] < df["dF"].rolling(20).quantile(0.25)
+                    flat = intraday["dF"] < intraday["dF"].rolling(20).quantile(0.25)
                     
-                    df["Call_LF"] = (df["Call_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
-                    df["Put_LF"]  = (df["Put_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
+                    intraday["Call_LF"] = (intraday["Call_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
+                    intraday["Put_LF"]  = (intraday["Put_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
 
                     return intraday
 
