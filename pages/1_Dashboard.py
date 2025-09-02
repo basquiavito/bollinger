@@ -6214,7 +6214,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="lines",
                         name="Call PE",
                         line=dict(color="gold", width=1.3),
-                        hovertemplate="Call PE: %{y:.1f}¢/Fpt<extra></extra>"
+                        hovertemplate="Time: %{x}<br>Call PE: %{y:.1f}¢/Fpt<extra></extra>"
                     ))
                 
                     # Put PE Line
@@ -6224,7 +6224,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="lines",
                         name="Put PE",
                         line=dict(color="cyan", width=1.3),
-                        hovertemplate="Put PE: %{y:.1f}¢/Fpt<extra></extra>"
+                        hovertemplate="Time: %{x}<br>Put PE: %{y:.1f}¢/Fpt<extra></extra>"
                     ))
                 
                     # Optional Threshold Lines
