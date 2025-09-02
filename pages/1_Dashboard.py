@@ -1758,8 +1758,8 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Put_PE"]  = intraday["Put_PE_raw"].rolling(smooth_window, min_periods=1).mean()
                 
                     # 4⃣  **readable PE** (×100) ―-> option-cents per F-point
-                    intraday["Call_PE_x100"] = (intraday["Call_PE"] * 100).round(2)
-                    intraday["Put_PE_x100"]  = (intraday["Put_PE"]  * 100).round(2)
+                    intraday["Call_PE_x100"] = (intraday["Call_PE"] * 1000).round(2)
+                    intraday["Put_PE_x100"]  = (intraday["Put_PE"]  * 1000).round(2)
                 
                     # 5⃣  rolling-median gates on the ×100 series
                     call_med = intraday["Call_PE_x100"].rolling(median_window, min_periods=1).median()
