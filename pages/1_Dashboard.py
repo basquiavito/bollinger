@@ -1669,6 +1669,8 @@ if st.sidebar.button("Run Analysis"):
                 intraday = compute_option_value(intraday)      
 
 
+  
+
                 def compute_option_price_elasticity(
                     intraday,
                     fcol="F_numeric",
@@ -1677,54 +1679,50 @@ if st.sidebar.button("Run Analysis"):
                     smooth_window=3,
                     median_window=50,
                     threshold_scale=1.2,
-                    scale_factor=100_000,  # Increase to get readable numbers like 89.77, 143.55
-                    eps_replace_zero=True
+                    eps_replace_zero=True,
                 ):
                     """
-                    Computes price elasticity (PE) of options relative to % change in F_numeric.
-                    Produces both raw and scaled versions for Call and Put:
+                    PE = ΔOption  /  ΔF_numeric_points
+                         (cents)    (1 pt = 0.01 % move in underlying)
                 
-                    - Call_PE / Put_PE: raw option elasticity (change in option / change in F)
-                    - Call_PE_scaled / Put_PE_scaled: scaled version (× scale_factor) for readability
-                    - call_ok / put_ok: boolean gates if PE exceeds rolling median × threshold
+                    The smoothed PE is multiplied by 100 so a value like 23.4 means:
+                    ~23 ¢ option move for every 1-point change in F_numeric.
                     """
                 
                     intraday = intraday.copy()
                 
-                    # 1) dF: absolute percent change in F, scaled to match F_numeric (×10,000)
-                    intraday["dF"] = intraday[fcol].pct_change().abs() * 10_000
+                    # 1⃣  ΔF as point change in F_numeric
+                    intraday["dF"] = intraday[fcol].diff().abs()
                     if eps_replace_zero:
                         intraday["dF"] = intraday["dF"].replace(0, np.nan)
                 
-                    # 2) Raw PE (change in option / change in F)
+                    # 2⃣  raw elasticity
                     intraday["Call_PE_raw"] = intraday[call_col].diff() / intraday["dF"]
                     intraday["Put_PE_raw"]  = intraday[put_col].diff()  / intraday["dF"]
                 
-                    # 3) Smoothed PE (rolling average)
-                    intraday["Call_PE"] = intraday["Call_PE_raw"].rolling(window=smooth_window, min_periods=1).mean()
-                    intraday["Put_PE"]  = intraday["Put_PE_raw"].rolling(window=smooth_window, min_periods=1).mean()
+                    # 3⃣  smoothed PE
+                    intraday["Call_PE"] = intraday["Call_PE_raw"].rolling(smooth_window, min_periods=1).mean()
+                    intraday["Put_PE"]  = intraday["Put_PE_raw"].rolling(smooth_window, min_periods=1).mean()
                 
-                    # 4) Scaled PE for readability
-                    intraday["Call_PE_scaled"] = (intraday["Call_PE"] * scale_factor).round(2)
-                    intraday["Put_PE_scaled"]  = (intraday["Put_PE"]  * scale_factor).round(2)
+                    # 4⃣  **readable PE** (×100) ―-> option-cents per F-point
+                    intraday["Call_PE_x100"] = (intraday["Call_PE"] * 100).round(2)
+                    intraday["Put_PE_x100"]  = (intraday["Put_PE"]  * 100).round(2)
                 
-                    # 5) Rolling medians (on scaled)
-                    call_median_scaled = intraday["Call_PE_scaled"].rolling(window=median_window, min_periods=1).median()
-                    put_median_scaled  = intraday["Put_PE_scaled"].rolling(window=median_window, min_periods=1).median()
+                    # 5⃣  rolling-median gates on the ×100 series
+                    call_med = intraday["Call_PE_x100"].rolling(median_window, min_periods=1).median()
+                    put_med  = intraday["Put_PE_x100"].rolling(median_window, min_periods=1).median()
                 
-                    # 6) Boolean gates (PE spike over median × threshold)
-                    intraday["call_ok"] = intraday["Call_PE_scaled"] > (call_median_scaled * threshold_scale)
-                    intraday["put_ok"]  = intraday["Put_PE_scaled"]  > (put_median_scaled  * threshold_scale)
+                    intraday["call_ok"] = intraday["Call_PE_x100"] > call_med * threshold_scale
+                    intraday["put_ok"]  = intraday["Put_PE_x100"]  > put_med  * threshold_scale
                 
-                    # 7) Clean boolean columns
                     intraday["call_ok"] = intraday["call_ok"].fillna(False)
                     intraday["put_ok"]  = intraday["put_ok"].fillna(False)
                 
                     return intraday
 
+
                 intraday = compute_option_price_elasticity(intraday)      
 
-           
 
                 
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
