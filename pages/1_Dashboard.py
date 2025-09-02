@@ -1722,6 +1722,12 @@ if st.sidebar.button("Run Analysis"):
                     
                     intraday["Call_LF"] = (intraday["Call_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
                     intraday["Put_LF"]  = (intraday["Put_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
+                    # Boolean crossovers
+                    intraday["PE_Cross_Bull"] = (intraday["Call_PE"] > intraday["Put_PE"]) & \
+                                                (intraday["Call_PE"].shift(1) <= intraday["Put_PE"].shift(1))
+                    
+                    intraday["PE_Cross_Bear"] = (intraday["Put_PE"] > intraday["Call_PE"]) & \
+                                                (intraday["Put_PE"].shift(1) <= intraday["Call_PE"].shift(1))
 
                     return intraday
 
@@ -6269,7 +6275,30 @@ if st.sidebar.button("Run Analysis"):
                         xaxis_title="Time",
                         yaxis_title="¢ per F-pt",
                     )
-                
+
+
+                                      # PE Cross: Bullish (Call PE crosses above Put PE)
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday[intraday["PE_Cross_Bull"]]["Time"],
+                        y=intraday[intraday["PE_Cross_Bull"]]["Call_PE"],
+                        mode="text",
+                        text=["⚡️"] * intraday["PE_Cross_Bull"].sum(),
+                        textposition="top center",
+                        name="Bullish PE Crossover",
+                        showlegend=False
+                    ))
+                    
+                    # PE Cross: Bearish (Put PE crosses above Call PE)
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday[intraday["PE_Cross_Bear"]]["Time"],
+                        y=intraday[intraday["PE_Cross_Bear"]]["Put_PE"],
+                        mode="text",
+                        text=["⛓️"] * intraday["PE_Cross_Bear"].sum(),
+                        textposition="bottom center",
+                        name="Bearish PE Crossover",
+                        showlegend=False
+                    ))
+
                     st.plotly_chart(fig_pe, use_container_width=True)
 
 
