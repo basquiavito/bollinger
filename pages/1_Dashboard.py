@@ -6231,32 +6231,10 @@ if st.sidebar.button("Run Analysis"):
                     call_med = intraday["Call_PE_x100"].rolling(9, min_periods=1).median()
                     put_med  = intraday["Put_PE_x100"].rolling(9, min_periods=1).median()
               
-                    # Optional Emoji Markers
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Call_PE_x100"],
-                        mode="text",
-                        text=["⚡" if x else "" for x in intraday["call_ok"]],
-                        textposition="top center",
-                        textfont=dict(color="gold", size=14),
-                        name="Call PE Spike",
-                        showlegend=False
-                    ))
-                
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Put_PE_x100"],
-                        mode="text",
-                        text=["⚡" if x else "" for x in intraday["put_ok"]],
-                        textposition="top center",
-                        textfont=dict(color="cyan", size=14),
-                        name="Put PE Spike",
-                        showlegend=False
-                    ))
                 
                     # Layout
                     fig_pe.update_layout(
-                        height=250,
+                        height=450,
                         margin=dict(l=10, r=10, t=30, b=30),
                         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
                         title_text="Option Price Elasticity (¢ per F% point)",
