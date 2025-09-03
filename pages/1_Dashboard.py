@@ -6268,26 +6268,26 @@ if st.sidebar.button("Run Analysis"):
                 
                
                 
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday[intraday["Call_LF"]]["Time"],
-                        y=intraday[intraday["Call_LF"]]["Call_PE_x100"],
-                        mode='text',
-                        text=["🔋"] * intraday["Call_LF"].sum(),
-                        textposition="top center",
-                        name="Call Fuse",
-                        showlegend=False
-                          ))
+                    # fig_pe.add_trace(go.Scatter(
+                    #     x=intraday[intraday["Call_LF"]]["Time"],
+                    #     y=intraday[intraday["Call_LF"]]["Call_PE_x100"],
+                    #     mode='text',
+                    #     text=["🔋"] * intraday["Call_LF"].sum(),
+                    #     textposition="top center",
+                    #     name="Call Fuse",
+                    #     showlegend=False
+                    #       ))
 
                     
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday[intraday["Put_LF"]]["Time"],
-                        y=intraday[intraday["Put_LF"]]["Put_PE_x100"],
-                        mode='text',
-                        text=["🧨"] * intraday["Put_LF"].sum(),
-                        textposition="bottom center",
-                        name="Put Fuse",
-                        showlegend=False
-                    ))
+                    # fig_pe.add_trace(go.Scatter(
+                    #     x=intraday[intraday["Put_LF"]]["Time"],
+                    #     y=intraday[intraday["Put_LF"]]["Put_PE_x100"],
+                    #     mode='text',
+                    #     text=["🧨"] * intraday["Put_LF"].sum(),
+                    #     textposition="bottom center",
+                    #     name="Put Fuse",
+                    #     showlegend=False
+                    # ))
 
      # Layout
                     fig_pe.update_layout(
