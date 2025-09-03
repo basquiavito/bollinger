@@ -1744,7 +1744,8 @@ if st.sidebar.button("Run Analysis"):
                     )
                     intraday["PE_Streak"] = intraday["PE_Same_Side"].rolling(3).sum() >= 3
                     intraday["PE_Timer"] = np.where(intraday["PE_Streak"], "🔁", "")
-                    
+                    intraday["PE_PCR"] = intraday["Put_PE"] / intraday["Call_PE"]
+
 
                     return intraday
 
@@ -6349,7 +6350,7 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(
                         intraday[[
                             'Time', 'Volume',
-                            'Call_Option_Smooth', 'Put_Option_Smooth',"Call_PE","Put_PE","Call_LF","Put_LF","PE_Kill_Shot","PE_Streak","PE_Timer"
+                            'Call_Option_Smooth', 'Put_Option_Smooth',"Call_PE","Put_PE","Call_LF","Put_LF","PE_Kill_Shot","PE_PCR"
                           
                         ]]
                         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
