@@ -1733,7 +1733,7 @@ if st.sidebar.button("Run Analysis"):
                     conditions_call = (Call_PE > Put_PE * 1.5) & (Call_PE > 50)
                     conditions_put  = (Put_PE > Call_PE * 1.5) & (Put_PE > 50)
                     
-                    df["PE_Kill_Shot"] = np.select(
+                    intraday["PE_Kill_Shot"] = np.select(
                         [conditions_call, conditions_put],
                         ["🟢", "🔴"],
                         default="⚪"
