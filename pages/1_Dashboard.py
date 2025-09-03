@@ -8924,27 +8924,27 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # 🔀 Call Enhancer
+                # 🏹 Call Enhancer
                 fig.add_trace(go.Scatter(
                     x=cross_aid_times_call,
                     y=cross_aid_prices_call ,
                     mode="text",
-                    text=["🔀"] * len(cross_aid_times_call),
+                    text=["🏹"] * len(cross_aid_times_call),
                     textposition="top center",
                     textfont=dict(size=20),
-                    name="🔀 PE Cross Enhancer (Call)",
+                    name="🏹 PE Cross Enhancer (Call)",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<br>PE_Cross_Bull within ±3 bars<extra></extra>"
                 ), row=1, col=1)
                 
-                # 🔀 Put Enhancer
+                # 🏹 Put Enhancer
                 fig.add_trace(go.Scatter(
                     x=cross_aid_times_put,
                     y=cross_aid_prices_put,
                     mode="text",
-                    text=["🔀"] * len(cross_aid_times_put),
+                    text=["🏹"] * len(cross_aid_times_put),
                     textposition="top center",
                     textfont=dict(size=20),
-                    name="🔀 PE Cross Enhancer (Put)",
+                    name="🏹 PE Cross Enhancer (Put)",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<br>PE_Cross_Bear within ±3 bars<extra></extra>"
                 ), row=1, col=1)
 
@@ -9131,23 +9131,23 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
+                # jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
 
-                fig.add_trace(go.Scatter(
-                x=intraday.loc[jerk_cross_mask, "TimeIndex"],
-                y=intraday.loc[jerk_cross_mask, "F_numeric"] + 25,
-                mode="text",
-                text=["🔦"] * jerk_cross_mask.sum(),
-                textposition="top center",
-                textfont=dict(size=18),
-                showlegend=False,
-                hovertemplate=(
-                    "🔦 Jerk Spike > 100<br>"
-                    "Time: %{x|%I:%M %p}<br>"
-                    "Jerk: %{customdata:.2f}<extra></extra>"
-                ),
-                customdata=intraday.loc[jerk_cross_mask, "Jerk_Vector"]
-                ), row=1, col=1)
+                # fig.add_trace(go.Scatter(
+                # x=intraday.loc[jerk_cross_mask, "TimeIndex"],
+                # y=intraday.loc[jerk_cross_mask, "F_numeric"] + 25,
+                # mode="text",
+                # text=["🔦"] * jerk_cross_mask.sum(),
+                # textposition="top center",
+                # textfont=dict(size=18),
+                # showlegend=False,
+                # hovertemplate=(
+                #     "🔦 Jerk Spike > 100<br>"
+                #     "Time: %{x|%I:%M %p}<br>"
+                #     "Jerk: %{customdata:.2f}<extra></extra>"
+                # ),
+                # customdata=intraday.loc[jerk_cross_mask, "Jerk_Vector"]
+                # ), row=1, col=1)
 
 
    #              if yva_min is not None and yva_max is not None:
