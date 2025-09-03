@@ -6324,27 +6324,27 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                                      # 🟢 Green Kill Shot Dot (Bullish)
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday[intraday["PE_Kill_Shot"] == "🟢"]["Time"],
-                        y=intraday[intraday["PE_Kill_Shot"] == "🟢"]["Call_PE_x100"],
-                        mode="markers",
-                        marker=dict(color="green", size=5),
-                        name="Bull Kill Shot",
-                        hovertemplate="🟢 Bull Kill<br>PE: %{y:.1f}¢<extra></extra>",
-                        showlegend=True
-                    ))
+                    #                   # 🟢 Green Kill Shot Dot (Bullish)
+                    # fig_pe.add_trace(go.Scatter(
+                    #     x=intraday[intraday["PE_Kill_Shot"] == "🟢"]["Time"],
+                    #     y=intraday[intraday["PE_Kill_Shot"] == "🟢"]["Call_PE_x100"],
+                    #     mode="markers",
+                    #     marker=dict(color="green", size=5),
+                    #     name="Bull Kill Shot",
+                    #     hovertemplate="🟢 Bull Kill<br>PE: %{y:.1f}¢<extra></extra>",
+                    #     showlegend=True
+                    # ))
                     
-                    # 🔴 Red Kill Shot Dot (Bearish)
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday[intraday["PE_Kill_Shot"] == "🔴"]["Time"],
-                        y=intraday[intraday["PE_Kill_Shot"] == "🔴"]["Put_PE_x100"],
-                        mode="markers",
-                        marker=dict(color="red", size=5),
-                        name="Bear Kill Shot",
-                        hovertemplate="🔴 Bear Kill<br>PE: %{y:.1f}¢<extra></extra>",
-                        showlegend=True
-                    ))
+                    # # 🔴 Red Kill Shot Dot (Bearish)
+                    # fig_pe.add_trace(go.Scatter(
+                    #     x=intraday[intraday["PE_Kill_Shot"] == "🔴"]["Time"],
+                    #     y=intraday[intraday["PE_Kill_Shot"] == "🔴"]["Put_PE_x100"],
+                    #     mode="markers",
+                    #     marker=dict(color="red", size=5),
+                    #     name="Bear Kill Shot",
+                    #     hovertemplate="🔴 Bear Kill<br>PE: %{y:.1f}¢<extra></extra>",
+                    #     showlegend=True
+                    # ))
 
                     st.plotly_chart(fig_pe, use_container_width=True)
                 
