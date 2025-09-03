@@ -1732,13 +1732,13 @@ if st.sidebar.button("Run Analysis"):
 
                     conditions_call = (intraday["Call_PE"] > intraday["Put_PE"] * 1.5) & (intraday["Call_PE"] > 0.50)
                     conditions_put  = (intraday["Put_PE"] > intraday["Call_PE"] * 1.5) & (intraday["Put_PE"] > 0.50)
-
                     
                     intraday["PE_Kill_Shot"] = np.select(
                         [conditions_call, conditions_put],
                         ["🟢", "🔴"],
-                        default="⚪"
+                        default=None
                     )
+
 
 
                     return intraday
@@ -6309,6 +6309,30 @@ if st.sidebar.button("Run Analysis"):
                         textposition="bottom center",
                         name="Bearish PE Crossover",
                         showlegend=False
+                    ))
+
+
+
+                                      # 🟢 Green Kill Shot Dot (Bullish)
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday[intraday["PE_Kill_Shot"] == "🟢"]["Time"],
+                        y=intraday[intraday["PE_Kill_Shot"] == "🟢"]["Call_PE_x100"],
+                        mode="markers",
+                        marker=dict(color="green", size=5),
+                        name="Bull Kill Shot",
+                        hovertemplate="🟢 Bull Kill<br>PE: %{y:.1f}¢<extra></extra>",
+                        showlegend=True
+                    ))
+                    
+                    # 🔴 Red Kill Shot Dot (Bearish)
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday[intraday["PE_Kill_Shot"] == "🔴"]["Time"],
+                        y=intraday[intraday["PE_Kill_Shot"] == "🔴"]["Put_PE_x100"],
+                        mode="markers",
+                        marker=dict(color="red", size=5),
+                        name="Bear Kill Shot",
+                        hovertemplate="🔴 Bear Kill<br>PE: %{y:.1f}¢<extra></extra>",
+                        showlegend=True
                     ))
 
                     st.plotly_chart(fig_pe, use_container_width=True)
