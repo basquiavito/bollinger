@@ -1730,8 +1730,9 @@ if st.sidebar.button("Run Analysis"):
                                                 (intraday["Put_PE"].shift(1) <= intraday["Call_PE"].shift(1))
 
 
-                    conditions_call = (Call_PE > Put_PE * 1.5) & (Call_PE > 50)
-                    conditions_put  = (Put_PE > Call_PE * 1.5) & (Put_PE > 50)
+                    conditions_call = (intraday["Call_PE"] > intraday["Put_PE"] * 1.5) & (intraday["Call_PE"] > 0.50)
+                    conditions_put  = (intraday["Put_PE"] > intraday["Call_PE"] * 1.5) & (intraday["Put_PE"] > 0.50)
+
                     
                     intraday["PE_Kill_Shot"] = np.select(
                         [conditions_call, conditions_put],
