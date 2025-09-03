@@ -1729,6 +1729,17 @@ if st.sidebar.button("Run Analysis"):
                     intraday["PE_Cross_Bear"] = (intraday["Put_PE"] > intraday["Call_PE"]) & \
                                                 (intraday["Put_PE"].shift(1) <= intraday["Call_PE"].shift(1))
 
+
+                    conditions_call = (Call_PE > Put_PE * 1.5) & (Call_PE > 50)
+                    conditions_put  = (Put_PE > Call_PE * 1.5) & (Put_PE > 50)
+                    
+                    df["PE_Kill_Shot"] = np.select(
+                        [conditions_call, conditions_put],
+                        ["🟢", "🔴"],
+                        default="⚪"
+                    )
+
+
                     return intraday
 
 
@@ -6308,7 +6319,7 @@ if st.sidebar.button("Run Analysis"):
                     st.dataframe(
                         intraday[[
                             'Time', 'Volume',
-                            'Call_Option_Smooth', 'Put_Option_Smooth',"Call_PE","Put_PE","Call_LF","Put_LF"
+                            'Call_Option_Smooth', 'Put_Option_Smooth',"Call_PE","Put_PE","Call_LF","Put_LF","PE_Kill_Shot"
                           
                         ]]
                         .dropna(subset=['Call_Option_Smooth', 'Put_Option_Smooth'], how='all')
