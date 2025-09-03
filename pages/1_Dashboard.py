@@ -6149,7 +6149,37 @@ if st.sidebar.button("Run Analysis"):
                             force_aid_times.append(trough_time)
                             force_aid_prices.append(trough_val)
                             force_aid_vals.append(int(force_val))
-  
+                cross_aid_times_call = []
+                cross_aid_prices_call = []
+                
+                call_entry_idxs = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
+                
+                for idx in call_entry_idxs:
+                    i = intraday.index.get_loc(idx)
+                    lower = max(i - 3, 0)
+                    upper = min(i + 4, len(intraday))
+                
+                    sub = intraday.iloc[lower:upper]
+                    if (sub["PE_Cross_Bull"] == True).any():
+                        cross_aid_times_call.append(intraday.at[idx, "Time"])
+                        cross_aid_prices_call.append(intraday.at[idx, "F_numeric"] + 90)
+
+
+                cross_aid_times_put = []
+                cross_aid_prices_put = []
+                
+                put_entry_idxs = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
+                
+                for idx in put_entry_idxs:
+                    i = intraday.index.get_loc(idx)
+                    lower = max(i - 3, 0)
+                    upper = min(i + 4, len(intraday))
+                
+                    sub = intraday.iloc[lower:upper]
+                    if (sub["PE_Cross_Bear"] == True).any():
+                        cross_aid_times_put.append(intraday.at[idx, "Time"])
+                        cross_aid_prices_put.append(intraday.at[idx, "F_numeric"] - 90)
+
                 momentum_aid_times = []
                 momentum_aid_prices = []
                 
