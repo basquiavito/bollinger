@@ -6267,28 +6267,7 @@ if st.sidebar.button("Run Analysis"):
               
                 
                
-                
-                    # fig_pe.add_trace(go.Scatter(
-                    #     x=intraday[intraday["Call_LF"]]["Time"],
-                    #     y=intraday[intraday["Call_LF"]]["Call_PE_x100"],
-                    #     mode='text',
-                    #     text=["🔋"] * intraday["Call_LF"].sum(),
-                    #     textposition="top center",
-                    #     name="Call Fuse",
-                    #     showlegend=False
-                    #       ))
-
-                    
-                    # fig_pe.add_trace(go.Scatter(
-                    #     x=intraday[intraday["Put_LF"]]["Time"],
-                    #     y=intraday[intraday["Put_LF"]]["Put_PE_x100"],
-                    #     mode='text',
-                    #     text=["🧨"] * intraday["Put_LF"].sum(),
-                    #     textposition="bottom center",
-                    #     name="Put Fuse",
-                    #     showlegend=False
-                    # ))
-
+                 
      # Layout
                     fig_pe.update_layout(
                         height=650,
@@ -6323,29 +6302,7 @@ if st.sidebar.button("Run Analysis"):
                     ))
 
 
-
-                    #                   # 🟢 Green Kill Shot Dot (Bullish)
-                    # fig_pe.add_trace(go.Scatter(
-                    #     x=intraday[intraday["PE_Kill_Shot"] == "🟢"]["Time"],
-                    #     y=intraday[intraday["PE_Kill_Shot"] == "🟢"]["Call_PE_x100"],
-                    #     mode="markers",
-                    #     marker=dict(color="green", size=5),
-                    #     name="Bull Kill Shot",
-                    #     hovertemplate="🟢 Bull Kill<br>PE: %{y:.1f}¢<extra></extra>",
-                    #     showlegend=True
-                    # ))
-                    
-                    # # 🔴 Red Kill Shot Dot (Bearish)
-                    # fig_pe.add_trace(go.Scatter(
-                    #     x=intraday[intraday["PE_Kill_Shot"] == "🔴"]["Time"],
-                    #     y=intraday[intraday["PE_Kill_Shot"] == "🔴"]["Put_PE_x100"],
-                    #     mode="markers",
-                    #     marker=dict(color="red", size=5),
-                    #     name="Bear Kill Shot",
-                    #     hovertemplate="🔴 Bear Kill<br>PE: %{y:.1f}¢<extra></extra>",
-                    #     showlegend=True
-                    # ))
-
+ 
                     st.plotly_chart(fig_pe, use_container_width=True)
                 
                 # with st.expander("📊 Elasticity-Based Put/Call Ratio (PE-PCR)", expanded=True):
@@ -8903,6 +8860,36 @@ if st.sidebar.button("Run Analysis"):
                     textfont=dict(size=34),
                     name="🎯3 Call Entry 3",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+
+
+
+                put_pe_mask = (intraday["Put_FirstEntry_Emoji"] == "🎯") & (intraday["Put_PE"] > intraday["Call_PE"])
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[put_pe_mask, "Time"],
+                    y=intraday.loc[put_pe_mask, "F_numeric"] - 60,
+                    mode="text",
+                    text=["🧬"] * put_pe_mask.sum(),
+                    textposition="top center",
+                    textfont=dict(size=22),
+                    name="🧬 PE Enhancer (Put)",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>Elasticity confirms Put<extra></extra>"
+                ), row=1, col=1)
+
+                
+                
+                call_pe_mask = (intraday["Call_FirstEntry_Emoji"] == "🎯") & (intraday["Call_PE"] > intraday["Put_PE"])
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[call_pe_mask, "Time"],
+                    y=intraday.loc[call_pe_mask, "F_numeric"] + 60,
+                    mode="text",
+                    text=["🧬"] * call_pe_mask.sum(),
+                    textposition="top center",
+                    textfont=dict(size=22),
+                    name="🧬 PE Enhancer (Call)",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>Elasticity confirms Call<extra></extra>"
                 ), row=1, col=1)
 
              # # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
