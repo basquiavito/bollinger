@@ -6348,53 +6348,53 @@ if st.sidebar.button("Run Analysis"):
 
                     st.plotly_chart(fig_pe, use_container_width=True)
                 
-                with st.expander("📊 Elasticity-Based Put/Call Ratio (PE-PCR)", expanded=True):
+                # with st.expander("📊 Elasticity-Based Put/Call Ratio (PE-PCR)", expanded=True):
                 
-                    fig_pepcr = go.Figure()
+                #     fig_pepcr = go.Figure()
                 
-                    # Main PE-PCR Line
-                    fig_pepcr.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["PE_PCR"],
-                        mode="lines",
-                        name="PE-PCR",
-                        line=dict(color="magenta", width=1.4),
-                        hovertemplate="Time: %{x}<br>PE-PCR: %{y:.2f}<extra></extra>"
-                    ))
+                #     # Main PE-PCR Line
+                #     fig_pepcr.add_trace(go.Scatter(
+                #         x=intraday["Time"],
+                #         y=intraday["PE_PCR"],
+                #         mode="lines",
+                #         name="PE-PCR",
+                #         line=dict(color="magenta", width=1.4),
+                #         hovertemplate="Time: %{x}<br>PE-PCR: %{y:.2f}<extra></extra>"
+                #     ))
                 
-                    # Reference lines
-                    fig_pepcr.add_shape(
-                        type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
-                        y0=1.0, y1=1.0,
-                        line=dict(color="gray", width=0.8, dash="dash"),
-                        name="Neutral"
-                    )
+                #     # Reference lines
+                #     fig_pepcr.add_shape(
+                #         type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
+                #         y0=1.0, y1=1.0,
+                #         line=dict(color="gray", width=0.8, dash="dash"),
+                #         name="Neutral"
+                #     )
                 
-                    fig_pepcr.add_shape(
-                        type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
-                        y0=1.5, y1=1.5,
-                        line=dict(color="red", width=0.8, dash="dot"),
-                        name="Bearish Threshold"
-                    )
+                #     fig_pepcr.add_shape(
+                #         type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
+                #         y0=1.5, y1=1.5,
+                #         line=dict(color="red", width=0.8, dash="dot"),
+                #         name="Bearish Threshold"
+                #     )
                 
-                    fig_pepcr.add_shape(
-                        type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
-                        y0=0.66, y1=0.66,
-                        line=dict(color="green", width=0.8, dash="dot"),
-                        name="Bullish Threshold"
-                    )
+                #     fig_pepcr.add_shape(
+                #         type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
+                #         y0=0.66, y1=0.66,
+                #         line=dict(color="green", width=0.8, dash="dot"),
+                #         name="Bullish Threshold"
+                #     )
                 
-                    # Layout
-                    fig_pepcr.update_layout(
-                        height=420,
-                        margin=dict(l=10, r=10, t=30, b=30),
-                        title_text="PE-Based Put/Call Ratio (Elasticity-Weighted)",
-                        xaxis_title="Time",
-                        yaxis_title="Put PE ÷ Call PE",
-                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                    )
+                #     # Layout
+                #     fig_pepcr.update_layout(
+                #         height=420,
+                #         margin=dict(l=10, r=10, t=30, b=30),
+                #         title_text="PE-Based Put/Call Ratio (Elasticity-Weighted)",
+                #         xaxis_title="Time",
+                #         yaxis_title="Put PE ÷ Call PE",
+                #         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                #     )
                 
-                    st.plotly_chart(fig_pepcr, use_container_width=True)
+                #     st.plotly_chart(fig_pepcr, use_container_width=True)
                 
 
 
