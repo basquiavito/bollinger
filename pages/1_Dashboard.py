@@ -8922,6 +8922,32 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%%: %{y}<br>Elasticity confirms Call<extra></extra>"
                 ), row=1, col=1)
 
+
+
+                # 🔀 Call Enhancer
+                fig.add_trace(go.Scatter(
+                    x=cross_aid_times_call,
+                    y=cross_aid_prices_call,
+                    mode="text",
+                    text=["🔀"] * len(cross_aid_times_call),
+                    textposition="top center",
+                    textfont=dict(size=20),
+                    name="🔀 PE Cross Enhancer (Call)",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>PE_Cross_Bull within ±3 bars<extra></extra>"
+                ), row=1, col=1)
+                
+                # 🔀 Put Enhancer
+                fig.add_trace(go.Scatter(
+                    x=cross_aid_times_put,
+                    y=cross_aid_prices_put,
+                    mode="text",
+                    text=["🔀"] * len(cross_aid_times_put),
+                    textposition="top center",
+                    textfont=dict(size=20),
+                    name="🔀 PE Cross Enhancer (Put)",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>PE_Cross_Bear within ±3 bars<extra></extra>"
+                ), row=1, col=1)
+
              # # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
              #    gb_rows = intraday[intraday["Gravity_Break_Alert"] == "🪂"]
                 
