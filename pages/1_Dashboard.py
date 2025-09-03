@@ -8868,7 +8868,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[put_pe_mask, "Time"],
-                    y=intraday.loc[put_pe_mask, "F_numeric"] - 60,
+                    y=intraday.loc[put_pe_mask, "F_numeric"] - 44,
                     mode="text",
                     text=["🧬"] * put_pe_mask.sum(),
                     textposition="top center",
@@ -8883,7 +8883,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[call_pe_mask, "Time"],
-                    y=intraday.loc[call_pe_mask, "F_numeric"] + 60,
+                    y=intraday.loc[call_pe_mask, "F_numeric"] + 44,
                     mode="text",
                     text=["🧬"] * call_pe_mask.sum(),
                     textposition="top center",
