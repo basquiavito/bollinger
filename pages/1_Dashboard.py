@@ -8050,33 +8050,33 @@ if st.sidebar.button("Run Analysis"):
                     ), row=1, col=1)
 
                                 
-                #                    # Plot 💸 for breakout above IB High
-                # high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
-                # fig.add_trace(go.Scatter(
-                #     x=high_break_df["TimeIndex"],
-                #     y=high_break_df["F_numeric"] + 30,
-                #     mode="text",
-                #     text=high_break_df["IB_High_Break"],
-                #     textposition="top left",
-                #     textfont=dict(size=24),
-                #     name="Breakout Above IB 💸",
-                #     showlegend=True,
-                #     hovertemplate="Time: %{x}<br>💸 IB High Breakout"
-                # ), row=1, col=1)
+                                   # Plot 💸 for breakout above IB High
+                high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
+                fig.add_trace(go.Scatter(
+                    x=high_break_df["TimeIndex"],
+                    y=high_break_df["F_numeric"] + 30,
+                    mode="text",
+                    text=high_break_df["IB_High_Break"],
+                    textposition="top left",
+                    textfont=dict(size=24),
+                    name="Breakout Above IB 💸",
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>💸 IB High Breakout"
+                ), row=1, col=1)
                 
-                # # Plot 🧧 for breakdown below IB Low
-                # low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
-                # fig.add_trace(go.Scatter(
-                #     x=low_break_df["TimeIndex"],
-                #     y=low_break_df["F_numeric"] - 30,
-                #     mode="text",
-                #     text=low_break_df["IB_Low_Break"],
-                #     textposition="bottom left",
-                #     textfont=dict(size=24),
-                #     name="Breakdown Below IB 🧧",
-                #     showlegend=True,
-                #     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
-                # ), row=1, col=1)
+                # Plot 🧧 for breakdown below IB Low
+                low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
+                fig.add_trace(go.Scatter(
+                    x=low_break_df["TimeIndex"],
+                    y=low_break_df["F_numeric"] - 30,
+                    mode="text",
+                    text=low_break_df["IB_Low_Break"],
+                    textposition="bottom left",
+                    textfont=dict(size=24),
+                    name="Breakdown Below IB 🧧",
+                    showlegend=True,
+                    hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
+                ), row=1, col=1)
 
 
 
@@ -8425,50 +8425,50 @@ if st.sidebar.button("Run Analysis"):
                 #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
                 # ), row=1, col=1) 
 
-                # cloud_mask = intraday["Heaven_Cloud"] == "☁️"
+                cloud_mask = intraday["Heaven_Cloud"] == "☁️"
   
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[cloud_mask, "Time"],
-                #     y=intraday.loc[cloud_mask, "F_numeric"] + 100,
-                #     mode="text",
-                #     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
-                #     textposition="top center",
-                #     textfont=dict(size=21),
-                #     name="Heaven ☁️",
-                #     hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
-                # ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[cloud_mask, "Time"],
+                    y=intraday.loc[cloud_mask, "F_numeric"] + 100,
+                    mode="text",
+                    text=intraday.loc[cloud_mask, "Heaven_Cloud"],
+                    textposition="top center",
+                    textfont=dict(size=21),
+                    name="Heaven ☁️",
+                    hovertemplate="Time: %{x}<br>Price above TD Supply Line<extra></extra>"
+                ), row=1, col=1)
   
-                # # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
-                # intraday["Drizzle_Emoji"] = None
-                # below_demand = False
+                # Generate continuous 🌧️ drizzle emojis while F% is below TD Demand Line F
+                intraday["Drizzle_Emoji"] = None
+                below_demand = False
   
-                # for i in range(1, len(intraday)):
-                #     f = intraday["F_numeric"].iloc[i]
-                #     demand = intraday["TD Demand Line F"].iloc[i]
+                for i in range(1, len(intraday)):
+                    f = intraday["F_numeric"].iloc[i]
+                    demand = intraday["TD Demand Line F"].iloc[i]
   
-                #     if pd.notna(demand) and f < demand:
-                #         below_demand = True
-                #     elif pd.notna(demand) and f >= demand:
-                #         below_demand = False
+                    if pd.notna(demand) and f < demand:
+                        below_demand = True
+                    elif pd.notna(demand) and f >= demand:
+                        below_demand = False
   
-                #     if below_demand:
-                #         intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
+                    if below_demand:
+                        intraday.at[intraday.index[i], "Drizzle_Emoji"] = "🌧️"
   
   
   
-                # # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
-                # drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
+                # Plot 🌧️ Drizzle Emoji on F% chart when price crosses down TD Demand Line
+                drizzle_mask = intraday["Drizzle_Emoji"] == "🌧️"
   
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[drizzle_mask, "Time"],
-                #     y=intraday.loc[drizzle_mask, "F_numeric"] + 100,  # Position below the bar
-                #     mode="text",
-                #     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
-                #     textposition="bottom center",
-                #     textfont=dict(size=21),
-                #     name="Price Dropped Below Demand 🌧️",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
-                # ), row=1, col=1)
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[drizzle_mask, "Time"],
+                    y=intraday.loc[drizzle_mask, "F_numeric"] + 100,  # Position below the bar
+                    mode="text",
+                    text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=21),
+                    name="Price Dropped Below Demand 🌧️",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
+                ), row=1, col=1)
   
                          # Mask for Tenkan_F crossing down through MIDAS_Bear
                 mask_tenkan_cross_down = (
