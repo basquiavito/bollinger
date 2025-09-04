@@ -6300,7 +6300,7 @@ if st.sidebar.button("Run Analysis"):
                  
      # Layout
                     fig_pe.update_layout(
-                        height=650,
+                        height=350,
                         margin=dict(l=10, r=10, t=30, b=30),
                         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
                         title_text="Option Price Elasticity (¢ per F% point)",
