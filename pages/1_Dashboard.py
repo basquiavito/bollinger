@@ -7251,86 +7251,86 @@ if st.sidebar.button("Run Analysis"):
                 # fig.add_trace(long_entry_trace, row=1, col=1)
 
 
-                # # 🔍 First Wake-Up Detection
-                # first_call_eye_idx = intraday.index[intraday["Call_Wake_Emoji"] == "👁️"]
-                # first_put_eye_idx  = intraday.index[intraday["Put_Wake_Emoji"]  == "🦉"]
+                # 🔍 First Wake-Up Detection
+                first_call_eye_idx = intraday.index[intraday["Call_Wake_Emoji"] == "👁️"]
+                first_put_eye_idx  = intraday.index[intraday["Put_Wake_Emoji"]  == "🦉"]
                 
-                # # ✅ Plot Call Wake 👁️ once
-                # if not first_call_eye_idx.empty:
-                #     first_idx = first_call_eye_idx[0]
-                #     fig.add_trace(go.Scatter(
-                #         x=[intraday.loc[first_idx, "Time"]],
-                #         y=[intraday.loc[first_idx, price_col] + 30],  # position above
-                #         mode="text",
-                #         text=["👁️"],
-                #         textposition="top center",
-                #         textfont=dict(size=28),
-                #         showlegend=True,
-                #         hoverinfo="text",
-                #         hovertemplate="<b>Call Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                # ✅ Plot Call Wake 👁️ once
+                if not first_call_eye_idx.empty:
+                    first_idx = first_call_eye_idx[0]
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_idx, "Time"]],
+                        y=[intraday.loc[first_idx, price_col] + 30],  # position above
+                        mode="text",
+                        text=["👁️"],
+                        textposition="top center",
+                        textfont=dict(size=28),
+                        showlegend=True,
+                        hoverinfo="text",
+                        hovertemplate="<b>Call Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
 
-                #         name="Call Wake-Up"
-                #     ), row=1, col=1)
+                        name="Call Wake-Up"
+                    ), row=1, col=1)
                 
-                # # ✅ Plot Put Wake 🦉 once
-                # if not first_put_eye_idx.empty:
-                #     first_idx = first_put_eye_idx[0]
-                #     fig.add_trace(go.Scatter(
-                #         x=[intraday.loc[first_idx, "Time"]],
-                #         y=[intraday.loc[first_idx, price_col] - 0],  # position below
-                #         mode="text",
-                #         text=["🦉"],
-                #         textposition="bottom right",
-                #         textfont=dict(size=21),
-                #         showlegend=True,
-                #         hoverinfo="text",
-                #         hovertemplate="<b>Put Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                # ✅ Plot Put Wake 🦉 once
+                if not first_put_eye_idx.empty:
+                    first_idx = first_put_eye_idx[0]
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_idx, "Time"]],
+                        y=[intraday.loc[first_idx, price_col] - 0],  # position below
+                        mode="text",
+                        text=["🦉"],
+                        textposition="bottom right",
+                        textfont=dict(size=21),
+                        showlegend=True,
+                        hoverinfo="text",
+                        hovertemplate="<b>Put Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
 
-                #         name="Put Wake-Up"
-                #     ), row=1, col=1)
+                        name="Put Wake-Up"
+                    ), row=1, col=1)
 
-                # # ✅ Plot Call Solo Eye 👁️ (No Cross but strong rise)
-                # first_call_solo_eye_idx = intraday.index[intraday["Call_Eye_Solo"] == "👁️"]
+                # ✅ Plot Call Solo Eye 👁️ (No Cross but strong rise)
+                first_call_solo_eye_idx = intraday.index[intraday["Call_Eye_Solo"] == "👁️"]
                 
-                # if not first_call_solo_eye_idx.empty:
-                #     first_idx = first_call_solo_eye_idx[0]
-                #     fig.add_trace(go.Scatter(
-                #         x=[intraday.loc[first_idx, "Time"]],
-                #         y=[intraday.loc[first_idx, price_col] + 15],  # Slightly below Wake-Up 👁️
-                #         mode="text",
-                #         text=["👁️"],
-                #         textposition="top center",
-                #         textfont=dict(size=21),
-                #         showlegend=True,
-                #         hoverinfo="text",
-                #         hovertemplate="<b>Call Rising (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
-                #         name="Call Solo Eye"
-                #     ), row=1, col=1)
+                if not first_call_solo_eye_idx.empty:
+                    first_idx = first_call_solo_eye_idx[0]
+                    fig.add_trace(go.Scatter(
+                        x=[intraday.loc[first_idx, "Time"]],
+                        y=[intraday.loc[first_idx, price_col] + 15],  # Slightly below Wake-Up 👁️
+                        mode="text",
+                        text=["👁️"],
+                        textposition="top center",
+                        textfont=dict(size=21),
+                        showlegend=True,
+                        hoverinfo="text",
+                        hovertemplate="<b>Call Rising (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                        name="Call Solo Eye"
+                    ), row=1, col=1)
 
 
 
                   
-                    # # ✅ Plot Put Solo Eye 🦉 (No Cross but strong drop)
-                    # first_put_solo_eye_idx = intraday.index[intraday["Put_Eye_Solo"] == "🦉"]
+                    # ✅ Plot Put Solo Eye 🦉 (No Cross but strong drop)
+                    first_put_solo_eye_idx = intraday.index[intraday["Put_Eye_Solo"] == "🦉"]
 
 
 
 
 
-                    # if not first_put_solo_eye_idx.empty:
-                    #     first_idx = first_put_solo_eye_idx[0]
-                    #     fig.add_trace(go.Scatter(
-                    #         x=[intraday.loc[first_idx, "Time"]],
-                    #         y=[intraday.loc[first_idx, price_col] - 15],  # Slightly above Put Wake 🦉
-                    #         mode="text",
-                    #         text=["🦉"],
-                    #         textposition="bottom center",
-                    #         textfont=dict(size=24),
-                    #         showlegend=True,
-                    #         hoverinfo="text",
-                    #         hovertemplate="<b>Put Falling (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
-                    #         name="Put Solo Eye"
-                    #     ), row=1, col=1)
+                    if not first_put_solo_eye_idx.empty:
+                        first_idx = first_put_solo_eye_idx[0]
+                        fig.add_trace(go.Scatter(
+                            x=[intraday.loc[first_idx, "Time"]],
+                            y=[intraday.loc[first_idx, price_col] - 15],  # Slightly above Put Wake 🦉
+                            mode="text",
+                            text=["🦉"],
+                            textposition="bottom center",
+                            textfont=dict(size=24),
+                            showlegend=True,
+                            hoverinfo="text",
+                            hovertemplate="<b>Put Falling (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
+                            name="Put Solo Eye"
+                        ), row=1, col=1)
 
              
                 intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
