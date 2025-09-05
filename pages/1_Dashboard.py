@@ -6433,52 +6433,52 @@ if st.sidebar.button("Run Analysis"):
                     )
                     fig.add_trace(scatter_f, row=1, col=1)
 
-                    # # === Overlay Colored Top Dots ===
-                    # colored_dots = go.Scatter(
-                    #     x=top_dots["Time"],
-                    #     y=top_dots["F_numeric"],
-                    #     mode="markers",
-                    #     marker=dict(
-                    #         size=8,
-                    #         color=top_dots["DotColor"],
-                    #         symbol="circle"
-                    #     ),
-                    #     name="15-min Directional Dot",
-                    #     hovertemplate="Time: %{x}<br>Top F%: %{y:.2f}<extra></extra>",
-                    # )
-                    # fig.add_trace(colored_dots, row=1, col=1)
+                    # === Overlay Colored Top Dots ===
+                    colored_dots = go.Scatter(
+                        x=top_dots["Time"],
+                        y=top_dots["F_numeric"],
+                        mode="markers",
+                        marker=dict(
+                            size=8,
+                            color=top_dots["DotColor"],
+                            symbol="circle"
+                        ),
+                        name="15-min Directional Dot",
+                        hovertemplate="Time: %{x}<br>Top F%: %{y:.2f}<extra></extra>",
+                    )
+                    fig.add_trace(colored_dots, row=1, col=1)
                                         
-                    #             # === Define Dots ===
-                    # main_dot = go.Scatter(
-                    #     x=top_dots["Time"],
-                    #     y=top_dots["F_numeric"],
-                    #     mode="markers",
-                    #     marker=dict(
-                    #         color=top_dots["DotColor"],
-                    #         size=8,
-                    #         symbol="circle"
-                    #     ),
-                    #     name="15-min Top Dot",
-                    #     hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
-                    # )
+                                # === Define Dots ===
+                    main_dot = go.Scatter(
+                        x=top_dots["Time"],
+                        y=top_dots["F_numeric"],
+                        mode="markers",
+                        marker=dict(
+                            color=top_dots["DotColor"],
+                            size=8,
+                            symbol="circle"
+                        ),
+                        name="15-min Top Dot",
+                        hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
+                    )
                     
-                    # ghost_dot = go.Scatter(
-                    #     x=top_dots["Time_HighMoment"],
-                    #     y=top_dots["F_numeric"],
-                    #     mode="markers",
-                    #     marker=dict(
-                    #         color=top_dots["DotColor"],
-                    #         size=20,
-                    #         symbol="circle-open",
-                    #         opacity=0.4
-                    #     ),
-                    #     name="Ghost Dot 🫥",
-                    #     hovertemplate="Auction Push: %{x}<br>F%: %{y}<extra></extra>"
-                    # )
+                    ghost_dot = go.Scatter(
+                        x=top_dots["Time_HighMoment"],
+                        y=top_dots["F_numeric"],
+                        mode="markers",
+                        marker=dict(
+                            color=top_dots["DotColor"],
+                            size=20,
+                            symbol="circle-open",
+                            opacity=0.4
+                        ),
+                        name="Ghost Dot 🫥",
+                        hovertemplate="Auction Push: %{x}<br>F%: %{y}<extra></extra>"
+                    )
                     
-                    # === Now Add to Plot ===
-                    # fig.add_trace(main_dot, row=1, col=1)
-                    # fig.add_trace(ghost_dot, row=1, col=1)
+                    === Now Add to Plot ===
+                    fig.add_trace(main_dot, row=1, col=1)
+                    fig.add_trace(ghost_dot, row=1, col=1)
                     #**************************************************************************************************************************************************************************
 
 
@@ -7084,46 +7084,46 @@ if st.sidebar.button("Run Analysis"):
 
 
                # Extract only the rows where TDST just formed
-                    # tdst_points = intraday["TDST"].notna()
+                    tdst_points = intraday["TDST"].notna()
 
-                    # tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-                    # tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
-
-
-
-                    # tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-                    # tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
+                    tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
+                    tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
 
 
-                    # # Buy TDST marker (⎯)
-                    # fig.add_trace(
-                    #     go.Scatter(
-                    #         x=intraday.loc[tdst_buy_mask, "Time"],
-                    #         y=intraday.loc[tdst_buy_mask, "F_numeric"],
-                    #         mode="text",
-                    #         text=["⎯"] * tdst_buy_mask.sum(),
-                    #         textposition="middle center",
-                    #         textfont=dict(size=24, color="green"),
-                    #         name="Buy TDST",
-                    #         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    #     ),
-                    #     row=1, col=1
-                    # )
 
-                    # # Sell TDST marker (⎯)
-                    # fig.add_trace(
-                    #     go.Scatter(
-                    #         x=intraday.loc[tdst_sell_mask, "Time"],
-                    #         y=intraday.loc[tdst_sell_mask, "F_numeric"],
-                    #         mode="text",
-                    #         text=["⎯"] * tdst_sell_mask.sum(),
-                    #         textposition="middle center",
-                    #         textfont=dict(size=24, color="red"),
-                    #         name="Sell TDST",
-                    #         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    #     ),
-                    #     row=1, col=1
-                    # )
+                    tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
+                    tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
+
+
+                    # Buy TDST marker (⎯)
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday.loc[tdst_buy_mask, "Time"],
+                            y=intraday.loc[tdst_buy_mask, "F_numeric"],
+                            mode="text",
+                            text=["⎯"] * tdst_buy_mask.sum(),
+                            textposition="middle center",
+                            textfont=dict(size=24, color="green"),
+                            name="Buy TDST",
+                            hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                        ),
+                        row=1, col=1
+                    )
+
+                    # Sell TDST marker (⎯)
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday.loc[tdst_sell_mask, "Time"],
+                            y=intraday.loc[tdst_sell_mask, "F_numeric"],
+                            mode="text",
+                            text=["⎯"] * tdst_sell_mask.sum(),
+                            textposition="middle center",
+                            textfont=dict(size=24, color="red"),
+                            name="Sell TDST",
+                            hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                        ),
+                        row=1, col=1
+                    )
 
 
                  
@@ -7133,80 +7133,80 @@ if st.sidebar.button("Run Analysis"):
                    
 
 
-                    # intraday["F_shift"] = intraday["F_numeric"].shift(1)
+                    intraday["F_shift"] = intraday["F_numeric"].shift(1)
 
-                    # tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
-                    # tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
+                    tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
+                    tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
 
-                    #                     # Step 1: For each Buy TDST bar, get the F% level
-                    # buy_tdst_levels = intraday.loc[tdst_buy_mask, "F_numeric"]
+                                        # Step 1: For each Buy TDST bar, get the F% level
+                    buy_tdst_levels = intraday.loc[tdst_buy_mask, "F_numeric"]
 
-                    # # Step 2: Loop through each Buy TDST and track from that point forward
-                    # for buy_idx, tdst_level in buy_tdst_levels.items():
-                    #     # Get index location of the TDST signal
-                    #     i = intraday.index.get_loc(buy_idx)
+                    # Step 2: Loop through each Buy TDST and track from that point forward
+                    for buy_idx, tdst_level in buy_tdst_levels.items():
+                        # Get index location of the TDST signal
+                        i = intraday.index.get_loc(buy_idx)
 
-                    #     # Look at all bars forward from the TDST bar
-                    #     future = intraday.iloc[i+1:].copy()
+                        # Look at all bars forward from the TDST bar
+                        future = intraday.iloc[i+1:].copy()
 
-                    #     # Find where F% crosses and stays above the TDST level for 2 bars
-                    #     above = future["F_numeric"] > tdst_level
-                    #     two_bar_hold = above & above.shift(-1)
+                        # Find where F% crosses and stays above the TDST level for 2 bars
+                        above = future["F_numeric"] > tdst_level
+                        two_bar_hold = above & above.shift(-1)
 
-                    #     # Find the first time this happens
-                    #     if two_bar_hold.any():
-                    #         ghost_idx = two_bar_hold[two_bar_hold].index[0]  # first valid bar
+                        # Find the first time this happens
+                        if two_bar_hold.any():
+                            ghost_idx = two_bar_hold[two_bar_hold].index[0]  # first valid bar
 
-                    #         # Plot 🔑 emoji on the first bar
-                    #         fig.add_trace(
-                    #             go.Scatter(
-                    #                 x=[intraday.at[ghost_idx, "Time"]],
-                    #                 y=[intraday.at[ghost_idx, "F_numeric"] + 8],
-                    #                 mode="text",
-                    #                 text=["🔑"],
-                    #                 textposition="middle center",
-                    #                 textfont=dict(size=20, color="purple"),
-                    #                 name="Confirmed Buy TDST Breakout",
-                    #                 hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    #             ),
-                    #             row=1, col=1
-                    #         )
+                            # Plot 🔑 emoji on the first bar
+                            fig.add_trace(
+                                go.Scatter(
+                                    x=[intraday.at[ghost_idx, "Time"]],
+                                    y=[intraday.at[ghost_idx, "F_numeric"] + 8],
+                                    mode="text",
+                                    text=["🔑"],
+                                    textposition="middle center",
+                                    textfont=dict(size=20, color="purple"),
+                                    name="Confirmed Buy TDST Breakout",
+                                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                                ),
+                                row=1, col=1
+                            )
 
 
-                    # # Step 1: Get all Sell TDST points (each defines its own world)
-                    # sell_tdst_levels = intraday.loc[tdst_sell_mask, "F_numeric"]
-                    # sell_tdst_indices = list(sell_tdst_levels.index) + [intraday.index[-1]]  # add end of session as last boundary
+                    # Step 1: Get all Sell TDST points (each defines its own world)
+                    sell_tdst_levels = intraday.loc[tdst_sell_mask, "F_numeric"]
+                    sell_tdst_indices = list(sell_tdst_levels.index) + [intraday.index[-1]]  # add end of session as last boundary
 
-                    # # Step 2: Loop through each Sell TDST "world"
-                    # for i in range(len(sell_tdst_levels)):
-                    #     tdst_idx = sell_tdst_levels.index[i]
-                    #     tdst_level = sell_tdst_levels.iloc[i]
+                    # Step 2: Loop through each Sell TDST "world"
+                    for i in range(len(sell_tdst_levels)):
+                        tdst_idx = sell_tdst_levels.index[i]
+                        tdst_level = sell_tdst_levels.iloc[i]
 
-                    #     # Define the domain: from this Sell TDST until the next one (or end of day)
-                    #     domain_start = intraday.index.get_loc(tdst_idx) + 1
-                    #     domain_end = intraday.index.get_loc(sell_tdst_indices[i+1])  # next TDST or end
+                        # Define the domain: from this Sell TDST until the next one (or end of day)
+                        domain_start = intraday.index.get_loc(tdst_idx) + 1
+                        domain_end = intraday.index.get_loc(sell_tdst_indices[i+1])  # next TDST or end
 
-                    #     domain = intraday.iloc[domain_start:domain_end]
+                        domain = intraday.iloc[domain_start:domain_end]
 
-                    #     # Condition: F% crosses below and stays below for 2 bars
-                    #     below = domain["F_numeric"] < tdst_level
-                    #     confirmed = below & below.shift(-1)
+                        # Condition: F% crosses below and stays below for 2 bars
+                        below = domain["F_numeric"] < tdst_level
+                        confirmed = below & below.shift(-1)
 
-                    #     if confirmed.any():
-                    #         ghost_idx = confirmed[confirmed].index[0]
-                    #         fig.add_trace(
-                    #             go.Scatter(
-                    #                 x=[intraday.at[ghost_idx, "Time"]],
-                    #                 y=[intraday.at[ghost_idx, "F_numeric"] - 8],
-                    #                 mode="text",
-                    #                 text=["🔑"],
-                    #                 textposition="middle center",
-                    #                 textfont=dict(size=20, color="purple"),
-                    #                 name="Confirmed Sell TDST Breakdown",
-                    #                 hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    #             ),
-                    #             row=1, col=1
-                    #         )
+                        if confirmed.any():
+                            ghost_idx = confirmed[confirmed].index[0]
+                            fig.add_trace(
+                                go.Scatter(
+                                    x=[intraday.at[ghost_idx, "Time"]],
+                                    y=[intraday.at[ghost_idx, "F_numeric"] - 8],
+                                    mode="text",
+                                    text=["🔑"],
+                                    textposition="middle center",
+                                    textfont=dict(size=20, color="purple"),
+                                    name="Confirmed Sell TDST Breakdown",
+                                    hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                                ),
+                                row=1, col=1
+                            )
 
 
 
