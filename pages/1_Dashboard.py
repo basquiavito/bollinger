@@ -8115,7 +8115,41 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate=f"🦻🏼 Top Memory Line<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>"
                     ), row=1, col=1)
                 
+              # 👃🏽 Get the F% level with the highest Letter_Count (most time spent)
+              nose_row = (
+                  profile_df.sort_values(by="Letter_Count", ascending=False)
+                  .head(1)  # Only the top one
+              )
               
+              if not nose_row.empty:
+                  poc_f_level = nose_row["F% Level"].values[0]
+                  nose_time = nose_row["Time"].values[0]
+                  
+                  # Add pink dotted line for 👃🏽
+                  fig.add_hline(
+                      y=poc_f_level,
+                      line=dict(color="#ff1493", dash="dot", width=0.3),
+                      row=1, col=1,
+                      showlegend=False
+                  )
+              
+                  # Plot 👃🏽 text marker at far right
+                  fig.add_trace(go.Scatter(
+                      x=[intraday["TimeIndex"].iloc[-1]],  # far right time
+                      y=[poc_f_level],
+                      mode="markers+text",
+                      marker=dict(size=0, color="#ff1493"),
+                      text=["👃🏽 Nose (Most Price Acceptance)"],
+                      textposition="top right",
+                      name="👃🏽 Nose Line",
+                      showlegend=False,
+                      hovertemplate=(
+                          "👃🏽 Nose Line<br>"
+                          f"F% Level: {poc_f_level}<br>"
+                          f"Time: {nose_time}<extra></extra>"
+                      )
+                  ), row=1, col=1)
+
                #                 # 🦻🏼 Top 3 Ear Lines based on %Vol
                
                #               # Step 1: Filter Ear-marked rows
