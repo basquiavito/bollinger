@@ -8122,39 +8122,39 @@ if st.sidebar.button("Run Analysis"):
 
                #  top_ears = profile_df.nlargest(3, "%Vol")
                 
-                x_hover = intraday["TimeIndex"].iloc[-1]  # Use last bar time for clean placement
+                # x_hover = intraday["TimeIndex"].iloc[-1]  # Use last bar time for clean placement
                 
-                for _, row in top_ears.iterrows():
-                    ear_level = row["F% Level"]
-                    vol = row["%Vol"]
-                    time = row["Time"]
+                # for _, row in top_ears.iterrows():
+                #     ear_level = row["F% Level"]
+                #     vol = row["%Vol"]
+                #     time = row["Time"]
                 
-                    fig.add_trace(go.Scatter(
-                        x=[x_hover],
-                        y=[ear_level],
-                        mode="text",
-                        text=["🥁"],
-                        textposition="middle right",
-                        hovertemplate=f"🥁 Top %Vol<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
-                        showlegend=False
-                    ), row=1, col=1)
+                #     fig.add_trace(go.Scatter(
+                #         x=[x_hover],
+                #         y=[ear_level],
+                #         mode="text",
+                #         text=["🥁"],
+                #         textposition="middle right",
+                #         hovertemplate=f"🥁 Top %Vol<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
+                #         showlegend=False
+                #     ), row=1, col=1)
               
                                         
-                top_price_levels = profile_df.nlargest(3, "Letter_Count")
+                # top_price_levels = profile_df.nlargest(3, "Letter_Count")
                 
-                for _, row in top_price_levels.iterrows():
-                    fig.add_annotation(
-                        x=intraday["TimeIndex"].min(),  # far left
-                        y=row["F% Level"],
-                        text="💲",
-                        showarrow=False,
-                        font=dict(size=20),
-                        xanchor="right",
-                        yanchor="middle",
-                        hovertext=f"💲 Time-Zone<br>Letters: {row['Letter_Count']}<br>First Seen: {row['Time']}",
+                # for _, row in top_price_levels.iterrows():
+                #     fig.add_annotation(
+                #         x=intraday["TimeIndex"].min(),  # far left
+                #         y=row["F% Level"],
+                #         text="💲",
+                #         showarrow=False,
+                #         font=dict(size=20),
+                #         xanchor="right",
+                #         yanchor="middle",
+                #         hovertext=f"💲 Time-Zone<br>Letters: {row['Letter_Count']}<br>First Seen: {row['Time']}",
                    
-                        ax=0, ay=0
-                    )
+                #         ax=0, ay=0
+                #     )
 
                 
 
