@@ -8081,46 +8081,46 @@ if st.sidebar.button("Run Analysis"):
 
 
               
-                               # 🦻🏼 Top 3 Ear Lines based on %Vol
+               #                 # 🦻🏼 Top 3 Ear Lines based on %Vol
                
-                             # Step 1: Filter Ear-marked rows
-                               # 🦻🏼 Top 3 Ear Lines based on %Vol
-                top_ears = profile_df[profile_df["🦻🏼"] == "🦻🏼"].nlargest(3, "%Vol")
+               #               # Step 1: Filter Ear-marked rows
+               #                 # 🦻🏼 Top 3 Ear Lines based on %Vol
+               #  top_ears = profile_df[profile_df["🦻🏼"] == "🦻🏼"].nlargest(3, "%Vol")
                 
-                for _, row in top_ears.iterrows():
-                    ear_level = row["F% Level"]
-                    vol = row["%Vol"]
-                    time = row["Time"]  # Or row["TimeIndex"] if Time is not a string
+               #  for _, row in top_ears.iterrows():
+               #      ear_level = row["F% Level"]
+               #      vol = row["%Vol"]
+               #      time = row["Time"]  # Or row["TimeIndex"] if Time is not a string
                 
-                    fig.add_hline(
-                        y=ear_level,
-                        line=dict(color="darkgray", dash="dot", width=1.5),
-                        row=1, col=1,
-                        showlegend=False,
-                        annotation_text="🦻🏼",
-                        annotation_position="top left",
-                        annotation_font=dict(color="black"),
+               #      fig.add_hline(
+               #          y=ear_level,
+               #          line=dict(color="darkgray", dash="dot", width=1.5),
+               #          row=1, col=1,
+               #          showlegend=False,
+               #          annotation_text="🦻🏼",
+               #          annotation_position="top left",
+               #          annotation_font=dict(color="black"),
               
-                    )
+               #      )
 
 
              
-               # 🦻🏼 Add Ear line if it exists
-                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+               # # 🦻🏼 Add Ear line if it exists
+               #  ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                 
-                if not ear_row.empty:
-                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
-                    fig.add_hline(
-                        y=ear_level,
-                        line=dict(color="darkgray", dash="dot", width=0.7),
-                        row=1, col=1,
-                        showlegend=True,
-                        annotation_text="🦻🏼 Ear Shift",
-                        annotation_position="top left",
-                        annotation_font=dict(color="black")
-                    )
+               #  if not ear_row.empty:
+               #      ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+               #      fig.add_hline(
+               #          y=ear_level,
+               #          line=dict(color="darkgray", dash="dot", width=0.7),
+               #          row=1, col=1,
+               #          showlegend=True,
+               #          annotation_text="🦻🏼 Ear Shift",
+               #          annotation_position="top left",
+               #          annotation_font=dict(color="black")
+               #      )
 
-                top_ears = profile_df.nlargest(3, "%Vol")
+               #  top_ears = profile_df.nlargest(3, "%Vol")
                 
                 x_hover = intraday["TimeIndex"].iloc[-1]  # Use last bar time for clean placement
                 
