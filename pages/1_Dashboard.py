@@ -122,7 +122,7 @@ st.set_page_config(
 # ======================================
 st.sidebar.header("Input Options")
 
-default_tickers = ["SPY","VIXY","SOXX","NVDA","AMZN","MU","AMD","SMCI","MSFT", "AVGO","QCOM","TSLA","MRVL","QQQ","uber","PLTR","AAPL","GOOGL","META","XLY","TSLA","nke","GM","c","DKNG","CHWY","ETSY","CART","W","KBE","wfc","hood","PYPL","coin","bac","jpm"]
+default_tickers = ["BTC-USD","SPY","VIXY","SOXX","NVDA","AMZN","MU","AMD","SMCI","MSFT", "AVGO","QCOM","TSLA","MRVL","QQQ","uber","PLTR","AAPL","GOOGL","META","XLY","TSLA","nke","GM","c","DKNG","CHWY","ETSY","CART","W","KBE","wfc","hood","PYPL","coin","bac","jpm"]
 tickers = st.sidebar.multiselect(
     "Select Tickers",
     options=default_tickers,
