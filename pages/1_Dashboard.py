@@ -7620,7 +7620,7 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>MIDAS Bull: %{y:.2f}<extra></extra>"
                 ))
                 # 🦻🏼 Add Ear line if it exists
-                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"].sort_values("Volume", ascending=False).head(1)
                 
                 if not ear_row.empty:
                     ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
