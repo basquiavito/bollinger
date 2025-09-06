@@ -8078,8 +8078,43 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
                 ), row=1, col=1)
 
-
-
+                
+                # 🦻🏼 Get the top 🦻🏼 ear level based on highest %Vol
+                ear_row = (
+                    profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                    .sort_values(by="%Vol", ascending=False)
+                    .head(1)  # only take the highest
+                )
+                
+                if not ear_row.empty:
+                    row = ear_row.iloc[0]
+                    ear_level = row["F% Level"]
+                    vol = row["%Vol"]
+                    time = row["Time"]
+                
+                    # 🦻🏼 Add Ear memory line
+                    fig.add_hline(
+                        y=ear_level,
+                        line=dict(color="darkgray", dash="dot", width=1.5),
+                        row=1, col=1,
+                        showlegend=False,
+                        annotation_text="🦻🏼 Ear Shift",
+                        annotation_position="top left",
+                        annotation_font=dict(color="black"),
+                    )
+                
+                    # 🦻🏼 Optional: Add emoji text near the memory level
+                    fig.add_trace(go.Scatter(
+                        x=[intraday["TimeIndex"].iloc[-1]],  # Use last bar's timestamp
+                        y=[ear_level],
+                        mode="text",
+                        text=["🦻🏼"],
+                        textposition="middle right",
+                        textfont=dict(size=20),
+                        showlegend=False,
+                        hovertemplate=f"🦻🏼 Top Memory Line<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>"
+                    ), row=1, col=1)
+                
               
                #                 # 🦻🏼 Top 3 Ear Lines based on %Vol
                
