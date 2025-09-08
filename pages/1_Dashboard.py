@@ -6191,31 +6191,31 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                memory_window = 3  
+                # memory_window = 3  
 
 
       
-                for i in entry_indices:
-                    sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
-                    entry_type = "call" if is_call_entry(i) else "put"
+                # for i in entry_indices:
+                #     sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
+                #     entry_type = "call" if is_call_entry(i) else "put"
                 
-                    # 👂🏽 Ear Check
-                    ear_cross = (
-                        (entry_type == "call" and (sub["Price"] > sub["Ear_Line"]).any()) or
-                        (entry_type == "put" and (sub["Price"] < sub["Ear_Line"]).any())
-                    )
+                #     # 👂🏽 Ear Check
+                #     ear_cross = (
+                #         (entry_type == "call" and (sub["Price"] > sub["Ear_Line"]).any()) or
+                #         (entry_type == "put" and (sub["Price"] < sub["Ear_Line"]).any())
+                #     )
                 
-                    # 👃🏽 Nose Check
-                    nose_cross = (
-                        (entry_type == "call" and (sub["Price"] > sub["Nose_Line"]).any()) or
-                        (entry_type == "put" and (sub["Price"] < sub["Nose_Line"]).any())
-                    )
+                #     # 👃🏽 Nose Check
+                #     nose_cross = (
+                #         (entry_type == "call" and (sub["Price"] > sub["Nose_Line"]).any()) or
+                #         (entry_type == "put" and (sub["Price"] < sub["Nose_Line"]).any())
+                #     )
                 
-                    if ear_cross:
-                        intraday.loc[i, "Memory_Enhancer"] = "🧠"
+                #     if ear_cross:
+                #         intraday.loc[i, "Memory_Enhancer"] = "🧠"
                 
-                    if nose_cross:
-                        intraday.loc[i, "Time_Enhancer"] = "🧭"
+                #     if nose_cross:
+                #         intraday.loc[i, "Time_Enhancer"] = "🧭"
                 # Iterate through the dataframe
                 for i in range(len(intraday)):
                     if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
