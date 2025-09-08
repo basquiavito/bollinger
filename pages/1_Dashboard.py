@@ -6221,12 +6221,59 @@ if st.sidebar.button("Run Analysis"):
                             momentum_aid_times.append(trough_time)
                             momentum_aid_prices.append(trough_value)
                             intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
+
+
                 
+                vol_aid_times_call = []
+                vol_aid_prices_call = []
+                
+                vol_aid_times_put = []
+                vol_aid_prices_put = []
+
                   # Initialize containers
                 energy_aid_times = []
                 energy_aid_prices = []
                 energy_aid_vals = []
+
+                # --- CALL Entries ---
+                call_entry_idxs = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
                 
+                for idx in call_entry_idxs:
+                    i = intraday.index.get_loc(idx)
+                    lower = max(i - 3, 0)
+                    upper = min(i + 4, len(intraday))  # +4 because Python excludes upper
+                
+                    sub = intraday.iloc[lower:upper]
+                
+                    if (
+                        (sub["BBW Alert"] == "🔥").any() or
+                        (sub["STD_Alert"] == "🐦‍🔥").any() or
+                        (sub["ATR_Exp_Alert"] == "☄️").any() or
+                        (sub["RVOL_5"] > 1.2).any()
+                    ):
+                        vol_aid_times_call.append(intraday.at[idx, "Time"])
+                        vol_aid_prices_call.append(intraday.at[idx, "F_numeric"] + 120)
+                
+                
+                # --- PUT Entries ---
+                put_entry_idxs = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
+                
+                for idx in put_entry_idxs:
+                    i = intraday.index.get_loc(idx)
+                    lower = max(i - 3, 0)
+                    upper = min(i + 4, len(intraday))
+                
+                    sub = intraday.iloc[lower:upper]
+                
+                    if (
+                        (sub["BBW Alert"] == "🔥").any() or
+                        (sub["STD_Alert"] == "🐦‍🔥").any() or
+                        (sub["ATR_Exp_Alert"] == "☄️").any() or
+                        (sub["RVOL_5"] > 1.2).any()
+                    ):
+                        vol_aid_times_put.append(intraday.at[idx, "Time"])
+                        vol_aid_prices_put.append(intraday.at[idx, "F_numeric"] - 120)
+
                 # Ensure Vector Energy is numeric
                 intraday["Vector Energy"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
                 
@@ -9015,6 +9062,32 @@ if st.sidebar.button("Run Analysis"):
                     textfont=dict(size=20),
                     name="🏹 PE Cross Enhancer (Put)",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<br>PE_Cross_Bear within ±3 bars<extra></extra>"
+                ), row=1, col=1)
+
+
+
+                # 💥 Volatility Enhancer (Call)
+                fig.add_trace(go.Scatter(
+                    x=vol_aid_times_call,
+                    y=vol_aid_prices_call,
+                    mode="text",
+                    text=["💥"] * len(vol_aid_times_call),
+                    textposition="top center",
+                    textfont=dict(size=20),
+                    name="💥 Volatility Enhancer (Call)",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>Volatility surge detected<extra></extra>"
+                ), row=1, col=1)
+                
+                # 💥 Volatility Enhancer (Put)
+                fig.add_trace(go.Scatter(
+                    x=vol_aid_times_put,
+                    y=vol_aid_prices_put,
+                    mode="text",
+                    text=["💥"] * len(vol_aid_times_put),
+                    textposition="top center",
+                    textfont=dict(size=20),
+                    name="💥 Volatility Enhancer (Put)",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>Volatility surge detected<extra></extra>"
                 ), row=1, col=1)
 
              # # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
