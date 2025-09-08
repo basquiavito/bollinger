@@ -1,5 +1,3 @@
-
-
 import streamlit as st
 import numpy as np
 import string       
@@ -6224,7 +6222,7 @@ if st.sidebar.button("Run Analysis"):
                             momentum_aid_prices.append(trough_value)
                             intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
 
-                  memory_window = 3  
+                  memory_window = 3  # Can adjust this to 5, etc.
                   
                   for i in entry_indices:
                       sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
