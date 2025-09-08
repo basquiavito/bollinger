@@ -6249,11 +6249,11 @@ if st.sidebar.button("Run Analysis"):
                     entry_type = "call" if "Call" in "".join(intraday.columns[intraday.loc[i] == "🎯"]) else "put"
                 
                     if entry_type == "call":
-                        ear_cross = (sub["Price"] > sub["Ear_Line"]).any()
-                        nose_cross = (sub["Price"] > sub["Nose_Line"]).any()
+                        ear_cross = (sub["F_numeric"] > sub["Ear_Line"]).any()
+                        nose_cross = (sub["F_numeric"] > sub["Nose_Line"]).any()
                     else:
-                        ear_cross = (sub["Price"] < sub["Ear_Line"]).any()
-                        nose_cross = (sub["Price"] < sub["Nose_Line"]).any()
+                        ear_cross = (sub["F_numeric"] < sub["Ear_Line"]).any()
+                        nose_cross = (sub["F_numeric"] < sub["Nose_Line"]).any()
                 
                     if ear_cross:
                         intraday.loc[i, "Ear_Cross_Enhancer"] = "👂🏽"
