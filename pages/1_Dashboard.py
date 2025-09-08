@@ -6222,29 +6222,6 @@ if st.sidebar.button("Run Analysis"):
                             momentum_aid_prices.append(trough_value)
                             intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
 
-                  memory_window = 3  # Can adjust this to 5, etc.
-                  
-                  for i in entry_indices:
-                      sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
-                      entry_type = "call" if is_call_entry(i) else "put"
-                  
-                      # 👂🏽 Ear Check
-                      ear_cross = (
-                          (entry_type == "call" and (sub["Price"] > sub["Ear_Line"]).any()) or
-                          (entry_type == "put" and (sub["Price"] < sub["Ear_Line"]).any())
-                      )
-                  
-                      # 👃🏽 Nose Check
-                      nose_cross = (
-                          (entry_type == "call" and (sub["Price"] > sub["Nose_Line"]).any()) or
-                          (entry_type == "put" and (sub["Price"] < sub["Nose_Line"]).any())
-                      )
-                  
-                      if ear_cross:
-                          intraday.loc[i, "Memory_Enhancer"] = "🧠"
-                  
-                      if nose_cross:
-                          intraday.loc[i, "Time_Enhancer"] = "🧭"
 
                 
                 vol_aid_times_call = []
@@ -9299,27 +9276,6 @@ if st.sidebar.button("Run Analysis"):
 
                 ), row=1, col=1)
 
-                memory_enhanced_calls = intraday["Memory_Enhancer"] == "🧠"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[memory_enhanced_calls, "Time"],
-                    y=intraday.loc[memory_enhanced_calls, "F_numeric"] + 44,  # Adjust offset
-                    mode="text",
-                    text=intraday.loc[memory_enhanced_calls, "Memory_Enhancer"],
-                    textfont=dict(size=28),
-                    name="🧠 Memory Enhancer",
-                    textposition="top center"
-                ), row=1, col=1)
-
-                memory_enhanced_puts = intraday["Memory_Enhancer"] == "🧠"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[memory_enhanced_puts, "Time"],
-                    y=intraday.loc[memory_enhanced_puts, "F_numeric"] - 44,
-                    mode="text",
-                    text=intraday.loc[memory_enhanced_puts, "Memory_Enhancer"],
-                    textfont=dict(size=28),
-                    name="🧠 Memory Enhancer",
-                    textposition="top center"
-                ), row=1, col=1)
 
                 # jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
 
