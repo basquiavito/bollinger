@@ -6217,40 +6217,40 @@ if st.sidebar.button("Run Analysis"):
                 #     if nose_cross:
                 #         intraday.loc[i, "Time_Enhancer"] = "🧭"
                 # Iterate through the dataframe
-                for i in range(len(intraday)):
-                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        window = intraday.iloc[lower:upper]
+                # for i in range(len(intraday)):
+                #     if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
+                #         lower = max(i - 5, 0)
+                #         upper = min(i + 6, len(intraday))
+                #         window = intraday.iloc[lower:upper]
                 
-                        # Filter out NaNs
-                        valid_window = window["Unit Momentum"].dropna()
-                        if not valid_window.empty:
-                            peak_idx = valid_window.idxmax()
-                            peak_time = intraday["Time"].loc[peak_idx]
-                            peak_value = intraday["F_numeric"].loc[peak_idx] + 300
-                            peak_momentum = valid_window.loc[peak_idx]
+                #         # Filter out NaNs
+                #         valid_window = window["Unit Momentum"].dropna()
+                #         if not valid_window.empty:
+                #             peak_idx = valid_window.idxmax()
+                #             peak_time = intraday["Time"].loc[peak_idx]
+                #             peak_value = intraday["F_numeric"].loc[peak_idx] + 300
+                #             peak_momentum = valid_window.loc[peak_idx]
                 
-                            momentum_aid_times.append(peak_time)
-                            momentum_aid_prices.append(peak_value)
-                            intraday.loc[peak_idx, "Momentum_Aid_Value"] = peak_momentum
+                #             momentum_aid_times.append(peak_time)
+                #             momentum_aid_prices.append(peak_value)
+                #             intraday.loc[peak_idx, "Momentum_Aid_Value"] = peak_momentum
                 
-                    elif intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        window = intraday.iloc[lower:upper]
+                #     elif intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
+                #         lower = max(i - 5, 0)
+                #         upper = min(i + 6, len(intraday))
+                #         window = intraday.iloc[lower:upper]
                 
-                        # Filter out NaNs
-                        valid_window = window["Unit Momentum"].dropna()
-                        if not valid_window.empty:
-                            trough_idx = valid_window.idxmin()
-                            trough_time = intraday["Time"].loc[trough_idx]
-                            trough_value = intraday["F_numeric"].loc[trough_idx] + 300
-                            trough_momentum = valid_window.loc[trough_idx]
+                #         # Filter out NaNs
+                #         valid_window = window["Unit Momentum"].dropna()
+                #         if not valid_window.empty:
+                #             trough_idx = valid_window.idxmin()
+                #             trough_time = intraday["Time"].loc[trough_idx]
+                #             trough_value = intraday["F_numeric"].loc[trough_idx] + 300
+                #             trough_momentum = valid_window.loc[trough_idx]
                 
-                            momentum_aid_times.append(trough_time)
-                            momentum_aid_prices.append(trough_value)
-                              intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
+                #             momentum_aid_times.append(trough_time)
+                #             momentum_aid_prices.append(trough_value)
+                #               intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
   
           
   
