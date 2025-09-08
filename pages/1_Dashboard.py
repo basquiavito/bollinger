@@ -6224,50 +6224,6 @@ if st.sidebar.button("Run Analysis"):
 
 
                 
-                              ### STEP 1: Inject the Ear and Nose Lines globally from your profile_df
-                
-                # Extract last 🦻🏼 (Ear) level from profile_df
-                ear_rows = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
-                ear_line_level = ear_rows["F% Level"].iloc[-1] if not ear_rows.empty else None
-                
-                # Extract last 👃🏽 (Nose) level from profile_df
-                nose_rows = profile_df[profile_df["👃🏽"] == "👃🏽"]
-                nose_line_level = nose_rows["F% Level"].iloc[-1] if not nose_rows.empty else None
-                
-                # Broadcast these lines across intraday for enhancer comparison
-                intraday["Ear_Line"] = ear_line_level
-                intraday["Nose_Line"] = nose_line_level
-
-
-
-                
-                              # Memory Enhancer Check (Ear/Nose Cross within ±3 bars of entry)
-                memory_window = 3
-                entry_indices = intraday.index[intraday["🎯 Entry"] == True].tolist()
-                
-                for i in entry_indices:
-                    sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
-                    entry_type = "call" if intraday.loc[i, "Direction"] == "call" else "put"
-                
-                    # Ear Cross Enhancer (🧠)
-                    if pd.notna(ear_line_level):
-                        ear_cross = (
-                            (entry_type == "call" and (sub["F_numeric"] > sub["Ear_Line"]).any()) or
-                            (entry_type == "put" and (sub["F_numeric"] < sub["Ear_Line"]).any())
-                        )
-                        if ear_cross:
-                            intraday.loc[i, "Memory_Enhancer"] = "🧠"
-                
-                    # Nose Cross Enhancer (🧭)
-                    if pd.notna(nose_line_level):
-                        nose_cross = (
-                            (entry_type == "call" and (sub["F_numeric"] > sub["Nose_Line"]).any()) or
-                            (entry_type == "put" and (sub["F_numeric"] < sub["Nose_Line"]).any())
-                        )
-                        if nose_cross:
-                            intraday.loc[i, "Time_Enhancer"] = "🧭"
-
-                
                 vol_aid_times_call = []
                 vol_aid_prices_call = []
                 
