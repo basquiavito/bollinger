@@ -6223,6 +6223,43 @@ if st.sidebar.button("Run Analysis"):
                             intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
 
 
+
+                
+                
+                # 1. Initialize enhancer columns
+                intraday["Ear_Cross_Enhancer"] = ""
+                intraday["Nose_Cross_Enhancer"] = ""
+                
+                # 2. Set window
+                memory_window = 3
+                
+                # 3. Define entry index list (can be from 🎯1/2/3 call + put)
+                entry_indices = (
+                    intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"].tolist()
+                    + intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"].tolist()
+                    + intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"].tolist()
+                    + intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"].tolist()
+                    + intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"].tolist()
+                    + intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"].tolist()
+                )
+                
+                # 4. Loop through each entry and apply enhancer
+                for i in entry_indices:
+                    sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
+                    entry_type = "call" if "Call" in "".join(intraday.columns[intraday.loc[i] == "🎯"]) else "put"
+                
+                    if entry_type == "call":
+                        ear_cross = (sub["Price"] > sub["Ear_Line"]).any()
+                        nose_cross = (sub["Price"] > sub["Nose_Line"]).any()
+                    else:
+                        ear_cross = (sub["Price"] < sub["Ear_Line"]).any()
+                        nose_cross = (sub["Price"] < sub["Nose_Line"]).any()
+                
+                    if ear_cross:
+                        intraday.loc[i, "Ear_Cross_Enhancer"] = "👂🏽"
+                    if nose_cross:
+                        intraday.loc[i, "Nose_Cross_Enhancer"] = "👃🏽"
+
                 
                 vol_aid_times_call = []
                 vol_aid_prices_call = []
