@@ -6247,7 +6247,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     if (
                         (sub["BBW Alert"] == "🔥").any() or
-                        (sub["BBW Tight"] == "🐝").any() or
+                        (sub["BBW_Tight"] == "🐝").any() or
 
                         (sub["STD_Alert"] == "🐦‍🔥").any() or
                         (sub["ATR_Exp_Alert"] == "☄️").any() or
@@ -6269,7 +6269,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     if (
                         (sub["BBW Alert"] == "🔥").any() or
-                        (sub["BBW Tight"] == "🐝").any() or
+                        (sub["BBW_Tight"] == "🐝").any() or
 
                         (sub["STD_Alert"] == "🐦‍🔥").any() or
                         (sub["ATR_Exp_Alert"] == "☄️").any() or
