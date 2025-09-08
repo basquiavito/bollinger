@@ -6223,42 +6223,49 @@ if st.sidebar.button("Run Analysis"):
                             intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
 
 
+                
+                              ### STEP 1: Inject the Ear and Nose Lines globally from your profile_df
+                
+                # Extract last 🦻🏼 (Ear) level from profile_df
+                ear_rows = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                ear_line_level = ear_rows["F% Level"].iloc[-1] if not ear_rows.empty else None
+                
+                # Extract last 👃🏽 (Nose) level from profile_df
+                nose_rows = profile_df[profile_df["👃🏽"] == "👃🏽"]
+                nose_line_level = nose_rows["F% Level"].iloc[-1] if not nose_rows.empty else None
+                
+                # Broadcast these lines across intraday for enhancer comparison
+                intraday["Ear_Line"] = ear_line_level
+                intraday["Nose_Line"] = nose_line_level
+
+
 
                 
-                
-                # 1. Initialize enhancer columns
-                intraday["Ear_Cross_Enhancer"] = ""
-                intraday["Nose_Cross_Enhancer"] = ""
-                
-                # 2. Set window
+                              # Memory Enhancer Check (Ear/Nose Cross within ±3 bars of entry)
                 memory_window = 3
+                entry_indices = intraday.index[intraday["🎯 Entry"] == True].tolist()
                 
-                # 3. Define entry index list (can be from 🎯1/2/3 call + put)
-                entry_indices = (
-                    intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"].tolist()
-                    + intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"].tolist()
-                    + intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"].tolist()
-                    + intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"].tolist()
-                    + intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"].tolist()
-                    + intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"].tolist()
-                )
-                
-                # 4. Loop through each entry and apply enhancer
                 for i in entry_indices:
                     sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
-                    entry_type = "call" if "Call" in "".join(intraday.columns[intraday.loc[i] == "🎯"]) else "put"
+                    entry_type = "call" if intraday.loc[i, "Direction"] == "call" else "put"
                 
-                    if entry_type == "call":
-                        ear_cross = (sub["F_numeric"] > sub["Ear_Line"]).any()
-                        nose_cross = (sub["F_numeric"] > sub["Nose_Line"]).any()
-                    else:
-                        ear_cross = (sub["F_numeric"] < sub["Ear_Line"]).any()
-                        nose_cross = (sub["F_numeric"] < sub["Nose_Line"]).any()
+                    # Ear Cross Enhancer (🧠)
+                    if pd.notna(ear_line_level):
+                        ear_cross = (
+                            (entry_type == "call" and (sub["F_numeric"] > sub["Ear_Line"]).any()) or
+                            (entry_type == "put" and (sub["F_numeric"] < sub["Ear_Line"]).any())
+                        )
+                        if ear_cross:
+                            intraday.loc[i, "Memory_Enhancer"] = "🧠"
                 
-                    if ear_cross:
-                        intraday.loc[i, "Ear_Cross_Enhancer"] = "👂🏽"
-                    if nose_cross:
-                        intraday.loc[i, "Nose_Cross_Enhancer"] = "👃🏽"
+                    # Nose Cross Enhancer (🧭)
+                    if pd.notna(nose_line_level):
+                        nose_cross = (
+                            (entry_type == "call" and (sub["F_numeric"] > sub["Nose_Line"]).any()) or
+                            (entry_type == "put" and (sub["F_numeric"] < sub["Nose_Line"]).any())
+                        )
+                        if nose_cross:
+                            intraday.loc[i, "Time_Enhancer"] = "🧭"
 
                 
                 vol_aid_times_call = []
