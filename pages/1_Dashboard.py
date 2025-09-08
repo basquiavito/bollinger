@@ -6185,7 +6185,37 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Ensure Unit Momentum is numeric
                 intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
+
+
+
+
+
+
+                memory_window = 3  
+
+
+      
+                for i in entry_indices:
+                    sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
+                    entry_type = "call" if is_call_entry(i) else "put"
                 
+                    # 👂🏽 Ear Check
+                    ear_cross = (
+                        (entry_type == "call" and (sub["Price"] > sub["Ear_Line"]).any()) or
+                        (entry_type == "put" and (sub["Price"] < sub["Ear_Line"]).any())
+                    )
+                
+                    # 👃🏽 Nose Check
+                    nose_cross = (
+                        (entry_type == "call" and (sub["Price"] > sub["Nose_Line"]).any()) or
+                        (entry_type == "put" and (sub["Price"] < sub["Nose_Line"]).any())
+                    )
+                
+                    if ear_cross:
+                        intraday.loc[i, "Memory_Enhancer"] = "🧠"
+                
+                    if nose_cross:
+                        intraday.loc[i, "Time_Enhancer"] = "🧭"
                 # Iterate through the dataframe
                 for i in range(len(intraday)):
                     if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
@@ -6220,33 +6250,11 @@ if st.sidebar.button("Run Analysis"):
                 
                             momentum_aid_times.append(trough_time)
                             momentum_aid_prices.append(trough_value)
-                            intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
-
-              memory_window = 3  
-              
-              for i in entry_indices:
-                  sub = intraday.iloc[max(0, i - memory_window): i + memory_window + 1]
-                  entry_type = "call" if is_call_entry(i) else "put"
-              
-                  # 👂🏽 Ear Check
-                  ear_cross = (
-                      (entry_type == "call" and (sub["Price"] > sub["Ear_Line"]).any()) or
-                      (entry_type == "put" and (sub["Price"] < sub["Ear_Line"]).any())
-                  )
-              
-                  # 👃🏽 Nose Check
-                  nose_cross = (
-                      (entry_type == "call" and (sub["Price"] > sub["Nose_Line"]).any()) or
-                      (entry_type == "put" and (sub["Price"] < sub["Nose_Line"]).any())
-                  )
-              
-                  if ear_cross:
-                      intraday.loc[i, "Memory_Enhancer"] = "🧠"
-              
-                  if nose_cross:
-                      intraday.loc[i, "Time_Enhancer"] = "🧭"
-
-                
+                              intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
+  
+          
+  
+                  
                 vol_aid_times_call = []
                 vol_aid_prices_call = []
                 
