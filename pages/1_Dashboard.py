@@ -6235,6 +6235,43 @@ if st.sidebar.button("Run Analysis"):
                 energy_aid_prices = []
                 energy_aid_vals = []
 
+
+
+                # Shift to detect crossing events
+                intraday["Price_Shifted"] = intraday["Price"].shift(1)
+                intraday["Ear_Shifted"] = intraday["Ear_Line"].shift(1)
+                intraday["Nose_Shifted"] = intraday["Nose_Line"].shift(1)
+                
+                # 👂🏽 Ear Cross Up
+                intraday["Ear_Cross_Emoji"] = np.where(
+                    (intraday["Price_Shifted"] < intraday["Ear_Shifted"]) &
+                    (intraday["Price"] >= intraday["Ear_Line"]),
+                    "👂🏽", ""
+                )
+                
+                # 👃🏽 Nose Cross Up
+                intraday["Nose_Cross_Emoji"] = np.where(
+                    (intraday["Price_Shifted"] < intraday["Nose_Shifted"]) &
+                    (intraday["Price"] >= intraday["Nose_Line"]),
+                    "👃🏽", ""
+                )
+                
+                
+                # 👂🏽 Downward Cross (Optional)
+                intraday["Ear_Cross_Down_Emoji"] = np.where(
+                    (intraday["Price_Shifted"] > intraday["Ear_Shifted"]) &
+                    (intraday["Price"] <= intraday["Ear_Line"]),
+                    "👂🏽", ""
+                )
+                
+                # 👃🏽 Downward Cross (Optional)
+                intraday["Nose_Cross_Down_Emoji"] = np.where(
+                    (intraday["Price_Shifted"] > intraday["Nose_Shifted"]) &
+                    (intraday["Price"] <= intraday["Nose_Line"]),
+                    "👃🏽", ""
+                )
+
+
                 # --- CALL Entries ---
                 call_entry_idxs = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
                 
@@ -9275,7 +9312,30 @@ if st.sidebar.button("Run Analysis"):
                     customdata=np.array(vol_aid_values).reshape(-1, 1)
 
                 ), row=1, col=1)
+                
+                ear_mask = intraday["Ear_Cross_Emoji"] == "👂🏽"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[ear_mask, "Time"],
+                    y=intraday.loc[ear_mask, "F_numeric"] + 55,
+                    mode="text",
+                    text=intraday.loc[ear_mask, "Ear_Cross_Emoji"],
+                    textfont=dict(size=28),
+                    name="👂🏽 Ear Cross",
+                    textposition="top center"
+                ), row=1, col=1)
 
+
+                
+                nose_mask = intraday["Nose_Cross_Emoji"] == "👃🏽"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[nose_mask, "Time"],
+                    y=intraday.loc[nose_mask, "F_numeric"] + 65,
+                    mode="text",
+                    text=intraday.loc[nose_mask, "Nose_Cross_Emoji"],
+                    textfont=dict(size=28),
+                    name="👃🏽 Nose Cross",
+                    textposition="top center"
+                ), row=1, col=1)
 
                 # jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
 
