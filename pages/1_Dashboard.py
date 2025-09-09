@@ -6236,27 +6236,38 @@ if st.sidebar.button("Run Analysis"):
                 energy_aid_vals = []
 
 
-
-                intraday["Price_Shifted"] = intraday["Close"].shift(1)
-                intraday["Ear_Shifted"] = intraday["Ear_Line"].shift(1)
-
+                # -- Cross-Check Independent Enhancers: Ear and Nose Crosses --
+                intraday["🦻🏼_Cross"] = ""
+                intraday["👃🏽_Cross"] = ""
                 
-
-                  
-                               # 👂🏽 Ear Cross Up (F_numeric crosses above Ear_Line)
-                intraday["Ear_Cross_Emoji"] = np.where(
-                    (intraday["F_numeric"].shift(1) < intraday["Ear_Line"].shift(1)) &
-                    (intraday["F_numeric"] >= intraday["Ear_Line"]),
-                    "👂🏽", ""
-                )
+                # Use previously computed values from profile_df
+                ear_line = max_vol_level
+                nose_line = max_letter_level
                 
-                # 👃🏽 Nose Cross Up (F_numeric crosses above Nose_Line)
-                intraday["Nose_Cross_Emoji"] = np.where(
-                    (intraday["F_numeric"].shift(1) < intraday["Nose_Line"].shift(1)) &
-                    (intraday["F_numeric"] >= intraday["Nose_Line"]),
-                    "👃🏽", ""
-                )
-  
+                # Loop from second row onward (to compare with previous)
+                for i in range(1, len(intraday)):
+                    current = intraday.iloc[i]
+                    previous = intraday.iloc[i - 1]
+                
+                    # Ear Cross (🦻🏼): if price crosses above or below the volume-dominant level
+                    crossed_ear = (
+                        (previous["F_numeric"] < ear_line and current["F_numeric"] >= ear_line) or
+                        (previous["F_numeric"] > ear_line and current["F_numeric"] <= ear_line)
+                    )
+                
+                    # Nose Cross (👃🏽): if price crosses above or below the time-dominant level
+                    crossed_nose = (
+                        (previous["F_numeric"] < nose_line and current["F_numeric"] >= nose_line) or
+                        (previous["F_numeric"] > nose_line and current["F_numeric"] <= nose_line)
+                    )
+                
+                    # Set emojis in row `i` (not previous one)
+                    if crossed_ear:
+                        intraday.at[i, "🦻🏼_Cross"] = "🦻🏼"
+                
+                    if crossed_nose:
+                        intraday.at[i, "👃🏽_Cross"] = "👃🏽"
+
 
                 # --- CALL Entries ---
                 call_entry_idxs = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
@@ -9299,30 +9310,7 @@ if st.sidebar.button("Run Analysis"):
 
                 ), row=1, col=1)
                 
-                              # 👂🏽 Ear Cross
-                ear_cross_mask = intraday["Ear_Cross_Emoji"] == "👂🏽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[ear_cross_mask, "Time"],
-                    y=intraday.loc[ear_cross_mask, "F_numeric"],
-                    mode="text",
-                    text=intraday.loc[ear_cross_mask, "Ear_Cross_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=28),
-                    name="👂🏽 Ear Cross",
-                ), row=1, col=1)
-                
-                # 👃🏽 Nose Cross
-                nose_cross_mask = intraday["Nose_Cross_Emoji"] == "👃🏽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[nose_cross_mask, "Time"],
-                    y=intraday.loc[nose_cross_mask, "F_numeric"],
-                    mode="text",
-                    text=intraday.loc[nose_cross_mask, "Nose_Cross_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=28),
-                    name="👃🏽 Nose Cross",
-                ), row=1, col=1)
-
+          
                 # jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
 
                 # fig.add_trace(go.Scatter(
