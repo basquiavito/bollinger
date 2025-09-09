@@ -9310,7 +9310,29 @@ if st.sidebar.button("Run Analysis"):
 
                 ), row=1, col=1)
                 
-          
+                          # Add 🦻🏼 markers where Ear Cross occurred
+                ear_crosses = intraday[intraday["🦻🏼_Cross"] == "🦻🏼"]
+                fig.add_trace(go.Scatter(
+                    x=ear_crosses["TimeIndex"],
+                    y=ear_crosses["F_numeric"],
+                    mode="markers+text",
+                    name="Ear Cross",
+                    text=["🦻🏼"] * len(ear_crosses),
+                    textposition="top center",
+                    marker=dict(size=10, color="cyan", symbol="circle")
+                ))
+                
+                # Add 👃🏽 markers where Nose Cross occurred
+                nose_crosses = intraday[intraday["👃🏽_Cross"] == "👃🏽"]
+                fig.add_trace(go.Scatter(
+                    x=nose_crosses["TimeIndex"],
+                    y=nose_crosses["F_numeric"],
+                    mode="markers+text",
+                    name="Nose Cross",
+                    text=["👃🏽"] * len(nose_crosses),
+                    textposition="bottom center",
+                    marker=dict(size=10, color="magenta", symbol="circle")
+                ))
                 # jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
 
                 # fig.add_trace(go.Scatter(
