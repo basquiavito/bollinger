@@ -9360,31 +9360,31 @@ if st.sidebar.button("Run Analysis"):
                 # ))
 
 
-                # Ear Cross Plot
-                ear_mask = intraday["🦻🏼_Cross"] == "🦻🏼"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[ear_mask, "Time"],
-                    y=intraday.loc[ear_mask, "🦻🏼_y"],
-                    mode="text",
-                    text=["🦻🏼"] * ear_mask.sum(),
-                    textposition="middle center",
-                    textfont=dict(size=24),
-                    name="Ear Line Cross",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
-                ), row=1, col=1)
+                # # Ear Cross Plot
+                # ear_mask = intraday["🦻🏼_Cross"] == "🦻🏼"
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[ear_mask, "Time"],
+                #     y=intraday.loc[ear_mask, "🦻🏼_y"],
+                #     mode="text",
+                #     text=["🦻🏼"] * ear_mask.sum(),
+                #     textposition="middle center",
+                #     textfont=dict(size=24),
+                #     name="Ear Line Cross",
+                #     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                # ), row=1, col=1)
                 
-                # Nose Cross Plot
-                nose_mask = intraday["👃🏽_Cross"] == "👃🏽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[nose_mask, "Time"],
-                    y=intraday.loc[nose_mask, "👃🏽_y"],
-                    mode="text",
-                    text=["👃🏽"] * nose_mask.sum(),
-                    textposition="middle center",
-                    textfont=dict(size=24),
-                    name="Nose Line Cross",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
-                ), row=1, col=1)
+                # # Nose Cross Plot
+                # nose_mask = intraday["👃🏽_Cross"] == "👃🏽"
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[nose_mask, "Time"],
+                #     y=intraday.loc[nose_mask, "👃🏽_y"],
+                #     mode="text",
+                #     text=["👃🏽"] * nose_mask.sum(),
+                #     textposition="middle center",
+                #     textfont=dict(size=24),
+                #     name="Nose Line Cross",
+                #     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                # ), row=1, col=1)
 
                 # jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
 
