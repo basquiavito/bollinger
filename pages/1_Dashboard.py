@@ -6236,37 +6236,62 @@ if st.sidebar.button("Run Analysis"):
                 energy_aid_vals = []
 
 
-                # -- Cross-Check Independent Enhancers: Ear and Nose Crosses --
-                intraday["🦻🏼_Cross"] = ""
-                intraday["👃🏽_Cross"] = ""
+                # # -- Cross-Check Independent Enhancers: Ear and Nose Crosses --
+                # intraday["🦻🏼_Cross"] = ""
+                # intraday["👃🏽_Cross"] = ""
                 
-                # Use previously computed values from profile_df
-                ear_line = max_vol_level
-                nose_line = max_letter_level
+                # # Use previously computed values from profile_df
+                # ear_line = max_vol_level
+                # nose_line = max_letter_level
                 
-                # Loop from second row onward (to compare with previous)
+                # # Loop from second row onward (to compare with previous)
+                # for i in range(1, len(intraday)):
+                #     current = intraday.iloc[i]
+                #     previous = intraday.iloc[i - 1]
+                
+                #     # Ear Cross (🦻🏼): if price crosses above or below the volume-dominant level
+                #     crossed_ear = (
+                #         (previous["F_numeric"] < ear_line and current["F_numeric"] >= ear_line) or
+                #         (previous["F_numeric"] > ear_line and current["F_numeric"] <= ear_line)
+                #     )
+                
+                #     # Nose Cross (👃🏽): if price crosses above or below the time-dominant level
+                #     crossed_nose = (
+                #         (previous["F_numeric"] < nose_line and current["F_numeric"] >= nose_line) or
+                #         (previous["F_numeric"] > nose_line and current["F_numeric"] <= nose_line)
+                #     )
+                
+                #     # Set emojis in row `i` (not previous one)
+                #     if crossed_ear:
+                #         intraday.at[i, "🦻🏼_Cross"] = "🦻🏼"
+                
+                #     if crossed_nose:
+                #         intraday.at[i, "👃🏽_Cross"] = "👃🏽"
+
+                
+                intraday["👃🏽_y"] = np.nan
+                intraday["🦻🏼_y"] = np.nan
+                
                 for i in range(1, len(intraday)):
                     current = intraday.iloc[i]
                     previous = intraday.iloc[i - 1]
                 
-                    # Ear Cross (🦻🏼): if price crosses above or below the volume-dominant level
-                    crossed_ear = (
-                        (previous["F_numeric"] < ear_line and current["F_numeric"] >= ear_line) or
-                        (previous["F_numeric"] > ear_line and current["F_numeric"] <= ear_line)
-                    )
-                
-                    # Nose Cross (👃🏽): if price crosses above or below the time-dominant level
-                    crossed_nose = (
-                        (previous["F_numeric"] < nose_line and current["F_numeric"] >= nose_line) or
-                        (previous["F_numeric"] > nose_line and current["F_numeric"] <= nose_line)
-                    )
-                
-                    # Set emojis in row `i` (not previous one)
-                    if crossed_ear:
+                    # Ear Cross (🦻🏼)
+                    if previous["F_numeric"] < ear_line and current["F_numeric"] >= ear_line:
                         intraday.at[i, "🦻🏼_Cross"] = "🦻🏼"
+                        intraday.at[i, "🦻🏼_y"] = current["F_numeric"] + 30  # above
+                    elif previous["F_numeric"] > ear_line and current["F_numeric"] <= ear_line:
+                        intraday.at[i, "🦻🏼_Cross"] = "🦻🏼"
+                        intraday.at[i, "🦻🏼_y"] = current["F_numeric"] - 30  # below
                 
-                    if crossed_nose:
+                    # Nose Cross (👃🏽)
+                    if previous["F_numeric"] < nose_line and current["F_numeric"] >= nose_line:
                         intraday.at[i, "👃🏽_Cross"] = "👃🏽"
+                        intraday.at[i, "👃🏽_y"] = current["F_numeric"] + 30  # above
+                    elif previous["F_numeric"] > nose_line and current["F_numeric"] <= nose_line:
+                        intraday.at[i, "👃🏽_Cross"] = "👃🏽"
+                        intraday.at[i, "👃🏽_y"] = current["F_numeric"] - 30  # below
+                
 
 
                 # --- CALL Entries ---
@@ -9310,29 +9335,57 @@ if st.sidebar.button("Run Analysis"):
 
                 ), row=1, col=1)
                 
-                          # Add 🦻🏼 markers where Ear Cross occurred
-                ear_crosses = intraday[intraday["🦻🏼_Cross"] == "🦻🏼"]
-                fig.add_trace(go.Scatter(
-                    x=ear_crosses["TimeIndex"],
-                    y=ear_crosses["F_numeric"],
-                    mode="markers+text",
-                    name="Ear Cross",
-                    text=["🦻🏼"] * len(ear_crosses),
-                    textposition="top center",
-                    marker=dict(size=10, color="cyan", symbol="circle")
-                ))
+                #           # Add 🦻🏼 markers where Ear Cross occurred
+                # ear_crosses = intraday[intraday["🦻🏼_Cross"] == "🦻🏼"]
+                # fig.add_trace(go.Scatter(
+                #     x=ear_crosses["TimeIndex"],
+                #     y=ear_crosses["F_numeric"],
+                #     mode="markers+text",
+                #     name="Ear Cross",
+                #     text=["🦻🏼"] * len(ear_crosses),
+                #     textposition="top center",
+                #     marker=dict(size=10, color="cyan", symbol="circle")
+                # ))
                 
-                # Add 👃🏽 markers where Nose Cross occurred
-                nose_crosses = intraday[intraday["👃🏽_Cross"] == "👃🏽"]
+                # # Add 👃🏽 markers where Nose Cross occurred
+                # nose_crosses = intraday[intraday["👃🏽_Cross"] == "👃🏽"]
+                # fig.add_trace(go.Scatter(
+                #     x=nose_crosses["TimeIndex"],
+                #     y=nose_crosses["F_numeric"],
+                #     mode="markers+text",
+                #     name="Nose Cross",
+                #     text=["👃🏽"] * len(nose_crosses),
+                #     textposition="bottom center",
+                #     marker=dict(size=10, color="magenta", symbol="circle")
+                # ))
+
+
+                # Ear Cross Plot
+                ear_mask = intraday["🦻🏼_Cross"] == "🦻🏼"
                 fig.add_trace(go.Scatter(
-                    x=nose_crosses["TimeIndex"],
-                    y=nose_crosses["F_numeric"],
-                    mode="markers+text",
-                    name="Nose Cross",
-                    text=["👃🏽"] * len(nose_crosses),
-                    textposition="bottom center",
-                    marker=dict(size=10, color="magenta", symbol="circle")
-                ))
+                    x=intraday.loc[ear_mask, "Time"],
+                    y=intraday.loc[ear_mask, "🦻🏼_y"],
+                    mode="text",
+                    text=["🦻🏼"] * ear_mask.sum(),
+                    textposition="middle center",
+                    textfont=dict(size=24),
+                    name="Ear Line Cross",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+                
+                # Nose Cross Plot
+                nose_mask = intraday["👃🏽_Cross"] == "👃🏽"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[nose_mask, "Time"],
+                    y=intraday.loc[nose_mask, "👃🏽_y"],
+                    mode="text",
+                    text=["👃🏽"] * nose_mask.sum(),
+                    textposition="middle center",
+                    textfont=dict(size=24),
+                    name="Nose Line Cross",
+                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+
                 # jerk_cross_mask = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
 
                 # fig.add_trace(go.Scatter(
