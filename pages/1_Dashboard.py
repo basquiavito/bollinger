@@ -6241,8 +6241,8 @@ if st.sidebar.button("Run Analysis"):
                 # intraday["👃🏽_Cross"] = ""
                 
                 # # Use previously computed values from profile_df
-                # ear_line = max_vol_level
-                # nose_line = max_letter_level
+                ear_line = max_vol_level
+                nose_line = max_letter_level
                 
                 # # Loop from second row onward (to compare with previous)
                 # for i in range(1, len(intraday)):
