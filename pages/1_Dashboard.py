@@ -5368,8 +5368,8 @@ if st.sidebar.button("Run Analysis"):
       
 
 
-                  # # # Show DataFrame
-                  # st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
+                  # # Show DataFrame
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
                   
                   def compute_ib_volume_weights(intraday, ib_high, ib_low):
@@ -6367,16 +6367,16 @@ if st.sidebar.button("Run Analysis"):
 
                  
 
-                # with st.expander("🪞 MIDAS Anchor Table", expanded=False):
-                #                     st.dataframe(
-                #                         intraday[[
-                #                             'Time', price_col, 'Volume',
-                #                             'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
-                #                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
-                #                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
-                #                         ]]
-                #                         .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
-                #                         .reset_index(drop=True))
+                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
+                                    st.dataframe(
+                                        intraday[[
+                                            'Time', price_col, 'Volume',
+                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
+                                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
+                                        ]]
+                                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+                                        .reset_index(drop=True))
                          
 
                 with st.expander("📈 Option Price Elasticity (PE)", expanded=True):
