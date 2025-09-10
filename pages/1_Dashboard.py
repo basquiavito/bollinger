@@ -6507,30 +6507,27 @@ if st.sidebar.button("Run Analysis"):
                     )
 
 
+                # === Your intraday prep code above ===
+                intraday["Time"] = intraday["Date"].dt.strftime("%I:%M %p")
+                intraday["Date"] = intraday["Date"].dt.strftime("%Y-%m-%d")
+
+                # ======================================
+                # Export Stock Name + Date Test
+                # ======================================
+                if st.sidebar.button("Download Stock + Date"):
+                    export_df = intraday[["Date"]].copy()
+                    export_df.insert(0, "Ticker", t)
+
+                    csv = export_df.to_csv(index=False).encode("utf-8")
+                    st.download_button(
+                        label="📥 Download Stock + Date CSV",
+                        data=csv,
+                        file_name=f"{t}_stock_date.csv",
+                        mime="text/csv",
+                    )
 
 
-               except Exception as e:
-                            st.error(f"Error fetching data for {t}: {e}")
-            
-                       
-                              # === Your intraday prep code above ===
-                            intraday["Time"] = intraday["Date"].dt.strftime("%I:%M %p")
-                            intraday["Date"] = intraday["Date"].dt.strftime("%Y-%m-%d")
-            
-                            # ======================================
-                            # Export Stock Name + Date Test
-                            # ======================================
-                            if st.sidebar.button("Download Stock + Date"):
-                                export_df = intraday[["Date"]].copy()
-                                export_df.insert(0, "Ticker", t)
-            
-                                csv = export_df.to_csv(index=False).encode("utf-8")
-                                st.download_button(
-                                    label="📥 Download Stock + Date CSV",
-                                    data=csv,
-                                    file_name=f"{t}_stock_date.csv",
-                                    mime="text/csv",
-                                )
+
 
                   
        #          st.plotly_chart(fig_displacement, use_container_width=True)
