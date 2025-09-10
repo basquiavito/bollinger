@@ -1,4 +1,4 @@
-
+ 
 
 import streamlit as st
 import numpy as np
@@ -6502,9 +6502,17 @@ if st.sidebar.button("Run Analysis"):
              # ======================================
                 # Export Tools (in Sidebar Expander)
                 # ======================================
+               # ======================================
+# Export Tools (in Sidebar Expander)
+# ======================================
                 with st.sidebar.expander("📤 Export Tools"):
-                    export_df = intraday[["Date"]].copy()
-                    export_df.insert(0, "Ticker", t)
+                    # Take just the first date in the intraday data (since it's all same trading day)
+                    session_date = intraday["Date"].iloc[0]
+                
+                    export_df = pd.DataFrame({
+                        "Ticker": [t],
+                        "Date": [session_date]
+                    })
                 
                     csv = export_df.to_csv(index=False).encode("utf-8")
                     st.download_button(
@@ -6513,7 +6521,7 @@ if st.sidebar.button("Run Analysis"):
                         file_name=f"{t}_stock_date.csv",
                         mime="text/csv",
                     )
-
+                
 
                 with st.expander("💎 Option Spread Table", expanded=False):
                     st.dataframe(
