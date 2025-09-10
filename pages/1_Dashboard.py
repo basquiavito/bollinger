@@ -6507,21 +6507,21 @@ if st.sidebar.button("Run Analysis"):
 # ======================================
               # ======================================
 # Export Tools (in Sidebar Expander)
-# ======================================
-                with st.sidebar.expander("📤 Export Tools"):
-                    # Grab the current ticker and the start_date you already selected
-                    export_df = pd.DataFrame({
-                        "Ticker": [t],
-                        "Date": [start_date.strftime("%Y-%m-%d")]
-                    })
+# # ======================================
+#                 with st.sidebar.expander("📤 Export Tools"):
+#                     # Grab the current ticker and the start_date you already selected
+#                     export_df = pd.DataFrame({
+#                         "Ticker": [t],
+#                         "Date": [start_date.strftime("%Y-%m-%d")]
+#                     })
                 
-                    csv = export_df.to_csv(index=False).encode("utf-8")
-                    st.download_button(
-                        label="📥 Download Stock + Date CSV",
-                        data=csv,
-                        file_name=f"{t}_stock_date.csv",
-                        mime="text/csv",
-                    )
+#                     csv = export_df.to_csv(index=False).encode("utf-8")
+#                     st.download_button(
+#                         label="📥 Download Stock + Date CSV",
+#                         data=csv,
+#                         file_name=f"{t}_stock_date.csv",
+#                         mime="text/csv",
+#                     )
  
                  
 
