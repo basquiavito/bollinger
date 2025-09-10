@@ -6499,18 +6499,21 @@ if st.sidebar.button("Run Analysis"):
                 # ======================================
                 # Export Tools (in Sidebar Expander)
                 # ======================================
+             # ======================================
+                # Export Tools (in Sidebar Expander)
+                # ======================================
                 with st.sidebar.expander("📤 Export Tools"):
-                    if st.button("Prepare Stock + Date"):
-                        export_df = intraday[["Date"]].copy()
-                        export_df.insert(0, "Ticker", t)
+                    export_df = intraday[["Date"]].copy()
+                    export_df.insert(0, "Ticker", t)
                 
-                        csv = export_df.to_csv(index=False).encode("utf-8")
-                        st.download_button(
-                            label="📥 Download CSV",
-                            data=csv,
-                            file_name=f"{t}_stock_date.csv",
-                            mime="text/csv",
-                        )
+                    csv = export_df.to_csv(index=False).encode("utf-8")
+                    st.download_button(
+                        label="📥 Download Stock + Date CSV",
+                        data=csv,
+                        file_name=f"{t}_stock_date.csv",
+                        mime="text/csv",
+                    )
+
 
                 with st.expander("💎 Option Spread Table", expanded=False):
                     st.dataframe(
