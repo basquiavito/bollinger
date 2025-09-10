@@ -1,3 +1,5 @@
+
+
 import streamlit as st
 import numpy as np
 import string       
@@ -6506,8 +6508,6 @@ if st.sidebar.button("Run Analysis"):
                         .reset_index(drop=True)
                     )
 
-
-
                   
        #          st.plotly_chart(fig_displacement, use_container_width=True)
                 with ticker_tabs[0]:
@@ -9489,7 +9489,11 @@ if st.sidebar.button("Run Analysis"):
 
      
 
-         
+            except Exception as e:
+                st.error(f"Error fetching data for {t}: {e}")
+
+           
+  
             # Assuming you already have 'intraday' DataFrame with 'Compliance' and 'Smoothed_Compliance' columns.
             
        
