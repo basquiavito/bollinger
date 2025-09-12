@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 import yfinance as yf
+from datetime import datetime
 
 GEX_FILE = "gex_levels.csv"
 
@@ -121,7 +122,8 @@ with st.expander("📡 GEX Radar"):
     if radar_data:
         df = pd.DataFrame(radar_data, columns=["Ticker", "GEX Ceiling", "GEX Floor", "Last Price", "Status"])
         st.dataframe(df, hide_index=True)
-
+ # ✅ Add timestamp
+        st.caption(f"Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 # --- Trade entry form ---
 with st.form("trade_entry"):
     col1, col2, col3 = st.columns(3)
