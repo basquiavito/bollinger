@@ -3,6 +3,13 @@ import pandas as pd
 import os
 
 LEDGER_FILE = "trading_ledger.csv"
+# --- Inventory (your tradeable tickers) ---
+TICKERS = [
+    "NVDA", "AMD", "AVGO", "MRVL", "MU", "SMCI", "QCOM",
+    "MSFT", "AMZN", "AAPL", "GOOGL", "UBER", "PLTR", "META", "TSLA",
+    "HOOD", "COIN", "C", "WFC", "JPM",
+    "SPY", "QQQ"
+]
 
 st.title("📒 Trading Ledger")
 
@@ -11,6 +18,7 @@ if os.path.exists(LEDGER_FILE):
     ledger = pd.read_csv(LEDGER_FILE)
 else:
     ledger = pd.DataFrame(columns=["Date", "Ticker", "Entry","Time", "Delta","Entry_Level","Enhancer",  "Ear", "Nose","Type", "StopLoss", "PnL", "Notes"])
+
 
 # --- Upload to restore ---
 uploaded = st.file_uploader("📤 Upload existing ledger (CSV)", type="csv")
@@ -56,7 +64,7 @@ with st.form("trade_entry"):
         date = st.date_input("Date")
         entry_time = st.time_input("Entry Time")   # 👈 New field
 
-        ticker = st.text_input("Ticker (e.g. TSLA)")
+        ticker = st.selectbox("Ticker", TICKERS)
         enhancer = st.checkbox("Enhancer present?")
         ear = st.checkbox("👂 Ear (Volume Memory crossed?)")
         nose = st.checkbox("👃 Nose (Time Memory crossed?)")
