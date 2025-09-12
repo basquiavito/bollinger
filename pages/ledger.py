@@ -175,6 +175,15 @@ if submitted:
 st.subheader("📊 Current Ledger")
 st.dataframe(ledger, use_container_width=True)
 
+# --- Reset Ledger button ---
+if st.button("🗑 Reset Ledger (Clear Trades)"):
+    ledger = pd.DataFrame(columns=["Date", "Ticker", "Entry","Time", "Delta","Entry_Level",
+                                   "Enhancer", "Ear", "Nose","Type", "StopLoss", "PnL", "Notes"])
+    ledger.to_csv(LEDGER_FILE, index=False)
+    st.warning("Ledger reset. GEX levels remain untouched ✅")
+
+
+
 # --- Download ledger ---
 csv = ledger.to_csv(index=False).encode("utf-8")
 st.download_button(
