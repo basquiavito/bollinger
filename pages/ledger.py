@@ -10,7 +10,7 @@ st.title("📒 Trading Ledger")
 if os.path.exists(LEDGER_FILE):
     ledger = pd.read_csv(LEDGER_FILE)
 else:
-    ledger = pd.DataFrame(columns=["Date", "Ticker", "Entry", "Delta", "Type", "StopLoss", "PnL", "Notes"])
+    ledger = pd.DataFrame(columns=["Date", "Ticker", "Entry","Time", "Delta", "Type", "StopLoss", "PnL", "Notes"])
 
 # --- Upload to restore ---
 uploaded = st.file_uploader("📤 Upload existing ledger (CSV)", type="csv")
@@ -54,6 +54,8 @@ with st.form("trade_entry"):
     col1, col2, col3 = st.columns(3)
     with col1:
         date = st.date_input("Date")
+        entry_time = st.time_input("Entry Time")   # 👈 New field
+
         ticker = st.text_input("Ticker (e.g. TSLA)")
         trade_type = st.selectbox("Type", ["Call", "Put"])
     with col2:
@@ -63,7 +65,7 @@ with st.form("trade_entry"):
     with col3:
         exit_price = st.number_input("Exit Price", min_value=0.0, step=0.01, format="%.2f")
         notes = st.text_area("Notes (optional)", height=50)
-
+ 
     submitted = st.form_submit_button("➕ Add Trade")
 
 if submitted:
@@ -71,6 +73,7 @@ if submitted:
     new_row = {
         "Date": date,
         "Ticker": ticker.upper(),
+        "Time": entry_time.strftime("%H:%M:%S"),
         "Entry": entry_price,
         "Exit": exit_price,
         "Delta": delta,
