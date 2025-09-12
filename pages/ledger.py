@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import os
-
+import yfinance as yf
+ 
 LEDGER_FILE = "trading_ledger.csv"
 # --- Inventory (your tradeable tickers) ---
 TICKERS = [
@@ -56,6 +57,38 @@ if uploaded is not None:
 #     ledger.to_csv(LEDGER_FILE, index=False)
 #     st.success(f"Added {ticker} trade.")
 
+# --- GEX Radar Section ---
+with st.expander("📡 GEX Radar"):
+    st.write("Premarket GEX Levels")
+
+    # Multi-select tickers
+    selected_tickers = st.multiselect("Select Tickers", TICKERS)
+
+    radar_data = []
+    for ticker in selected_tickers:
+        gex_ceiling = st.number_input(f"{ticker} GEX Ceiling", step=0.1, key=f"{ticker}_ceiling")
+        gex_floor = st.number_input(f"{ticker} GEX Floor", step=0.1, key=f"{ticker}_floor")
+
+        # Get last price
+        try:
+            data = yf.Ticker(ticker).history(period="1d", interval="1m")
+            last_price = data["Close"].iloc[-1]
+        except:
+            last_price = None
+
+        # Condition highlight
+        status = "⚪ Between"
+        if last_price and gex_ceiling and last_price > gex_ceiling:
+            status = "🟢 Above Ceiling"
+        elif last_price and gex_floor and last_price < gex_floor:
+            status = "🔴 Below Floor"
+
+        radar_data.append([ticker, gex_ceiling, gex_floor, last_price, status])
+
+    # Build table
+    if radar_data:
+        df = pd.DataFrame(radar_data, columns=["Ticker", "GEX Ceiling", "GEX Floor", "Last Price", "Status"])
+        st.dataframe(df, hide_index=True)
 
 # --- Trade entry form ---
 with st.form("trade_entry"):
