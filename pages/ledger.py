@@ -68,7 +68,11 @@ else:
 with st.expander("📡 GEX Radar"):
     st.write("Premarket GEX Levels")
 
-    selected_tickers = st.multiselect("Select Tickers", TICKERS)
+    selected_tickers = st.multiselect(
+        "Select Tickers",
+        TICKERS,
+        default=gex_df["Ticker"].tolist()  # ✅ remembers last saved tickers
+    )
 
     radar_data = []
     for ticker in selected_tickers:
