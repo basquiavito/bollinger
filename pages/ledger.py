@@ -10,7 +10,7 @@ st.title("📒 Trading Ledger")
 if os.path.exists(LEDGER_FILE):
     ledger = pd.read_csv(LEDGER_FILE)
 else:
-    ledger = pd.DataFrame(columns=["Date", "Ticker", "Entry", "Delta", "Type", "StopLoss", "Notes"])
+    ledger = pd.DataFrame(columns=["Date", "Ticker", "Entry", "Delta", "Type", "StopLoss", "PnL", "Notes"])
 
 # --- Upload to restore ---
 uploaded = st.file_uploader("📤 Upload existing ledger (CSV)", type="csv")
