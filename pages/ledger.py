@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import os
 import yfinance as yf
- 
+
+GEX_FILE = "gex_levels.csv"
+
 LEDGER_FILE = "trading_ledger.csv"
 # --- Inventory (your tradeable tickers) ---
 TICKERS = [
@@ -57,22 +59,49 @@ if uploaded is not None:
 #     ledger.to_csv(LEDGER_FILE, index=False)
 #     st.success(f"Added {ticker} trade.")
 
-# --- GEX Radar Section ---
+
+if os.path.exists(GEX_FILE):
+    gex_df = pd.read_csv(GEX_FILE)
+else:
+    gex_df = pd.DataFrame(columns=["Ticker", "GEX Ceiling", "GEX Floor"])
+
 with st.expander("📡 GEX Radar"):
     st.write("Premarket GEX Levels")
 
-    # Multi-select tickers
     selected_tickers = st.multiselect("Select Tickers", TICKERS)
 
     radar_data = []
-    for ticker in selected_tickers:
-        gex_ceiling = st.number_input(f"{ticker} GEX Ceiling", step=0.1, key=f"{ticker}_ceiling")
-        gex_floor = st.number_input(f"{ticker} GEX Floor", step=0.1, key=f"{ticker}_floor")
+  for ticker in selected_tickers:
+    # Get saved values if they exist
+    saved_ceiling = gex_df[gex_df["Ticker"] == ticker]["GEX Ceiling"].values
+    saved_floor = gex_df[gex_df["Ticker"] == ticker]["GEX Floor"].values
+
+    gex_ceiling = st.number_input(
+        f"{ticker} GEX Ceiling", 
+        step=0.1, 
+        value=float(saved_ceiling[0]) if len(saved_ceiling) else 0.0, 
+        key=f"{ticker}_ceiling"
+    )
+    gex_floor = st.number_input(
+        f"{ticker} GEX Floor", 
+        step=0.1, 
+        value=float(saved_floor[0]) if len(saved_floor) else 0.0, 
+        key=f"{ticker}_floor"
+    )
+oor = st.number_input(f"{ticker} GEX Floor", step=0.1, key=f"{ticker}_floor")
+
+        # --- Update GEX table ---
+        new_levels = pd.DataFrame(
+            [[ticker, gex_ceiling, gex_floor]],
+            columns=["Ticker", "GEX Ceiling", "GEX Floor"]
+        )
+        gex_df = gex_df[gex_df["Ticker"] != ticker]  # remove old row if exists
+        gex_df = pd.concat([gex_df, new_levels], ignore_index=True)
+        gex_df.to_csv(GEX_FILE, index=False)
 
         # Get last price
         try:
-            data = yf.Ticker(ticker).history(period="1d", interval="1m")
-            last_price = data["Close"].iloc[-1]
+            last_price = yf.Ticker(ticker).history(period="1d", interval="1m")["Close"].iloc[-1]
         except:
             last_price = None
 
@@ -89,6 +118,7 @@ with st.expander("📡 GEX Radar"):
     if radar_data:
         df = pd.DataFrame(radar_data, columns=["Ticker", "GEX Ceiling", "GEX Floor", "Last Price", "Status"])
         st.dataframe(df, hide_index=True)
+
 
 # --- Trade entry form ---
 with st.form("trade_entry"):
