@@ -13,7 +13,8 @@ if os.path.exists(OUTCOME_FILE):
 else:
     outcomes = pd.DataFrame(columns=[
         "Date", "Ticker", 
-        "Entry 1 Time", "Entry 1 Price", "Entry 1 Prototype",
+        "Entry 1 Time", "Entry 1 Price", "Entry 1 Prototype","Entry 1 Type ",
+
         "Entry 2 Time", "Kijun Cross Type",
         "Entry 3 Time", "IB Line Cross Type",
         "Exit Price", "Change", "Total P&L",
@@ -41,6 +42,7 @@ with st.form("outcome_entry"):
         e1_time = st.text_input("Entry 1 Time (e.g. 11:55 AM)")
         e1_price = st.number_input("Entry 1 Price", min_value=0.0, step=0.01)
         e1_proto = st.text_input("Entry 1 Prototype")
+        e1_type = st.selectbox("Entry 1 Type", ["", "Call", "Put"])
 
         e2_time = st.text_input("Entry 2 Time")
         kijun_type = st.text_input("Kijun Cross Type")
@@ -76,7 +78,8 @@ if submitted:
     new_row = {
         "Date": date,
         "Ticker": ticker,
-        "Entry 1 Time": e1_time, "Entry 1 Price": e1_price, "Entry 1 Prototype": e1_proto,
+        "Entry 1 Time": e1_time, "Entry 1 Price": e1_price, "Entry 1 Prototype": e1_proto,"Entry 1 Type": e1_type,
+
         "Entry 2 Time": e2_time, "Kijun Cross Type": kijun_type,
         "Entry 3 Time": e3_time, "IB Line Cross Type": ib_type,
         "Exit Price": exit_price, "Change": change,
