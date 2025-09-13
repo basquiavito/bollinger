@@ -6880,7 +6880,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="solid", color="#000",width=2.2),
+                        line=dict(dash="solid", color="#000",width=3.2),
                         name="Upper Band"
                     )
 
@@ -6889,7 +6889,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Lower"],
                         mode="lines",
-                        line=dict(dash="solid", color="#000",width=2.2),
+                        line=dict(dash="solid", color="#000",width=3.2),
                         name="Lower Band"
                     )
 
