@@ -96,6 +96,22 @@ if submitted:
 st.subheader("📊 Recorded Outcomes")
 st.dataframe(outcomes, use_container_width=True)
 
+# --- Editable table ---
+st.subheader("✏️ Edit Outcomes")
+edited_df = st.data_editor(outcomes, num_rows="dynamic", use_container_width=True)
+
+if st.button("💾 Save Edits"):
+    edited_df.to_csv(OUTCOME_FILE, index=False)
+    outcomes = edited_df
+    st.success("Changes saved ✅")
+
+# --- Delete row by index ---
+delete_index = st.number_input("Row index to delete", min_value=0, max_value=len(outcomes)-1, step=1)
+if st.button("🗑 Delete Row"):
+    outcomes = outcomes.drop(delete_index).reset_index(drop=True)
+    outcomes.to_csv(OUTCOME_FILE, index=False)
+    st.warning(f"Row {delete_index} deleted ✅")
+
 # --- Reset button ---
 if st.button("🗑 Reset Outcomes"):
     outcomes = pd.DataFrame(columns=outcomes.columns)
