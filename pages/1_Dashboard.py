@@ -6367,85 +6367,85 @@ if st.sidebar.button("Run Analysis"):
 
                  
 
-                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
-                                    st.dataframe(
-                                        intraday[[
-                                            'Time', price_col, 'Volume',
-                                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
-                                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
-                                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
-                                        ]]
-                                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
-                                        .reset_index(drop=True))
+     #            with st.expander("🪞 MIDAS Anchor Table", expanded=False):
+     #                                st.dataframe(
+     #                                    intraday[[
+     #                                        'Time', price_col, 'Volume',
+     #                                        'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+     #                                        'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
+     #                                        'Bull_Midas_Wake', 'Bear_Midas_Wake'
+     #                                    ]]
+     #                                    .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+     #                                    .reset_index(drop=True))
                          
 
-                with st.expander("📈 Option Price Elasticity (PE)", expanded=True):
+     #            with st.expander("📈 Option Price Elasticity (PE)", expanded=True):
                 
-                    fig_pe = go.Figure()
+     #                fig_pe = go.Figure()
                 
-                    # Call PE Line
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Call_PE_x100"],
-                        mode="lines",
-                        name="Call PE",
-                        line=dict(color="gold", width=1.3),
-                        hovertemplate="Time: %{x}<br>Call PE: %{y:.1f}¢/Fpt<extra></extra>"
-                    ))
+     #                # Call PE Line
+     #                fig_pe.add_trace(go.Scatter(
+     #                    x=intraday["Time"],
+     #                    y=intraday["Call_PE_x100"],
+     #                    mode="lines",
+     #                    name="Call PE",
+     #                    line=dict(color="gold", width=1.3),
+     #                    hovertemplate="Time: %{x}<br>Call PE: %{y:.1f}¢/Fpt<extra></extra>"
+     #                ))
                 
-                    # Put PE Line
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["Put_PE_x100"],
-                        mode="lines",
-                        name="Put PE",
-                        line=dict(color="cyan", width=1.3),
-                        hovertemplate="Time: %{x}<br>Put PE: %{y:.1f}¢/Fpt<extra></extra>"
-                    ))
+     #                # Put PE Line
+     #                fig_pe.add_trace(go.Scatter(
+     #                    x=intraday["Time"],
+     #                    y=intraday["Put_PE_x100"],
+     #                    mode="lines",
+     #                    name="Put PE",
+     #                    line=dict(color="cyan", width=1.3),
+     #                    hovertemplate="Time: %{x}<br>Put PE: %{y:.1f}¢/Fpt<extra></extra>"
+     #                ))
                 
-                    # Optional Threshold Lines
-                    call_med = intraday["Call_PE_x100"].rolling(9, min_periods=1).median()
-                    put_med  = intraday["Put_PE_x100"].rolling(9, min_periods=1).median()
+     #                # Optional Threshold Lines
+     #                call_med = intraday["Call_PE_x100"].rolling(9, min_periods=1).median()
+     #                put_med  = intraday["Put_PE_x100"].rolling(9, min_periods=1).median()
               
                 
                
                  
-     # Layout
-                    fig_pe.update_layout(
-                        height=350,
-                        margin=dict(l=10, r=10, t=30, b=30),
-                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                        title_text="Option Price Elasticity (¢ per F% point)",
-                        xaxis_title="Time",
-                        yaxis_title="¢ per F-pt",
-                    )
+     # # Layout
+     #                fig_pe.update_layout(
+     #                    height=350,
+     #                    margin=dict(l=10, r=10, t=30, b=30),
+     #                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+     #                    title_text="Option Price Elasticity (¢ per F% point)",
+     #                    xaxis_title="Time",
+     #                    yaxis_title="¢ per F-pt",
+     #                )
 
 
-                                      # PE Cross: Bullish (Call PE crosses above Put PE)
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday[intraday["PE_Cross_Bull"]]["Time"],
-                        y=intraday[intraday["PE_Cross_Bull"]]["Call_PE"],
-                        mode="text",
-                        text=["⚡️"] * intraday["PE_Cross_Bull"].sum(),
-                        textposition="top center",
-                        name="Bullish PE Crossover",
-                        showlegend=False
-                    ))
+     #                                  # PE Cross: Bullish (Call PE crosses above Put PE)
+     #                fig_pe.add_trace(go.Scatter(
+     #                    x=intraday[intraday["PE_Cross_Bull"]]["Time"],
+     #                    y=intraday[intraday["PE_Cross_Bull"]]["Call_PE"],
+     #                    mode="text",
+     #                    text=["⚡️"] * intraday["PE_Cross_Bull"].sum(),
+     #                    textposition="top center",
+     #                    name="Bullish PE Crossover",
+     #                    showlegend=False
+     #                ))
                     
-                    # PE Cross: Bearish (Put PE crosses above Call PE)
-                    fig_pe.add_trace(go.Scatter(
-                        x=intraday[intraday["PE_Cross_Bear"]]["Time"],
-                        y=intraday[intraday["PE_Cross_Bear"]]["Put_PE"],
-                        mode="text",
-                        text=["⛓️"] * intraday["PE_Cross_Bear"].sum(),
-                        textposition="bottom center",
-                        name="Bearish PE Crossover",
-                        showlegend=False
-                    ))
+     #                # PE Cross: Bearish (Put PE crosses above Call PE)
+     #                fig_pe.add_trace(go.Scatter(
+     #                    x=intraday[intraday["PE_Cross_Bear"]]["Time"],
+     #                    y=intraday[intraday["PE_Cross_Bear"]]["Put_PE"],
+     #                    mode="text",
+     #                    text=["⛓️"] * intraday["PE_Cross_Bear"].sum(),
+     #                    textposition="bottom center",
+     #                    name="Bearish PE Crossover",
+     #                    showlegend=False
+     #                ))
 
 
  
-                    st.plotly_chart(fig_pe, use_container_width=True)
+     #                st.plotly_chart(fig_pe, use_container_width=True)
                 
                 # with st.expander("📊 Elasticity-Based Put/Call Ratio (PE-PCR)", expanded=True):
                 
