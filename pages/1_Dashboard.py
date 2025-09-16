@@ -9458,13 +9458,46 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-             # --- Initiative Buying Test (only #1 for now) ---
-                initiative_msg = ""
-                if opening_price >= yva_max:
-                    initiative_msg = "🟢 **Initiative Buying detected**"
-            
-                if initiative_msg:
-                    st.markdown(initiative_msg)
+      
+               if yva_min is not None and yva_max is not None:
+                   opening_price = intraday["Close"].iloc[0]
+                   first_hour = intraday[intraday.index < intraday.index[0] + pd.Timedelta(hours=1)]
+                   last_price_1030 = first_hour["Close"].iloc[-1]
+               
+                   # Step 1: Provisional classification at open
+                   if opening_price >= yva_max:
+                       provisional_msg = "⬆️ Initiative Buying (provisional)"
+                   elif opening_price <= yva_min:
+                       provisional_msg = "⬇️ Initiative Selling (provisional)"
+                   elif yva_min < opening_price < yva_max:
+                       provisional_msg = "✅ Opened **within** Yesterday's Value Area"
+                   else:
+                       provisional_msg = "⚠️ Could not determine opening position"
+               
+                   st.markdown(f"### {provisional_msg}")
+               
+                   # Step 2: Final classification after 60 minutes
+                   if opening_price >= yva_max:
+                       if last_price_1030 >= yva_max:
+                           final_msg = "✅ Initiative Buying Confirmed"
+                       else:
+                           final_msg = "🔄 Responsive Selling Took Over"
+                   elif opening_price <= yva_min:
+                       if last_price_1030 <= yva_min:
+                           final_msg = "✅ Initiative Selling Confirmed"
+                       else:
+                           final_msg = "🔄 Responsive Buying Took Over"
+                   elif yva_min < opening_price < yva_max:
+                       if last_price_1030 > yva_max:
+                           final_msg = "⬆️ Initiative Buying from Within"
+                       elif last_price_1030 < yva_min:
+                           final_msg = "⬇️ Initiative Selling from Within"
+                       else:
+                           final_msg = "✅ Responsive Activity (Stayed Within VA)"
+                   else:
+                       final_msg = "⚠️ Could not finalize activity type"
+               
+                   st.markdown(f"### {final_msg}")
              # ✅ Detect Initiative Breakout from Yesterday’s Value Area
                   
   
