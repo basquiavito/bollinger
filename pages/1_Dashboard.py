@@ -9476,25 +9476,25 @@ if st.sidebar.button("Run Analysis"):
                           
                           
 
-                if yva_min is not None and yva_max is not None and not intraday.empty:
-                     opening_price = intraday["Close"].iloc[0]
-                     opened_inside_yva = yva_min < opening_price < yva_max
+                # if yva_min is not None and yva_max is not None and not intraday.empty:
+                #      opening_price = intraday["Close"].iloc[0]
+                #      opened_inside_yva = yva_min < opening_price < yva_max
                  
-                     # First 30 min = first 6 bars on 5-min timeframe
-                     first_6 = intraday.iloc[:6]
-                     broke_above_yva = first_6["Close"].max() > yva_max
-                     broke_below_yva = first_6["Close"].min() < yva_min
+                #      # First 30 min = first 6 bars on 5-min timeframe
+                #      first_6 = intraday.iloc[:6]
+                #      broke_above_yva = first_6["Close"].max() > yva_max
+                #      broke_below_yva = first_6["Close"].min() < yva_min
                  
-                     if opened_inside_yva:
-                         if broke_above_yva:
-                             st.markdown("🚀 **Breakout Alert: Opened *inside* YVA → Broke *above* within 30 min**")
-                         elif broke_below_yva:
-                             st.markdown("🔻 **Breakout Alert: Opened *inside* YVA → Broke *below* within 30 min**")
-                         else:
-                             st.markdown("🟨 Opened inside YVA – No early breakout")
+                #      if opened_inside_yva:
+                #          if broke_above_yva:
+                #              st.markdown("🚀 **Breakout Alert: Opened *inside* YVA → Broke *above* within 30 min**")
+                #          elif broke_below_yva:
+                #              st.markdown("🔻 **Breakout Alert: Opened *inside* YVA → Broke *below* within 30 min**")
+                #          else:
+                #              st.markdown("🟨 Opened inside YVA – No early breakout")
                  
-                     else:
-                         st.markdown("🟦 Market did *not* open inside YVA")
+                #      else:
+                #          st.markdown("🟦 Market did *not* open inside YVA")
 
 
 
