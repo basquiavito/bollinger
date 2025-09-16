@@ -9461,7 +9461,8 @@ if st.sidebar.button("Run Analysis"):
       
                 if yva_min is not None and yva_max is not None:
                     opening_price = intraday["Close"].iloc[0]
-                    first_hour = intraday[intraday.index < intraday.index[0] + pd.Timedelta(hours=1)]
+                    first_timestamp = intraday.index[0]  # capture the actual datetime of first bar
+                    first_hour = intraday[intraday.index < first_timestamp + pd.Timedelta(hours=1)]
                     last_price_1030 = first_hour["Close"].iloc[-1]
                 
                     # Step 1: Provisional classification at open
