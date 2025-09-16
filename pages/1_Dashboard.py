@@ -9455,6 +9455,16 @@ if st.sidebar.button("Run Analysis"):
                             yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
                     
                     st.markdown(f"### {yva_position_msg}")
+
+
+
+             # --- Initiative Buying Test (only #1 for now) ---
+                initiative_msg = ""
+                if opening_price >= yva_max:
+                    initiative_msg = "🟢 **Initiative Buying detected**"
+            
+                if initiative_msg:
+                    st.markdown(initiative_msg)
              # ✅ Detect Initiative Breakout from Yesterday’s Value Area
                   
   
