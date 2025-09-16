@@ -9456,30 +9456,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     # st.markdown(f"### {yva_position_msg}")
              # ✅ Detect Initiative Breakout from Yesterday’s Value Area
-                    if yva_min is not None and yva_max is not None and not intraday.empty:
-                        opening_price = intraday["Close"].iloc[0]
-                        opened_inside_yva = yva_min < opening_price < yva_max
-                    
-                        # First 30 min = first 6 bars on 5-min timeframe
-                        first_6 = intraday.iloc[:6]
-                        broke_above_yva = first_6["Close"].max() > yva_max
-                        broke_below_yva = first_6["Close"].min() < yva_min
-                    
-                        if opened_inside_yva:
-                            if broke_above_yva:
-                                st.markdown("🚀 **Breakout Alert: Opened *inside* YVA → Broke *above* within 30 min**")
-                            elif broke_below_yva:
-                                st.markdown("🔻 **Breakout Alert: Opened *inside* YVA → Broke *below* within 30 min**")
-                            else:
-                                st.markdown("🟨 Opened inside YVA – No early breakout")
-                    
-                        else:
-                            st.markdown("🟦 Market did *not* open inside YVA")
-
-
-
-
-
+                  
   
    #                  opened_above_yh = opening_price > prev_high
    #                  opened_below_yl = opening_price < prev_low
@@ -9499,7 +9476,30 @@ if st.sidebar.button("Run Analysis"):
                           
                           
 
-                          
+                if yva_min is not None and yva_max is not None and not intraday.empty:
+                     opening_price = intraday["Close"].iloc[0]
+                     opened_inside_yva = yva_min < opening_price < yva_max
+                 
+                     # First 30 min = first 6 bars on 5-min timeframe
+                     first_6 = intraday.iloc[:6]
+                     broke_above_yva = first_6["Close"].max() > yva_max
+                     broke_below_yva = first_6["Close"].min() < yva_min
+                 
+                     if opened_inside_yva:
+                         if broke_above_yva:
+                             st.markdown("🚀 **Breakout Alert: Opened *inside* YVA → Broke *above* within 30 min**")
+                         elif broke_below_yva:
+                             st.markdown("🔻 **Breakout Alert: Opened *inside* YVA → Broke *below* within 30 min**")
+                         else:
+                             st.markdown("🟨 Opened inside YVA – No early breakout")
+                 
+                     else:
+                         st.markdown("🟦 Market did *not* open inside YVA")
+
+
+
+
+         
                 fig.update_layout(
                     title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
