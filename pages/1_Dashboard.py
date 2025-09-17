@@ -9549,7 +9549,7 @@ if st.sidebar.button("Run Analysis"):
                     else:
                         provisional_msg = "⚠️ Could not determine opening position"
                 
-                    st.markdown(f"### {provisional_msg}")
+                    st.markdown(f"#### *{provisional_msg}*")
                 
                     # Step 2: Final classification after 60 minutes
                     if opening_price >= yva_max:
