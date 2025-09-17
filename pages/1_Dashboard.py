@@ -9456,13 +9456,16 @@ if st.sidebar.button("Run Analysis"):
                     
                     st.markdown(f"### {yva_position_msg}")
 
+                intraday.index = pd.to_datetime(intraday.index)
 
 
       
                 if yva_min is not None and yva_max is not None:
                     opening_price = intraday["Close"].iloc[0]
-                    first_timestamp = intraday.index[0]  # capture the actual datetime of first bar
-                    first_hour = intraday[intraday.index < first_timestamp + pd.Timedelta(hours=1)]
+                    first_timestamp = pd.to_datetime(intraday.index[0])  # force datetime at fetch time
+                    cutoff = first_timestamp + pd.Timedelta(hours=1)
+                    first_hour = intraday[intraday.index < cutoff]
+
                     last_price_1030 = first_hour["Close"].iloc[-1]
                 
                     # Step 1: Provisional classification at open
