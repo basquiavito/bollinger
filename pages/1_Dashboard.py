@@ -9504,6 +9504,76 @@ if st.sidebar.button("Run Analysis"):
                         final_msg = "⚠️ Could not finalize activity type"
                 
                     st.markdown(f"### {final_msg}")
+
+
+                # Force datetime index for safety
+                intraday.index = pd.to_datetime(intraday.index)
+                
+                if yva_min is not None and yva_max is not None and prev_high is not None and prev_low is not None:
+                    opening_price = intraday["Close"].iloc[0]
+                    first_timestamp = intraday.index[0]
+                    cutoff = first_timestamp + pd.Timedelta(minutes=30)
+                    first_window = intraday[intraday.index < cutoff]
+                
+                    last_price_window = first_window["Close"].iloc[-1]
+                
+                    # ========================
+                    # 1. RANGE-BASED OVERRIDES
+                    # ========================
+                    if opening_price > prev_high:
+                        # Opened ABOVE yesterday's range
+                        if last_price_window > prev_high:
+                            final_msg = "⚡ Unlimited Range Potential (Trend Candidate)\n✅ Accepted Out of Range (Above)"
+                        else:
+                            final_msg = "⚡ Unlimited Range Potential (Reversal Candidate)\n🔄 Rejection Flip (Back Inside Range)"
+                
+                    elif opening_price < prev_low:
+                        # Opened BELOW yesterday's range
+                        if last_price_window < prev_low:
+                            final_msg = "⚡ Unlimited Range Potential (Trend Candidate)\n✅ Accepted Out of Range (Below)"
+                        else:
+                            final_msg = "⚡ Unlimited Range Potential (Reversal Candidate)\n🔄 Rejection Flip (Back Inside Range)"
+                
+                    else:
+                        # ========================
+                        # 2. VALUE-AREA LOGIC (your existing stuff)
+                        # ========================
+                        # Step 1: Provisional classification at open
+                        if opening_price >= yva_max:
+                            provisional_msg = "⬆️ Initiative Buying (provisional)"
+                        elif opening_price <= yva_min:
+                            provisional_msg = "⬇️ Initiative Selling (provisional)"
+                        elif yva_min < opening_price < yva_max:
+                            provisional_msg = "✅ Opened **within** Yesterday's Value Area"
+                        else:
+                            provisional_msg = "⚠️ Could not determine opening position"
+                
+                        st.markdown(f"### {provisional_msg}")
+                
+                        # Step 2: Final classification after 30 minutes
+                        if opening_price >= yva_max:
+                            if last_price_window >= yva_max:
+                                final_msg = "✅ Initiative Buying Confirmed"
+                            else:
+                                final_msg = "🔄 Responsive Selling Took Over"
+                        elif opening_price <= yva_min:
+                            if last_price_window <= yva_min:
+                                final_msg = "✅ Initiative Selling Confirmed"
+                            else:
+                                final_msg = "🔄 Responsive Buying Took Over"
+                        elif yva_min < opening_price < yva_max:
+                            if last_price_window > yva_max:
+                                final_msg = "⬆️ Initiative Buying from Within"
+                            elif last_price_window < yva_min:
+                                final_msg = "⬇️ Initiative Selling from Within"
+                            else:
+                                final_msg = "✅ Responsive Activity (Stayed Within VA)"
+                        else:
+                            final_msg = "⚠️ Could not finalize activity type"
+                
+                    # Print final classification
+                    st.markdown(f"### {final_msg}")
+
              # ✅ Detect Initiative Breakout from Yesterday’s Value Area
                   
   
