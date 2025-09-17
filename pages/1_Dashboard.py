@@ -9465,7 +9465,7 @@ if st.sidebar.button("Run Analysis"):
                 if yva_min is not None and yva_max is not None:
                     opening_price = intraday["Close"].iloc[0]
                     first_timestamp = pd.to_datetime(intraday.index[0])  # force datetime at fetch time
-                    cutoff = first_timestamp + pd.Timedelta(hours=1)
+                    cutoff = first_timestamp + pd.Timedelta(minutes=30)
                     first_hour = intraday[intraday.index < cutoff]
 
                     last_price_1030 = first_hour["Close"].iloc[-1]
