@@ -9572,7 +9572,7 @@ if st.sidebar.button("Run Analysis"):
                     else:
                         final_msg = "⚠️ Could not finalize activity type"
                 
-                    st.markdown(f"#### *{final_msg}*")
+                    st.markdown(f" *{final_msg}*")
 
              # ✅ Detect Initiative Breakout from Yesterday’s Value Area
                   
