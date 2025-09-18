@@ -8089,7 +8089,7 @@ if st.sidebar.button("Run Analysis"):
                         "Time: %{x|%I:%M %p}<br>"
                         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
                     )
-                # ), row=1, col=1)
+                 ), row=1, col=1)
 
                 # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
                 bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
