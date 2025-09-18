@@ -8805,11 +8805,11 @@ if st.sidebar.button("Run Analysis"):
                     name="Tenkan-Kijun Bearish Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
                 )
-
+                    fig.add_trace(scatter_tk_sun, row=1, col=1)
+                    fig.add_trace(scatter_tk_moon, row=1, col=1)
 
    # # Add to the F% Plot
-                # fig.add_trace(scatter_tk_sun, row=1, col=1)
-                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+               
                 # # # 👼🏻 Bullish Sanyaku Kouten
                 # mask_sanyaku_kouten = intraday["Sanyaku_Kouten"] == "🟩"
                 
