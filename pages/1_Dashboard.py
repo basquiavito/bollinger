@@ -8029,18 +8029,18 @@ if st.sidebar.button("Run Analysis"):
                 #     showlegend=True
                 # ))
 
-                # emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
+                emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
   
-                # fig.add_trace(go.Scatter(
-                #     x=emoji_df["TimeIndex"],
-                #     y=emoji_df["F_numeric"] - 24,
-                #     mode="text",
-                #     text=emoji_df["Mike_Kijun_Bee_Emoji"],
-                #     textposition="top center",
-                #     textfont=dict(size=18),
-                #     name="Mike x Kijun + Bees",
-                #     showlegend=True
-                # ))
+                fig.add_trace(go.Scatter(
+                    x=emoji_df["TimeIndex"],
+                    y=emoji_df["F_numeric"] - 24,
+                    mode="text",
+                    text=emoji_df["Mike_Kijun_Bee_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Mike x Kijun + Bees",
+                    showlegend=True
+                ))
           
                 # # 🌋 Magma Pass Plot (Mike x Kijun + ATR Expansion)
 
@@ -8406,50 +8406,50 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(scatter_red_king, row=1, col=1)
 
 
-                #     threshold = 0.5  # or even 1.0 depending on your scaling
-                #     intraday["Kijun_F_Cross_Emoji"] = np.where(
-                #         (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
-                #         "♕",
-                #         np.where(
-                #             (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
-                #             "♛",
-                #             ""
-                #         )
-                #     )
+                    threshold = 0.5  # or even 1.0 depending on your scaling
+                    intraday["Kijun_F_Cross_Emoji"] = np.where(
+                        (intraday["F_numeric"] > intraday["Kijun_F"] + threshold) & (intraday["F_shift"] < intraday["Kijun_F"] - threshold),
+                        "♕",
+                        np.where(
+                            (intraday["F_numeric"] < intraday["Kijun_F"] - threshold) & (intraday["F_shift"] > intraday["Kijun_F"] + threshold),
+                            "♛",
+                            ""
+                        )
+                    )
 
 
 
-                #  # Create separate masks for upward and downward crosses:
-                #     mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
-                #     mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
+                 # Create separate masks for upward and downward crosses:
+                    mask_kijun_up = intraday["Kijun_F_Cross_Emoji"] == "♕"
+                    mask_kijun_down = intraday["Kijun_F_Cross_Emoji"] == "♛"
 
-                #     # Upward Cross Trace (♕)
-                #     up_cross_trace = go.Scatter(
-                #         x=intraday.loc[mask_kijun_up, "Time"],
-                #         y=intraday.loc[mask_kijun_up, "F_numeric"] + 89,  # Offset upward (adjust as needed)
-                #         mode="text",
-                #         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
-                #         textposition="top center",  # Positioned above the point
-                #         textfont=dict(size=34, color="green"),
-                #         name="Kijun Cross Up (♕)",
-                #         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
-                #     )
+                    # Upward Cross Trace (♕)
+                    up_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_up, "Time"],
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 89,  # Offset upward (adjust as needed)
+                        mode="text",
+                        text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
+                        textposition="top center",  # Positioned above the point
+                        textfont=dict(size=34, color="green"),
+                        name="Kijun Cross Up (♕)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Upward Cross: %{text}<extra></extra>"
+                    )
 
-                #     # Downward Cross Trace (♛)
-                #     down_cross_trace = go.Scatter(
-                #         x=intraday.loc[mask_kijun_down, "Time"],
-                #         y=intraday.loc[mask_kijun_down, "F_numeric"] - 89,  # Offset downward
-                #         mode="text",
-                #         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
-                #         textposition="bottom center",  # Positioned below the point
-                #         textfont=dict(size=34, color="red"),
-                #         name="Kijun Cross Down (♛)",
-                #         hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
-                #     )
+                    # Downward Cross Trace (♛)
+                    down_cross_trace = go.Scatter(
+                        x=intraday.loc[mask_kijun_down, "Time"],
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 89,  # Offset downward
+                        mode="text",
+                        text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
+                        textposition="bottom center",  # Positioned below the point
+                        textfont=dict(size=34, color="red"),
+                        name="Kijun Cross Down (♛)",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Downward Cross: %{text}<extra></extra>"
+                    )
 
 
-                #     fig.add_trace(up_cross_trace,   row=1, col=1)
-                #     fig.add_trace(down_cross_trace, row=1, col=1)
+                    fig.add_trace(up_cross_trace,   row=1, col=1)
+                    fig.add_trace(down_cross_trace, row=1, col=1)
 
 
                 # mask_horse_buy = intraday["Kijun_Cross_Horse"] == "♘"
