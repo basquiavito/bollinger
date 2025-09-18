@@ -6947,22 +6947,22 @@ if st.sidebar.button("Run Analysis"):
                     #(G) Distensibility Alert on Main Plot
                     
                     #Mask bars that triggered the 🪟 emoji
-                    mask_distensibility = intraday["Distensibility Alert"] != ""
+                    # mask_distensibility = intraday["Distensibility Alert"] != ""
                     
-                    # Plot emoji above price (or F_numeric)but rangebut range
-                    scatter_distensibility = go.Scatter(
-                        x=intraday.loc[mask_distensibility, "Time"],
-                        y=intraday.loc[mask_distensibility, "F_numeric"] + 38,  # Slight offset upward
-                        mode="text",
-                        text=intraday.loc[mask_distensibility, "Distensibility Alert"],
-                        textposition="top center",
-                        textfont=dict(size=24),
-                        name="Distensibility 🪟",
-                        hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
-                        customdata=intraday.loc[mask_distensibility, "Distensibility"]
-                    )
+                    # # Plot emoji above price (or F_numeric)but rangebut range
+                    # scatter_distensibility = go.Scatter(
+                    #     x=intraday.loc[mask_distensibility, "Time"],
+                    #     y=intraday.loc[mask_distensibility, "F_numeric"] + 38,  # Slight offset upward
+                    #     mode="text",
+                    #     text=intraday.loc[mask_distensibility, "Distensibility Alert"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=24),
+                    #     name="Distensibility 🪟",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
+                    #     customdata=intraday.loc[mask_distensibility, "Distensibility"]
+                    # )
                     
-                    fig.add_trace(scatter_distensibility, row=1, col=1)
+                    # fig.add_trace(scatter_distensibility, row=1, col=1)
 
 
                     #Create a Boolean mask for rows with Stroke Growth ⭐ emojis
