@@ -8696,23 +8696,23 @@ if st.sidebar.button("Run Analysis"):
                     (intraday["Tenkan_F"] <= intraday["MIDAS_Bear"])
                 )
                 
-                # # Create a new column with the emoji (optional but clean)
-                # intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
+                # Create a new column with the emoji (optional but clean)
+                intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
                 
-                # # Scatter plot for 🕸️ (slightly below F_numeric)
-                # scatter_tenkan_cross_down = go.Scatter(
-                #     x=intraday.loc[mask_tenkan_cross_down, "Time"],
-                #     y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 20,
-                #     mode="text",
-                #     text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
-                #     textposition="bottom right",
-                #     textfont=dict(size=28, color="black"),
-                #     name="Tenkan Cross MIDAS Bear (🕸️)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
-                # )
+                # Scatter plot for 🕸️ (slightly below F_numeric)
+                scatter_tenkan_cross_down = go.Scatter(
+                    x=intraday.loc[mask_tenkan_cross_down, "Time"],
+                    y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 20,
+                    mode="text",
+                    text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
+                    textposition="bottom right",
+                    textfont=dict(size=28, color="black"),
+                    name="Tenkan Cross MIDAS Bear (🕸️)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
+                )
                 
-                # # Add to figure
-                # fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
+                # Add to figure
+                fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
 
 
    
@@ -8779,32 +8779,32 @@ if st.sidebar.button("Run Analysis"):
 
   
         
-                # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
-                # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
+                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
+                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
-                # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                # scatter_tk_sun = go.Scatter(
-                #     x=intraday.loc[mask_tk_sun, "Time"],
-                #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 104,  # Offset for visibility
-                #     mode="text",
-                #     text="🌞",
-                #     textposition="top center",
-                #     textfont=dict(size=34),
-                #     name="Tenkan-Kijun Bullish Cross",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                # )
+                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                scatter_tk_sun = go.Scatter(
+                    x=intraday.loc[mask_tk_sun, "Time"],
+                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 104,  # Offset for visibility
+                    mode="text",
+                    text="🌞",
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Tenkan-Kijun Bullish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                )
 
-                # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                # scatter_tk_moon = go.Scatter(
-                #     x=intraday.loc[mask_tk_moon, "Time"],
-                #     y=intraday.loc[mask_tk_moon, "F_numeric"] - 104,  # Offset for visibility
-                #     mode="text",
-                #     text="🌙",
-                #     textposition="bottom center",
-                #     textfont=dict(size=34),
-                #     name="Tenkan-Kijun Bearish Cross",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                # )
+                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                scatter_tk_moon = go.Scatter(
+                    x=intraday.loc[mask_tk_moon, "Time"],
+                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 104,  # Offset for visibility
+                    mode="text",
+                    text="🌙",
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="Tenkan-Kijun Bearish Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                )
 
 
    # # Add to the F% Plot
