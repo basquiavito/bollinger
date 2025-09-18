@@ -7373,32 +7373,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # short_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
-                #     textposition="bottom left",
-                #     textfont=dict(size=13, color="lime"),
-                #     name="Short Entry (✅)"
-                # )
-                # fig.add_trace(short_entry_trace, row=1, col=1)
+                short_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
+                    textposition="bottom left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Short Entry (✅)"
+                )
+                fig.add_trace(short_entry_trace, row=1, col=1)
 
 
 
 
 
 
-                # long_entry_trace = go.Scatter(
-                #     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                #     y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
-                #     mode="text",
-                #     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
-                #     textposition="top left",
-                #     textfont=dict(size=13, color="lime"),
-                #     name="Long Entry (✅)"
-                # )
-                # fig.add_trace(long_entry_trace, row=1, col=1)
+                long_entry_trace = go.Scatter(
+                    x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
+                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
+                    mode="text",
+                    text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
+                    textposition="top left",
+                    textfont=dict(size=13, color="lime"),
+                    name="Long Entry (✅)"
+                )
+                fig.add_trace(long_entry_trace, row=1, col=1)
 
 
                 # 🔍 First Wake-Up Detection
