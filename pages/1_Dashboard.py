@@ -8545,28 +8545,28 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_rook_up, row=1, col=1)
                 fig.add_trace(scatter_rook_down, row=1, col=1)
 
-                # mask_tenkan_cross_up = (
-                #     (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
-                #     (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
-                # )
+                mask_tenkan_cross_up = (
+                    (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
+                    (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
+                )
                 
-                # # Create a new column with the emoji (optional but clean)
-                # intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
+                # Create a new column with the emoji (optional but clean)
+                intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
                 
-                # # Scatter plot for 🫆 (slightly above F_numeric)
-                # scatter_tenkan_cross_up = go.Scatter(
-                #     x=intraday.loc[mask_tenkan_cross_up, "Time"],
-                #     y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
-                #     mode="text",
-                #     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
-                #     textposition="top right",
-                #     textfont=dict(size=24, color="orange"),
-                #     name="Tenkan Cross MIDAS Bull (🧲)",
-                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
-                # )
+                # Scatter plot for 🫆 (slightly above F_numeric)
+                scatter_tenkan_cross_up = go.Scatter(
+                    x=intraday.loc[mask_tenkan_cross_up, "Time"],
+                    y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
+                    mode="text",
+                    text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
+                    textposition="top right",
+                    textfont=dict(size=24, color="orange"),
+                    name="Tenkan Cross MIDAS Bull (🧲)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
+                )
                 
-                # # Add to figure
-                # fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
+                # Add to figure
+                fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
 
 
  
@@ -8999,38 +8999,38 @@ if st.sidebar.button("Run Analysis"):
  
 
 
-#                     # Filter where the Astronaut or Moon emoji exist
-#                 astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
+                    # Filter where the Astronaut or Moon emoji exist
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
 
-#                 scatter_astronaut = go.Scatter(
-#                     x=astronaut_points["Time"],
-#                     y=astronaut_points["F_numeric"] + 124,  # Offset so it floats higher
-#                     mode="text",
-#                     text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-#                     textposition="top center",
-#                     name="New Highs 🌒",
-#                     textfont=dict(size=21),
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 124,  # Offset so it floats higher
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
+                    textposition="top center",
+                    name="New Highs 🌒",
+                    textfont=dict(size=21),
                    
-#                 )
+                )
 
-#                 fig.add_trace(scatter_astronaut, row=1, col=1)
+                fig.add_trace(scatter_astronaut, row=1, col=1)
 
 
                 # Filter where Swimmer or Squid exist
-                # swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
+                swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
 
-                # scatter_swimmer = go.Scatter(
-                #     x=swimmer_points["Time"],
-                #     y=swimmer_points["F_numeric"] - 104,  # Offset downward so it floats below price
-                #     mode="text",
-                #     text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
-                #     textposition="bottom center",
-                #     name="New Lows 🏊🏽‍♂️🦑",
-                #     textfont=dict(size=24),
-                #     showlegend=True
-                # )
+                scatter_swimmer = go.Scatter(
+                    x=swimmer_points["Time"],
+                    y=swimmer_points["F_numeric"] - 104,  # Offset downward so it floats below price
+                    mode="text",
+                    text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
+                    textposition="bottom center",
+                    name="New Lows 🏊🏽‍♂️🦑",
+                    textfont=dict(size=24),
+                    showlegend=True
+                )
 
-                # fig.add_trace(scatter_swimmer, row=1, col=1)
+                fig.add_trace(scatter_swimmer, row=1, col=1)
 
 
   
