@@ -8514,8 +8514,8 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_bishop_down, row=1, col=1)
          
                               
-                # mask_rook_up = intraday["TD_Supply_Rook"] == "♖"
-                # mask_rook_down = intraday["TD_Supply_Rook"] == "♜"
+                mask_rook_up = intraday["TD_Supply_Rook"] == "♖"
+                mask_rook_down = intraday["TD_Supply_Rook"] == "♜"
 
                 # White rook (up cross)
                 scatter_rook_up = go.Scatter(
