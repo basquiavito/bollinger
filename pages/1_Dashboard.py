@@ -6926,22 +6926,22 @@ if st.sidebar.button("Run Analysis"):
                     )
                     
            
-                    # Create a Boolean mask for rows with surge emojis
-                    mask_compliance_surge = intraday["Compliance Surge"] != ""
+                    # # Create a Boolean mask for rows with surge emojis
+                    # mask_compliance_surge = intraday["Compliance Surge"] != ""
                     
-                    # Plot Surge Emojis using same structure as BBW Alert
-                    scatter_compliance_surge = go.Scatter(
-                        x=intraday.loc[mask_compliance_surge, "Time"],
-                        y=intraday.loc[mask_compliance_surge, "F_numeric"] - 24,  # Offset slightly below F%
-                        mode="text",
-                        text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
-                        textposition="top center",
-                        textfont=dict(size=14),
-                        name="Compliance Surge",
-                        hovertemplate="Time: %{x}<br>Surge: %{text}<extra></extra>"
-                    )
+                    # # Plot Surge Emojis using same structure as BBW Alert
+                    # scatter_compliance_surge = go.Scatter(
+                    #     x=intraday.loc[mask_compliance_surge, "Time"],
+                    #     y=intraday.loc[mask_compliance_surge, "F_numeric"] - 24,  # Offset slightly below F%
+                    #     mode="text",
+                    #     text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=14),
+                    #     name="Compliance Surge",
+                    #     hovertemplate="Time: %{x}<br>Surge: %{text}<extra></extra>"
+                    # )
                     
-                    fig.add_trace(scatter_compliance_surge, row=1, col=1)
+                    # fig.add_trace(scatter_compliance_surge, row=1, col=1)
 
 
                     #(G) Distensibility Alert on Main Plot
@@ -8057,73 +8057,73 @@ if st.sidebar.button("Run Analysis"):
                 #     showlegend=True
                 # ))
 
-                #                 # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
-                # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
-                # fig.add_trace(go.Scatter(
-                #     x=bull_hand_rows["TimeIndex"],
-                #     y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
-                #     mode="text",
-                #     text=["👋🏽"] * len(bull_hand_rows),
-                #     textposition="top right",
-                #     textfont=dict(size=22),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "👋🏽 Bull MIDAS Breakout<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         f"Bear MIDAS: {{y:.2f}}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                                # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
+                bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                fig.add_trace(go.Scatter(
+                    x=bull_hand_rows["TimeIndex"],
+                    y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
+                    mode="text",
+                    text=["👋🏽"] * len(bull_hand_rows),
+                    textposition="top right",
+                    textfont=dict(size=22),
+                    showlegend=False,
+                    hovertemplate=(
+                        "👋🏽 Bull MIDAS Breakout<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        f"Bear MIDAS: {{y:.2f}}<extra></extra>"
+                    )
+                ), row=1, col=1)
                 
-                # # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
-                # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_glove_rows["TimeIndex"],
-                #     y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
-                #     mode="text",
-                #     text=["🧤"] * len(bear_glove_rows),
-                #     textposition="bottom right",
-                #     textfont=dict(size=22),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🧤 Bear MIDAS Breakdown<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
-                #     )
-                # # ), row=1, col=1)
-
-                # # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
-                # bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_lethal_rows["TimeIndex"],
-                #     y=bear_lethal_rows["F_numeric"] - 40,  # Offset below Mike for clarity
-                #     mode="text",
-                #     text=["🥊"] * len(bear_lethal_rows),
-                #     textposition="bottom right",
-                #     textfont=dict(size=14),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🥊 Bear Lethal Acceleration<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         "F%: %{y:.2f}<extra></extra>"
-                #     )
+                # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
+                bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                fig.add_trace(go.Scatter(
+                    x=bear_glove_rows["TimeIndex"],
+                    y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
+                    mode="text",
+                    text=["🧤"] * len(bear_glove_rows),
+                    textposition="bottom right",
+                    textfont=dict(size=22),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🧤 Bear MIDAS Breakdown<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        f"Bull MIDAS: {{y:.2f}}<extra></extra>"
+                    )
                 # ), row=1, col=1)
 
-                # # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
-                # bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
-                # fig.add_trace(go.Scatter(
-                #     x=bull_lethal_rows["TimeIndex"],
-                #     y=bull_lethal_rows["F_numeric"] + 40,  # Offset above Mike for clarity
-                #     mode="text",
-                #     text=["🚀"] * len(bull_lethal_rows),
-                #     textposition="top right",
-                #     textfont=dict(size=14),
-                #     showlegend=False,
-                #     hovertemplate=(
-                #         "🚀 Bull Lethal Acceleration<br>"
-                #         "Time: %{x|%I:%M %p}<br>"
-                #         "F%: %{y:.2f}<extra></extra>"
-                #     )
-                # ), row=1, col=1)
+                # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
+                bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
+                fig.add_trace(go.Scatter(
+                    x=bear_lethal_rows["TimeIndex"],
+                    y=bear_lethal_rows["F_numeric"] - 40,  # Offset below Mike for clarity
+                    mode="text",
+                    text=["🥊"] * len(bear_lethal_rows),
+                    textposition="bottom right",
+                    textfont=dict(size=14),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🥊 Bear Lethal Acceleration<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        "F%: %{y:.2f}<extra></extra>"
+                    )
+                ), row=1, col=1)
+
+                # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
+                bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
+                fig.add_trace(go.Scatter(
+                    x=bull_lethal_rows["TimeIndex"],
+                    y=bull_lethal_rows["F_numeric"] + 40,  # Offset above Mike for clarity
+                    mode="text",
+                    text=["🚀"] * len(bull_lethal_rows),
+                    textposition="top right",
+                    textfont=dict(size=14),
+                    showlegend=False,
+                    hovertemplate=(
+                        "🚀 Bull Lethal Acceleration<br>"
+                        "Time: %{x|%I:%M %p}<br>"
+                        "F%: %{y:.2f}<extra></extra>"
+                    )
+                ), row=1, col=1)
 
 
                 # Wake-up Emojis 📈
