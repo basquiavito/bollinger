@@ -241,6 +241,205 @@ rule_data = pd.DataFrame({"value":[0,1]})
 
 
 
+# ============================
+# ⚡ GEX Cross Feed (drop-in)
+# ============================
+import pandas as pd
+from datetime import datetime
+
+EVENTS_FILE = "gex_events.csv"
+STATE_FILE  = "gex_state.csv"
+
+# optional: auto-refresh the section (milliseconds)
+st.autorefresh(interval=15_000, key="gex_cross_autorefresh")  # 15s; change as you like
+
+# ---- helpers
+def classify_state(last_price, floor, ceiling):
+    if pd.isna(last_price) or pd.isna(floor) or pd.isna(ceiling):
+        return "Unset"
+    rng = ceiling - floor
+    if rng <= 0:
+        return "Unset"
+    if last_price < floor:
+        return "Below"
+    if last_price > ceiling:
+        return "Above"
+    return "Between"
+
+def event_label(prev, curr):
+    if prev == curr or prev == "Unset" and curr == "Unset":
+        return None
+    # simple map of transitions -> labels
+    mapping = {
+        ("Between","Below"):  "Hit Floor",
+        ("Between","Above"):  "Break Ceiling",
+        ("Below","Between"):  "Re-enter (from Below)",
+        ("Above","Between"):  "Re-enter (from Above)",
+        ("Below","Above"):    "Through Range Up",
+        ("Above","Below"):    "Through Range Down",
+        ("Unset","Between"):  "Init (Between)",
+        ("Unset","Below"):    "Init (Below)",
+        ("Unset","Above"):    "Init (Above)",
+        ("Between","Unset"):  "Levels Unset",
+        ("Below","Unset"):    "Levels Unset",
+        ("Above","Unset"):    "Levels Unset",
+    }
+    return mapping.get((prev, curr), f"{prev} → {curr}")
+
+def nearest_distance(last_price, floor, ceiling):
+    if pd.isna(last_price) or pd.isna(floor) or pd.isna(ceiling):
+        return pd.NA
+    if ceiling - floor <= 0:
+        return pd.NA
+    if last_price < floor:
+        return last_price - floor  # negative below
+    if last_price > ceiling:
+        return last_price - ceiling  # positive above (still distance)
+    # inside band: positive min distance to boundary
+    return min(last_price - floor, ceiling - last_price)
+
+# ---- load prior state & events
+if os.path.exists(STATE_FILE):
+    prev_state_df = pd.read_csv(STATE_FILE)
+else:
+    prev_state_df = pd.DataFrame(columns=["Ticker","State"])
+
+if os.path.exists(EVENTS_FILE):
+    events = pd.read_csv(EVENTS_FILE)
+else:
+    events = pd.DataFrame(columns=[
+        "Time","Ticker","Event","From","To",
+        "Last Price","GEX Floor","GEX Ceiling","Dist to Boundary"
+    ])
+
+# ensure df has necessary columns
+needed_cols = {"Ticker","GEX Floor","GEX Ceiling","Last Price"}
+missing = needed_cols - set(df.columns)
+if missing:
+    st.error(f"GEX Cross Feed needs columns missing from df: {missing}")
+else:
+    # compute current states
+    curr_rows = []
+    for _, r in df.iterrows():
+        tkr = r["Ticker"]
+        floor = r["GEX Floor"]
+        ceil  = r["GEX Ceiling"]
+        lp    = r["Last Price"]
+        curr  = classify_state(lp, floor, ceil)
+        curr_rows.append((tkr, curr))
+    curr_state_df = pd.DataFrame(curr_rows, columns=["Ticker","State"])
+
+    # join with previous to detect transitions
+    merged = curr_state_df.merge(prev_state_df, on="Ticker", how="left", suffixes=("", "_prev"))
+    merged["State_prev"] = merged["State_prev"].fillna("Unset")
+
+    # loop & collect new events
+    new_events = []
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    df_idx = df.set_index("Ticker")
+
+    for _, row in merged.iterrows():
+        tkr = row["Ticker"]
+        prev = row["State_prev"]
+        curr = row["State"]
+        if prev == curr:
+            continue  # no change
+
+        lbl = event_label(prev, curr)
+        if lbl is None:
+            continue
+
+        # grab metrics for context
+        floor = df_idx.loc[tkr, "GEX Floor"]
+        ceil  = df_idx.loc[tkr, "GEX Ceiling"]
+        lp    = df_idx.loc[tkr, "Last Price"]
+        dist  = nearest_distance(lp, floor, ceil)
+
+        new_events.append({
+            "Time": stamp,
+            "Ticker": tkr,
+            "Event": lbl,
+            "From": prev,
+            "To": curr,
+            "Last Price": lp,
+            "GEX Floor": floor,
+            "GEX Ceiling": ceil,
+            "Dist to Boundary": dist
+        })
+
+    # persist: append new events & update state
+    if new_events:
+        events = pd.concat([events, pd.DataFrame(new_events)], ignore_index=True)
+        events.to_csv(EVENTS_FILE, index=False)
+
+    curr_state_df.to_csv(STATE_FILE, index=False)
+
+    # ---- UI: feed + filters
+    st.subheader("⚡ GEX Cross Feed")
+
+    # Basic filters
+    colf1, colf2, colf3 = st.columns([2,1,1])
+    with colf1:
+        only_breaches = st.checkbox("Only Breaches (Hit/Break/Through)", value=False)
+    with colf2:
+        show_reentries = st.checkbox("Include Re-entries", value=True)
+    with colf3:
+        max_rows = st.number_input("Rows", min_value=10, max_value=500, value=100, step=10)
+
+    feed = events.copy()
+    # filter logic
+    breaches = ["Hit Floor","Break Ceiling","Through Range Up","Through Range Down"]
+    reenters = ["Re-enter (from Below)","Re-enter (from Above)"]
+    if only_breaches:
+        feed = feed[feed["Event"].isin(breaches)]
+    elif not show_reentries:
+        feed = feed[~feed["Event"].isin(reenters)]
+
+    # newest on top
+    if not feed.empty:
+        feed = feed.sort_values("Time", ascending=False).head(int(max_rows))
+
+        # friendly emojis
+        emoji_map = {
+            "Hit Floor":"🔴",
+            "Break Ceiling":"🟢",
+            "Re-enter (from Below)":"⚪",
+            "Re-enter (from Above)":"⚪",
+            "Through Range Up":"🟢⤴️",
+            "Through Range Down":"🔴⤵️",
+            "Init (Between)":"⚪",
+            "Init (Below)":"🔴",
+            "Init (Above)":"🟢",
+            "Levels Unset":"⚫",
+        }
+        feed["Event"] = feed["Event"].map(lambda x: f"{emoji_map.get(x,'')} {x}".strip())
+
+        # distance formatting
+        def fmt_dist(x):
+            if pd.isna(x): return ""
+            # negative = below floor; positive outside above; inside = positive distance to nearest boundary
+            return f"{x:+.2f}"
+        feed["Dist to Boundary"] = feed["Dist to Boundary"].map(fmt_dist)
+
+        st.dataframe(
+            feed[["Time","Ticker","Event","Last Price","GEX Floor","GEX Ceiling","Dist to Boundary"]],
+            use_container_width=True,
+            hide_index=True
+        )
+    else:
+        st.info("No cross events yet.")
+
+    # maintenance
+    c1, c2 = st.columns([1,1])
+    with c1:
+        if st.button("🧹 Clear Feed (events)"):
+            pd.DataFrame(columns=events.columns).to_csv(EVENTS_FILE, index=False)
+            st.warning("Event feed cleared.")
+    with c2:
+        if st.button("🔄 Reset State (force init on next run)"):
+            if os.path.exists(STATE_FILE):
+                os.remove(STATE_FILE)
+            st.warning("State file removed. Next run will log Init events.")
 
 
 
