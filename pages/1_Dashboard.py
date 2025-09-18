@@ -6944,9 +6944,9 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(scatter_compliance_surge, row=1, col=1)
 
 
-                    (G) Distensibility Alert on Main Plot
+                    #(G) Distensibility Alert on Main Plot
                     
-                    Mask bars that triggered the 🪟 emoji
+                    #Mask bars that triggered the 🪟 emoji
                     mask_distensibility = intraday["Distensibility Alert"] != ""
                     
                     # Plot emoji above price (or F_numeric)but rangebut range
@@ -6965,7 +6965,7 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(scatter_distensibility, row=1, col=1)
 
 
-                    Create a Boolean mask for rows with Stroke Growth ⭐ emojis
+                    #Create a Boolean mask for rows with Stroke Growth ⭐ emojis
                     mask_stroke_growth = intraday["Stroke Growth ⭐"] != ""
                     
                     # Plot Stroke Growth ⭐ emojis just below the F_numeric line
