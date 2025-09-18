@@ -251,8 +251,7 @@ EVENTS_FILE = "gex_events.csv"
 STATE_FILE  = "gex_state.csv"
 
 # optional: auto-refresh the section (milliseconds)
-st.autorefresh(interval=15_000, key="gex_cross_autorefresh")  # 15s; change as you like
-
+ 
 # ---- helpers
 def classify_state(last_price, floor, ceiling):
     if pd.isna(last_price) or pd.isna(floor) or pd.isna(ceiling):
