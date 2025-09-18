@@ -189,6 +189,59 @@ if st.button("🗑 Reset Ledger (Clear Trades)"):
     st.warning("Ledger reset. GEX levels remain untouched ✅")
 
 
+import altair as alt
+import numpy as np
+
+def make_gex_position_df(df):
+    # expects columns: Ticker, GEX Floor, GEX Ceiling, Last Price
+    d = df.copy()
+    d["range"] = d["GEX Ceiling"] - d["GEX Floor"]
+    d["pos"] = (d["Last Price"] - d["GEX Floor"]) / d["range"]  # 0=floor, 1=ceiling
+    # classify
+    def status_row(r):
+        if r["Last Price"] is None or r["range"] <= 0: return "Unset"
+        if r["pos"] < 0: return "Below"
+        if r["pos"] > 1: return "Above"
+        return "Between"
+    d["State"] = d.apply(status_row, axis=1)
+
+    # Distance to nearest boundary; negative if outside (stronger signal)
+    def edge_pressure(r):
+        if r["Last Price"] is None or r["range"] <= 0: return np.nan
+        if r["pos"] < 0: return r["pos"]  # negative
+        if r["pos"] > 1: return 1 - r["pos"]  # negative
+        return -min(r["pos"], 1 - r["pos"])  # closer to edge => more negative
+    d["EdgePressure"] = d.apply(edge_pressure, axis=1)
+    return d
+
+# inside your GEX expander, after building df:
+viz_df = make_gex_position_df(df).dropna(subset=["EdgePressure"]).sort_values("EdgePressure")
+
+color_scale = alt.Scale(
+    domain=["Below","Between","Above","Unset"],
+    range=["#e74c3c","#bdc3c7","#2ecc71","#7f8c8d"]
+)
+
+bars = alt.Chart(viz_df).mark_bar().encode(
+    x=alt.X("pos:Q", title="Position (0=floor, 1=ceiling)", scale=alt.Scale(domain=[-0.2,1.2])),
+    y=alt.Y("Ticker:N", sort=viz_df["Ticker"].tolist()),
+    color=alt.Color("State:N", scale=color_scale, legend=alt.Legend(title="GEX State")),
+    tooltip=[
+        "Ticker:N",
+        alt.Tooltip("Last Price:Q", format=".2f"),
+        alt.Tooltip("GEX Floor:Q", format=".2f"),
+        alt.Tooltip("GEX Ceiling:Q", format=".2f"),
+        alt.Tooltip("pos:Q", title="Dial", format=".2f"),
+        "State:N"
+    ]
+)
+
+rules = alt.Chart(viz_df).mark_rule(strokeDash=[2,2], opacity=0.5).encode(x="value:Q")
+rule_data = pd.DataFrame({"value":[0,1]})
+
+st.subheader("🎯 GEX Dial Leaderboard")
+st.altair_chart((bars + rules.transform_calculate(value="0") + rules.transform_calculate(value="1")), use_container_width=True)
+
 
 # --- Download ledger ---
 csv = ledger.to_csv(index=False).encode("utf-8")
