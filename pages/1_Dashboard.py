@@ -8947,16 +8947,16 @@ if st.sidebar.button("Run Analysis"):
                 # )
                 # fig.add_trace(scatter_40ish, row=1, col=1)
 
-                # up_high_mask = intraday["Y_High_Cross"] == "✈️"
-                # up_high_trace = go.Scatter(
-                #     x=intraday.loc[up_high_mask, "Time"],
-                #     y=intraday.loc[up_high_mask, "F_numeric"] + 70,
-                #     mode="text",
-                #     text=intraday.loc[up_high_mask, "Y_High_Cross"],
-                #     textposition="top center",
-                #     textfont=dict(size=28),
-                #     name="Cross Above Y-High (✈️)"
-                # )
+                up_high_mask = intraday["Y_High_Cross"] == "✈️"
+                up_high_trace = go.Scatter(
+                    x=intraday.loc[up_high_mask, "Time"],
+                    y=intraday.loc[up_high_mask, "F_numeric"] + 70,
+                    mode="text",
+                    text=intraday.loc[up_high_mask, "Y_High_Cross"],
+                    textposition="top center",
+                    textfont=dict(size=28),
+                    name="Cross Above Y-High (✈️)"
+                )
 
                 
                 # breach_mask = intraday["Y_Low_Cross"] == "🛟"
@@ -8982,20 +8982,20 @@ if st.sidebar.button("Run Analysis"):
                 #     name="Cross Above Y-Low (🚣🏽)"
 #                 # )
 
-#                 astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
+                astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
-#                 scatter_astronaut = go.Scatter(
-#                     x=astronaut_points["Time"],
-#                     y=astronaut_points["F_numeric"] + 124,  # Higher offset
-#                     mode="text",
-#                     text=astronaut_points["Astronaut_Emoji"],
-#                     textposition="top center",
-#                     name="New Highs 👨🏽‍🚀",
-#                     textfont=dict(size=21),
-#                  )
+                scatter_astronaut = go.Scatter(
+                    x=astronaut_points["Time"],
+                    y=astronaut_points["F_numeric"] + 124,  # Higher offset
+                    mode="text",
+                    text=astronaut_points["Astronaut_Emoji"],
+                    textposition="top center",
+                    name="New Highs 👨🏽‍🚀",
+                    textfont=dict(size=21),
+                 )
  
-# #                     # Add to figure
-#                 # fig.add_trace(up_high_trace, row=1, col=1)
+#                     # Add to figure
+                # fig.add_trace(up_high_trace, row=1, col=1)
  
 
 
