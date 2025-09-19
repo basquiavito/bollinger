@@ -9781,8 +9781,14 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                 )
 
+                
+                         # Add to figure
+                fig.add_trace(bull_flip_trace, row=1, col=1)
+                fig.add_trace(bear_flip_trace, row=1, col=1)
 
-         
+
+
+
                 fig.update_layout(
                     title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
