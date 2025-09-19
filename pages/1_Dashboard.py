@@ -9838,28 +9838,30 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(bull_flip_trace, row=1, col=1)
                 fig.add_trace(bear_flip_trace, row=1, col=1)
 
-
-                # 🪟 Bull Distensibility Alerts
+                # 🪟 Bull Distensibility Alerts (emoji markers)
                 bull_dist_alerts = go.Scatter(
                     x=intraday["Time"],
                     y=intraday["F%"].where(intraday["Bull_Dist_Alert"] == "🪟"),
-                    mode="markers",
-                    marker=dict(size=16, symbol="triangle-up", color="#00cc66", line=dict(color="black", width=1)),
+                    mode="text",
+                    text=intraday["Bull_Dist_Alert"].where(intraday["Bull_Dist_Alert"] == "🪟"),
+                    textfont=dict(size=20, color="green"),
                     name="🪟 Bull Distensibility",
                     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                 )
                 fig.add_trace(bull_dist_alerts, row=1, col=1)
                 
-                # 🪟 Bear Distensibility Alerts
+                # 🪟 Bear Distensibility Alerts (emoji markers)
                 bear_dist_alerts = go.Scatter(
                     x=intraday["Time"],
                     y=intraday["F%"].where(intraday["Bear_Dist_Alert"] == "🪟"),
-                    mode="markers",
-                    marker=dict(size=16, symbol="triangle-down", color="#cc0000", line=dict(color="black", width=1)),
+                    mode="text",
+                    text=intraday["Bear_Dist_Alert"].where(intraday["Bear_Dist_Alert"] == "🪟"),
+                    textfont=dict(size=20, color="red"),
                     name="🪟 Bear Distensibility",
                     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                 )
                 fig.add_trace(bear_dist_alerts, row=1, col=1)
+
 
 
                 fig.update_layout(
