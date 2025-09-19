@@ -6403,7 +6403,22 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it
                 intraday = calculate_compliance_midas(intraday)
 
-                 
+                def detect_compliance_shift(df, comp_col="Compliance_Midas"):
+                    """
+                    Adds 🫧 emoji where Compliance_Midas shifts from negative to positive.
+                    """
+                    df["Compliance Shift"] = ""
+                    for i in range(1, len(df)):
+                        prev = df[comp_col].iloc[i - 1]
+                        curr = df[comp_col].iloc[i]
+                        if pd.notna(prev) and pd.notna(curr):
+                            if prev < 0 and curr >= 0:
+                                df.at[df.index[i], "Compliance Shift"] = "🫧"
+                    return df
+                
+                # Run it
+                intraday = detect_compliance_shift(intraday, comp_col="Compliance_Midas")
+
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
@@ -6943,15 +6958,16 @@ if st.sidebar.button("Run Analysis"):
 
                     #                   # (E) Compliance Shift Bubbles on Main Plot
                     shift_bubbles = go.Scatter(
-                            x=intraday["Time"],
-                            y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
-                            mode="markers",
-                            marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
-                            name="🫧 Compliance Shift",
-                            hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                        )
-                        
+                    x=intraday["Time"],
+                    y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
+                    mode="markers",
+                    marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                    name="🫧 Compliance Shift",
+                    hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                )
+                
                     fig.add_trace(shift_bubbles, row=1, col=1)
+
                     
                    # (E) Compliance Shift Bubbles on Main Plot
                     shift_bubbles = go.Scatter(
