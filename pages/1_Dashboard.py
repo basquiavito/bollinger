@@ -6424,6 +6424,26 @@ if st.sidebar.button("Run Analysis"):
                 # Apply
                 intraday = mark_compliance_bull_flip(intraday)
 
+                def mark_compliance_bear_flip(df):
+                    """
+                    Marks when Compliance Bear turns negative 
+                    *after* a Bull MIDAS anchor is active.
+                    """
+                    df["Compliance_Bear_Flip"] = ""
+                
+                    if "Compliance_Bear" in df.columns and "MIDAS_Bull" in df.columns:
+                        bull_anchor_idx = df["MIDAS_Bull"].first_valid_index()
+                        if bull_anchor_idx is not None:
+                            for i in range(bull_anchor_idx + 1, len(df)):
+                                prev = df["Compliance_Bear"].iloc[i - 1]
+                                curr = df["Compliance_Bear"].iloc[i]
+                                if pd.notna(prev) and pd.notna(curr):
+                                    if prev >= 0 and curr < 0:
+                                        df.at[df.index[i], "Compliance_Bear_Flip"] = "🌑"  # Bear aura collapse
+                    return df
+                
+                # Apply
+                intraday = mark_compliance_bear_flip(intraday)
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
