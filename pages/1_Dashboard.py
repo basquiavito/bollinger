@@ -6939,30 +6939,57 @@ if st.sidebar.button("Run Analysis"):
                         line=dict(dash="dash",color="#d3d3d3",width=2),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
-
-
-                    #                   # (E) Compliance Shift Bubbles on Main Plot
-                    shift_bubbles = go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
-                    mode="markers",
-                    marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
-                    name="🫧 Compliance Shift",
-                    hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                )
-                
-                    fig.add_trace(shift_bubbles, row=1, col=1)
-
-                    
-                   # (E) Compliance Shift Bubbles on Main Plot
-                    shift_bubbles = go.Scatter(
+                    # 🫧 Bull Compliance Shifts
+                    bull_shift = go.Scatter(
                         x=intraday["Time"],
-                        y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
+                        y=intraday["F%"].where(
+                            (intraday["Compliance_Bull"].shift(1) < 0) & (intraday["Compliance_Bull"] >= 0)
+                        ),
                         mode="markers",
                         marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
-                        name="🫧 Compliance Shift",
+                        name="🐂🫧 Bull Compliance",
                         hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                     )
+                    
+                    # 🫧 Bear Compliance Shifts
+                    bear_shift = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F%"].where(
+                            (intraday["Compliance_Bear"].shift(1) < 0) & (intraday["Compliance_Bear"] >= 0)
+                        ),
+                        mode="markers",
+                        marker=dict(size=14, symbol="circle", color="#ff6699", line=dict(color="white", width=1)),
+                        name="🐻🫧 Bear Compliance",
+                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                    )
+                    
+                    # Add to figure
+                    fig.add_trace(bull_shift, row=1, col=1)
+                    fig.add_trace(bear_shift, row=1, col=1)
+
+
+                #     #                   # (E) Compliance Shift Bubbles on Main Plot
+                #     shift_bubbles = go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
+                #     mode="markers",
+                #     marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                #     name="🫧 Compliance Shift",
+                #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                # )
+                
+                #     fig.add_trace(shift_bubbles, row=1, col=1)
+
+                    
+                #    # (E) Compliance Shift Bubbles on Main Plot
+                #     shift_bubbles = go.Scatter(
+                #         x=intraday["Time"],
+                #         y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
+                #         mode="markers",
+                #         marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                #         name="🫧 Compliance Shift",
+                #         hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                #     )
                     
            
                     # # Create a Boolean mask for rows with surge emojis
