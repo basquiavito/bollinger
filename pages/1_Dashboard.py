@@ -7008,23 +7008,23 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(bear_shift, row=1, col=1)
 
                     
-                    # 💨 Bull Compliance Flip
+                    # 💧 Bull Compliance Flip
                     bull_flip_trace = go.Scatter(
                         x=intraday["Time"],
-                        y=intraday["F%"].where(intraday["Compliance_Bull_Flip"] == "💨"),
+                        y=intraday["F%"].where(intraday["Compliance_Bull_Flip"] == "💧"),
                         mode="markers",
                         marker=dict(size=14, symbol="triangle-down", color="#00ccff", line=dict(color="white", width=1)),
-                        name="💨 Bull Compliance Flip",
+                        name="💧 Bull Compliance Flip",
                         hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                     )
                     
-                    # 🌑 Bear Compliance Flip
+                    # 🌪️ Bear Compliance Flip
                     bear_flip_trace = go.Scatter(
                         x=intraday["Time"],
-                        y=intraday["F%"].where(intraday["Compliance_Bear_Flip"] == "🌑"),
+                        y=intraday["F%"].where(intraday["Compliance_Bear_Flip"] == "🌪️"),
                         mode="markers",
                         marker=dict(size=14, symbol="triangle-up", color="#ff4444", line=dict(color="white", width=1)),
-                        name="🌑 Bear Compliance Flip",
+                        name="🌪️ Bear Compliance Flip",
                         hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                     )
                     
