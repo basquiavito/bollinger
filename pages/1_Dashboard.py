@@ -6402,22 +6402,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply it
                 intraday = calculate_compliance_midas(intraday)
-
-                def detect_compliance_shift(df, comp_col="Compliance_Midas"):
-                    """
-                    Adds 🫧 emoji where Compliance_Midas shifts from negative to positive.
-                    """
-                    df["Compliance Shift"] = ""
-                    for i in range(1, len(df)):
-                        prev = df[comp_col].iloc[i - 1]
-                        curr = df[comp_col].iloc[i]
-                        if pd.notna(prev) and pd.notna(curr):
-                            if prev < 0 and curr >= 0:
-                                df.at[df.index[i], "Compliance Shift"] = "🫧"
-                    return df
-                
-                # Run it
-                intraday = detect_compliance_shift(intraday, comp_col="Compliance_Midas")
+ 
 
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
