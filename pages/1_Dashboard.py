@@ -6776,8 +6776,8 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(tenkan_line, row=1, col=1)
 
 
-                    # intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
-                    # intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
+                    intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
+                    intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
 
 
 
@@ -6898,7 +6898,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% MA"],
                         mode="lines",
-                        line=dict(dash="dash",color="#d3d3d3",width=1),  # Set dash style
+                        line=dict(dash="dash",color="#d3d3d3",width=2),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
 
