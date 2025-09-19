@@ -9548,19 +9548,19 @@ if st.sidebar.button("Run Analysis"):
             # ), row=1, col=1)
 
 
-                # Step 2: Add 💨 to the plot like ☄️
-                fig.add_trace(go.Scatter(
-                    x=vol_aid_times,
-                    y=vol_aid_prices,
-                    mode="text",
-                    text=["💨"] * len(vol_aid_times),
-                    textposition="top center",
-                    textfont=dict(size=21),
-                    name="Volatility Composite 💨",
-                    hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite: %{customdata:.2f}<extra></extra>",
-                    customdata=np.array(vol_aid_values).reshape(-1, 1)
+                # # Step 2: Add 💨 to the plot like ☄️
+                # fig.add_trace(go.Scatter(
+                #     x=vol_aid_times,
+                #     y=vol_aid_prices,
+                #     mode="text",
+                #     text=["💨"] * len(vol_aid_times),
+                #     textposition="top center",
+                #     textfont=dict(size=21),
+                #     name="Volatility Composite 💨",
+                #     hovertemplate="Time: %{x|%H:%M}<br>Volatility Composite: %{customdata:.2f}<extra></extra>",
+                #     customdata=np.array(vol_aid_values).reshape(-1, 1)
 
-                ), row=1, col=1)
+                # ), row=1, col=1)
                 
                 #           # Add 🦻🏼 markers where Ear Cross occurred
                 # ear_crosses = intraday[intraday["🦻🏼_Cross"] == "🦻🏼"]
@@ -9838,29 +9838,29 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(bull_flip_trace, row=1, col=1)
                 fig.add_trace(bear_flip_trace, row=1, col=1)
 
-                # 🪟 Bull Distensibility Alerts (emoji markers)
-                bull_dist_alerts = go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["F%"].where(intraday["Bull_Dist_Alert"] == "🪟"),
-                    mode="text",
-                    text=intraday["Bull_Dist_Alert"].where(intraday["Bull_Dist_Alert"] == "🪟"),
-                    textfont=dict(size=20, color="green"),
-                    name="🪟 Bull Distensibility",
-                    hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                )
-                fig.add_trace(bull_dist_alerts, row=1, col=1)
+                # # 🪟 Bull Distensibility Alerts (emoji markers)
+                # bull_dist_alerts = go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["F%"].where(intraday["Bull_Dist_Alert"] == "🪟"),
+                #     mode="text",
+                #     text=intraday["Bull_Dist_Alert"].where(intraday["Bull_Dist_Alert"] == "🪟"),
+                #     textfont=dict(size=20, color="green"),
+                #     name="🪟 Bull Distensibility",
+                #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                # )
+                # fig.add_trace(bull_dist_alerts, row=1, col=1)
                 
-                # 🪟 Bear Distensibility Alerts (emoji markers)
-                bear_dist_alerts = go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["F%"].where(intraday["Bear_Dist_Alert"] == "🪟"),
-                    mode="text",
-                    text=intraday["Bear_Dist_Alert"].where(intraday["Bear_Dist_Alert"] == "🪟"),
-                    textfont=dict(size=20, color="red"),
-                    name="🪟 Bear Distensibility",
-                    hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                )
-                fig.add_trace(bear_dist_alerts, row=1, col=1)
+                # # 🪟 Bear Distensibility Alerts (emoji markers)
+                # bear_dist_alerts = go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["F%"].where(intraday["Bear_Dist_Alert"] == "🪟"),
+                #     mode="text",
+                #     text=intraday["Bear_Dist_Alert"].where(intraday["Bear_Dist_Alert"] == "🪟"),
+                #     textfont=dict(size=20, color="red"),
+                #     name="🪟 Bear Distensibility",
+                #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                # )
+                # fig.add_trace(bear_dist_alerts, row=1, col=1)
 
 
 
