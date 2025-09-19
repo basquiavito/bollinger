@@ -6403,13 +6403,33 @@ if st.sidebar.button("Run Analysis"):
                 # Apply it
                 intraday = calculate_compliance_midas(intraday)
  
+                def mark_compliance_bull_flip(df):
+                    """
+                    Marks when Compliance Bull turns negative 
+                    *after* a Bear MIDAS anchor is active.
+                    """
+                    df["Compliance_Bull_Flip"] = ""
+                
+                    if "Compliance_Bull" in df.columns and "MIDAS_Bear" in df.columns:
+                        bear_anchor_idx = df["MIDAS_Bear"].first_valid_index()
+                        if bear_anchor_idx is not None:
+                            for i in range(bear_anchor_idx + 1, len(df)):
+                                prev = df["Compliance_Bull"].iloc[i - 1]
+                                curr = df["Compliance_Bull"].iloc[i]
+                                if pd.notna(prev) and pd.notna(curr):
+                                    if prev >= 0 and curr < 0:
+                                        df.at[df.index[i], "Compliance_Bull_Flip"] = "💨"  # Aura collapse
+                    return df
+                
+                # Apply
+                intraday = mark_compliance_bull_flip(intraday)
 
 
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
                                         intraday[[
                                             'Time', price_col, 'Volume',
-                                            'MIDAS_Bear', 'MIDAS_Bull',"Compliance_Bull","Compliance_Bear","Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bear', 'MIDAS_Bull',"Compliance_Bull","Compliance_Bear","Compliance_Bull_Flip","Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
                                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
                                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
                                         ]]
