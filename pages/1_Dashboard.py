@@ -9766,7 +9766,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["F_numeric"].where(intraday["Compliance_Bull_Flip"] == "💨"),
                     mode="markers",
-                    marker=dict(size=200, symbol="triangle-down", color="#00ccff", line=dict(color="white", width=1)),
+                    marker=dict(size=20, symbol="triangle-down", color="#00ccff", line=dict(color="white", width=1)),
                     name="💨 Bull Compliance Flip",
                     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                 )
@@ -9776,7 +9776,7 @@ if st.sidebar.button("Run Analysis"):
                     x=intraday["Time"],
                     y=intraday["F_numeric"].where(intraday["Compliance_Bear_Flip"] == "🌑"),
                     mode="markers",
-                    marker=dict(size=200, symbol="triangle-up", color="#ff4444", line=dict(color="white", width=1)),
+                    marker=dict(size=20, symbol="triangle-up", color="#ff4444", line=dict(color="white", width=1)),
                     name="🌑 Bear Compliance Flip",
                     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
                 )
