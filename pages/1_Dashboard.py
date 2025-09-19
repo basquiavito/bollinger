@@ -6364,19 +6364,57 @@ if st.sidebar.button("Run Analysis"):
                 
                             # Optional for hover
                             intraday.loc[peak_idx, "Energy_Aid_Value"] = energy_val
+                def calculate_compliance_midas(df, bbw_col="F% BBW", vol_col="RVOL_5"):
+                    """
+                    Calculate Compliance relative to MIDAS anchors.
+                    - Bull: anchor at min
+                    - Bear: anchor at max
+                    Compliance = (BBW - BBW_at_anchor) / RVOL_5
+                    """
+                
+                    # Initialize columns
+                    df["Compliance_Bull"] = np.nan
+                    df["Compliance_Bear"] = np.nan
+                
+                    # --- 🐂 Bull Midas ---
+                    if "MIDAS_Bull" in df.columns:
+                        # Anchor index
+                        bull_anchor_idx = df["MIDAS_Bull"].first_valid_index()
+                        if bull_anchor_idx is not None:
+                            bbw_anchor = df.loc[bull_anchor_idx, bbw_col]
+                            # Compliance from anchor forward
+                            df.loc[bull_anchor_idx:, "Compliance_Bull"] = (
+                                (df.loc[bull_anchor_idx:, bbw_col] - bbw_anchor) /
+                                df.loc[bull_anchor_idx:, vol_col].replace(0, np.nan)
+                            )
+                
+                    # --- 🐻 Bear Midas ---
+                    if "MIDAS_Bear" in df.columns:
+                        bear_anchor_idx = df["MIDAS_Bear"].first_valid_index()
+                        if bear_anchor_idx is not None:
+                            bbw_anchor = df.loc[bear_anchor_idx, bbw_col]
+                            df.loc[bear_anchor_idx:, "Compliance_Bear"] = (
+                                (df.loc[bear_anchor_idx:, bbw_col] - bbw_anchor) /
+                                df.loc[bear_anchor_idx:, vol_col].replace(0, np.nan)
+                            )
+                
+                    return df
+                
+                # Apply it
+                intraday = calculate_compliance_midas(intraday)
 
                  
 
-     #            with st.expander("🪞 MIDAS Anchor Table", expanded=False):
-     #                                st.dataframe(
-     #                                    intraday[[
-     #                                        'Time', price_col, 'Volume',
-     #                                        'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
-     #                                        'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
-     #                                        'Bull_Midas_Wake', 'Bear_Midas_Wake'
-     #                                    ]]
-     #                                    .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
-     #                                    .reset_index(drop=True))
+                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
+                                    st.dataframe(
+                                        intraday[[
+                                            'Time', price_col, 'Volume',
+                                            'MIDAS_Bear', 'MIDAS_Bull',"Compliance_Bull","Compliance_Bear","Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
+                                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
+                                        ]]
+                                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+                                        .reset_index(drop=True))
                          
 
      #            with st.expander("📈 Option Price Elasticity (PE)", expanded=True):
