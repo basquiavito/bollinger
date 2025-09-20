@@ -6825,7 +6825,7 @@ if st.sidebar.button("Run Analysis"):
                         else:
                             i += 1
                     
-                    draw one translucent band per region
+                    #draw one translucent band per region
                     ymin = intraday["Cumulative_Unit"].min()
                     ymax = intraday["Cumulative_Unit"].max()
                     for (a,b) in regions:
