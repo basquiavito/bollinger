@@ -6797,6 +6797,40 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate="🛑 Brake<br>z(Jerk)=%{customdata[0]:.2f}<extra></extra>",
                         customdata=intraday.loc( )[brk_mask][["z_jerk"]].values
                     ))
+
+
+
+                 # find contiguous regions where z_vcomp < -1
+                    low = intraday["z_vcomp"] < -1.0
+                    regions = []
+                    i = 0
+                    while i < len(low):
+                        if low.iat[i]:
+                            j = i
+                            while j < len(low) and low.iat[j]:
+                                j += 1
+                            # extend until mean reverts above -0.5 to avoid micro-flicker
+                            k = j
+                            while k < len(low) and intraday["z_vcomp"].iat[k] < -0.5:
+                                k += 1
+                            regions.append((i, k-1))
+                            i = k
+                        else:
+                            i += 1
+                    
+                    # draw one translucent band per region
+                    ymin = intraday["Cumulative_Unit"].min()
+                    ymax = intraday["Cumulative_Unit"].max()
+                    for (a,b) in regions:
+                        x0 = intraday["Time"].iat[a]
+                        x1 = intraday["Time"].iat[b]
+                        fig_displacement.add_vrect(
+                            x0=x0, x1=x1,
+                            fillcolor="purple", opacity=0.12, line_width=0,
+                            annotation_text="coil", annotation_position="top left",
+                            annotation_font=dict(color="purple", size=10)
+                        )
+
                     #                     # --- Extract top 3 positive and negative Velocity points ---
                     # velocity_data = intraday.copy()
                     # velocity_data["Velocity_Num"] = pd.to_numeric(velocity_data["Velocity"].str.replace("%", ""), errors="coerce")
