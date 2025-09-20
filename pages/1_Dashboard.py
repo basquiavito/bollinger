@@ -1799,7 +1799,14 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday["BRAKE"] = armed_cross_down(intraday["z_jerk"], down=-2.0, up=-1.0)
 
-
+       
+                rng3 = intraday["Range"].rolling(3, min_periods=3).sum()
+                intraday["Force_per_3bar_Range"] = (
+                      pd.to_numeric(intraday.get("Vector Force"), errors="coerce").fillna(0) / rng3.replace(0, np.nan)
+                  )
+              
+                vec_idx = intraday.index[intraday.index % 3 == 2]  # your 3rd bars
+                eff = intraday.loc[vec_idx, "Force_per_3bar_Range"].astype(float)
 
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
                     """
@@ -6831,15 +6838,7 @@ if st.sidebar.button("Run Analysis"):
                             annotation_font=dict(color="purple", size=10)
                         )
                       # compute efficiency if not present
-                    if "Force_per_3bar_Range" not in intraday.columns:
-                        # fallback quick calc
-                        rng3 = intraday["Range"].rolling(3, min_periods=3).sum()
-                        intraday["Force_per_3bar_Range"] = (
-                            pd.to_numeric(intraday.get("Vector Force"), errors="coerce").fillna(0) / rng3.replace(0, np.nan)
-                        )
-                    
-                    vec_idx = intraday.index[intraday.index % 3 == 2]  # your 3rd bars
-                    eff = intraday.loc[vec_idx, "Force_per_3bar_Range"].astype(float)
+             
                     
                     fig_displacement.add_trace(go.Scatter(
                         x=intraday.loc[vec_idx, "Time"],
