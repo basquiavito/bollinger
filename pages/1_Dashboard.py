@@ -6825,30 +6825,30 @@ if st.sidebar.button("Run Analysis"):
                         else:
                             i += 1
                     
-                    # draw one translucent band per region
-                    # ymin = intraday["Cumulative_Unit"].min()
-                    # ymax = intraday["Cumulative_Unit"].max()
-                    # for (a,b) in regions:
-                    #     x0 = intraday["Time"].iat[a]
-                    #     x1 = intraday["Time"].iat[b]
-                    #     fig_displacement.add_vrect(
-                    #         x0=x0, x1=x1,
-                    #         fillcolor="purple", opacity=0.12, line_width=0,
-                    #         annotation_text="coil", annotation_position="top left",
-                    #         annotation_font=dict(color="purple", size=10)
-                    #     )
-                    #   # compute efficiency if not present
+                    draw one translucent band per region
+                    ymin = intraday["Cumulative_Unit"].min()
+                    ymax = intraday["Cumulative_Unit"].max()
+                    for (a,b) in regions:
+                        x0 = intraday["Time"].iat[a]
+                        x1 = intraday["Time"].iat[b]
+                        fig_displacement.add_vrect(
+                            x0=x0, x1=x1,
+                            fillcolor="purple", opacity=0.12, line_width=0,
+                            annotation_text="coil", annotation_position="top left",
+                            annotation_font=dict(color="purple", size=10)
+                        )
+                      # compute efficiency if not present
              
                     
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=intraday.loc[vec_idx, "Time"],
-                    #     y=intraday.loc[vec_idx, "Cumulative_Unit"] + 0.02*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
-                    #     mode="text",
-                    #     text=[f"{v:+.1f}×" if np.isfinite(v) else "" for v in eff],
-                    #     textfont=dict(size=11, color="rgba(255,255,255,0.7)"),
-                    #     showlegend=False,
-                    #     hovertemplate="Efficiency: %{text}<extra></extra>"
-                    # ))
+                    fig_displacement.add_trace(go.Scatter(
+                        x=intraday.loc[vec_idx, "Time"],
+                        y=intraday.loc[vec_idx, "Cumulative_Unit"] + 0.02*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
+                        mode="text",
+                        text=[f"{v:+.1f}×" if np.isfinite(v) else "" for v in eff],
+                        textfont=dict(size=11, color="rgba(255,255,255,0.7)"),
+                        showlegend=False,
+                        hovertemplate="Efficiency: %{text}<extra></extra>"
+                    ))
 
                     #                     # --- Extract top 3 positive and negative Velocity points ---
                     # velocity_data = intraday.copy()
