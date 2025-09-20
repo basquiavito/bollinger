@@ -7762,58 +7762,58 @@ if st.sidebar.button("Run Analysis"):
                         line=dict(dash="dash",color="#d3d3d3",width=2),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
-                    # 🫧 Bull Compliance Shifts
-                    bull_shift = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["F%"].where(
-                            (intraday["Compliance_Bull"].shift(1) < 0) & (intraday["Compliance_Bull"] >= 0)
-                        ),
-                        mode="markers",
-                        marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
-                        name="🐂🫧 Bull Compliance",
-                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                    )
+                    # # 🫧 Bull Compliance Shifts
+                    # bull_shift = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["F%"].where(
+                    #         (intraday["Compliance_Bull"].shift(1) < 0) & (intraday["Compliance_Bull"] >= 0)
+                    #     ),
+                    #     mode="markers",
+                    #     marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                    #     name="🐂🫧 Bull Compliance",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                    # )
                     
-                    # 🫧 Bear Compliance Shifts
-                    bear_shift = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["F%"].where(
-                            (intraday["Compliance_Bear"].shift(1) < 0) & (intraday["Compliance_Bear"] >= 0)
-                        ),
-                        mode="markers",
-                        marker=dict(size=14, symbol="circle", color="#ff6699", line=dict(color="white", width=1)),
-                        name="🐻🫧 Bear Compliance",
-                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                    )
+                    # # 🫧 Bear Compliance Shifts
+                    # bear_shift = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["F%"].where(
+                    #         (intraday["Compliance_Bear"].shift(1) < 0) & (intraday["Compliance_Bear"] >= 0)
+                    #     ),
+                    #     mode="markers",
+                    #     marker=dict(size=14, symbol="circle", color="#ff6699", line=dict(color="white", width=1)),
+                    #     name="🐻🫧 Bear Compliance",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                    # )
                     
-                    # Add to figure
-                    fig.add_trace(bull_shift, row=1, col=1)
-                    fig.add_trace(bear_shift, row=1, col=1)
+                    # # Add to figure
+                    # fig.add_trace(bull_shift, row=1, col=1)
+                    # fig.add_trace(bear_shift, row=1, col=1)
 
                     
-                    # 💧 Bull Compliance Flip
-                    bull_flip_trace = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["F%"].where(intraday["Compliance_Bull_Flip"] == "💧"),
-                        mode="markers",
-                        marker=dict(size=40, symbol="triangle-down", color="#00ccff", line=dict(color="white", width=1)),
-                        name="💧 Bull Compliance Flip",
-                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                    )
+                    # # 💧 Bull Compliance Flip
+                    # bull_flip_trace = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["F%"].where(intraday["Compliance_Bull_Flip"] == "💧"),
+                    #     mode="markers",
+                    #     marker=dict(size=40, symbol="triangle-down", color="#00ccff", line=dict(color="white", width=1)),
+                    #     name="💧 Bull Compliance Flip",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                    # )
                     
-                    # 🌪️ Bear Compliance Flip
-                    bear_flip_trace = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["F%"].where(intraday["Compliance_Bear_Flip"] == "🌪️"),
-                        mode="markers",
-                        marker=dict(size=40, symbol="triangle-up", color="#ff4444", line=dict(color="white", width=1)),
-                        name="🌪️ Bear Compliance Flip",
-                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                    )
+                    # # 🌪️ Bear Compliance Flip
+                    # bear_flip_trace = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["F%"].where(intraday["Compliance_Bear_Flip"] == "🌪️"),
+                    #     mode="markers",
+                    #     marker=dict(size=40, symbol="triangle-up", color="#ff4444", line=dict(color="white", width=1)),
+                    #     name="🌪️ Bear Compliance Flip",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                    # )
                     
-                    # Add to figure
-                    fig.add_trace(bull_flip_trace, row=1, col=1)
-                    fig.add_trace(bear_flip_trace, row=1, col=1)
+                    # # Add to figure
+                    # fig.add_trace(bull_flip_trace, row=1, col=1)
+                    # fig.add_trace(bear_flip_trace, row=1, col=1)
 
 
 
@@ -8946,18 +8946,18 @@ if st.sidebar.button("Run Analysis"):
                 #     showlegend=True
                 # ))
 
-                emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
+                # emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
   
-                fig.add_trace(go.Scatter(
-                    x=emoji_df["TimeIndex"],
-                    y=emoji_df["F_numeric"] - 24,
-                    mode="text",
-                    text=emoji_df["Mike_Kijun_Bee_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=18),
-                    name="Mike x Kijun + Bees",
-                    showlegend=True
-                ))
+                # fig.add_trace(go.Scatter(
+                #     x=emoji_df["TimeIndex"],
+                #     y=emoji_df["F_numeric"] - 24,
+                #     mode="text",
+                #     text=emoji_df["Mike_Kijun_Bee_Emoji"],
+                #     textposition="top center",
+                #     textfont=dict(size=18),
+                #     name="Mike x Kijun + Bees",
+                #     showlegend=True
+                # ))
           
                 # # 🌋 Magma Pass Plot (Mike x Kijun + ATR Expansion)
 
@@ -9008,39 +9008,39 @@ if st.sidebar.button("Run Analysis"):
                     )
                  ), row=1, col=1)
 
-                # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
-                bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
-                fig.add_trace(go.Scatter(
-                    x=bear_lethal_rows["TimeIndex"],
-                    y=bear_lethal_rows["F_numeric"] - 40,  # Offset below Mike for clarity
-                    mode="text",
-                    text=["🥊"] * len(bear_lethal_rows),
-                    textposition="bottom right",
-                    textfont=dict(size=14),
-                    showlegend=False,
-                    hovertemplate=(
-                        "🥊 Bear Lethal Acceleration<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        "F%: %{y:.2f}<extra></extra>"
-                    )
-                ), row=1, col=1)
+                # # 🥊 Bear Lethal Acceleration = strong downward force after MIDAS Bear breach
+                # bear_lethal_rows = intraday[intraday["Bear_Lethal_Accel"] == "🥊"]
+                # fig.add_trace(go.Scatter(
+                #     x=bear_lethal_rows["TimeIndex"],
+                #     y=bear_lethal_rows["F_numeric"] - 40,  # Offset below Mike for clarity
+                #     mode="text",
+                #     text=["🥊"] * len(bear_lethal_rows),
+                #     textposition="bottom right",
+                #     textfont=dict(size=14),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "🥊 Bear Lethal Acceleration<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         "F%: %{y:.2f}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
 
-                # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
-                bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
-                fig.add_trace(go.Scatter(
-                    x=bull_lethal_rows["TimeIndex"],
-                    y=bull_lethal_rows["F_numeric"] + 40,  # Offset above Mike for clarity
-                    mode="text",
-                    text=["🚀"] * len(bull_lethal_rows),
-                    textposition="top right",
-                    textfont=dict(size=14),
-                    showlegend=False,
-                    hovertemplate=(
-                        "🚀 Bull Lethal Acceleration<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        "F%: %{y:.2f}<extra></extra>"
-                    )
-                ), row=1, col=1)
+                # # 🚀 Bull Lethal Acceleration = strong breakout upward beyond MIDAS Bull
+                # bull_lethal_rows = intraday[intraday["Bull_Lethal_Accel"] == "🚀"]
+                # fig.add_trace(go.Scatter(
+                #     x=bull_lethal_rows["TimeIndex"],
+                #     y=bull_lethal_rows["F_numeric"] + 40,  # Offset above Mike for clarity
+                #     mode="text",
+                #     text=["🚀"] * len(bull_lethal_rows),
+                #     textposition="top right",
+                #     textfont=dict(size=14),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "🚀 Bull Lethal Acceleration<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         "F%: %{y:.2f}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
 
 
                 # Wake-up Emojis 📈
@@ -9462,28 +9462,28 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_rook_up, row=1, col=1)
                 fig.add_trace(scatter_rook_down, row=1, col=1)
 
-                mask_tenkan_cross_up = (
-                    (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
-                    (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
-                )
+                # mask_tenkan_cross_up = (
+                #     (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
+                #     (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
+                # )
                 
-                # Create a new column with the emoji (optional but clean)
-                intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
+                # # Create a new column with the emoji (optional but clean)
+                # intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
                 
-                # Scatter plot for 🫆 (slightly above F_numeric)
-                scatter_tenkan_cross_up = go.Scatter(
-                    x=intraday.loc[mask_tenkan_cross_up, "Time"],
-                    y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
-                    mode="text",
-                    text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
-                    textposition="top right",
-                    textfont=dict(size=24, color="orange"),
-                    name="Tenkan Cross MIDAS Bull (🧲)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
-                )
+                # # Scatter plot for 🫆 (slightly above F_numeric)
+                # scatter_tenkan_cross_up = go.Scatter(
+                #     x=intraday.loc[mask_tenkan_cross_up, "Time"],
+                #     y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
+                #     mode="text",
+                #     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
+                #     textposition="top right",
+                #     textfont=dict(size=24, color="orange"),
+                #     name="Tenkan Cross MIDAS Bull (🧲)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
+                # )
                 
-                # Add to figure
-                fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
+                # # Add to figure
+                # fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
 
 
  
@@ -9608,28 +9608,28 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
   
                          # Mask for Tenkan_F crossing down through MIDAS_Bear
-                mask_tenkan_cross_down = (
-                    (intraday["Tenkan_F"].shift(1) > intraday["MIDAS_Bear"].shift(1)) &
-                    (intraday["Tenkan_F"] <= intraday["MIDAS_Bear"])
-                )
+                # mask_tenkan_cross_down = (
+                #     (intraday["Tenkan_F"].shift(1) > intraday["MIDAS_Bear"].shift(1)) &
+                #     (intraday["Tenkan_F"] <= intraday["MIDAS_Bear"])
+                # )
                 
-                # Create a new column with the emoji (optional but clean)
-                intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
+                # # Create a new column with the emoji (optional but clean)
+                # intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
                 
-                # Scatter plot for 🕸️ (slightly below F_numeric)
-                scatter_tenkan_cross_down = go.Scatter(
-                    x=intraday.loc[mask_tenkan_cross_down, "Time"],
-                    y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 20,
-                    mode="text",
-                    text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
-                    textposition="bottom right",
-                    textfont=dict(size=28, color="black"),
-                    name="Tenkan Cross MIDAS Bear (🕸️)",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
-                )
+                # # Scatter plot for 🕸️ (slightly below F_numeric)
+                # scatter_tenkan_cross_down = go.Scatter(
+                #     x=intraday.loc[mask_tenkan_cross_down, "Time"],
+                #     y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 20,
+                #     mode="text",
+                #     text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
+                #     textposition="bottom right",
+                #     textfont=dict(size=28, color="black"),
+                #     name="Tenkan Cross MIDAS Bear (🕸️)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
+                # )
                 
-                # Add to figure
-                fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
+                # # Add to figure
+                # fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
 
 
    
@@ -9666,33 +9666,33 @@ if st.sidebar.button("Run Analysis"):
 
               
 
-                            # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
-                wing_mask = intraday["wing_emoji"] == "🪽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[wing_mask, "TimeIndex"],
-                    y=intraday.loc[wing_mask, "F_numeric"] + 35,
-                    mode="text",
-                    text=intraday.loc[wing_mask, "wing_emoji"],
-                    textposition="top center",
-                    textfont=dict(size=26, color="green"),
-                    name="Wing 🪽",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
-                ), row=1, col=1)
-              # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
+              #               # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
+              #   wing_mask = intraday["wing_emoji"] == "🪽"
+              #   fig.add_trace(go.Scatter(
+              #       x=intraday.loc[wing_mask, "TimeIndex"],
+              #       y=intraday.loc[wing_mask, "F_numeric"] + 35,
+              #       mode="text",
+              #       text=intraday.loc[wing_mask, "wing_emoji"],
+              #       textposition="top center",
+              #       textfont=dict(size=26, color="green"),
+              #       name="Wing 🪽",
+              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
+              #   ), row=1, col=1)
+              # # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
 
 
 
-                bat_mask = intraday["bat_emoji"] == "🪽"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[bat_mask, "TimeIndex"],
-                    y=intraday.loc[bat_mask, "F_numeric"] - 35,
-                    mode="text",
-                    text=intraday.loc[bat_mask, "bat_emoji"],
-                    textposition="bottom center",
-                    textfont=dict(size=26, color="red"),
-                    name="Bat 🪽",
-                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
-                ), row=1, col=1)
+              #   bat_mask = intraday["bat_emoji"] == "🪽"
+              #   fig.add_trace(go.Scatter(
+              #       x=intraday.loc[bat_mask, "TimeIndex"],
+              #       y=intraday.loc[bat_mask, "F_numeric"] - 35,
+              #       mode="text",
+              #       text=intraday.loc[bat_mask, "bat_emoji"],
+              #       textposition="bottom center",
+              #       textfont=dict(size=26, color="red"),
+              #       name="Bat 🪽",
+              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
+              #   ), row=1, col=1)
 
   
         
