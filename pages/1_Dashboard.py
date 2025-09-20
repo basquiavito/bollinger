@@ -1785,7 +1785,22 @@ if st.sidebar.button("Run Analysis"):
                 intraday["z_jerk"]  = zscore(jerk_w).clip(-4, 4)
                 intraday["z_vcomp"] = zscore(vcomp_w).clip(-4, 4)
 
-                
+                def armed_cross_down(series, down=-2.0, up=-1.0):
+                    hit = np.zeros(len(series), dtype=bool)
+                    armed = True
+                    for i in range(1, len(series)):
+                        prev, curr = series.iat[i-1], series.iat[i]
+                        if armed and curr < down and prev >= down:
+                            hit[i] = True
+                            armed = False
+                        elif not armed and curr > up:
+                            armed = True
+                    return hit
+
+                intraday["BRAKE"] = armed_cross_down(intraday["z_jerk"], down=-2.0, up=-1.0)
+
+
+
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
                     """
                     Detects call/put speed explosions using a ratio test and percentile filter.
@@ -6767,6 +6782,21 @@ if st.sidebar.button("Run Analysis"):
                         hovertemplate="🔋 Ignition<br>z(Vector Energy)=%{customdata[0]:.2f}<extra></extra>",
                         customdata=intraday.loc( )[ign_mask][["z_vecE"]].values
                          ))
+
+
+
+                    brk_mask = intraday["BRAKE"]
+                    fig_displacement.add_trace(go.Scatter(
+                        x=intraday.loc( )[brk_mask]["Time"],
+                        y=intraday.loc( )[brk_mask]["Cumulative_Unit"] - 0.05*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
+                        mode="text",
+                        text=["🛑"] * brk_mask.sum(),
+                        textfont=dict(size=18),
+                        name="Brake",
+                        showlegend=False,
+                        hovertemplate="🛑 Brake<br>z(Jerk)=%{customdata[0]:.2f}<extra></extra>",
+                        customdata=intraday.loc( )[brk_mask][["z_jerk"]].values
+                    ))
                     #                     # --- Extract top 3 positive and negative Velocity points ---
                     # velocity_data = intraday.copy()
                     # velocity_data["Velocity_Num"] = pd.to_numeric(velocity_data["Velocity"].str.replace("%", ""), errors="coerce")
