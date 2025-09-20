@@ -7536,7 +7536,7 @@ if st.sidebar.button("Run Analysis"):
                     fig = make_subplots(
                         rows=3,
                         cols=1,
-                        row_heights=[0.50, 0.25, 0.25],  # top = 75%, bottom = 25%
+                        row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
 
                         vertical_spacing=0.03,
                         subplot_titles=("Mike Volatility", "Option Flow (Call/Put)","Option vs MIDAS"),
@@ -10730,7 +10730,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_layout(
                     title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=2000,  # Increase overall figure height (default ~450-600)
+                    height=3000,  # Increase overall figure height (default ~450-600)
                     showlegend=True,
                 
 
