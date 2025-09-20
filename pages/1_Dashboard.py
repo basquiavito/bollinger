@@ -5240,80 +5240,131 @@ if st.sidebar.button("Run Analysis"):
                     intraday.loc[last_swimmer_idx, "Swimmer_Emoji"] = "🦑"
 
 
-            
+
+ 
                 
-                def clamp(x, lo, hi): 
+                # ----------------------------
+                # 0) CONFIG (tune to taste)
+                # ----------------------------
+                OMEN_CFG = dict(
+                    bb_window=20,          # F%-BB window
+                    kijun_period=26,       # Kijun period (in bars)
+                    rvol_gate=1.20,        # min RVOL_5 to allow an omen
+                    zE_gate=1.5,           # min z(Vector Energy) for impulse
+                    zJ_gate=2.0,           # min z(Jerk) for impulse
+                    body_min=0.40,         # body% of range toward edge
+                    prox_cap=0.50,         # normalize proximity (0=at edge, 0.5=fairly far)
+                    near_threshold=0.25    # within 25% of edge counts as "Near Omen"
+                )
+                
+                # ----------------------------
+                # 1) F%-space helpers
+                # ----------------------------
+                def to_f_space(df, prev_close, open_col="Open", high_col="High", low_col="Low", close_col="Close"):
+                    """Add F%-space OHLC columns: F_open/F_high/F_low/F_close and F_numeric=F_close."""
+                    pc = float(prev_close)
+                    out = df.copy()
+                    out["F_open"]  = (out[open_col]  - pc) / pc * 10000
+                    out["F_high"]  = (out[high_col]  - pc) / pc * 10000
+                    out["F_low"]   = (out[low_col]   - pc) / pc * 10000
+                    out["F_close"] = (out[close_col] - pc) / pc * 10000
+                    out["F_numeric"] = out["F_close"]
+                    return out
+                
+                def add_f_bbands(df, window=20):
+                    """Bollinger Bands on F%-close."""
+                    out = df.copy()
+                    ma  = out["F_numeric"].rolling(window, min_periods=1).mean()
+                    sd  = out["F_numeric"].rolling(window, min_periods=1).std()
+                    out["F% MA"]    = ma
+                    out["F% Std"]   = sd
+                    out["F% Upper"] = ma + 2*sd
+                    out["F% Lower"] = ma - 2*sd
+                    return out
+                
+                def add_kijun_f(df, period=26):
+                    """Kijun computed in price space then mapped to F%-space via same prev_close baseline."""
+                    out = df.copy()
+                    hh = out["High"].rolling(period, min_periods=1).max()
+                    ll = out["Low"].rolling(period, min_periods=1).min()
+                    kijun_price = (hh + ll) / 2.0
+                    # map to F%-space using same baseline as F_open/F_close
+                    # baseline is the session prev_close used earlier; recover from first-row inverse transform:
+                    # safer: reuse F%-mapping formula with provided prev_close when calling to_f_space()
+                    # here we infer baseline by reversing F_close if necessary:
+                    if "Baseline_PrevClose" in out.columns:
+                        pc = float(out["Baseline_PrevClose"].iloc[0])
+                    else:
+                        # best-effort inference (optional): use first row Close / (1 + F_close/10000)
+                        # but strongly recommend passing Baseline_PrevClose column if you have it.
+                        pc = float(out["Close"].iloc[0] / (1 + out["F_close"].iloc[0]/10000.0))
+                    out["Kijun_F"] = (kijun_price - pc) / pc * 10000
+                    return out
+                
+                # ----------------------------
+                # 2) Omen core (row scorer)
+                # ----------------------------
+                def _clamp(x, lo, hi):
                     return np.minimum(np.maximum(x, lo), hi)
                 
-                def omen_score_row(r, prox_cap=0.5):
-                    """
-                    Expects columns:
-                      F_numeric, F% Upper, F% Lower, Kijun_F, Open, High, Low, Close,
-                      RVOL_5, z_vecE, z_jerk
-                    Returns (strength, label)
-                    """
-                    # ---------------- basics ----------------
-                    kijun   = r["Kijun_F"]
-                    f_up    = r["F% Upper"]
-                    f_lo    = r["F% Lower"]
-                    f       = r["F_numeric"]
-                    o, h, l, c = r["Open"], r["High"], r["Low"], r["Close"]
-                    rvol    = float(r.get("RVOL_5", 0) or 0)
-                    zE      = float(r.get("z_vecE", 0) or 0)
-                    zJ      = float(r.get("z_jerk", 0) or 0)
+                def omen_score_row_F(r, cfg=OMEN_CFG):
+                    kijun = r["Kijun_F"]
+                    f_up  = r["F% Upper"]
+                    f_lo  = r["F% Lower"]
                 
-                    # band geometry
-                    half_bw = 0.5 * max((f_up - f_lo), 1e-9)   # avoid div/0
-                    # proximity to nearest edge, normalized by half band width
+                    fo, fh, fl, fc = r["F_open"], r["F_high"], r["F_low"], r["F_close"]
+                    f = fc
+                
+                    rvol = float(r.get("RVOL_5", 0) or 0)
+                    zE   = float(r.get("z_vecE", 0) or 0)
+                    zJ   = float(r.get("z_jerk", 0) or 0)
+                
+                    # band geometry, proximity normalized by half bandwidth
+                    half_bw = 0.5 * max((f_up - f_lo), 1e-9)
                     dist_up = abs(f_up - f)
                     dist_lo = abs(f - f_lo)
                     dist    = min(dist_up, dist_lo)
-                    prox    = clamp(dist / half_bw, 0.0, prox_cap)  # 0=at edge, 0.5=far
-                    tagged  = (h >= f_up) or (l <= f_lo)
-                    near    = (prox <= 0.25)  # within 25% of edge
+                    prox    = _clamp(dist / half_bw, 0.0, cfg["prox_cap"])          # 0=at edge
+                    tagged  = (fh >= f_up) or (fl <= f_lo)
+                    near    = (prox <= cfg["near_threshold"])
                 
-                    # direction: cross & close beyond Kijun
-                    crossed_up   = (o < kijun) and (c > kijun)
-                    crossed_down = (o > kijun) and (c < kijun)
+                    # direction (close must finish beyond Kijun)
+                    crossed_up   = (fo < kijun) and (fc > kijun)
+                    crossed_down = (fo > kijun) and (fc < kijun)
                 
-                    # body dominance toward touched side
-                    rng  = max(h - l, 1e-9)
-                    body = abs(c - o)
-                    body_ok = (body / rng) >= 0.40
-                    # "toward edge": for up-cross, close near upper edge; for down-cross, close near lower edge
+                    # body dominance toward nearest edge
+                    rngF  = max(fh - fl, 1e-9)
+                    bodyF = abs(fc - fo)
+                    body_ok = (bodyF / rngF) >= cfg["body_min"]
                     toward_up   = dist_up <= dist_lo
                     toward_down = dist_lo <  dist_up
                     body_toward = (crossed_up and toward_up) or (crossed_down and toward_down)
                 
                     # gates
-                    fuel_ok    = (rvol >= 1.2)                         # "horse"
-                    impulse_ok = (zE >= 1.5) or (zJ >= 2.0)
+                    fuel_ok    = (rvol >= cfg["rvol_gate"])
+                    impulse_ok = (zE >= cfg["zE_gate"]) or (zJ >= cfg["zJ_gate"])
                 
-                    # score components (0–100)
+                    # score (0–100)
                     score = 0.0
-                    # 1) direction proof (close beyond kijun)
                     if crossed_up or crossed_down:
-                        score += 25
+                        score += 25.0
                 
-                    # 2) band proximity (0 at 0.5, 25 at 0.0; tag = full 25)
                     if tagged:
-                        score += 25
+                        score += 25.0
                     else:
-                        # linear from prox_cap→0 maps to 0→25
-                        score += (1.0 - prox / prox_cap) * 25.0
+                        score += (1.0 - prox / cfg["prox_cap"]) * 25.0  # closer → more
                 
-                    # 3) fuel (RVOL linearly from 1.0→1.8 → 0→20)
-                    score += clamp((rvol - 1.0) / (1.8 - 1.0), 0.0, 1.0) * 20.0
+                    # RVOL from 1.0→1.8 → 0→20
+                    score += _clamp((rvol - 1.0) / 0.8, 0.0, 1.0) * 20.0
                 
-                    # 4) impulse (max of zE or zJ, each clamped 0→3, scaled to 20 total)
-                    imp_unit = max(clamp(zE, 0, 3), clamp(zJ, 0, 3)) / 3.0
+                    # impulse (max of zE or zJ), clamp 0→3 → 0→20
+                    imp_unit = max(_clamp(zE, 0, 3), _clamp(zJ, 0, 3)) / 3.0
                     score += imp_unit * 20.0
                 
-                    # 5) body dominance toward edge
                     if body_ok and body_toward:
                         score += 10.0
                 
-                    # label logic
+                    # labels
                     label = ""
                     if (crossed_up or crossed_down) and fuel_ok and impulse_ok:
                         if tagged:
@@ -5321,39 +5372,58 @@ if st.sidebar.button("Run Analysis"):
                         elif near:
                             label = "⚠️ Near Omen"
                 
-                    return round(score, 1), label
+                    direction = ""
+                    if label:
+                        direction = "bull" if crossed_up else ("bear" if crossed_down else "")
                 
-                def compute_omen(df):
-                    # apply row-wise
-                    out = df.apply(omen_score_row, axis=1, result_type="expand")
-                    df["Omen_Strength"] = out[0]
-                    df["Omen_Label"]    = out[1]
+                    return round(score, 1), label, direction
                 
-                    # convenience booleans
-                    df["Omen_Full"] = df["Omen_Label"].eq("🔥 Full Omen")
-                    df["Omen_Near"] = df["Omen_Label"].eq("⚠️ Near Omen")
+                # ----------------------------
+                # 3) Public API
+                # ----------------------------
+                def build_omen(
+                    df,
+                    prev_close,
+                    cfg=OMEN_CFG,
+                    expect_cols=("RVOL_5","z_vecE","z_jerk"),
+                ):
+                    """
+                    Returns df with:
+                      - F_open/F_high/F_low/F_close/F_numeric
+                      - F% MA/F% Std/F% Upper/F% Lower
+                      - Kijun_F
+                      - Omen_Strength (0–100), Omen_Label, Omen_Direction, Omen_On (bool)
+                    Notes:
+                      - Expects RVOL_5, z_vecE, z_jerk. If missing, fills with zeros (will rarely trigger).
+                      - prev_close MUST be the session baseline used for F%-space.
+                    """
+                    out = df.copy()
+                    out["Baseline_PrevClose"] = float(prev_close)  # keep baseline for any later transforms
                 
-                    # direction flags
-                    df["Omen_Bull"] = (
-                        (df["Open"] < df["Kijun_F"]) & (df["Close"] > df["Kijun_F"]) &
-                        (df["Omen_Full"] | df["Omen_Near"])
-                    )
-                    df["Omen_Bear"] = (
-                        (df["Open"] > df["Kijun_F"]) & (df["Close"] < df["Kijun_F"]) &
-                        (df["Omen_Full"] | df["Omen_Near"])
-                    )
-                    return df
+                    # Ensure inputs exist
+                    for col in expect_cols:
+                        if col not in out.columns:
+                            out[col] = 0.0
                 
-                # --- call it ---
-                intraday = compute_omen(intraday)
+                    # Build F%-space + aura + queen
+                    out = to_f_space(out, prev_close)
+                    out = add_f_bbands(out, window=cfg["bb_window"])
+                    out = add_kijun_f(out, period=cfg["kijun_period"])
                 
-                intraday["Omen_On"] = intraday["Omen_Label"].ne("")
+                    # Score
+                    res = out.apply(lambda r: omen_score_row_F(r, cfg=cfg), axis=1, result_type="expand")
+                    out["Omen_Strength"]  = res[0]
+                    out["Omen_Label"]     = res[1]
+                    out["Omen_Direction"] = res[2]
+                    out["Omen_On"]        = out["Omen_Label"].ne("")
                 
-                intraday["Omen_Direction"] = np.select(
-                    [intraday["Omen_Bull"], intraday["Omen_Bear"]],
-                    ["bull", "bear"],
-                    default=""
-                )
+                    return out
+                    
+                       # prev_close = your session reference (yesterday's close or session baseline)
+                    intraday = build_omen(intraday, prev_close)
+                    
+                    # Quick check:
+                    # intraday.loc[intraday["Omen_On"], ["Time","Omen_Label","Omen_Direction","Omen_Strength"]].head()
 
 # --- plotting hints (minimal) ---
 # mask = intraday["Omen_Full"] | intraday["Omen_Near"]
@@ -5395,7 +5465,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","Omen_Strength","Omen_Label","Omen_Direction","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Omen_On","Omen_Label","Omen_Direction","Omen_Strength","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
