@@ -6840,15 +6840,15 @@ if st.sidebar.button("Run Analysis"):
                       # compute efficiency if not present
              
                     
-                    fig_displacement.add_trace(go.Scatter(
-                        x=intraday.loc[vec_idx, "Time"],
-                        y=intraday.loc[vec_idx, "Cumulative_Unit"] + 0.02*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
-                        mode="text",
-                        text=[f"{v:+.1f}×" if np.isfinite(v) else "" for v in eff],
-                        textfont=dict(size=11, color="rgba(255,255,255,0.7)"),
-                        showlegend=False,
-                        hovertemplate="Efficiency: %{text}<extra></extra>"
-                    ))
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=intraday.loc[vec_idx, "Time"],
+                    #     y=intraday.loc[vec_idx, "Cumulative_Unit"] + 0.02*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
+                    #     mode="text",
+                    #     text=[f"{v:+.1f}×" if np.isfinite(v) else "" for v in eff],
+                    #     textfont=dict(size=11, color="rgba(255,255,255,0.7)"),
+                    #     showlegend=False,
+                    #     hovertemplate="Efficiency: %{text}<extra></extra>"
+                    # ))
 
                     #                     # --- Extract top 3 positive and negative Velocity points ---
                     # velocity_data = intraday.copy()
