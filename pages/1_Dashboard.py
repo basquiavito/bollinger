@@ -1465,7 +1465,9 @@ if st.sidebar.button("Run Analysis"):
                 
                     # 3️⃣ Price moves
                     df["F%_Move"]            = df["F_numeric"] - f_open
-                    df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
+                    # df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
+                    df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * prev_close
+
                     df["Sim_Spot"]           = spot_open + df["Dollar_Move_From_F"]
                 
                     # 4️⃣ Moneyness
