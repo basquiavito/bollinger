@@ -6830,6 +6830,26 @@ if st.sidebar.button("Run Analysis"):
                             annotation_text="coil", annotation_position="top left",
                             annotation_font=dict(color="purple", size=10)
                         )
+                     # compute efficiency if not present
+                     if "Force_per_3bar_Range" not in intraday.columns:
+                         # fallback quick calc
+                         rng3 = intraday["Range"].rolling(3, min_periods=3).sum()
+                         intraday["Force_per_3bar_Range"] = (
+                             pd.to_numeric(intraday.get("Vector Force"), errors="coerce").fillna(0) / rng3.replace(0, np.nan)
+                         )
+                     
+                     vec_idx = intraday.index[intraday.index % 3 == 2]  # your 3rd bars
+                     eff = intraday.loc[vec_idx, "Force_per_3bar_Range"].astype(float)
+                     
+                     fig_displacement.add_trace(go.Scatter(
+                         x=intraday.loc[vec_idx, "Time"],
+                         y=intraday.loc[vec_idx, "Cumulative_Unit"] + 0.02*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
+                         mode="text",
+                         text=[f"{v:+.1f}×" if np.isfinite(v) else "" for v in eff],
+                         textfont=dict(size=11, color="rgba(255,255,255,0.7)"),
+                         showlegend=False,
+                         hovertemplate="Efficiency: %{text}<extra></extra>"
+                     ))
 
                     #                     # --- Extract top 3 positive and negative Velocity points ---
                     # velocity_data = intraday.copy()
