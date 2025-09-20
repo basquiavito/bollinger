@@ -4769,9 +4769,9 @@ if st.sidebar.button("Run Analysis"):
               
                 # Vector candle filter: crosses Kijun AND tags a Bollinger band (upper or lower)
                 def is_omen_candle(row):
-                    kijun = row["Kijun"]
-                    upper = row["BB_Upper"]
-                    lower = row["BB_Lower"]
+                    kijun = row["Kijun_F"]
+                    upper = row["F% Upper"]
+                    lower = row["F% Lower"]
                     close = row["Close"]
                     open_ = row["Open"]
                     high = row["High"]
