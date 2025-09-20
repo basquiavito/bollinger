@@ -5423,7 +5423,7 @@ if st.sidebar.button("Run Analysis"):
                     intraday = build_omen(intraday, prev_close)
                     
                     # Quick check:
-                    intraday.loc[intraday["Omen_On"], ["Time","Omen_Label","Omen_Direction","Omen_Strength"]].head()
+                    # intraday.loc[intraday["Omen_On"], ["Time","Omen_Label","Omen_Direction","Omen_Strength"]].head()
 
 # --- plotting hints (minimal) ---
 # mask = intraday["Omen_Full"] | intraday["Omen_Near"]
