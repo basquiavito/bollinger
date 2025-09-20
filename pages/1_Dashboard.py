@@ -1759,6 +1759,31 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = compute_option_price_elasticity(intraday)      
 
+                 
+                
+                # --- make sure we have numeric versions (no % strings) ---
+                intraday["Vector_Energy_num"] = pd.to_numeric(intraday.get("Vector Energy"), errors="coerce").fillna(0)
+                intraday["Jerk_Vector_num"]   = pd.to_numeric(intraday.get("Jerk_Vector"),  errors="coerce").fillna(0)
+                intraday["VolComp_num"]       = pd.to_numeric(intraday.get("Volatility_Composite"), errors="coerce").fillna(0)
+                
+                def winsorize(s, lo=0.01, hi=0.99):
+                    qlo, qhi = s.quantile(lo), s.quantile(hi)
+                    return s.clip(qlo, qhi)
+                
+                def zscore(s):
+                    s = s.astype(float)
+                    mu = s.mean()
+                    sd = s.std(ddof=0)
+                    return (s - mu) / (sd if sd > 0 else 1.0)
+                
+                # --- clip outliers then z-score (session standardization) ---
+                vecE_w = winsorize(intraday["Vector_Energy_num"])
+                jerk_w = winsorize(intraday["Jerk_Vector_num"])
+                vcomp_w= winsorize(intraday["VolComp_num"])
+                
+                intraday["z_vecE"]  = zscore(vecE_w).clip(-4, 4)
+                intraday["z_jerk"]  = zscore(jerk_w).clip(-4, 4)
+                intraday["z_vcomp"] = zscore(vcomp_w).clip(-4, 4)
 
                 
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
