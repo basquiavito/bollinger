@@ -2003,7 +2003,19 @@ if st.sidebar.button("Run Analysis"):
                 # Mark them with the window emoji
                 intraday.loc[top_distensible.index, "Distensibility Alert"] = "🪟"
 
-
+                def armed_cross_up(series, up=2.0, down=1.0):
+                    hit = np.zeros(len(series), dtype=bool)
+                    armed = True
+                    for i in range(1, len(series)):
+                        prev, curr = series.iat[i-1], series.iat[i]
+                        if armed and curr > up and prev <= up:
+                            hit[i] = True
+                            armed = False
+                        elif not armed and curr < down:
+                            armed = True
+                    return hit
+                
+                intraday["IGNITION"] = armed_cross_up(intraday["z_vecE"], up=2.0, down=1.0)
               
                 def calculate_compliance(df):
                     """
@@ -6742,7 +6754,19 @@ if st.sidebar.button("Run Analysis"):
                         textfont=dict(size=13),
                         hovertemplate="Vector%: %{text}<br>Time: %{x}<extra></extra>"
                     ))
-     
+     # --- plot marker (one trace, only the hits) ---
+                    ign_mask = intraday["IGNITION"]
+                    fig_displacement.add_trace(go.Scatter(
+                        x=intraday.loc( )[ign_mask]["Time"],
+                        y=intraday.loc( )[ign_mask]["Cumulative_Unit"] + 0.05*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
+                        mode="text",
+                        text=["🔋"] * ign_mask.sum(),
+                        textfont=dict(size=18),
+                        name="Ignition",
+                        showlegend=False,
+                        hovertemplate="🔋 Ignition<br>z(Vector Energy)=%{customdata[0]:.2f}<extra></extra>",
+                        customdata=intraday.loc( )[ign_mask][["z_vecE"]].values
+                         ))
                     #                     # --- Extract top 3 positive and negative Velocity points ---
                     # velocity_data = intraday.copy()
                     # velocity_data["Velocity_Num"] = pd.to_numeric(velocity_data["Velocity"].str.replace("%", ""), errors="coerce")
