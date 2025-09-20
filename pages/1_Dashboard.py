@@ -4784,6 +4784,128 @@ if st.sidebar.button("Run Analysis"):
                 
                 intraday["Omen_Candle"] = intraday.apply(is_omen_candle, axis=1)
 
+            
+                
+                def clamp(x, lo, hi): 
+                    return np.minimum(np.maximum(x, lo), hi)
+                
+                def omen_score_row(r, prox_cap=0.5):
+                    """
+                    Expects columns:
+                      F_numeric, F% Upper, F% Lower, Kijun_F, Open, High, Low, Close,
+                      RVOL_5, z_vecE, z_jerk
+                    Returns (strength, label)
+                    """
+                    # ---------------- basics ----------------
+                    kijun   = r["Kijun_F"]
+                    f_up    = r["F% Upper"]
+                    f_lo    = r["F% Lower"]
+                    f       = r["F_numeric"]
+                    o, h, l, c = r["Open"], r["High"], r["Low"], r["Close"]
+                    rvol    = float(r.get("RVOL_5", 0) or 0)
+                    zE      = float(r.get("z_vecE", 0) or 0)
+                    zJ      = float(r.get("z_jerk", 0) or 0)
+                
+                    # band geometry
+                    half_bw = 0.5 * max((f_up - f_lo), 1e-9)   # avoid div/0
+                    # proximity to nearest edge, normalized by half band width
+                    dist_up = abs(f_up - f)
+                    dist_lo = abs(f - f_lo)
+                    dist    = min(dist_up, dist_lo)
+                    prox    = clamp(dist / half_bw, 0.0, prox_cap)  # 0=at edge, 0.5=far
+                    tagged  = (h >= f_up) or (l <= f_lo)
+                    near    = (prox <= 0.25)  # within 25% of edge
+                
+                    # direction: cross & close beyond Kijun
+                    crossed_up   = (o < kijun) and (c > kijun)
+                    crossed_down = (o > kijun) and (c < kijun)
+                
+                    # body dominance toward touched side
+                    rng  = max(h - l, 1e-9)
+                    body = abs(c - o)
+                    body_ok = (body / rng) >= 0.40
+                    # "toward edge": for up-cross, close near upper edge; for down-cross, close near lower edge
+                    toward_up   = dist_up <= dist_lo
+                    toward_down = dist_lo <  dist_up
+                    body_toward = (crossed_up and toward_up) or (crossed_down and toward_down)
+                
+                    # gates
+                    fuel_ok    = (rvol >= 1.2)                         # "horse"
+                    impulse_ok = (zE >= 1.5) or (zJ >= 2.0)
+                
+                    # score components (0–100)
+                    score = 0.0
+                    # 1) direction proof (close beyond kijun)
+                    if crossed_up or crossed_down:
+                        score += 25
+                
+                    # 2) band proximity (0 at 0.5, 25 at 0.0; tag = full 25)
+                    if tagged:
+                        score += 25
+                    else:
+                        # linear from prox_cap→0 maps to 0→25
+                        score += (1.0 - prox / prox_cap) * 25.0
+                
+                    # 3) fuel (RVOL linearly from 1.0→1.8 → 0→20)
+                    score += clamp((rvol - 1.0) / (1.8 - 1.0), 0.0, 1.0) * 20.0
+                
+                    # 4) impulse (max of zE or zJ, each clamped 0→3, scaled to 20 total)
+                    imp_unit = max(clamp(zE, 0, 3), clamp(zJ, 0, 3)) / 3.0
+                    score += imp_unit * 20.0
+                
+                    # 5) body dominance toward edge
+                    if body_ok and body_toward:
+                        score += 10.0
+                
+                    # label logic
+                    label = ""
+                    if (crossed_up or crossed_down) and fuel_ok and impulse_ok:
+                        if tagged:
+                            label = "🔥 Full Omen"
+                        elif near:
+                            label = "⚠️ Near Omen"
+                
+                    return round(score, 1), label
+                
+                def compute_omen(df):
+                    # apply row-wise
+                    out = df.apply(omen_score_row, axis=1, result_type="expand")
+                    df["Omen_Strength"] = out[0]
+                    df["Omen_Label"]    = out[1]
+                
+                    # convenience booleans
+                    df["Omen_Full"] = df["Omen_Label"].eq("🔥 Full Omen")
+                    df["Omen_Near"] = df["Omen_Label"].eq("⚠️ Near Omen")
+                
+                    # direction flags
+                    df["Omen_Bull"] = (
+                        (df["Open"] < df["Kijun_F"]) & (df["Close"] > df["Kijun_F"]) &
+                        (df["Omen_Full"] | df["Omen_Near"])
+                    )
+                    df["Omen_Bear"] = (
+                        (df["Open"] > df["Kijun_F"]) & (df["Close"] < df["Kijun_F"]) &
+                        (df["Omen_Full"] | df["Omen_Near"])
+                    )
+                    return df
+                
+                # --- call it ---
+                intraday = compute_omen(intraday)
+
+# --- plotting hints (minimal) ---
+# mask = intraday["Omen_Full"] | intraday["Omen_Near"]
+# fig_displacement.add_trace(go.Scatter(
+#     x=intraday.loc[mask, "Time"],
+#     y=intraday.loc[mask, "Cumulative_Unit"],
+#     mode="text",
+#     text=intraday.loc[mask, "Omen_Label"].str.replace(" Omen","", regex=False),
+#     textfont=dict(size=14),
+#     hovertemplate="Omen %{text}<br>Strength=%{customdata[0]}<extra></extra>",
+#     customdata=intraday.loc[mask, ["Omen_Strength"]].values,
+#     showlegend=False,
+#     name="Omen"
+# ))
+
+
                 #  def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
                 #     """
                 #     Entry Alert System (Corrected):
@@ -5118,7 +5240,127 @@ if st.sidebar.button("Run Analysis"):
                     intraday.loc[last_swimmer_idx, "Swimmer_Emoji"] = "🦑"
 
 
+            
                 
+                def clamp(x, lo, hi): 
+                    return np.minimum(np.maximum(x, lo), hi)
+                
+                def omen_score_row(r, prox_cap=0.5):
+                    """
+                    Expects columns:
+                      F_numeric, F% Upper, F% Lower, Kijun_F, Open, High, Low, Close,
+                      RVOL_5, z_vecE, z_jerk
+                    Returns (strength, label)
+                    """
+                    # ---------------- basics ----------------
+                    kijun   = r["Kijun_F"]
+                    f_up    = r["F% Upper"]
+                    f_lo    = r["F% Lower"]
+                    f       = r["F_numeric"]
+                    o, h, l, c = r["Open"], r["High"], r["Low"], r["Close"]
+                    rvol    = float(r.get("RVOL_5", 0) or 0)
+                    zE      = float(r.get("z_vecE", 0) or 0)
+                    zJ      = float(r.get("z_jerk", 0) or 0)
+                
+                    # band geometry
+                    half_bw = 0.5 * max((f_up - f_lo), 1e-9)   # avoid div/0
+                    # proximity to nearest edge, normalized by half band width
+                    dist_up = abs(f_up - f)
+                    dist_lo = abs(f - f_lo)
+                    dist    = min(dist_up, dist_lo)
+                    prox    = clamp(dist / half_bw, 0.0, prox_cap)  # 0=at edge, 0.5=far
+                    tagged  = (h >= f_up) or (l <= f_lo)
+                    near    = (prox <= 0.25)  # within 25% of edge
+                
+                    # direction: cross & close beyond Kijun
+                    crossed_up   = (o < kijun) and (c > kijun)
+                    crossed_down = (o > kijun) and (c < kijun)
+                
+                    # body dominance toward touched side
+                    rng  = max(h - l, 1e-9)
+                    body = abs(c - o)
+                    body_ok = (body / rng) >= 0.40
+                    # "toward edge": for up-cross, close near upper edge; for down-cross, close near lower edge
+                    toward_up   = dist_up <= dist_lo
+                    toward_down = dist_lo <  dist_up
+                    body_toward = (crossed_up and toward_up) or (crossed_down and toward_down)
+                
+                    # gates
+                    fuel_ok    = (rvol >= 1.2)                         # "horse"
+                    impulse_ok = (zE >= 1.5) or (zJ >= 2.0)
+                
+                    # score components (0–100)
+                    score = 0.0
+                    # 1) direction proof (close beyond kijun)
+                    if crossed_up or crossed_down:
+                        score += 25
+                
+                    # 2) band proximity (0 at 0.5, 25 at 0.0; tag = full 25)
+                    if tagged:
+                        score += 25
+                    else:
+                        # linear from prox_cap→0 maps to 0→25
+                        score += (1.0 - prox / prox_cap) * 25.0
+                
+                    # 3) fuel (RVOL linearly from 1.0→1.8 → 0→20)
+                    score += clamp((rvol - 1.0) / (1.8 - 1.0), 0.0, 1.0) * 20.0
+                
+                    # 4) impulse (max of zE or zJ, each clamped 0→3, scaled to 20 total)
+                    imp_unit = max(clamp(zE, 0, 3), clamp(zJ, 0, 3)) / 3.0
+                    score += imp_unit * 20.0
+                
+                    # 5) body dominance toward edge
+                    if body_ok and body_toward:
+                        score += 10.0
+                
+                    # label logic
+                    label = ""
+                    if (crossed_up or crossed_down) and fuel_ok and impulse_ok:
+                        if tagged:
+                            label = "🔥 Full Omen"
+                        elif near:
+                            label = "⚠️ Near Omen"
+                
+                    return round(score, 1), label
+                
+                def compute_omen(df):
+                    # apply row-wise
+                    out = df.apply(omen_score_row, axis=1, result_type="expand")
+                    df["Omen_Strength"] = out[0]
+                    df["Omen_Label"]    = out[1]
+                
+                    # convenience booleans
+                    df["Omen_Full"] = df["Omen_Label"].eq("🔥 Full Omen")
+                    df["Omen_Near"] = df["Omen_Label"].eq("⚠️ Near Omen")
+                
+                    # direction flags
+                    df["Omen_Bull"] = (
+                        (df["Open"] < df["Kijun_F"]) & (df["Close"] > df["Kijun_F"]) &
+                        (df["Omen_Full"] | df["Omen_Near"])
+                    )
+                    df["Omen_Bear"] = (
+                        (df["Open"] > df["Kijun_F"]) & (df["Close"] < df["Kijun_F"]) &
+                        (df["Omen_Full"] | df["Omen_Near"])
+                    )
+                    return df
+                
+                # --- call it ---
+                intraday = compute_omen(intraday)
+
+# --- plotting hints (minimal) ---
+# mask = intraday["Omen_Full"] | intraday["Omen_Near"]
+# fig_displacement.add_trace(go.Scatter(
+#     x=intraday.loc[mask, "Time"],
+#     y=intraday.loc[mask, "Cumulative_Unit"],
+#     mode="text",
+#     text=intraday.loc[mask, "Omen_Label"].str.replace(" Omen","", regex=False),
+#     textfont=dict(size=14),
+#     hovertemplate="Omen %{text}<br>Strength=%{customdata[0]}<extra></extra>",
+#     customdata=intraday.loc[mask, ["Omen_Strength"]].values,
+#     showlegend=False,
+#     name="Omen"
+# ))
+
                
                 
                 
