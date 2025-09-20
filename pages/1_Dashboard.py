@@ -6792,18 +6792,18 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    brk_mask = intraday["BRAKE"]
-                    fig_displacement.add_trace(go.Scatter(
-                        x=intraday.loc( )[brk_mask]["Time"],
-                        y=intraday.loc( )[brk_mask]["Cumulative_Unit"] - 0.05*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
-                        mode="text",
-                        text=["🛑"] * brk_mask.sum(),
-                        textfont=dict(size=18),
-                        name="Brake",
-                        showlegend=False,
-                        hovertemplate="🛑 Brake<br>z(Jerk)=%{customdata[0]:.2f}<extra></extra>",
-                        customdata=intraday.loc( )[brk_mask][["z_jerk"]].values
-                    ))
+                    # brk_mask = intraday["BRAKE"]
+                    # fig_displacement.add_trace(go.Scatter(
+                    #     x=intraday.loc( )[brk_mask]["Time"],
+                    #     y=intraday.loc( )[brk_mask]["Cumulative_Unit"] - 0.05*(intraday["Cumulative_Unit"].quantile(0.75)-intraday["Cumulative_Unit"].quantile(0.25)),
+                    #     mode="text",
+                    #     text=["🛑"] * brk_mask.sum(),
+                    #     textfont=dict(size=18),
+                    #     name="Brake",
+                    #     showlegend=False,
+                    #     hovertemplate="🛑 Brake<br>z(Jerk)=%{customdata[0]:.2f}<extra></extra>",
+                    #     customdata=intraday.loc( )[brk_mask][["z_jerk"]].values
+                    # ))
 
 
 
