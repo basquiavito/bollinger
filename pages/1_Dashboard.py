@@ -4767,6 +4767,22 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = entryAlert(intraday, threshold=0.1)
               
+                # Vector candle filter: crosses Kijun AND tags a Bollinger band (upper or lower)
+                def is_omen_candle(row):
+                    kijun = row["Kijun"]
+                    upper = row["BB_Upper"]
+                    lower = row["BB_Lower"]
+                    close = row["Close"]
+                    open_ = row["Open"]
+                    high = row["High"]
+                    low = row["Low"]
+                    
+                    crossed_kijun = (open_ < kijun and close > kijun) or (open_ > kijun and close < kijun)
+                    touched_band = (high >= upper) or (low <= lower)
+                    
+                    return crossed_kijun and touched_band
+                
+                intraday["Omen_Candle"] = intraday.apply(is_omen_candle, axis=1)
 
                 #  def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
                 #     """
@@ -5129,7 +5145,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","Omen_Candle","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
