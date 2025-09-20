@@ -7556,16 +7556,16 @@ if st.sidebar.button("Run Analysis"):
                     # # Drop rows where Chikou_F is NaN (due to shifting)
                     chikou_plot = intraday.dropna(subset=["Chikou_F"])
 
-                    # Plot without shifting time
-                    chikou_line = go.Scatter(
-                        x=chikou_plot["Time"],
-                        y=chikou_plot["Chikou_F"],
-                        mode="lines",
+                    # # Plot without shifting time
+                    # chikou_line = go.Scatter(
+                    #     x=chikou_plot["Time"],
+                    #     y=chikou_plot["Chikou_F"],
+                    #     mode="lines",
                       
-                        name="Chikou (F%)",
-                        line=dict(color="purple", dash="dash", width=1)
-                    )
-                    fig.add_trace(chikou_line, row=1, col=1)
+                    #     name="Chikou (F%)",
+                    #     line=dict(color="purple", dash="dash", width=1)
+                    # )
+                    # fig.add_trace(chikou_line, row=1, col=1)
 
                     intraday["Chikou"] = intraday["Close"].shift(-26)
 
@@ -7637,50 +7637,50 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(tenkan_line, row=1, col=1)
 
 
-                    intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
-                    intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
+                    # intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
+                    # intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
 
 
 
-                                        # Span A – Yellow Line
-                    span_a_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanA_F"],
-                        mode="lines",
-                        line=dict(color="yellow", width=0.4),
-                        name="Span A (F%)"
-                    )
-                    fig.add_trace(span_a_line, row=1, col=1)
+                    #                     # Span A – Yellow Line
+                    # span_a_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanA_F"],
+                    #     mode="lines",
+                    #     line=dict(color="yellow", width=0.4),
+                    #     name="Span A (F%)"
+                    # )
+                    # fig.add_trace(span_a_line, row=1, col=1)
 
-                    # Span B – Blue Line
-                    span_b_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanB_F"],
-                        mode="lines",
-                        line=dict(color="blue", width=0.4),
-                        name="Span B (F%)"
-                    )
-                    fig.add_trace(span_b_line, row=1, col=1)
+                    # # Span B – Blue Line
+                    # span_b_line = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanB_F"],
+                    #     mode="lines",
+                    #     line=dict(color="blue", width=0.4),
+                    #     name="Span B (F%)"
+                    # )
+                    # fig.add_trace(span_b_line, row=1, col=1)
 
-                    # Invisible SpanA for cloud base
-                    fig.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanA_F"],
-                        line=dict(width=0),
-                        mode='lines',
-                        showlegend=False
-                    ), row=1, col=1)
+                    # # Invisible SpanA for cloud base
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanA_F"],
+                    #     line=dict(width=0),
+                    #     mode='lines',
+                    #     showlegend=False
+                    # ), row=1, col=1)
 
-                    # SpanB with fill → grey Kumo
-                    fig.add_trace(go.Scatter(
-                        x=intraday["Time"],
-                        y=intraday["SpanB_F"],
-                        fill='tonexty',
-                        fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
-                        line=dict(width=0),
-                        mode='lines',
-                        name='Kumo Cloud'
-                    ), row=1, col=1)
+                    # # SpanB with fill → grey Kumo
+                    # fig.add_trace(go.Scatter(
+                    #     x=intraday["Time"],
+                    #     y=intraday["SpanB_F"],
+                    #     fill='tonexty',
+                    #     fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                    #     line=dict(width=0),
+                    #     mode='lines',
+                    #     name='Kumo Cloud'
+                    # ), row=1, col=1)
 
 
                                     # Mask for different RVOL thresholds
@@ -7882,22 +7882,22 @@ if st.sidebar.button("Run Analysis"):
                     # fig.add_trace(scatter_distensibility, row=1, col=1)
 
 
-                    #Create a Boolean mask for rows with Stroke Growth ⭐ emojis
-                    mask_stroke_growth = intraday["Stroke Growth ⭐"] != ""
+                    # #Create a Boolean mask for rows with Stroke Growth ⭐ emojis
+                    # mask_stroke_growth = intraday["Stroke Growth ⭐"] != ""
                     
-                    # Plot Stroke Growth ⭐ emojis just below the F_numeric line
-                    scatter_stroke_growth = go.Scatter(
-                        x=intraday.loc[mask_stroke_growth, "Time"],
-                        y=intraday.loc[mask_stroke_growth, "F_numeric"] + 38,  # Adjust vertical offset if needed
-                        mode="text",
-                        text=intraday.loc[mask_stroke_growth, "Stroke Growth ⭐"],
-                        textposition="top center",
-                        textfont=dict(size=16),
-                        name="Stroke Growth ⭐",
-                        hovertemplate="Time: %{x}<br>⭐ Stroke Volume Growth<extra></extra>"
-                    )
+                    # # Plot Stroke Growth ⭐ emojis just below the F_numeric line
+                    # scatter_stroke_growth = go.Scatter(
+                    #     x=intraday.loc[mask_stroke_growth, "Time"],
+                    #     y=intraday.loc[mask_stroke_growth, "F_numeric"] + 38,  # Adjust vertical offset if needed
+                    #     mode="text",
+                    #     text=intraday.loc[mask_stroke_growth, "Stroke Growth ⭐"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=16),
+                    #     name="Stroke Growth ⭐",
+                    #     hovertemplate="Time: %{x}<br>⭐ Stroke Volume Growth<extra></extra>"
+                    # )
                     
-                    fig.add_trace(scatter_stroke_growth, row=1, col=1)
+                    # fig.add_trace(scatter_stroke_growth, row=1, col=1)
 
                   
 
@@ -9696,34 +9696,34 @@ if st.sidebar.button("Run Analysis"):
 
   
         
-                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
-                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
+                # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
+                # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
-                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                scatter_tk_sun = go.Scatter(
-                    x=intraday.loc[mask_tk_sun, "Time"],
-                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 104,  # Offset for visibility
-                    mode="text",
-                    text="🌞",
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bullish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                )
+                # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                # scatter_tk_sun = go.Scatter(
+                #     x=intraday.loc[mask_tk_sun, "Time"],
+                #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 104,  # Offset for visibility
+                #     mode="text",
+                #     text="🌞",
+                #     textposition="top center",
+                #     textfont=dict(size=34),
+                #     name="Tenkan-Kijun Bullish Cross",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
+                # )
 
-                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                scatter_tk_moon = go.Scatter(
-                    x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 104,  # Offset for visibility
-                    mode="text",
-                    text="🌙",
-                    textposition="bottom center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bearish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                )
-                fig.add_trace(scatter_tk_sun, row=1, col=1)
-                fig.add_trace(scatter_tk_moon, row=1, col=1)
+                # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                # scatter_tk_moon = go.Scatter(
+                #     x=intraday.loc[mask_tk_moon, "Time"],
+                #     y=intraday.loc[mask_tk_moon, "F_numeric"] - 104,  # Offset for visibility
+                #     mode="text",
+                #     text="🌙",
+                #     textposition="bottom center",
+                #     textfont=dict(size=34),
+                #     name="Tenkan-Kijun Bearish Cross",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                # )
+                # fig.add_trace(scatter_tk_sun, row=1, col=1)
+                # fig.add_trace(scatter_tk_moon, row=1, col=1)
 
    # # Add to the F% Plot
                
@@ -9864,16 +9864,16 @@ if st.sidebar.button("Run Analysis"):
                 # )
                 # fig.add_trace(scatter_40ish, row=1, col=1)
 
-                up_high_mask = intraday["Y_High_Cross"] == "✈️"
-                up_high_trace = go.Scatter(
-                    x=intraday.loc[up_high_mask, "Time"],
-                    y=intraday.loc[up_high_mask, "F_numeric"] + 70,
-                    mode="text",
-                    text=intraday.loc[up_high_mask, "Y_High_Cross"],
-                    textposition="top center",
-                    textfont=dict(size=28),
-                    name="Cross Above Y-High (✈️)"
-                )
+                # up_high_mask = intraday["Y_High_Cross"] == "✈️"
+                # up_high_trace = go.Scatter(
+                #     x=intraday.loc[up_high_mask, "Time"],
+                #     y=intraday.loc[up_high_mask, "F_numeric"] + 70,
+                #     mode="text",
+                #     text=intraday.loc[up_high_mask, "Y_High_Cross"],
+                #     textposition="top center",
+                #     textfont=dict(size=28),
+                #     name="Cross Above Y-High (✈️)"
+                # )
 
                 
                 # breach_mask = intraday["Y_Low_Cross"] == "🛟"
