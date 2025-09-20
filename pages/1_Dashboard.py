@@ -10544,30 +10544,30 @@ if st.sidebar.button("Run Analysis"):
                 #          st.markdown("🟦 Market did *not* open inside YVA")
 
 
-                # 💨 Bull Compliance Flip
-                bull_flip_trace = go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["F_numeric"].where(intraday["Compliance_Bull_Flip"] == "💨") + 16,
-                    mode="markers",
-                    marker=dict(size=20, symbol="triangle-down", color="#00ccff", line=dict(color="white", width=1)),
-                    name="💨 Bull Compliance Flip",
-                    hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                )
+                # # 💨 Bull Compliance Flip
+                # bull_flip_trace = go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["F_numeric"].where(intraday["Compliance_Bull_Flip"] == "💨") + 16,
+                #     mode="markers",
+                #     marker=dict(size=20, symbol="triangle-down", color="#00ccff", line=dict(color="white", width=1)),
+                #     name="💨 Bull Compliance Flip",
+                #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                # )
                 
-                # 🌑 Bear Compliance Flip
-                bear_flip_trace = go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["F_numeric"].where(intraday["Compliance_Bear_Flip"] == "🌑") - 16,
-                    mode="markers",
-                    marker=dict(size=20, symbol="triangle-up", color="#ff4444", line=dict(color="white", width=1)),
-                    name="🌑 Bear Compliance Flip",
-                    hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
-                )
+                # # 🌑 Bear Compliance Flip
+                # bear_flip_trace = go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["F_numeric"].where(intraday["Compliance_Bear_Flip"] == "🌑") - 16,
+                #     mode="markers",
+                #     marker=dict(size=20, symbol="triangle-up", color="#ff4444", line=dict(color="white", width=1)),
+                #     name="🌑 Bear Compliance Flip",
+                #     hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                # )
 
                 
-                         # Add to figure
-                fig.add_trace(bull_flip_trace, row=1, col=1)
-                fig.add_trace(bear_flip_trace, row=1, col=1)
+                #          # Add to figure
+                # fig.add_trace(bull_flip_trace, row=1, col=1)
+                # fig.add_trace(bear_flip_trace, row=1, col=1)
 
                 # # 🪟 Bull Distensibility Alerts (emoji markers)
                 # bull_dist_alerts = go.Scatter(
