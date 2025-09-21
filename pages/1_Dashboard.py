@@ -3630,7 +3630,7 @@ if st.sidebar.button("Run Analysis"):
 
                             # Compute DX (Directional Movement Index)
                             df["DX_F%"] = np.abs((df["+DI_F%"] - df["-DI_F%"]) / (df["+DI_F%"] + df["-DI_F%"])) * 100
-                            df["ADX"] = df["DX_F%"].rolling(window=period, min_periods=1).mean()
+                            df["ADX_F%"] = df["DX_F%"].rolling(window=period, min_periods=1).mean()
 
 
                         
