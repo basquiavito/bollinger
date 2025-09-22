@@ -9110,6 +9110,33 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Put IB Low: %{y:.2f}<extra></extra>"
                 ), row=2, col=1)
 
+
+
+ # ------------------------------------------------------------
+                # 🏁 Clean-Track Emoji  -- first bar where stamina is 💪
+                # ------------------------------------------------------------
+                clean_mask = intraday["Stamina_Signal"] == "💪"
+                
+                if clean_mask.any():
+                    first_clean_idx = clean_mask.idxmax()         # first True row
+                    clean_time  = intraday.loc[first_clean_idx, "TimeIndex"]
+                    clean_price = intraday.loc[first_clean_idx, "F_numeric"]  # plot at Mike’s value; tweak if desired
+                
+                    fig.add_trace(
+                        go.Scatter(
+                            x=[clean_time],
+                            y=[clean_price],
+                            mode="text",
+                            text=["💪"],              # one emoji marker
+                            textposition="top center",
+                            textfont=dict(size=18),   # adjust size to taste
+                            name="Clear Track (💪)",
+                            showlegend=False,
+                            hovertemplate="Stamina 💪 — clear track<extra></extra>"
+                        ),
+                        row=2, col=1
+                    )
+
                 # # 🔷 Value Area Min (hoverable)
                 # fig.add_trace(go.Scatter(
                 #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
