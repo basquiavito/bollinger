@@ -9119,55 +9119,55 @@ if st.sidebar.button("Run Analysis"):
 # Requires columns: TimeIndex, F_numeric, Stamina_Signal,
 #                   Call_FirstEntry_Emoji, Put_FirstEntry_Emoji
                 # ---------------------------------------------
-                needed = {"TimeIndex","F_numeric","Stamina_Signal","Call_FirstEntry_Emoji","Put_FirstEntry_Emoji"}
-                if needed.issubset(intraday.columns):
+                # needed = {"TimeIndex","F_numeric","Stamina_Signal","Call_FirstEntry_Emoji","Put_FirstEntry_Emoji"}
+                # if needed.issubset(intraday.columns):
                 
-                    # Call Entry 1 with clear track (stamina 💪)
-                    call_e1_clean = intraday[
-                        (intraday["Call_FirstEntry_Emoji"] == "🎯") &
-                        (intraday["Stamina_Signal"] == "💪")
-                    ]
+                #     # Call Entry 1 with clear track (stamina 💪)
+                #     call_e1_clean = intraday[
+                #         (intraday["Call_FirstEntry_Emoji"] == "🎯") &
+                #         (intraday["Stamina_Signal"] == "💪")
+                #     ]
                 
-                    if not call_e1_clean.empty:
-                        fig.add_trace(
-                            go.Scatter(
-                                x=call_e1_clean["TimeIndex"],
-                                y=call_e1_clean["F_numeric"],
-                                mode="text",
-                                text=["💪"] * len(call_e1_clean),
-                                textposition="top center",
-                                textfont=dict(size=18),
-                                name="Entry1 Stamina (Call)",
-                                showlegend=False,
-                                hovertemplate="Call Entry 1 — Stamina 💪 (clear track)<extra></extra>"
-                            ),
-                            row=1, col=1
-                        )
+                #     if not call_e1_clean.empty:
+                #         fig.add_trace(
+                #             go.Scatter(
+                #                 x=call_e1_clean["TimeIndex"],
+                #                 y=call_e1_clean["F_numeric"],
+                #                 mode="text",
+                #                 text=["💪"] * len(call_e1_clean),
+                #                 textposition="top center",
+                #                 textfont=dict(size=18),
+                #                 name="Entry1 Stamina (Call)",
+                #                 showlegend=False,
+                #                 hovertemplate="Call Entry 1 — Stamina 💪 (clear track)<extra></extra>"
+                #             ),
+                #             row=1, col=1
+                #         )
                 
-                    # Put Entry 1 with clear track (stamina 💪)
-                    put_e1_clean = intraday[
-                        (intraday["Put_FirstEntry_Emoji"] == "🎯") &
-                        (intraday["Stamina_Signal"] == "💪")
-                    ]
+                #     # Put Entry 1 with clear track (stamina 💪)
+                #     put_e1_clean = intraday[
+                #         (intraday["Put_FirstEntry_Emoji"] == "🎯") &
+                #         (intraday["Stamina_Signal"] == "💪")
+                #     ]
                 
-                    if not put_e1_clean.empty:
-                        fig.add_trace(
-                            go.Scatter(
-                                x=put_e1_clean["TimeIndex"],
-                                y=put_e1_clean["F_numeric"],
-                                mode="text",
-                                text=["💪"] * len(put_e1_clean),
-                                textposition="top center",
-                                textfont=dict(size=18),
-                                name="Entry1 Stamina (Put)",
-                                showlegend=False,
-                                hovertemplate="Put Entry 1 — Stamina 💪 (clear track)<extra></extra>"
-                            ),
-                            row=1, col=1
-                        )
-                else:
-                    # Optional: silent guard
-                    pass
+                #     if not put_e1_clean.empty:
+                #         fig.add_trace(
+                #             go.Scatter(
+                #                 x=put_e1_clean["TimeIndex"],
+                #                 y=put_e1_clean["F_numeric"],
+                #                 mode="text",
+                #                 text=["💪"] * len(put_e1_clean),
+                #                 textposition="top center",
+                #                 textfont=dict(size=18),
+                #                 name="Entry1 Stamina (Put)",
+                #                 showlegend=False,
+                #                 hovertemplate="Put Entry 1 — Stamina 💪 (clear track)<extra></extra>"
+                #             ),
+                #             row=1, col=1
+                #         )
+                # else:
+                #     # Optional: silent guard
+                #     pass
 
                 # # 🔷 Value Area Min (hoverable)
                 # fig.add_trace(go.Scatter(
