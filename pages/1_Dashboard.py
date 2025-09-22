@@ -9141,7 +9141,7 @@ if st.sidebar.button("Run Analysis"):
                                 showlegend=False,
                                 hovertemplate="Call Entry 1 — Stamina 💪 (clear track)<extra></extra>"
                             ),
-                            row=2, col=1
+                            row=1, col=1
                         )
                 
                     # Put Entry 1 with clear track (stamina 💪)
@@ -9163,7 +9163,7 @@ if st.sidebar.button("Run Analysis"):
                                 showlegend=False,
                                 hovertemplate="Put Entry 1 — Stamina 💪 (clear track)<extra></extra>"
                             ),
-                            row=2, col=1
+                            row=1, col=1
                         )
                 else:
                     # Optional: silent guard
