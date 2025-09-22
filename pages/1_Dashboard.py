@@ -5539,51 +5539,49 @@ if st.sidebar.button("Run Analysis"):
                   intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
                             
-                  def add_stamina_signal(intraday, profile_df, f_bins):
-                      """
-                      Adds a Stamina_Signal column:
-                      ⚪ = no stamina (RVOL ≤ 1.2)
-                      🪨 = stamina but track blocked (RVOL > 1.2 but not crossed 🦻🏼/👃🏽)
-                      💪 = stamina + clear track (RVOL > 1.2 and crossed 🦻🏼 or 👃🏽)
-                      """
-                  
-                      # Defensive checks
-                      if not all(col in intraday.columns for col in ["F_numeric", "RVOL_5"]):
-                          return intraday
-                  
-                      if not all(col in profile_df.columns for col in ["F% Level", "%Vol", "Letter_Count"]):
-                          return intraday
-                  
-                      # --- Step 1: Identify key profile levels ---
-                      max_vol_level = profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level']
-                      max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
-                  
-                      # --- Step 2: Assign stamina bar by bar ---
-                      stamina = []
-                      for i in range(len(intraday)):
-                          mike = intraday.at[intraday.index[i], "F_numeric"]
-                          rvol = intraday.at[intraday.index[i], "RVOL_5"]
-                  
-                          if pd.isna(mike) or pd.isna(rvol):
-                              stamina.append("⚪")  # default
-                              continue
-                  
-                          # Bin Mike into profile levels
-                          current_mike_bin = f_bins[np.digitize(mike, f_bins) - 1]
-                  
-                          # --- State logic ---
-                          if rvol <= 1.2:
-                              stamina.append("⚪")  # no stamina
-                          else:
-                              # RVOL > 1.2 → has stamina
-                              if current_mike_bin == max_vol_level or current_mike_bin == max_letter_level:
-                                  stamina.append("🪨")  # stamina but blocked
-                              else:
-                                  stamina.append("💪")  # stamina + clear track
+                 def add_stamina_signal(intraday, profile_df, f_bins, rvol_gate=1.2):
+                     """
+                     Adds Stamina_Signal column:
+                       ⚪ = no stamina
+                       🪨 = stamina but blocked (at volume- or time-memory level)
+                       💪 = stamina + clear track
+                     """
+                     intraday = intraday.copy()
                  
-                      intraday["Stamina_Signal"] = stamina
-                      return intraday
-
+                     # Ensure numeric
+                     for col in ["F_numeric", "RVOL_5"]:
+                         intraday[col] = pd.to_numeric(intraday[col], errors="coerce")
+                 
+                     if intraday[["F_numeric", "RVOL_5"]].isnull().all().any():
+                         # Required series are entirely NaN → skip
+                         return intraday
+                 
+                     max_vol_level    = int(profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level'])
+                     max_letter_level = int(profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level'])
+                 
+                     stamina = []
+                     last_bin = f_bins[-2]  # second-to-last edge (uppermost real bin)
+                 
+                     for mike, rvol in zip(intraday["F_numeric"], intraday["RVOL_5"]):
+                         if pd.isna(mike) or pd.isna(rvol):
+                             stamina.append("⚪")
+                             continue
+                 
+                         # Safe binning
+                         idx = np.digitize(mike, f_bins) - 1
+                         idx = max(0, min(idx, len(f_bins) - 2))
+                         current_bin = f_bins[idx]
+                 
+                         if rvol <= rvol_gate:
+                             stamina.append("⚪")
+                         elif current_bin in (max_vol_level, max_letter_level):
+                             stamina.append("🪨")
+                         else:
+                             stamina.append("💪")
+                 
+                     intraday["Stamina_Signal"] = stamina
+                     return intraday
+                 
                   intraday = add_stamina_signal(intraday, profile_df, f_bins)
 
 
