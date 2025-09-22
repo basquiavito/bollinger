@@ -5582,7 +5582,7 @@ if st.sidebar.button("Run Analysis"):
                       intraday["Stamina_Signal"] = stamina
                       return intraday
                   
-                   intraday = add_stamina_signal(intraday, profile_df, f_bins)
+                  intraday = add_stamina_signal(intraday, profile_df, f_bins)
 
 
 
