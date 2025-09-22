@@ -7677,38 +7677,38 @@ if st.sidebar.button("Run Analysis"):
                     
 
        #                                # Drop NaNs or invalid entries
-                    # valid_capacitance = intraday.dropna(subset=["Vector_Capacitance"])
+                    valid_capacitance = intraday.dropna(subset=["Vector_Capacitance"])
                     
-                    # # Top 3 positive Capacitance (high potential for breakout pressure being stored)
-                    # top3_cap_up = valid_capacitance.nlargest(3, "Vector_Capacitance")
+                    # Top 3 positive Capacitance (high potential for breakout pressure being stored)
+                    top3_cap_up = valid_capacitance.nlargest(3, "Vector_Capacitance")
                     
-                    # # Top 3 negative Capacitance (possibly reactive rejection or imbalance)
-                    # top3_cap_down = valid_capacitance.nsmallest(3, "Vector_Capacitance")
-                    # # ⚡ High Capacitance markers (storage building)
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=top3_cap_up["TimeIndex"],
-                    #     y=top3_cap_up["Cumulative_Unit"] + 80,
-                    #     mode="text",
-                    #     text=["🧲"] * len(top3_cap_up),
-                    #     textposition="top center",
-                    #     textfont=dict(size=18),
-                    #     showlegend=False,
-                    #     hovertemplate="🧲 High Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
-                    #     customdata=top3_cap_up[["Vector_Capacitance"]].values
-                    # ))
+                    # Top 3 negative Capacitance (possibly reactive rejection or imbalance)
+                    top3_cap_down = valid_capacitance.nsmallest(3, "Vector_Capacitance")
+                    # ⚡ High Capacitance markers (storage building)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_cap_up["TimeIndex"],
+                        y=top3_cap_up["Cumulative_Unit"] + 80,
+                        mode="text",
+                        text=["🧲"] * len(top3_cap_up),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🧲 High Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_cap_up[["Vector_Capacitance"]].values
+                    ))
                     
-                    # # 🪹 Low Capacitance markers (release, unstable)
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=top3_cap_down["TimeIndex"],
-                    #     y=top3_cap_down["Cumulative_Unit"] - 80,
-                    #     mode="text",
-                    #     text=["🪹"] * len(top3_cap_down),
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=18),
-                    #     showlegend=False,
-                    #     hovertemplate="🪹 Low Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
-                    #     customdata=top3_cap_down[["Vector_Capacitance"]].values
-                    # ))
+                    # 🪹 Low Capacitance markers (release, unstable)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_cap_down["TimeIndex"],
+                        y=top3_cap_down["Cumulative_Unit"] - 80,
+                        mode="text",
+                        text=["🪹"] * len(top3_cap_down),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate="🪹 Low Capacitance<br>Time: %{x|%I:%M %p}<br>C: %{customdata[0]:.2f}<extra></extra>",
+                        customdata=top3_cap_down[["Vector_Capacitance"]].values
+                    ))
 
                     
                                         # Ensure Capacitance is numeric
