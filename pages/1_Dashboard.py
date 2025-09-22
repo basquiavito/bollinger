@@ -5583,9 +5583,11 @@ if st.sidebar.button("Run Analysis"):
                       return intraday
                   
                   intraday = add_stamina_signal(intraday, profile_df, f_bins)
-
-
-
+                  
+                  print(intraday.columns[-5:])          # ‘Stamina_Signal’ should be listed
+                  print(intraday.tail()[["F_numeric", "RVOL_5", "Stamina_Signal"]])
+                  
+                  
 
                   
                   #                   # === Top Dot Logic by 15-Minute Block ===
