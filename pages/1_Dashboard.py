@@ -7713,6 +7713,55 @@ if st.sidebar.button("Run Analysis"):
                             ),
                             customdata=force_down[["Electric_Force"]],
                         ))
+                        # Ensure IB_Electric_Force is numeric
+                        intraday["IB_Electric_Force"] = pd.to_numeric(intraday["IB_Electric_Force"], errors="coerce")
+                        
+                        # Drop invalid rows
+                        valid_ib_force = intraday.dropna(subset=["IB_Electric_Force", "Cumulative_Unit", "Time"])
+                        
+                        # Calculate percentile thresholds
+                        p95 = valid_ib_force["IB_Electric_Force"].quantile(0.95)
+                        p90 = valid_ib_force["IB_Electric_Force"].quantile(0.90)
+                        p10 = valid_ib_force["IB_Electric_Force"].quantile(0.10)
+                        p05 = valid_ib_force["IB_Electric_Force"].quantile(0.05)
+                        
+                        # Select rows above/below thresholds
+                        ib_force_up = valid_ib_force[valid_ib_force["IB_Electric_Force"] >= p90]
+                        ib_force_down = valid_ib_force[valid_ib_force["IB_Electric_Force"] <= p10]
+                        
+                        # 💡 High IB Force Markers (90th+ percentile)
+                        fig_displacement.add_trace(go.Scatter(
+                            x=ib_force_up["Time"],
+                            y=ib_force_up["Cumulative_Unit"] + 96,
+                            mode="text",
+                            text=["💡"] * len(ib_force_up),
+                            textposition="top center",
+                            textfont=dict(size=18),
+                            showlegend=False,
+                            hovertemplate=(
+                                "💡 IB Electric Force (High)<br>"
+                                "Time: %{x}<br>"
+                                "Force: %{customdata[0]:.2f}<extra></extra>"
+                            ),
+                            customdata=ib_force_up[["IB_Electric_Force"]].values
+                        ))
+                        
+                        # 🕯️ Low IB Force Markers (10th- percentile)
+                        fig_displacement.add_trace(go.Scatter(
+                            x=ib_force_down["Time"],
+                            y=ib_force_down["Cumulative_Unit"] - 96,
+                            mode="text",
+                            text=["🕯️"] * len(ib_force_down),
+                            textposition="bottom center",
+                            textfont=dict(size=18),
+                            showlegend=False,
+                            hovertemplate=(
+                                "🕯️ IB Electric Force (Low)<br>"
+                                "Time: %{x}<br>"
+                                "Force: %{customdata[0]:.2f}<extra></extra>"
+                            ),
+                            customdata=ib_force_down[["IB_Electric_Force"]].values
+                        ))
 
                     # # Convert power column to numeric just in case
                     # intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
