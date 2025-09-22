@@ -5245,327 +5245,7 @@ if st.sidebar.button("Run Analysis"):
 
             
                 
-                OMEN_CFG = dict(
-                    bb_window=20,         # Bollinger window on F% (≈ last ~100 minutes on 5m)
-                    bb_k=2.0,             # Std dev multiplier
-                    kijun_period=26,      # Ichimoku Kijun period (price-space)
-                    rvol_gate=1.20,       # Minimum RVOL_5 to allow an Omen
-                    near_frac=0.25,       # Within 25% of half-bandwidth = Near Omen
-                    bbw_lookback=5,       # For expansion/contracting check
-                    bbw_ratio_gate=1.15,  # >1.15 = expanding, <1.0 = contracting
-                    kijun_slope_lb=0.0,   # >0.0 for bull impulse, <0.0 for bear impulse
-                    touch_mode="wick",    # 'wick' (High/Low) or 'close' (Close vs bands)
-                    cooldown=3            # Bars to suppress repeat "Full Omen" tags
-                )
-                
-                def _to_f(df, prev_close):
-                    pc = float(prev_close)
-                    out = df.copy()
-                    out["F_open"]  = (out["Open"]  - pc) / pc * 10000
-                    out["F_high"]  = (out["High"]  - pc) / pc * 10000
-                    out["F_low"]   = (out["Low"]   - pc) / pc * 10000
-                    out["F_close"] = (out["Close"] - pc) / pc * 10000
-                    out["F_numeric"] = out["F_close"]
-                    return out
-                
-                def _f_bbands(df, window, k):
-                    out = df.copy()
-                    ma = out["F_numeric"].rolling(window, min_periods=1).mean()
-                    sd = out["F_numeric"].rolling(window, min_periods=1).std(ddof=0)
-                    out["F% MA"]    = ma
-                    out["F% Upper"] = ma + k*sd
-                    out["F% Lower"] = ma - k*sd
-                    out["F% BBW"]   = out["F% Upper"] - out["F% Lower"]
-                    return out
-                
-                def _kijun_f(df, period, prev_close):
-                    pc = float(prev_close)
-                    hh = df["High"].rolling(period, min_periods=1).max()
-                    ll = df["Low"].rolling(period, min_periods=1).min()
-                    kijun_price = (hh + ll) / 2.0
-                    kijun_f = (kijun_price - pc) / pc * 10000
-                    return kijun_f
-                
-                def _cooldown_mask(signal_bool, cooldown):
-                    """Keep first True, then suppress next 'cooldown' bars of True."""
-                    if cooldown <= 0:
-                        return signal_bool
-                    keep = np.zeros(len(signal_bool), dtype=bool)
-                    last = -10**9
-                    for i, s in enumerate(signal_bool):
-                        if s and (i - last > cooldown):
-                            keep[i] = True
-                            last = i
-                    return pd.Series(keep, index=signal_bool.index)
-                
-                def build_omen_topnotch(df, prev_close, cfg=OMEN_CFG):
-                    """
-                    Returns a copy of df with Omen columns:
-                      - F%-space OHLC + Bollinger (F% Upper/Lower, F% BBW)
-                      - Kijun_F
-                      - Omen_Label: '🔥 Omen (bull/bear)', '⚠️ Near Omen (bull/bear)', or ''
-                      - Omen_Type: 'Impulse' or 'Exhaustion' (only for Full Omen)
-                      - Omen_Bias: 'bull'/'bear'/''
-                      - Omen_On: bool
-                    Expects: columns Open, High, Low, Close; optional RVOL_5.
-                    """
-                    out = df.copy()
-                    out = _to_f(out, prev_close)
-                    out = _f_bbands(out, cfg["bb_window"], cfg["bb_k"])
-                    out["Kijun_F"] = _kijun_f(out, cfg["kijun_period"], prev_close)
-                
-                    # Fuel (RVOL)
-                    if "RVOL_5" not in out.columns:
-                        out["RVOL_5"] = 0.0
-                    rvol = out["RVOL_5"]
-                
-                    f   = out["F_numeric"]
-                    up  = out["F% Upper"]
-                    lo  = out["F% Lower"]
-                    kij = out["Kijun_F"]
-                
-                    # Band touch logic
-                    if cfg["touch_mode"] == "close":
-                        touch_up = f >= up
-                        touch_lo = f <= lo
-                    else:  # wick
-                        touch_up = out["F_high"] >= up
-                        touch_lo = out["F_low"]  <= lo
-                
-                    # Kijun side (kingdom bias)
-                    bull_side = f > kij
-                    bear_side = f < kij
-                
-                    # Full Omen gates: band touch + side + fuel
-                    full_bull = touch_up & bull_side & (rvol >= cfg["rvol_gate"])
-                    full_bear = touch_lo & bear_side & (rvol >= cfg["rvol_gate"])
-                
-                    # Near Omen: within near_frac of half-bandwidth, regardless of fuel (soft heads-up)
-                    half_bw = (up - lo) / 2.0
-                    dist_to_edge = pd.concat([(up - f).abs(), (f - lo).abs()], axis=1).min(axis=1)
-                    prox = dist_to_edge / half_bw.replace(0, np.nan)
-                    near_band = prox <= cfg["near_frac"]
-                    near_bull = near_band & (f >= (up - cfg["near_frac"]*half_bw))
-                    near_bear = near_band & (f <= (lo + cfg["near_frac"]*half_bw))
-                
-                    # Classify impulse vs exhaustion using BBW change + Kijun slope
-                    bbw = out["F% BBW"]
-                    bbw_ratio = bbw / bbw.shift(cfg["bbw_lookback"])
-                    kij_slope = kij - kij.shift(cfg["bbw_lookback"])
-                
-                    impulse_bull = (bbw_ratio >= cfg["bbw_ratio_gate"]) & (kij_slope >  cfg["kijun_slope_lb"])
-                    impulse_bear = (bbw_ratio >= cfg["bbw_ratio_gate"]) & (kij_slope < -cfg["kijun_slope_lb"])
-                
-                    # Apply cooldown to Full Omen (don’t spam)
-                    full_any = (full_bull | full_bear)
-                    keep_full = _cooldown_mask(full_any.fillna(False), cfg["cooldown"])
-                    full_bull = full_bull & keep_full
-                    full_bear = full_bear & keep_full
-                
-                    # Labels
-                    out["Omen_Label"] = ""
-                    out.loc[full_bull, "Omen_Label"] = "🔥 Omen (bull)"
-                    out.loc[full_bear, "Omen_Label"] = "🩸 Omen (bear)"
-                    # Only create Near label if no Full Omen that bar
-                    near_only = (out["Omen_Label"] == "")
-                    out.loc[near_only & near_bull, "Omen_Label"] = "⚠️ Near Omen (bull)"
-                    out.loc[near_only & near_bear, "Omen_Label"] = "⚠️ Near Omen (bear)"
-                
-                    # Type (only for Full Omen)
-                    out["Omen_Type"] = ""
-                    out.loc[full_bull & impulse_bull, "Omen_Type"] = "Impulse"
-                    out.loc[full_bull & ~impulse_bull, "Omen_Type"] = "Exhaustion"
-                    out.loc[full_bear & impulse_bear, "Omen_Type"] = "Impulse"
-                    out.loc[full_bear & ~impulse_bear, "Omen_Type"] = "Exhaustion"
-                
-                    # Convenience
-                    out["Omen_Bias"] = ""
-                    out.loc[out["Omen_Label"].str.contains("bull"), "Omen_Bias"] = "bull"
-                    out.loc[out["Omen_Label"].str.contains("bear"), "Omen_Bias"] = "bear"
-                    out["Omen_On"] = out["Omen_Label"] != ""
-                
-                    return out
-
-                
-                # ----------------------------
-                # 0) CONFIG (tune to taste)
-                # ----------------------------
-                OMEN_CFG = dict(
-                    bb_window=20,          # F%-BB window
-                    kijun_period=26,       # Kijun period (in bars)
-                    rvol_gate=1.20,        # min RVOL_5 to allow an omen
-                    zE_gate=1.5,           # min z(Vector Energy) for impulse
-                    zJ_gate=2.0,           # min z(Jerk) for impulse
-                    body_min=0.40,         # body% of range toward edge
-                    prox_cap=0.50,         # normalize proximity (0=at edge, 0.5=fairly far)
-                    near_threshold=0.25    # within 25% of edge counts as "Near Omen"
-                )
-                
-                # ----------------------------
-                # 1) F%-space helpers
-                # ----------------------------
-                def to_f_space(df, prev_close, open_col="Open", high_col="High", low_col="Low", close_col="Close"):
-                    """Add F%-space OHLC columns: F_open/F_high/F_low/F_close and F_numeric=F_close."""
-                    pc = float(prev_close)
-                    out = df.copy()
-                    out["F_open"]  = (out[open_col]  - pc) / pc * 10000
-                    out["F_high"]  = (out[high_col]  - pc) / pc * 10000
-                    out["F_low"]   = (out[low_col]   - pc) / pc * 10000
-                    out["F_close"] = (out[close_col] - pc) / pc * 10000
-                    out["F_numeric"] = out["F_close"]
-                    return out
-                
-                def add_f_bbands(df, window=20):
-                    """Bollinger Bands on F%-close."""
-                    out = df.copy()
-                    ma  = out["F_numeric"].rolling(window, min_periods=1).mean()
-                    sd  = out["F_numeric"].rolling(window, min_periods=1).std()
-                    out["F% MA"]    = ma
-                    out["F% Std"]   = sd
-                    out["F% Upper"] = ma + 2*sd
-                    out["F% Lower"] = ma - 2*sd
-                    return out
-                
-                def add_kijun_f(df, period=26):
-                    """Kijun computed in price space then mapped to F%-space via same prev_close baseline."""
-                    out = df.copy()
-                    hh = out["High"].rolling(period, min_periods=1).max()
-                    ll = out["Low"].rolling(period, min_periods=1).min()
-                    kijun_price = (hh + ll) / 2.0
-                    # map to F%-space using same baseline as F_open/F_close
-                    # baseline is the session prev_close used earlier; recover from first-row inverse transform:
-                    # safer: reuse F%-mapping formula with provided prev_close when calling to_f_space()
-                    # here we infer baseline by reversing F_close if necessary:
-                    if "Baseline_PrevClose" in out.columns:
-                        pc = float(out["Baseline_PrevClose"].iloc[0])
-                    else:
-                        # best-effort inference (optional): use first row Close / (1 + F_close/10000)
-                        # but strongly recommend passing Baseline_PrevClose column if you have it.
-                        pc = float(out["Close"].iloc[0] / (1 + out["F_close"].iloc[0]/10000.0))
-                    out["Kijun_F"] = (kijun_price - pc) / pc * 10000
-                    return out
-                
-                # ----------------------------
-                # 2) Omen core (row scorer)
-                # ----------------------------
-                def _clamp(x, lo, hi):
-                    return np.minimum(np.maximum(x, lo), hi)
-                
-                def omen_score_row_F(r, cfg=OMEN_CFG):
-                    kijun = r["Kijun_F"]
-                    f_up  = r["F% Upper"]
-                    f_lo  = r["F% Lower"]
-                
-                    fo, fh, fl, fc = r["F_open"], r["F_high"], r["F_low"], r["F_close"]
-                    f = fc
-                
-                    rvol = float(r.get("RVOL_5", 0) or 0)
-                    zE   = float(r.get("z_vecE", 0) or 0)
-                    zJ   = float(r.get("z_jerk", 0) or 0)
-                
-                    # band geometry, proximity normalized by half bandwidth
-                    half_bw = 0.5 * max((f_up - f_lo), 1e-9)
-                    dist_up = abs(f_up - f)
-                    dist_lo = abs(f - f_lo)
-                    dist    = min(dist_up, dist_lo)
-                    prox    = _clamp(dist / half_bw, 0.0, cfg["prox_cap"])          # 0=at edge
-                    tagged  = (fh >= f_up) or (fl <= f_lo)
-                    near    = (prox <= cfg["near_threshold"])
-                
-                    # direction (close must finish beyond Kijun)
-                    crossed_up   = (fo < kijun) and (fc > kijun)
-                    crossed_down = (fo > kijun) and (fc < kijun)
-                
-                    # body dominance toward nearest edge
-                    rngF  = max(fh - fl, 1e-9)
-                    bodyF = abs(fc - fo)
-                    body_ok = (bodyF / rngF) >= cfg["body_min"]
-                    toward_up   = dist_up <= dist_lo
-                    toward_down = dist_lo <  dist_up
-                    body_toward = (crossed_up and toward_up) or (crossed_down and toward_down)
-                
-                    # gates
-                    fuel_ok    = (rvol >= cfg["rvol_gate"])
-                    impulse_ok = (zE >= cfg["zE_gate"]) or (zJ >= cfg["zJ_gate"])
-                
-                    # score (0–100)
-                    score = 0.0
-                    if crossed_up or crossed_down:
-                        score += 25.0
-                
-                    if tagged:
-                        score += 25.0
-                    else:
-                        score += (1.0 - prox / cfg["prox_cap"]) * 25.0  # closer → more
-                
-                    # RVOL from 1.0→1.8 → 0→20
-                    score += _clamp((rvol - 1.0) / 0.8, 0.0, 1.0) * 20.0
-                
-                    # impulse (max of zE or zJ), clamp 0→3 → 0→20
-                    imp_unit = max(_clamp(zE, 0, 3), _clamp(zJ, 0, 3)) / 3.0
-                    score += imp_unit * 20.0
-                
-                    if body_ok and body_toward:
-                        score += 10.0
-                
-                    # labels
-                    label = ""
-                    if (crossed_up or crossed_down) and fuel_ok and impulse_ok:
-                        if tagged:
-                            label = "🔥 Full Omen"
-                        elif near:
-                            label = "⚠️ Near Omen"
-                
-                    direction = ""
-                    if label:
-                        direction = "bull" if crossed_up else ("bear" if crossed_down else "")
-                
-                    return round(score, 1), label, direction
-                
-                # ----------------------------
-                # 3) Public API
-                # ----------------------------
-                def build_omen(
-                    df,
-                    prev_close,
-                    cfg=OMEN_CFG,
-                    expect_cols=("RVOL_5","z_vecE","z_jerk"),
-                ):
-                    """
-                    Returns df with:
-                      - F_open/F_high/F_low/F_close/F_numeric
-                      - F% MA/F% Std/F% Upper/F% Lower
-                      - Kijun_F
-                      - Omen_Strength (0–100), Omen_Label, Omen_Direction, Omen_On (bool)
-                    Notes:
-                      - Expects RVOL_5, z_vecE, z_jerk. If missing, fills with zeros (will rarely trigger).
-                      - prev_close MUST be the session baseline used for F%-space.
-                    """
-                    out = df.copy()
-                    out["Baseline_PrevClose"] = float(prev_close)  # keep baseline for any later transforms
-                
-                    # Ensure inputs exist
-                    for col in expect_cols:
-                        if col not in out.columns:
-                            out[col] = 0.0
-                
-                    # Build F%-space + aura + queen
-                    out = to_f_space(out, prev_close)
-                    out = add_f_bbands(out, window=cfg["bb_window"])
-                    out = add_kijun_f(out, period=cfg["kijun_period"])
-                
-                    # Score
-                    res = out.apply(lambda r: omen_score_row_F(r, cfg=cfg), axis=1, result_type="expand")
-                    out["Omen_Strength"]  = res[0]
-                    out["Omen_Label"]     = res[1]
-                    out["Omen_Direction"] = res[2]
-                    out["Omen_On"]        = out["Omen_Label"].ne("")
-                
-                    return out
-                    
-                       # prev_close = your session reference (yesterday's close or session baseline)
-                    intraday = build_omen(intraday, prev_close)
-                    
+             
                     # Quick check:
                     # intraday.loc[intraday["Omen_On"], ["Time","Omen_Label","Omen_Direction","Omen_Strength"]].head()
 
@@ -5609,7 +5289,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","Omen_Label", "Omen_Bias", "Omen_Type", "Omen_On","ADX_F%","+DM","-DM","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","ADX_F%","+DM","-DM","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
@@ -5823,8 +5503,54 @@ if st.sidebar.button("Run Analysis"):
                   
                   profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
 
-                  
- 
+                                 
+                def add_stamina_signal(intraday, profile_df, f_bins):
+                   """
+                   Adds a Stamina_Signal column:
+                   ⚪ = no stamina (RVOL ≤ 1.2)
+                   🪨 = stamina but track blocked (RVOL > 1.2 but not crossed 🦻🏼/👃🏽)
+                   💪 = stamina + clear track (RVOL > 1.2 and crossed 🦻🏼 or 👃🏽)
+                   """
+               
+                   # Defensive checks
+                   if not all(col in intraday.columns for col in ["F_numeric", "RVOL_5"]):
+                       return intraday
+               
+                   if not all(col in profile_df.columns for col in ["F% Level", "%Vol", "Letter_Count"]):
+                       return intraday
+               
+                   # --- Step 1: Identify key profile levels ---
+                   max_vol_level = profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level']
+                   max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+               
+                   # --- Step 2: Assign stamina bar by bar ---
+                   stamina = []
+                   for i in range(len(intraday)):
+                       mike = intraday.at[intraday.index[i], "F_numeric"]
+                       rvol = intraday.at[intraday.index[i], "RVOL_5"]
+               
+                       if pd.isna(mike) or pd.isna(rvol):
+                           stamina.append("⚪")  # default
+                           continue
+               
+                       # Bin Mike into profile levels
+                       current_mike_bin = f_bins[np.digitize(mike, f_bins) - 1]
+               
+                       # --- State logic ---
+                       if rvol <= 1.2:
+                           stamina.append("⚪")  # no stamina
+                       else:
+                           # RVOL > 1.2 → has stamina
+                           if current_mike_bin == max_vol_level or current_mike_bin == max_letter_level:
+                               stamina.append("🪨")  # stamina but blocked
+                           else:
+                               stamina.append("💪")  # stamina + clear track
+               
+                   intraday["Stamina_Signal"] = stamina
+                   return intraday
+
+                  intraday = add_stamina_signal(intraday, profile_df, f_bins)
+
                    # Define Initial Balance from first 12 candles
                   ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
                   
@@ -5908,7 +5634,7 @@ if st.sidebar.button("Run Analysis"):
 
 
                   # # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
+                  st.dataframe(profile_df[["F% Level","Time", "Stamina_Signal","Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
 
                   
                   def compute_ib_volume_weights(intraday, ib_high, ib_low):
