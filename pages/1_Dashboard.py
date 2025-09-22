@@ -5545,9 +5545,9 @@ if st.sidebar.button("Run Analysis"):
                                stamina.append("🪨")  # stamina but blocked
                            else:
                                stamina.append("💪")  # stamina + clear track
-               
-                   intraday["Stamina_Signal"] = stamina
-                   return intraday
+              
+                  intraday["Stamina_Signal"] = stamina
+                  return intraday
 
                   intraday = add_stamina_signal(intraday, profile_df, f_bins)
 
