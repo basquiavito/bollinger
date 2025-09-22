@@ -9114,28 +9114,60 @@ if st.sidebar.button("Run Analysis"):
 
  # ------------------------------------------------------------
                 # 🏁 Clean-Track Emoji  -- first bar where stamina is 💪
-                # ------------------------------------------------------------
-                clean_mask = intraday["Stamina_Signal"] == "💪"
+         # ---------------------------------------------
+# 💪 Stamina-at-Entry1 marker (Call & Put only)
+# Requires columns: TimeIndex, F_numeric, Stamina_Signal,
+#                   Call_FirstEntry_Emoji, Put_FirstEntry_Emoji
+                # ---------------------------------------------
+                needed = {"TimeIndex","F_numeric","Stamina_Signal","Call_FirstEntry_Emoji","Put_FirstEntry_Emoji"}
+                if needed.issubset(intraday.columns):
                 
-                if clean_mask.any():
-                    first_clean_idx = clean_mask.idxmax()         # first True row
-                    clean_time  = intraday.loc[first_clean_idx, "TimeIndex"]
-                    clean_price = intraday.loc[first_clean_idx, "F_numeric"]  # plot at Mike’s value; tweak if desired
+                    # Call Entry 1 with clear track (stamina 💪)
+                    call_e1_clean = intraday[
+                        (intraday["Call_FirstEntry_Emoji"] == "🎯") &
+                        (intraday["Stamina_Signal"] == "💪")
+                    ]
                 
-                    fig.add_trace(
-                        go.Scatter(
-                            x=[clean_time],
-                            y=[clean_price],
-                            mode="text",
-                            text=["💪"],              # one emoji marker
-                            textposition="top center",
-                            textfont=dict(size=18),   # adjust size to taste
-                            name="Clear Track (💪)",
-                            showlegend=False,
-                            hovertemplate="Stamina 💪 — clear track<extra></extra>"
-                        ),
-                        row=2, col=1
-                    )
+                    if not call_e1_clean.empty:
+                        fig.add_trace(
+                            go.Scatter(
+                                x=call_e1_clean["TimeIndex"],
+                                y=call_e1_clean["F_numeric"],
+                                mode="text",
+                                text=["💪"] * len(call_e1_clean),
+                                textposition="top center",
+                                textfont=dict(size=18),
+                                name="Entry1 Stamina (Call)",
+                                showlegend=False,
+                                hovertemplate="Call Entry 1 — Stamina 💪 (clear track)<extra></extra>"
+                            ),
+                            row=2, col=1
+                        )
+                
+                    # Put Entry 1 with clear track (stamina 💪)
+                    put_e1_clean = intraday[
+                        (intraday["Put_FirstEntry_Emoji"] == "🎯") &
+                        (intraday["Stamina_Signal"] == "💪")
+                    ]
+                
+                    if not put_e1_clean.empty:
+                        fig.add_trace(
+                            go.Scatter(
+                                x=put_e1_clean["TimeIndex"],
+                                y=put_e1_clean["F_numeric"],
+                                mode="text",
+                                text=["💪"] * len(put_e1_clean),
+                                textposition="top center",
+                                textfont=dict(size=18),
+                                name="Entry1 Stamina (Put)",
+                                showlegend=False,
+                                hovertemplate="Put Entry 1 — Stamina 💪 (clear track)<extra></extra>"
+                            ),
+                            row=2, col=1
+                        )
+                else:
+                    # Optional: silent guard
+                    pass
 
                 # # 🔷 Value Area Min (hoverable)
                 # fig.add_trace(go.Scatter(
