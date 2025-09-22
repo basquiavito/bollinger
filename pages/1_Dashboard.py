@@ -6790,7 +6790,7 @@ if st.sidebar.button("Run Analysis"):
                         out.at[out.index[t0_i], "Marengo_Side"]  = side
                 
                     return out
-                  intraday = add_marengo_T0(intraday)  # call AFTER your Entry 1 logic & ATR column exist
+                intraday = add_marengo_T0(intraday)  # call AFTER your Entry 1 logic & ATR column exist
                 
                 def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
                     """
