@@ -7663,6 +7663,57 @@ if st.sidebar.button("Run Analysis"):
                             annotation_font=dict(color="gold", size=13),
                             opacity=0.6
                         )
+
+                 # Ensure Electric_Force is numeric
+                        intraday["Electric_Force"] = pd.to_numeric(intraday["Electric_Force"], errors="coerce")
+                        
+                        # Drop invalid rows
+                        valid_force = intraday.dropna(subset=["Electric_Force", "Cumulative_Unit", "Time"])
+                        
+                        # Calculate percentile thresholds
+                        p95 = valid_force["Electric_Force"].quantile(0.95)
+                        p90 = valid_force["Electric_Force"].quantile(0.90)
+                        p10 = valid_force["Electric_Force"].quantile(0.10)
+                        p05 = valid_force["Electric_Force"].quantile(0.05)
+                        
+                        # Select rows above/below thresholds
+                        force_up = valid_force[valid_force["Electric_Force"] >= p90]
+                        force_down = valid_force[valid_force["Electric_Force"] <= p10]
+                        
+                        # 🐼 High Force Markers
+                        fig_displacement.add_trace(go.Scatter(
+                            x=force_up["Time"],
+                            y=force_up["Cumulative_Unit"] + 88,
+                            mode="text",
+                            text=["🐼"] * len(force_up),
+                            textposition="top center",
+                            textfont=dict(size=16),
+                            showlegend=False,
+                            hovertemplate=(
+                                "🐼 Strong Electric Force<br>"
+                                "Time: %{x}<br>"
+                                "Force: %{customdata[0]:.2f}<extra></extra>"
+                            ),
+                            customdata=force_up[["Electric_Force"]],
+                        ))
+                        
+                        # 🐻 Low Force Markers
+                        fig_displacement.add_trace(go.Scatter(
+                            x=force_down["Time"],
+                            y=force_down["Cumulative_Unit"] - 88,
+                            mode="text",
+                            text=["🐻"] * len(force_down),
+                            textposition="bottom center",
+                            textfont=dict(size=16),
+                            showlegend=False,
+                            hovertemplate=(
+                                "🐻 Weak Electric Force<br>"
+                                "Time: %{x}<br>"
+                                "Force: %{customdata[0]:.2f}<extra></extra>"
+                            ),
+                            customdata=force_down[["Electric_Force"]],
+                        ))
+
                     # # Convert power column to numeric just in case
                     # intraday["Power_numeric"] = pd.to_numeric(intraday["Power"], errors="coerce")
                     
