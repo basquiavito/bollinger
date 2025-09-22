@@ -5504,7 +5504,7 @@ if st.sidebar.button("Run Analysis"):
                   profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
 
                                  
-                def add_stamina_signal(intraday, profile_df, f_bins):
+                 def add_stamina_signal(intraday, profile_df, f_bins):
                    """
                    Adds a Stamina_Signal column:
                    ⚪ = no stamina (RVOL ≤ 1.2)
