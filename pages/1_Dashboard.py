@@ -7328,6 +7328,52 @@ if st.sidebar.button("Run Analysis"):
                         ),
                         customdata=top3_neg_jerk[["Jerk_num"]].values
                     ))
+                    intraday["Vector Energy_numeric"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
+                  
+                  # Drop NaN first
+                    ve = intraday["Vector Energy_numeric"].dropna()
+                    
+                    # Compute thresholds
+                    high_thresh = ve.quantile(0.95)   # top 5%
+                    low_thresh  = ve.quantile(0.05)   # bottom 5%
+                    
+                    # Filter rows directly for plotting
+                    top_energy_rows = intraday[intraday["Vector Energy_numeric"] >= high_thresh]
+                    bottom_energy_rows = intraday[intraday["Vector Energy_numeric"] <= low_thresh]
+                    
+                    # --- Plot Top Energy 🔋 ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top_energy_rows["Time"],
+                        y=top_energy_rows["Cumulative_Unit"] + 40,
+                        mode="text",
+                        text=["🔋"] * len(top_energy_rows),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🔋 Energy Burst<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Vector Energy: %{customdata[0]:,.1f}<extra></extra>"
+                        ),
+                        customdata=top_energy_rows[["Vector Energy_numeric"]].values
+                    ))
+                    
+                    # --- Plot Bottom Energy 🪫 ---
+                    fig_displacement.add_trace(go.Scatter(
+                        x=bottom_energy_rows["Time"],
+                        y=bottom_energy_rows["Cumulative_Unit"] - 40,
+                        mode="text",
+                        text=["🪫"] * len(bottom_energy_rows),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🪫 Low Energy<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Vector Energy: %{customdata[0]:.1f}<extra></extra>"
+                        ),
+                        customdata=bottom_energy_rows[["Vector Energy_numeric"]].values
+                    ))
 
                     # intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
                     # intraday["Vector Momentum"] = pd.to_numeric(intraday["Vector Momentum"], errors="coerce")
@@ -7413,53 +7459,7 @@ if st.sidebar.button("Run Analysis"):
                     # ))
                     # # --- Prepare Top 3 Vector Energy Rows ---
             # --- Prepare Percentile-Based Vector Energy Rows ---
-                  intraday["Vector Energy_numeric"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
-                  
-                  # Drop NaN first
-                  ve = intraday["Vector Energy_numeric"].dropna()
-                  
-                  # Compute thresholds
-                  high_thresh = ve.quantile(0.95)   # top 5%
-                  low_thresh  = ve.quantile(0.05)   # bottom 5%
-                  
-                  # Filter rows directly for plotting
-                  top_energy_rows = intraday[intraday["Vector Energy_numeric"] >= high_thresh]
-                  bottom_energy_rows = intraday[intraday["Vector Energy_numeric"] <= low_thresh]
-                  
-                  # --- Plot Top Energy 🔋 ---
-                  fig_displacement.add_trace(go.Scatter(
-                      x=top_energy_rows["Time"],
-                      y=top_energy_rows["Cumulative_Unit"] + 40,
-                      mode="text",
-                      text=["🔋"] * len(top_energy_rows),
-                      textposition="top center",
-                      textfont=dict(size=18),
-                      showlegend=False,
-                      hovertemplate=(
-                          "🔋 Energy Burst<br>"
-                          "Time: %{x|%I:%M %p}<br>"
-                          "Vector Energy: %{customdata[0]:,.1f}<extra></extra>"
-                      ),
-                      customdata=top_energy_rows[["Vector Energy_numeric"]].values
-                  ))
-                  
-                  # --- Plot Bottom Energy 🪫 ---
-                  fig_displacement.add_trace(go.Scatter(
-                      x=bottom_energy_rows["Time"],
-                      y=bottom_energy_rows["Cumulative_Unit"] - 40,
-                      mode="text",
-                      text=["🪫"] * len(bottom_energy_rows),
-                      textposition="bottom center",
-                      textfont=dict(size=18),
-                      showlegend=False,
-                      hovertemplate=(
-                          "🪫 Low Energy<br>"
-                          "Time: %{x|%I:%M %p}<br>"
-                          "Vector Energy: %{customdata[0]:.1f}<extra></extra>"
-                      ),
-                      customdata=bottom_energy_rows[["Vector Energy_numeric"]].values
-                  ))
-
+          
                   
                   # # Ensure column is numeric
                   #   intraday["Vector_Energy_Eff"] = pd.to_numeric(intraday["Vector_Energy_per_3bar_Range"], errors="coerce")
