@@ -6871,7 +6871,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
                                         intraday[[
-                                            'Time', price_col, 'Volume',"Side_Dist_F",
+                                            'Time', price_col, 'Volume',"Side_Label","Side_Dist_F",
                                             'MIDAS_Bear', 'MIDAS_Bull',"Compliance_Bull","Compliance_Bear","Compliance_Bull_Flip", "Compliance_Bear_Flip","Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
                                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
                                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
