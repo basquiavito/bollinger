@@ -6763,6 +6763,39 @@ if st.sidebar.button("Run Analysis"):
                 # Apply before plotting
                 intraday = add_vault_emoji(intraday)
 
+                def add_marengo_T0(df, dist_col="Side_Dist_F", tol=20):
+                    """
+                    Adds T0 phase markers:
+                    - 🚪 when Side_Dist_F is within tol of nearest band
+                    - Marengo_Side = 'north' (upper) or 'south' (lower)
+                    """
+                    out = df.copy()
+                
+                    # Ensure column exists
+                    if dist_col not in out.columns:
+                        out["T0_Emoji"] = ""
+                        out["Marengo_Side"] = ""
+                        return out
+                
+                    out["T0_Emoji"] = ""
+                    out["Marengo_Side"] = ""
+                
+                    for i in range(len(out)):
+                        dist = out.loc[out.index[i], dist_col]
+                
+                        if pd.isna(dist):
+                            continue
+                
+                        if dist >= 0 and dist <= tol:
+                            # Close enough to gate
+                            side = "north" if (out["F_numeric"].iloc[i] < out["F% Upper"].iloc[i]) else "south"
+                            out.at[out.index[i], "T0_Emoji"] = "🚪"
+                            out.at[out.index[i], "Marengo_Side"] = side
+                
+                    return out
+                
+                # Apply to intraday
+                intraday = add_marengo_T0(intraday, tol=20)
 
                 # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
                 #     """
@@ -10836,6 +10869,22 @@ if st.sidebar.button("Run Analysis"):
                     ),
                     row=1, col=1
 )
+                # 🚪 T0 markers
+                t0_mask = intraday["T0_Emoji"] == "🚪"
+                
+                fig.add_trace(
+                    go.Scatter(
+                        x=intraday.loc[t0_mask, "Time"],
+                        y=intraday.loc[t0_mask, "F_numeric"],
+                        mode="text",
+                        text=intraday.loc[t0_mask, "T0_Emoji"],
+                        textposition="middle right",   # shift a bit for readability
+                        textfont=dict(size=20, color="orange"),
+                        name="T0 Gate",
+                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Phase: T0 🚪<extra></extra>"
+                    ),
+                    row=1, col=1
+                )
 
              # # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
              #    gb_rows = intraday[intraday["Gravity_Break_Alert"] == "🪂"]
