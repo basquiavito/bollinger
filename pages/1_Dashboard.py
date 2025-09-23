@@ -10811,11 +10811,11 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(
                     go.Scatter(
                         x=intraday.loc[vault_mask_dove, "Time"],
-                        y=intraday.loc[vault_mask_dove, "Kijun_F"] + 20,  # offset +20 F% (tune if needed)
+                        y=intraday.loc[vault_mask_dove, "Kijun_F"] + 60,  # offset +20 F% (tune if needed)
                         mode="text",
                         text=intraday.loc[vault_mask_dove, "Vault_Emoji"],
                         textposition="bottom center",
-                        textfont=dict(size=22, color="purple"),
+                        textfont=dict(size=32, color="purple"),
                         name="Bull Vault 🕊️",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                     ),
@@ -10826,11 +10826,11 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(
                     go.Scatter(
                         x=intraday.loc[vault_mask_crow, "Time"],
-                        y=intraday.loc[vault_mask_crow, "Kijun_F"] - 20,  # offset -20 F% (tune if needed)
+                        y=intraday.loc[vault_mask_crow, "Kijun_F"] - 60,  # offset -20 F% (tune if needed)
                         mode="text",
                         text=intraday.loc[vault_mask_crow, "Vault_Emoji"],
                         textposition="top center",
-                        textfont=dict(size=22, color="black"),
+                        textfont=dict(size=32, color="black"),
                         name="Bear Vault 🐦‍⬛",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                     ),
