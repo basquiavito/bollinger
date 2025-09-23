@@ -6902,55 +6902,53 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_marengo_T2(intraday)
-                def add_marengo_ride_state(intraday, parallel_tol=5, bubble_tol=15):
+                def add_parallel_phase(intraday):
                     """
-                    Tracks Mike's ride phases after T2:
-                    - ⚡ = parallel ride (close to band, abs(Side_Dist_F) ≤ parallel_tol)
-                    - 🎈 = bubble drift (away from band, Side_Dist_F > bubble_tol)
-                    - States persist until flip
+                    Marks ⚡ Parallel phase:
+                    After T1, as long as price stays on the correct side of Tenkan_F.
+                    - For calls: F_numeric >= Tenkan_F
+                    - For puts:  F_numeric <= Tenkan_F
                     """
                     out = intraday.copy()
-                    out["Ride_State"] = ""
+                    out["Parallel_Emoji"] = ""
                 
-                    # Make sure we have Side_Dist_F and T2
-                    if "Side_Dist_F" not in out.columns or "T2_Emoji" not in out.columns:
+                    # Find T1
+                    t1_idx = out.index[out["T1_Emoji"] == "⏩"]
+                    if len(t1_idx) == 0:
                         return out
                 
-                    # Find T2 start
-                    t2_idx = out.index[out["T2_Emoji"] == "⏩"]
-                    if len(t2_idx) == 0:
+                    start_i = out.index.get_loc(t1_idx[0])
+                
+                    # Loop forward bar by bar
+                    side = None
+                    if any(out["Call_FirstEntry_Emoji"] == "🎯"):
+                        side = "call"
+                    elif any(out["Put_FirstEntry_Emoji"] == "🎯"):
+                        side = "put"
+                
+                    if side is None:
                         return out
-                    start_i = out.index.get_loc(t2_idx[0])
                 
-                    # Initialize state
-                    state = None
+                    for i in range(start_i + 1, len(out)):
+                        mike = out.at[out.index[i], "F_numeric"]
+                        tenkan = out.at[out.index[i], "Tenkan_F"]
                 
-                    for i in range(start_i, len(out)):
-                        dist = out.at[out.index[i], "Side_Dist_F"]
-                
-                        if pd.isna(dist):
+                        if pd.isna(mike) or pd.isna(tenkan):
                             continue
                 
-                        # Decide state
-                        if abs(dist) <= parallel_tol:
-                            new_state = "⚡"
-                        elif dist > bubble_tol:
-                            new_state = "🎈"
+                        # Check condition
+                        if side == "call" and mike >= tenkan:
+                            out.at[out.index[i], "Parallel_Emoji"] = "⚡"
+                        elif side == "put" and mike <= tenkan:
+                            out.at[out.index[i], "Parallel_Emoji"] = "⚡"
                         else:
-                            new_state = state  # hold previous state if in between zones
-                
-                        # Flip state if changed
-                        if new_state != state:
-                            state = new_state
-                
-                        # Mark state
-                        out.at[out.index[i], "Ride_State"] = state if state else ""
+                            break  # exits parallel phase
                 
                     return out
                 
-                
-                # Apply to intraday
-                intraday = add_marengo_ride_state(intraday)
+                # Apply
+                intraday = add_parallel_phase(intraday)
+
 
                 def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
                     """
@@ -10995,22 +10993,23 @@ if st.sidebar.button("Run Analysis"):
                     ),
                     row=1, col=1
                 )
-                # === Plot Ride States (⚡ parallel / 🎈 bubble) ===
-                ride_mask = intraday["Ride_State"].isin(["⚡", "🎈"])
+            # ⚡ Parallel markers
+                parallel_mask = intraday["Parallel_Emoji"] == "⚡"
                 
                 fig.add_trace(
                     go.Scatter(
-                        x=intraday.loc[ride_mask, "Time"],
-                        y=intraday.loc[ride_mask, "F_numeric"],
+                        x=intraday.loc[parallel_mask, "Time"],
+                        y=intraday.loc[parallel_mask, "F_numeric"],
                         mode="text",
-                        text=intraday.loc[ride_mask, "Ride_State"],
-                        textposition="middle right",
-                        textfont=dict(size=20, color="purple"),
-                        name="Ride State",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                        text=["⚡"] * parallel_mask.sum(),
+                        textposition="top center",
+                        textfont=dict(size=18, color="orange"),
+                        name="Parallel ⚡",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>⚡ Parallel<extra></extra>"
                     ),
                     row=1, col=1
                 )
+                
 
                 if yva_min is not None and yva_max is not None:
                     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
