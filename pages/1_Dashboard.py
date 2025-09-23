@@ -6712,86 +6712,72 @@ if st.sidebar.button("Run Analysis"):
 
                 
    
-                def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
-                    """
-                    T0 = first bar AFTER Entry 1 where Mike is ~1×ATR from the NEAREST BB edge (inside the band).
-                    - Marks:
-                        Marengo_Phase = "T0"
-                        Marengo_Side  = "north" | "south"
-                        T0_Emoji      = "🚪"
-                    - tol = ±30% tolerance around 1×ATR.
-                    Requires columns: F_numeric, F% Upper, F% Lower, ATR, Call_FirstEntry_Emoji, Put_FirstEntry_Emoji
-                    """
+                def add_marengo_T0_legacy(intraday, atr_col="ATR", tol=0.30):
                     out = intraday.copy()
                 
-                    need = ["F_numeric","F% Upper","F% Lower", atr_col,
-                            "Call_FirstEntry_Emoji","Put_FirstEntry_Emoji"]
-                    if not set(need).issubset(out.columns):
-                        return out  # missing inputs → no-op
+                    need_cols = ["F_numeric", "F% Upper", "F% Lower", atr_col,
+                                 "Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji"]
+                    for col in need_cols:
+                        if col not in out.columns:
+                            out["T0_Emoji"] = ""
+                            out["Marengo_Phase"] = ""
+                            out["Marengo_Side"] = ""
+                            return out
                 
-                    # ensure numeric
-                    for c in ["F_numeric","F% Upper","F% Lower", atr_col]:
-                        out[c] = pd.to_numeric(out[c], errors="coerce")
+                    # Find Entry 1
+                    call_idx = out.index[out["Call_FirstEntry_Emoji"] == "🎯"]
+                    put_idx  = out.index[out["Put_FirstEntry_Emoji"]  == "🎯"]
                 
-                    # find earliest Entry 1 (call or put)
-                    call_e1 = out.index[out["Call_FirstEntry_Emoji"] == "🎯"]
-                    put_e1  = out.index[out["Put_FirstEntry_Emoji"]  == "🎯"]
-                
-                    if len(call_e1)==0 and len(put_e1)==0:
-                        # no Entry 1 yet
-                        if "T0_Emoji" not in out.columns: out["T0_Emoji"] = ""
-                        if "Marengo_Phase" not in out.columns: out["Marengo_Phase"] = ""
-                        if "Marengo_Side"  not in out.columns: out["Marengo_Side"]  = ""
+                    if len(call_idx) == 0 and len(put_idx) == 0:
+                        out["T0_Emoji"] = ""
+                        out["Marengo_Phase"] = ""
+                        out["Marengo_Side"] = ""
                         return out
                 
-                    def first_loc(idx):
-                        return out.index.get_loc(idx[0]) if len(idx)>0 else None
+                    first_call_i = out.index.get_loc(call_idx[0]) if len(call_idx) > 0 else None
+                    first_put_i  = out.index.get_loc(put_idx[0])  if len(put_idx)  > 0 else None
                 
-                    i_call = first_loc(call_e1)
-                    i_put  = first_loc(put_e1)
+                    start_i = min(i for i in [first_call_i, first_put_i] if i is not None)
                 
-                    if i_call is not None and i_put is not None:
-                        start_i = min(i_call, i_put)
-                    else:
-                        start_i = i_call if i_call is not None else i_put
+                    # Init columns
+                    out["T0_Emoji"] = ""
+                    out["Marengo_Phase"] = ""
+                    out["Marengo_Side"] = ""
                 
-                    # scan forward for first bar ~1×ATR from nearest band
-                    up = out["F% Upper"]; lo = out["F% Lower"]; f = out["F_numeric"]
-                    t0_i = None; side = ""
+                    f  = out["F_numeric"].values
+                    up = out["F% Upper"].values
+                    lo = out["F% Lower"].values
+                    atr = out[atr_col].values
                 
                     for i in range(start_i + 1, len(out)):
-                        du  = (up.iloc[i] - f.iloc[i])   # distance to UPPER (inside if >=0)
-                        dl  = (f.iloc[i] - lo.iloc[i])   # distance to LOWER (inside if >=0)
-                        atr = out[atr_col].iloc[i]
-                
-                        if pd.isna(du) or pd.isna(dl) or pd.isna(atr) or atr <= 0:
+                        if np.isnan(f[i]) or np.isnan(up[i]) or np.isnan(lo[i]) or np.isnan(atr[i]) or atr[i] <= 0:
                             continue
                 
-                        # pick nearest band
-                        if du <= dl:
-                            nearest = du; side_try = "north"
-                        else:
-                            nearest = dl; side_try = "south"
+                        dist_to_up = up[i] - f[i]
+                        dist_to_lo = f[i] - lo[i]
                 
-                        # must be inside band (nearest >= 0) and ~1×ATR (±tol)
-                        if nearest >= 0 and (1 - tol)*atr <= nearest <= (1 + tol)*atr:
-                            t0_i = i
-                            side = side_try
+                        if np.isnan(dist_to_up) or np.isnan(dist_to_lo):
+                            continue
+                
+                        if dist_to_up <= dist_to_lo:
+                            nearest = dist_to_up
+                            side = "north"
+                        else:
+                            nearest = dist_to_lo
+                            side = "south"
+                
+                        lower_bound = (1 - tol) * atr[i]
+                        upper_bound = (1 + tol) * atr[i]
+                
+                        if nearest >= 0 and lower_bound <= nearest <= upper_bound:
+                            out.at[out.index[i], "T0_Emoji"] = "🚪"
+                            out.at[out.index[i], "Marengo_Phase"] = "T0"
+                            out.at[out.index[i], "Marengo_Side"] = side
                             break
                 
-                    # add/mark columns
-                    if "T0_Emoji" not in out.columns: out["T0_Emoji"] = ""
-                    if "Marengo_Phase" not in out.columns: out["Marengo_Phase"] = ""
-                    if "Marengo_Side"  not in out.columns: out["Marengo_Side"]  = ""
-                
-                    if t0_i is not None:
-                        out.at[out.index[t0_i], "T0_Emoji"] = "🚪"
-                        out.at[out.index[t0_i], "Marengo_Phase"] = "T0"
-                        out.at[out.index[t0_i], "Marengo_Side"]  = side
-                
                     return out
-                intraday = add_marengo_T0(intraday)  # call AFTER your Entry 1 logic & ATR column exist
-                
+                intraday = add_marengo_T0_legacy(intraday)
+
                 def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
                     """
                     Distensibility anchored to Midas.
