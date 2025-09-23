@@ -6709,67 +6709,43 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = mark_compliance_bear_flip(intraday)
-
-                def add_marengo_T0_value_auto(intraday):
+                def add_side_band_distance(intraday, out_col="Side_Dist_F", side_col="Side_Label"):
                     """
-                    Adds:
-                      - T0_Value: distance to *kingdom-side* BB / ATR  (float; ~1.0 ≈ gate)
-                                   < 0  => beyond edge (outside band)
-                      - T0_Side:  'north' if F_numeric > Kijun_F else 'south'
-                    Auto-detects column names for ATR, Kijun, and BBs.
+                    Distance to the Bollinger band on the Kijun side, in F_numeric units.
+                      - If F_numeric > Kijun_F (bull kingdom): distance = UpperBB_F - F_numeric
+                      - If F_numeric < Kijun_F (bear kingdom): distance = F_numeric - LowerBB_F
+                    Sign:
+                      > 0  → inside band (how far to the edge)
+                      = 0  → exactly at the edge
+                      < 0  → outside band (past the edge)
                     """
                     out = intraday.copy()
-                
-                    # --- 1) Auto-pick column names ---
-                    def pick(cols):
-                        return next((c for c in cols if c in out.columns), None)
-                
-                    atr_col   = pick(["ATR_5", "ATR", "atr", "Atr"])
-                    kij_col   = pick(["Kijun_F", "KijunF", "Kijun"])
-                    up_col    = pick(["F% Upper", "Upper_BB_F", "F%Upper", "F_Upper"])
-                    lo_col    = pick(["F% Lower", "Lower_BB_F", "F%Lower", "F_Lower"])
-                    f_col     = pick(["F_numeric", "F_close", "F"])
-                
-                    # Minimal fallback: if ATR missing, build a quick ATR_5 in place
-                    if atr_col is None and all(c in out.columns for c in ["High","Low","Close"]):
-                        high, low, close = out["High"], out["Low"], out["Close"]
-                        tr = pd.concat([(high-low), (high-close.shift(1)).abs(), (low-close.shift(1)).abs()], axis=1).max(axis=1)
-                        out["ATR_5"] = tr.rolling(5, min_periods=1).mean()
-                        atr_col = "ATR_5"
-                
-                    # If any key piece still missing, return numeric NaNs (not 'None')
-                    need = [atr_col, kij_col, up_col, lo_col, f_col]
-                    if any(c is None for c in need):
-                        out["T0_Value"] = np.nan
-                        out["T0_Side"]  = ""
+                    need = {"F_numeric","F% Upper","F% Lower","Kijun_F"}
+                    if not need.issubset(out.columns):
+                        # fail safe
+                        out[out_col] = np.nan
+                        if side_col: out[side_col] = ""
                         return out
                 
-                    # --- 2) Coerce numerics (prevents 'None' from object dtypes) ---
-                    for c in [atr_col, kij_col, up_col, lo_col, f_col]:
+                    # ensure numeric
+                    for c in ["F_numeric","F% Upper","F% Lower","Kijun_F"]:
                         out[c] = pd.to_numeric(out[c], errors="coerce")
                 
-                    f   = out[f_col].to_numpy()
-                    k   = out[kij_col].to_numpy()
-                    up  = out[up_col].to_numpy()
-                    lo  = out[lo_col].to_numpy()
-                    atr = out[atr_col].to_numpy()
+                    f  = out["F_numeric"].to_numpy()
+                    k  = out["Kijun_F"].to_numpy()
+                    up = out["F% Upper"].to_numpy()
+                    lo = out["F% Lower"].to_numpy()
                 
-                    # --- 3) Kingdom side & distance to correct band ---
-                    bull = f > k               # bull kingdom → check upper band
-                    dist = np.where(bull, up - f, f - lo)   # inside band => dist >= 0 ; outside => dist < 0
+                    bull = f > k  # kingdom side
+                    dist = np.where(bull, up - f, f - lo)  # north uses upper; south uses lower
                 
-                    # Avoid div-by-zero; tiny epsilon
-                    eps = 1e-12
-                    t0_value = dist / np.where(atr > eps, atr, np.nan)
-                    side = np.where(bull, "north", "south")
-                
-                    out["T0_Value"] = t0_value.astype(float)
-                    out["T0_Side"]  = side.astype(str)
+                    out[out_col] = dist
+                    if side_col:
+                        out[side_col] = np.where(bull, "upper", "lower")
                     return out
-          
 
 
-                intraday = add_marengo_T0_value_auto(intraday)
+                    intraday = add_side_band_distance(intraday)  # adds Side_Dist_F (+ Side_Label)
 
                 # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
                 #     """
@@ -6907,7 +6883,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
                                         intraday[[
-                                            'Time', price_col, 'Volume',"T0_Value",
+                                            'Time', price_col, 'Volume',"Side_Dist_F",
                                             'MIDAS_Bear', 'MIDAS_Bull',"Compliance_Bull","Compliance_Bear","Compliance_Bull_Flip", "Compliance_Bear_Flip","Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
                                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
                                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
