@@ -10999,7 +10999,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(
                     go.Scatter(
                         x=intraday.loc[parallel_mask, "Time"],
-                        y=intraday.loc[parallel_mask, "F_numeric"] - 16,
+                        y=intraday.loc[parallel_mask, "F_numeric"] + 33,
                         mode="text",
                         text=["⚡"] * parallel_mask.sum(),
                         textposition="top center",
