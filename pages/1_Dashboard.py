@@ -10936,11 +10936,11 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(
                     go.Scatter(
                         x=intraday.loc[t2_mask, "Time"],
-                        y=intraday.loc[t2_mask, "F_numeric"],
+                        y=intraday.loc[t2_mask, "F_numeric"] - 10,
                         mode="text",
                         text=["⚡"] * t2_mask.sum(),
                         textposition="middle center",
-                        textfont=dict(size=22, color="orange"),
+                        textfont=dict(size=26, color="orange"),
                         name="Marengo T2",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                     ),
