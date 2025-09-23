@@ -6711,39 +6711,35 @@ if st.sidebar.button("Run Analysis"):
                 intraday = mark_compliance_bear_flip(intraday)
 
                 
-   
-                def add_marengo_T0_legacy(intraday, atr_col="ATR_5", tol=0.30):
-                    out = intraday.copy()
-                    need = {"F_numeric","F% Upper","F% Lower","Kijun_F",atr_col,
-                            "Call_FirstEntry_Emoji","Put_FirstEntry_Emoji"}
-                    if not need.issubset(out.columns):
-                        return out.assign(T0_Emoji="", Marengo_Phase="", Marengo_Side="")
-                
-                    # earliest Entry 1 (call or put)
-                    e1_idx = out.index[(out["Call_FirstEntry_Emoji"]=="🎯") | (out["Put_FirstEntry_Emoji"]=="🎯")]
-                    if e1_idx.empty:
-                        return out.assign(T0_Emoji="", Marengo_Phase="", Marengo_Side="")
-                    start_pos = out.index.get_loc(e1_idx[0])
-                
-                    # slice AFTER Entry 1 and compute kingdom-side distance to the proper band
-                    sl = out.iloc[start_pos+1:].copy()
-                    f, k, up, lo, atr = sl["F_numeric"], sl["Kijun_F"], sl["F% Upper"], sl["F% Lower"], sl[atr_col]
-                    dist = np.where(f > k, up - f, f - lo)  # north uses upper, south uses lower
-                    lb, ub = (1 - tol) * atr, (1 + tol) * atr
-                    cond = (dist >= 0) & (dist >= lb) & (dist <= ub)
-                
-                    # no T0 found → return with empty cols
-                    if not cond.any():
-                        return out.assign(T0_Emoji="", Marengo_Phase="", Marengo_Side="")
-                
-                    # first T0 row + side
-                    t0_label = sl.index[cond.idxmax()]  # first True
-                    side = "north" if out.at[t0_label, "F_numeric"] > out.at[t0_label, "Kijun_F"] else "south"
-                
-                    # set columns succinctly
-                    out = out.assign(T0_Emoji="", Marengo_Phase="", Marengo_Side="")
-                    out.loc[t0_label, ["T0_Emoji","Marengo_Phase","Marengo_Side"]] = ["🚪","T0",side]
-                    return out
+                def add_marengo_T0_value(intraday, atr_col="ATR_5"):
+                 out = intraday.copy()
+                 need = {"F_numeric","F% Upper","F% Lower","Kijun_F",atr_col}
+                 if not need.issubset(out.columns):
+                     return out.assign(T0_Value=np.nan, T0_Side="")
+             
+                 # ensure numeric
+                 for c in ["F_numeric","F% Upper","F% Lower","Kijun_F",atr_col]:
+                     out[c] = pd.to_numeric(out[c], errors="coerce")
+             
+                 f   = out["F_numeric"].values
+                 k   = out["Kijun_F"].values
+                 up  = out["F% Upper"].values
+                 lo  = out["F% Lower"].values
+                 atr = out[atr_col].values
+             
+                 bull = f > k  # kingdom side
+                 # distance to the correct band (positive = inside band, negative = beyond edge)
+                 dist = np.where(bull, up - f, f - lo)
+                 # ratio vs ATR (how many ATRs away from the band)
+                 with np.errstate(divide="ignore", invalid="ignore"):
+                     t0_value = dist / atr
+             
+                 side = np.where(bull, "north", "south")
+             
+                 out["T0_Value"] = t0_value
+                 out["T0_Side"]  = side
+                 return out
+
 
                 intraday = add_marengo_T0_legacy(intraday)
 
@@ -6883,7 +6879,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
                                         intraday[[
-                                            'Time', price_col, 'Volume',"T0_Emoji",
+                                            'Time', price_col, 'Volume',"T0_Value",
                                             'MIDAS_Bear', 'MIDAS_Bull',"Compliance_Bull","Compliance_Bear","Compliance_Bull_Flip", "Compliance_Bear_Flip","Bear_Displacement","Bull_Displacement", "Bull_Lethal_Accel", "Bear_Lethal_Accel","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
                                             'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
                                             'Bull_Midas_Wake', 'Bear_Midas_Wake'
