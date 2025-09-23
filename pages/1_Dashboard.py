@@ -6801,86 +6801,41 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_marengo_T0(intraday, tol=5)
-
-                # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
-                #     """
-                #     T0 = first bar AFTER Entry 1 where Mike is ~1×ATR from the NEAREST BB edge (inside the band).
-                #     - Marks:
-                #         Marengo_Phase = "T0"
-                #         Marengo_Side  = "north" | "south"
-                #         T0_Emoji      = "🚪"
-                #     - tol = ±30% tolerance around 1×ATR.
-                #     Requires columns: F_numeric, F% Upper, F% Lower, ATR, Call_FirstEntry_Emoji, Put_FirstEntry_Emoji
-                #     """
-                #     out = intraday.copy()
+                def add_marengo_T1(intraday, tol=-5):
+                    """
+                    Marks T1: first acceleration beyond Bollinger band after Entry 1.
+                    tol = threshold in F% units (default = -5).
+                    """
+                    out = intraday.copy()
                 
-                #     need = ["F_numeric","F% Upper","F% Lower", atr_col,
-                #             "Call_FirstEntry_Emoji","Put_FirstEntry_Emoji"]
-                #     if not set(need).issubset(out.columns):
-                #         return out  # missing inputs → no-op
+                    # Make sure Entry 1 exists
+                    call_idx = out.index[out["Call_FirstEntry_Emoji"] == "🎯"]
+                    put_idx  = out.index[out["Put_FirstEntry_Emoji"]  == "🎯"]
                 
-                #     # ensure numeric
-                #     for c in ["F_numeric","F% Upper","F% Lower", atr_col]:
-                #         out[c] = pd.to_numeric(out[c], errors="coerce")
+                    if len(call_idx) == 0 and len(put_idx) == 0:
+                        out["T1_Emoji"] = ""
+                        return out
                 
-                #     # find earliest Entry 1 (call or put)
-                #     call_e1 = out.index[out["Call_FirstEntry_Emoji"] == "🎯"]
-                #     put_e1  = out.index[out["Put_FirstEntry_Emoji"]  == "🎯"]
+                    # Get first entry index
+                    first_call_i = out.index.get_loc(call_idx[0]) if len(call_idx) > 0 else None
+                    first_put_i  = out.index.get_loc(put_idx[0])  if len(put_idx)  > 0 else None
+                    start_i = min(i for i in [first_call_i, first_put_i] if i is not None)
                 
-                #     if len(call_e1)==0 and len(put_e1)==0:
-                #         # no Entry 1 yet
-                #         if "T0_Emoji" not in out.columns: out["T0_Emoji"] = ""
-                #         if "Marengo_Phase" not in out.columns: out["Marengo_Phase"] = ""
-                #         if "Marengo_Side"  not in out.columns: out["Marengo_Side"]  = ""
-                #         return out
+                    # Init column
+                    out["T1_Emoji"] = ""
                 
-                #     def first_loc(idx):
-                #         return out.index.get_loc(idx[0]) if len(idx)>0 else None
+                    # Loop forward after entry
+                    for i in range(start_i + 1, len(out)):
+                        if "Side_Dist_F" not in out.columns or pd.isna(out.at[out.index[i], "Side_Dist_F"]):
+                            continue
                 
-                #     i_call = first_loc(call_e1)
-                #     i_put  = first_loc(put_e1)
+                        if out.at[out.index[i], "Side_Dist_F"] <= tol:
+                            out.at[out.index[i], "T1_Emoji"] = "⏩"
+                            break  # only first acceleration
+                    return out
                 
-                #     if i_call is not None and i_put is not None:
-                #         start_i = min(i_call, i_put)
-                #     else:
-                #         start_i = i_call if i_call is not None else i_put
-                
-                #     # scan forward for first bar ~1×ATR from nearest band
-                #     up = out["F% Upper"]; lo = out["F% Lower"]; f = out["F_numeric"]
-                #     t0_i = None; side = ""
-                
-                #     for i in range(start_i + 1, len(out)):
-                #         du  = (up.iloc[i] - f.iloc[i])   # distance to UPPER (inside if >=0)
-                #         dl  = (f.iloc[i] - lo.iloc[i])   # distance to LOWER (inside if >=0)
-                #         atr = out[atr_col].iloc[i]
-                
-                #         if pd.isna(du) or pd.isna(dl) or pd.isna(atr) or atr <= 0:
-                #             continue
-                
-                #         # pick nearest band
-                #         if du <= dl:
-                #             nearest = du; side_try = "north"
-                #         else:
-                #             nearest = dl; side_try = "south"
-                
-                #         # must be inside band (nearest >= 0) and ~1×ATR (±tol)
-                #         if nearest >= 0 and (1 - tol)*atr <= nearest <= (1 + tol)*atr:
-                #             t0_i = i
-                #             side = side_try
-                #             break
-                
-                #     # add/mark columns
-                #     if "T0_Emoji" not in out.columns: out["T0_Emoji"] = ""
-                #     if "Marengo_Phase" not in out.columns: out["Marengo_Phase"] = ""
-                #     if "Marengo_Side"  not in out.columns: out["Marengo_Side"]  = ""
-                
-                #     if t0_i is not None:
-                #         out.at[out.index[t0_i], "T0_Emoji"] = "🚪"
-                #         out.at[out.index[t0_i], "Marengo_Phase"] = "T0"
-                #         out.at[out.index[t0_i], "Marengo_Side"]  = side
-                
-                #     return out
-                # intraday = add_marengo_T0(intraday)  # call AFTER your Entry 1 logic & ATR column exist
+                # Apply
+                intraday = add_marengo_T1(intraday)
 
                 def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
                     """
@@ -10890,6 +10845,24 @@ if st.sidebar.button("Run Analysis"):
                     ),
                     row=1, col=1
                 )
+
+                 # 🏇🏼 Marengo T1 Marker (acceleration after Entry 1)
+                t1_mask = intraday["T1_Emoji"] == "⏩"
+                
+                fig.add_trace(
+                    go.Scatter(
+                        x=intraday.loc[t1_mask, "Time"],
+                        y=intraday.loc[t1_mask, "F_numeric"],
+                        mode="text",
+                        text=["🏇🏼"] * t1_mask.sum(),  # you can swap 🏇🏼 for ⏩ if you prefer
+                        textposition="top center",
+                        textfont=dict(size=22, color="black"),
+                        name="Marengo T1",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>🏇🏼"
+                    ),
+                    row=1, col=1
+                )
+
 
              # # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
              #    gb_rows = intraday[intraday["Gravity_Break_Alert"] == "🪂"]
