@@ -6710,38 +6710,66 @@ if st.sidebar.button("Run Analysis"):
                 # Apply
                 intraday = mark_compliance_bear_flip(intraday)
 
+                def add_marengo_T0_value_auto(intraday):
+                    """
+                    Adds:
+                      - T0_Value: distance to *kingdom-side* BB / ATR  (float; ~1.0 ≈ gate)
+                                   < 0  => beyond edge (outside band)
+                      - T0_Side:  'north' if F_numeric > Kijun_F else 'south'
+                    Auto-detects column names for ATR, Kijun, and BBs.
+                    """
+                    out = intraday.copy()
                 
-                def add_marengo_T0_value(intraday, atr_col="ATR_5"):
-                 out = intraday.copy()
-                 need = {"F_numeric","F% Upper","F% Lower","Kijun_F",atr_col}
-                 if not need.issubset(out.columns):
-                     return out.assign(T0_Value=np.nan, T0_Side="")
-             
-                 # ensure numeric
-                 for c in ["F_numeric","F% Upper","F% Lower","Kijun_F",atr_col]:
-                     out[c] = pd.to_numeric(out[c], errors="coerce")
-             
-                 f   = out["F_numeric"].values
-                 k   = out["Kijun_F"].values
-                 up  = out["F% Upper"].values
-                 lo  = out["F% Lower"].values
-                 atr = out[atr_col].values
-             
-                 bull = f > k  # kingdom side
-                 # distance to the correct band (positive = inside band, negative = beyond edge)
-                 dist = np.where(bull, up - f, f - lo)
-                 # ratio vs ATR (how many ATRs away from the band)
-                 with np.errstate(divide="ignore", invalid="ignore"):
-                     t0_value = dist / atr
-             
-                 side = np.where(bull, "north", "south")
-             
-                 out["T0_Value"] = t0_value
-                 out["T0_Side"]  = side
-                 return out
+                    # --- 1) Auto-pick column names ---
+                    def pick(cols):
+                        return next((c for c in cols if c in out.columns), None)
+                
+                    atr_col   = pick(["ATR_5", "ATR", "atr", "Atr"])
+                    kij_col   = pick(["Kijun_F", "KijunF", "Kijun"])
+                    up_col    = pick(["F% Upper", "Upper_BB_F", "F%Upper", "F_Upper"])
+                    lo_col    = pick(["F% Lower", "Lower_BB_F", "F%Lower", "F_Lower"])
+                    f_col     = pick(["F_numeric", "F_close", "F"])
+                
+                    # Minimal fallback: if ATR missing, build a quick ATR_5 in place
+                    if atr_col is None and all(c in out.columns for c in ["High","Low","Close"]):
+                        high, low, close = out["High"], out["Low"], out["Close"]
+                        tr = pd.concat([(high-low), (high-close.shift(1)).abs(), (low-close.shift(1)).abs()], axis=1).max(axis=1)
+                        out["ATR_5"] = tr.rolling(5, min_periods=1).mean()
+                        atr_col = "ATR_5"
+                
+                    # If any key piece still missing, return numeric NaNs (not 'None')
+                    need = [atr_col, kij_col, up_col, lo_col, f_col]
+                    if any(c is None for c in need):
+                        out["T0_Value"] = np.nan
+                        out["T0_Side"]  = ""
+                        return out
+                
+                    # --- 2) Coerce numerics (prevents 'None' from object dtypes) ---
+                    for c in [atr_col, kij_col, up_col, lo_col, f_col]:
+                        out[c] = pd.to_numeric(out[c], errors="coerce")
+                
+                    f   = out[f_col].to_numpy()
+                    k   = out[kij_col].to_numpy()
+                    up  = out[up_col].to_numpy()
+                    lo  = out[lo_col].to_numpy()
+                    atr = out[atr_col].to_numpy()
+                
+                    # --- 3) Kingdom side & distance to correct band ---
+                    bull = f > k               # bull kingdom → check upper band
+                    dist = np.where(bull, up - f, f - lo)   # inside band => dist >= 0 ; outside => dist < 0
+                
+                    # Avoid div-by-zero; tiny epsilon
+                    eps = 1e-12
+                    t0_value = dist / np.where(atr > eps, atr, np.nan)
+                    side = np.where(bull, "north", "south")
+                
+                    out["T0_Value"] = t0_value.astype(float)
+                    out["T0_Side"]  = side.astype(str)
+                    return out
+          
 
 
-                intraday = add_marengo_T0_value(intraday)
+                intraday = add_marengo_T0_value_auto(intraday)
 
                 # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
                 #     """
