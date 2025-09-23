@@ -6712,70 +6712,39 @@ if st.sidebar.button("Run Analysis"):
 
                 
    
-                def add_marengo_T0_legacy(intraday, atr_col="ATR", tol=0.30):
+                def add_marengo_T0_legacy(intraday, atr_col="ATR_5", tol=0.30):
                     out = intraday.copy()
+                    need = {"F_numeric","F% Upper","F% Lower","Kijun_F",atr_col,
+                            "Call_FirstEntry_Emoji","Put_FirstEntry_Emoji"}
+                    if not need.issubset(out.columns):
+                        return out.assign(T0_Emoji="", Marengo_Phase="", Marengo_Side="")
                 
-                    need_cols = ["F_numeric", "F% Upper", "F% Lower", atr_col,
-                                 "Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji"]
-                    for col in need_cols:
-                        if col not in out.columns:
-                            out["T0_Emoji"] = ""
-                            out["Marengo_Phase"] = ""
-                            out["Marengo_Side"] = ""
-                            return out
+                    # earliest Entry 1 (call or put)
+                    e1_idx = out.index[(out["Call_FirstEntry_Emoji"]=="🎯") | (out["Put_FirstEntry_Emoji"]=="🎯")]
+                    if e1_idx.empty:
+                        return out.assign(T0_Emoji="", Marengo_Phase="", Marengo_Side="")
+                    start_pos = out.index.get_loc(e1_idx[0])
                 
-                    # Find Entry 1
-                    call_idx = out.index[out["Call_FirstEntry_Emoji"] == "🎯"]
-                    put_idx  = out.index[out["Put_FirstEntry_Emoji"]  == "🎯"]
+                    # slice AFTER Entry 1 and compute kingdom-side distance to the proper band
+                    sl = out.iloc[start_pos+1:].copy()
+                    f, k, up, lo, atr = sl["F_numeric"], sl["Kijun_F"], sl["F% Upper"], sl["F% Lower"], sl[atr_col]
+                    dist = np.where(f > k, up - f, f - lo)  # north uses upper, south uses lower
+                    lb, ub = (1 - tol) * atr, (1 + tol) * atr
+                    cond = (dist >= 0) & (dist >= lb) & (dist <= ub)
                 
-                    if len(call_idx) == 0 and len(put_idx) == 0:
-                        out["T0_Emoji"] = ""
-                        out["Marengo_Phase"] = ""
-                        out["Marengo_Side"] = ""
-                        return out
+                    # no T0 found → return with empty cols
+                    if not cond.any():
+                        return out.assign(T0_Emoji="", Marengo_Phase="", Marengo_Side="")
                 
-                    first_call_i = out.index.get_loc(call_idx[0]) if len(call_idx) > 0 else None
-                    first_put_i  = out.index.get_loc(put_idx[0])  if len(put_idx)  > 0 else None
+                    # first T0 row + side
+                    t0_label = sl.index[cond.idxmax()]  # first True
+                    side = "north" if out.at[t0_label, "F_numeric"] > out.at[t0_label, "Kijun_F"] else "south"
                 
-                    start_i = min(i for i in [first_call_i, first_put_i] if i is not None)
-                
-                    # Init columns
-                    out["T0_Emoji"] = ""
-                    out["Marengo_Phase"] = ""
-                    out["Marengo_Side"] = ""
-                
-                    f  = out["F_numeric"].values
-                    up = out["F% Upper"].values
-                    lo = out["F% Lower"].values
-                    atr = out[atr_col].values
-                
-                    for i in range(start_i + 1, len(out)):
-                        if np.isnan(f[i]) or np.isnan(up[i]) or np.isnan(lo[i]) or np.isnan(atr[i]) or atr[i] <= 0:
-                            continue
-                
-                        dist_to_up = up[i] - f[i]
-                        dist_to_lo = f[i] - lo[i]
-                
-                        if np.isnan(dist_to_up) or np.isnan(dist_to_lo):
-                            continue
-                
-                        if dist_to_up <= dist_to_lo:
-                            nearest = dist_to_up
-                            side = "north"
-                        else:
-                            nearest = dist_to_lo
-                            side = "south"
-                
-                        lower_bound = (1 - tol) * atr[i]
-                        upper_bound = (1 + tol) * atr[i]
-                
-                        if nearest >= 0 and lower_bound <= nearest <= upper_bound:
-                            out.at[out.index[i], "T0_Emoji"] = "🚪"
-                            out.at[out.index[i], "Marengo_Phase"] = "T0"
-                            out.at[out.index[i], "Marengo_Side"] = side
-                            break
-                
+                    # set columns succinctly
+                    out = out.assign(T0_Emoji="", Marengo_Phase="", Marengo_Side="")
+                    out.loc[t0_label, ["T0_Emoji","Marengo_Phase","Marengo_Side"]] = ["🚪","T0",side]
                     return out
+
                 intraday = add_marengo_T0_legacy(intraday)
 
                 # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
