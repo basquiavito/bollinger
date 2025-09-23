@@ -6733,7 +6733,36 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = calculate_side_band_distance(intraday)
-  
+                def add_vault_emoji(df):
+                    """
+                    Detects vault burst events between Bollinger bands:
+                    🕊️ = bullish slingshot (lower → upper flip)
+                    🐦‍⬛ = bearish slingshot (upper → lower flip)
+                    """
+                    df["Vault_Emoji"] = ""
+                
+                    if not all(col in df.columns for col in ["Side_Label", "Side_Dist_F"]):
+                        return df
+                
+                    for i in range(1, len(df)):
+                        prev_label = df.at[df.index[i - 1], "Side_Label"]
+                        prev_dist  = df.at[df.index[i - 1], "Side_Dist_F"]
+                        curr_label = df.at[df.index[i], "Side_Label"]
+                        curr_dist  = df.at[df.index[i], "Side_Dist_F"]
+                
+                        # 🕊️ bullish burst: jumps from hugging lower → overshooting upper
+                        if prev_label == "lower" and prev_dist > 0 and curr_label == "upper" and curr_dist < 0:
+                            df.at[df.index[i], "Vault_Emoji"] = "🕊️"
+                
+                        # 🐦‍⬛ bearish burst: jumps from hugging upper → overshooting lower
+                        elif prev_label == "upper" and prev_dist > 0 and curr_label == "lower" and curr_dist < 0:
+                            df.at[df.index[i], "Vault_Emoji"] = "🐦‍⬛"
+                
+                    return df
+                
+                # Apply before plotting
+                intraday = add_vault_emoji(intraday)
+
 
                 # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
                 #     """
@@ -10775,6 +10804,38 @@ if st.sidebar.button("Run Analysis"):
                     name="💥 Volatility Enhancer (Put)",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<br>Volatility surge detected<extra></extra>"
                 ), row=1, col=1)
+                vault_mask_dove = intraday["Vault_Emoji"] == "🕊️"
+                vault_mask_crow = intraday["Vault_Emoji"] == "🐦‍⬛"
+                
+                # 🕊️ Dove above Kijun
+                fig.add_trace(
+                    go.Scatter(
+                        x=intraday.loc[vault_mask_dove, "Time"],
+                        y=intraday.loc[vault_mask_dove, "Kijun_F"] + 20,  # offset +20 F% (tune if needed)
+                        mode="text",
+                        text=intraday.loc[vault_mask_dove, "Vault_Emoji"],
+                        textposition="bottom center",
+                        textfont=dict(size=22, color="purple"),
+                        name="Bull Vault 🕊️",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    ),
+                    row=1, col=1
+                )
+                
+                # 🐦‍⬛ Crow below Kijun
+                fig.add_trace(
+                    go.Scatter(
+                        x=intraday.loc[vault_mask_crow, "Time"],
+                        y=intraday.loc[vault_mask_crow, "Kijun_F"] - 20,  # offset -20 F% (tune if needed)
+                        mode="text",
+                        text=intraday.loc[vault_mask_crow, "Vault_Emoji"],
+                        textposition="top center",
+                        textfont=dict(size=22, color="black"),
+                        name="Bear Vault 🐦‍⬛",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    ),
+                    row=1, col=1
+)
 
              # # 🪂 Gravity Break Alert = sudden volatility jump beyond gravity threshold
              #    gb_rows = intraday[intraday["Gravity_Break_Alert"] == "🪂"]
