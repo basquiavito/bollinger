@@ -6902,6 +6902,55 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_marengo_T2(intraday)
+                def add_marengo_ride_state(intraday, parallel_tol=5, bubble_tol=15):
+                    """
+                    Tracks Mike's ride phases after T2:
+                    - ⚡ = parallel ride (close to band, abs(Side_Dist_F) ≤ parallel_tol)
+                    - 🎈 = bubble drift (away from band, Side_Dist_F > bubble_tol)
+                    - States persist until flip
+                    """
+                    out = intraday.copy()
+                    out["Ride_State"] = ""
+                
+                    # Make sure we have Side_Dist_F and T2
+                    if "Side_Dist_F" not in out.columns or "T2_Emoji" not in out.columns:
+                        return out
+                
+                    # Find T2 start
+                    t2_idx = out.index[out["T2_Emoji"] == "⏩"]
+                    if len(t2_idx) == 0:
+                        return out
+                    start_i = out.index.get_loc(t2_idx[0])
+                
+                    # Initialize state
+                    state = None
+                
+                    for i in range(start_i, len(out)):
+                        dist = out.at[out.index[i], "Side_Dist_F"]
+                
+                        if pd.isna(dist):
+                            continue
+                
+                        # Decide state
+                        if abs(dist) <= parallel_tol:
+                            new_state = "⚡"
+                        elif dist > bubble_tol:
+                            new_state = "🎈"
+                        else:
+                            new_state = state  # hold previous state if in between zones
+                
+                        # Flip state if changed
+                        if new_state != state:
+                            state = new_state
+                
+                        # Mark state
+                        out.at[out.index[i], "Ride_State"] = state if state else ""
+                
+                    return out
+                
+                
+                # Apply to intraday
+                intraday = add_marengo_ride_state(intraday)
 
                 def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
                     """
@@ -10942,6 +10991,22 @@ if st.sidebar.button("Run Analysis"):
                         textposition="middle center",
                         textfont=dict(size=26, color="orange"),
                         name="Marengo T2",
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    ),
+                    row=1, col=1
+                )
+                # === Plot Ride States (⚡ parallel / 🎈 bubble) ===
+                ride_mask = intraday["Ride_State"].isin(["⚡", "🎈"])
+                
+                fig.add_trace(
+                    go.Scatter(
+                        x=intraday.loc[ride_mask, "Time"],
+                        y=intraday.loc[ride_mask, "F_numeric"],
+                        mode="text",
+                        text=intraday.loc[ride_mask, "Ride_State"],
+                        textposition="middle right",
+                        textfont=dict(size=20, color="purple"),
+                        name="Ride State",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
                     ),
                     row=1, col=1
