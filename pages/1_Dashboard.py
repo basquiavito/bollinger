@@ -6709,31 +6709,31 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = mark_compliance_bear_flip(intraday)
-              def calculate_side_band_distance(df):
-                  """
-                  Adds Side_Dist_F (distance in F% units) from F_numeric to the
-                  Bollinger band on the Kijun side:
-                    - If F_numeric > Kijun_F → distance to Upper Band
-                    - If F_numeric < Kijun_F → distance to Lower Band
-                  Positive = inside band, 0 = at band, Negative = outside band
-                  """
-                  df = df.copy()
-              
-                  # Condition: bull (north kingdom) vs bear (south kingdom)
-                  df["Side_Label"] = np.where(df["F_numeric"] > df["Kijun_F"], "upper", "lower")
-              
-                  # Distance in F% units
-                  df["Side_Dist_F"] = np.where(
-                      df["Side_Label"] == "upper",
-                      df["F% Upper"] - df["F_numeric"],  # bull → distance to upper
-                      df["F_numeric"] - df["F% Lower"],  # bear → distance to lower
-                  )
-              
-                  return df
-              
-              # Apply
-              intraday = calculate_side_band_distance(intraday)
-
+                def calculate_side_band_distance(df):
+                    """
+                    Adds Side_Dist_F (distance in F% units) from F_numeric to the
+                    Bollinger band on the Kijun side:
+                      - If F_numeric > Kijun_F → distance to Upper Band
+                      - If F_numeric < Kijun_F → distance to Lower Band
+                    Positive = inside band, 0 = at band, Negative = outside band
+                    """
+                    df = df.copy()
+                
+                    # Condition: bull (north kingdom) vs bear (south kingdom)
+                    df["Side_Label"] = np.where(df["F_numeric"] > df["Kijun_F"], "upper", "lower")
+                
+                    # Distance in F% units
+                    df["Side_Dist_F"] = np.where(
+                        df["Side_Label"] == "upper",
+                        df["F% Upper"] - df["F_numeric"],  # bull → distance to upper
+                        df["F_numeric"] - df["F% Lower"],  # bear → distance to lower
+                    )
+                
+                    return df
+                
+                # Apply
+                intraday = calculate_side_band_distance(intraday)
+  
 
                 # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
                 #     """
