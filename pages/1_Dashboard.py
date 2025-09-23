@@ -8297,16 +8297,16 @@ if st.sidebar.button("Run Analysis"):
                     # # Drop rows where Chikou_F is NaN (due to shifting)
                     chikou_plot = intraday.dropna(subset=["Chikou_F"])
 
-                    # # Plot without shifting time
-                    # chikou_line = go.Scatter(
-                    #     x=chikou_plot["Time"],
-                    #     y=chikou_plot["Chikou_F"],
-                    #     mode="lines",
+                    # Plot without shifting time
+                    chikou_line = go.Scatter(
+                        x=chikou_plot["Time"],
+                        y=chikou_plot["Chikou_F"],
+                        mode="lines",
                       
-                    #     name="Chikou (F%)",
-                    #     line=dict(color="purple", dash="dash", width=1)
-                    # )
-                    # fig.add_trace(chikou_line, row=1, col=1)
+                        name="Chikou (F%)",
+                        line=dict(color="purple", dash="dash", width=1)
+                    )
+                    fig.add_trace(chikou_line, row=1, col=1)
 
                     intraday["Chikou"] = intraday["Close"].shift(-26)
 
@@ -8861,32 +8861,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    # fig.add_trace(
-                    #     go.Scatter(
-                    #         x=intraday['Time'],
-                    #         y=intraday['TD Supply Line F'],
-                    #         mode='lines',
-                    #         line=dict(width=0.5, color="#8A2BE2", dash='dot'),
-                    #         name='TD Supply F%',
-                    #         hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
-                    #     ),
-                    #     row=1, col=1
-                    # )
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday['Time'],
+                            y=intraday['TD Supply Line F'],
+                            mode='lines',
+                            line=dict(width=0.5, color="#8A2BE2", dash='dot'),
+                            name='TD Supply F%',
+                            hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
+                        ),
+                        row=1, col=1
+                    )
 
 
 
  
-                    # fig.add_trace(
-                    #     go.Scatter(
-                    #         x=intraday['Time'],
-                    #         y=intraday['TD Demand Line F'],
-                    #         mode='lines',
-                    #         line=dict(width=0.5, color="#5DADE2", dash='dot'),
-                    #         name='TD Demand F%',
-                    #         hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
-                    #     ),
-                    #     row=1, col=1
-                    # )
+                    fig.add_trace(
+                        go.Scatter(
+                            x=intraday['Time'],
+                            y=intraday['TD Demand Line F'],
+                            mode='lines',
+                            line=dict(width=0.5, color="#5DADE2", dash='dot'),
+                            name='TD Demand F%',
+                            hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
+                        ),
+                        row=1, col=1
+                    )
             
             
 
