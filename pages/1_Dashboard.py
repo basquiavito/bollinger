@@ -10999,11 +10999,11 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(
                     go.Scatter(
                         x=intraday.loc[parallel_mask, "Time"],
-                        y=intraday.loc[parallel_mask, "F_numeric"],
+                        y=intraday.loc[parallel_mask, "F_numeric"] - 16,
                         mode="text",
                         text=["⚡"] * parallel_mask.sum(),
                         textposition="top center",
-                        textfont=dict(size=18, color="orange"),
+                        textfont=dict(size=21, color="orange"),
                         name="Parallel ⚡",
                         hovertemplate="Time: %{x}<br>F%: %{y}<br>⚡ Parallel<extra></extra>"
                     ),
