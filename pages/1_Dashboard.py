@@ -8140,20 +8140,20 @@ if st.sidebar.button("Run Analysis"):
                     # fig.update_yaxes(title_text="Cumulative Unit", row=1, col=1)
                 
                 # st.plotly_chart(fig_displacement, use_container_width=True)
-                # with ticker_tabs[0]:
-                #     # -- Create Subplots: Row1=F%, Row2=Momentum
-                #     fig = make_subplots(
-                #         rows=3,
-                #         cols=1,
-                #         row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
+                with ticker_tabs[0]:
+                    # -- Create Subplots: Row1=F%, Row2=Momentum
+                    fig = make_subplots(
+                        rows=3,
+                        cols=1,
+                        row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
 
-                #         vertical_spacing=0.03,
-                #         subplot_titles=("Mike Volatility", "Option Flow (Call/Put)","Option vs MIDAS"),
-                #         shared_xaxes=True,
+                        vertical_spacing=0.03,
+                        subplot_titles=("Mike Volatility", "Option Flow (Call/Put)","Option vs MIDAS"),
+                        shared_xaxes=True,
                        
                          
                  
-                #     )
+                    )
 
     
 #**************************************************************************************************************************************************************************
