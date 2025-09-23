@@ -6762,40 +6762,45 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply before plotting
                 intraday = add_vault_emoji(intraday)
-
-                def add_marengo_T0(df, dist_col="Side_Dist_F", tol=20):
+                def add_marengo_T0(intraday, tol=5):
                     """
-                    Adds T0 phase markers:
-                    - 🚪 when Side_Dist_F is within tol of nearest band
-                    - Marengo_Side = 'north' (upper) or 'south' (lower)
+                    Detects T0 (🚪) after Entry 1.
+                    Shows only one 🚪 per Call/Put First Entry 🎯.
+                    Uses Side_Dist_F as distance measure.
                     """
-                    out = df.copy()
+                    out = intraday.copy()
                 
-                    # Ensure column exists
-                    if dist_col not in out.columns:
-                        out["T0_Emoji"] = ""
-                        out["Marengo_Side"] = ""
-                        return out
+                    # Make sure required columns exist
+                    need_cols = ["Side_Dist_F", "Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji"]
+                    for col in need_cols:
+                        if col not in out.columns:
+                            out["T0_Emoji"] = ""
+                            return out
                 
+                    # Init column
                     out["T0_Emoji"] = ""
-                    out["Marengo_Side"] = ""
                 
-                    for i in range(len(out)):
-                        dist = out.loc[out.index[i], dist_col]
+                    # Find all Entry 1 events (both Call & Put)
+                    entry_idx = list(out.index[out["Call_FirstEntry_Emoji"] == "🎯"]) + \
+                                list(out.index[out["Put_FirstEntry_Emoji"]  == "🎯"])
+                    entry_idx = sorted(entry_idx)
                 
-                        if pd.isna(dist):
-                            continue
-                
-                        if dist >= 0 and dist <= tol:
-                            # Close enough to gate
-                            side = "north" if (out["F_numeric"].iloc[i] < out["F% Upper"].iloc[i]) else "south"
-                            out.at[out.index[i], "T0_Emoji"] = "🚪"
-                            out.at[out.index[i], "Marengo_Side"] = side
+                    # Loop through each Entry 1
+                    for start in entry_idx:
+                        found = False
+                        for i in range(start + 1, len(out)):
+                            dist = out.at[out.index[i], "Side_Dist_F"]
+                            if pd.notna(dist) and dist <= tol:
+                                out.at[out.index[i], "T0_Emoji"] = "🚪"
+                                found = True
+                                break
+                        if found:
+                            continue  # move on to next Entry 1
                 
                     return out
                 
-                # Apply to intraday
-                intraday = add_marengo_T0(intraday, tol=20)
+                # Apply
+                intraday = add_marengo_T0(intraday, tol=5)
 
                 # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
                 #     """
