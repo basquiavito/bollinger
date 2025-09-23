@@ -6741,7 +6741,7 @@ if st.sidebar.button("Run Analysis"):
                  return out
 
 
-                intraday = add_marengo_T0_legacy(intraday)
+                intraday = add_marengo_T0_value(intraday)
 
                 # def add_marengo_T0(intraday, atr_col="ATR", tol=0.30):
                 #     """
