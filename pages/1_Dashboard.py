@@ -10880,7 +10880,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(
                     go.Scatter(
                         x=intraday.loc[t0_mask, "Time"],
-                        y=intraday.loc[t0_mask, "F_numeric"] - 20,
+                        y=intraday.loc[t0_mask, "F_numeric"] - 3,
                         mode="text",
                         text=intraday.loc[t0_mask, "T0_Emoji"],
                         textposition="middle right",   # shift a bit for readability
