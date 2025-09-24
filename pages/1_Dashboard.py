@@ -11067,16 +11067,16 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
  
-               # 🐘 Nose Line Cross
-               fig.add_trace(go.Scatter(
-                   x=intraday["Time"],
-                   y=intraday["Elephant_Cross_Y"],
-                   text=intraday["Elephant_Cross_Emoji"],
-                   mode="text",
-                   textfont=dict(size=14),
-                   name="🐘 Nose Cross",
-                   hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-               ), row=1, col=1)
+                # 🐘 Nose Line Cross
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Elephant_Cross_Y"],
+                    text=intraday["Elephant_Cross_Emoji"],
+                    mode="text",
+                    textfont=dict(size=14),
+                    name="🐘 Nose Cross",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
+                ), row=1, col=1)
 
 
                 # # 🎧 Cross Plot
