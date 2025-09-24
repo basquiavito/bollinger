@@ -6689,6 +6689,29 @@ if st.sidebar.button("Run Analysis"):
                 # Apply
                 intraday = mark_compliance_bull_flip(intraday)
 
+
+
+
+               
+                             # Ensure required columns exist
+                intraday["Headphone_Cross_Emoji"] = ""
+                intraday["Ear_Level"] = max_vol_level  # Ear Line (🦻🏼)
+                intraday["Nose_Level"] = max_letter_level  # Nose Line (👃🏽)
+                
+                # Detect crossing either line
+                for i in range(1, len(intraday)):
+                    prev_f = intraday["F_numeric"].iloc[i - 1]
+                    curr_f = intraday["F_numeric"].iloc[i]
+                
+                    ear = intraday["Ear_Level"].iloc[i]
+                    nose = intraday["Nose_Level"].iloc[i]
+                
+                    crossed_ear = (prev_f < ear and curr_f >= ear) or (prev_f > ear and curr_f <= ear)
+                    crossed_nose = (prev_f < nose and curr_f >= nose) or (prev_f > nose and curr_f <= nose)
+                
+                    if crossed_ear or crossed_nose:
+                        intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
+
                 def mark_compliance_bear_flip(df):
                     """
                     Marks when Compliance Bear turns negative 
