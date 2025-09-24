@@ -6701,12 +6701,12 @@ if st.sidebar.button("Run Analysis"):
                     # Crossed Up: below → above Ear line
                     if prev_f < ear and curr_f >= ear:
                         intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
-                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f + 33  # Above Mike
+                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f + 23  # Above Mike
                 
                     # Crossed Down: above → below Ear line
                     elif prev_f > ear and curr_f <= ear:
                         intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
-                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f - 33  # Below Mike
+                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f - 23  # Below Mike
 
                 
                             # 🐘 NOSE LINE CROSS (👃🏽)
@@ -6722,12 +6722,12 @@ if st.sidebar.button("Run Analysis"):
                     # Crossed Up: below → above Nose line
                     if prev_f < nose and curr_f >= nose:
                         intraday.at[intraday.index[i], "Elephant_Cross_Emoji"] = "🐘"
-                        intraday.at[intraday.index[i], "Elephant_Cross_Y"] = curr_f + 43  # Above Mike
+                        intraday.at[intraday.index[i], "Elephant_Cross_Y"] = curr_f + 23  # Above Mike
                 
                     # Crossed Down: above → below Nose line
                     elif prev_f > nose and curr_f <= nose:
                         intraday.at[intraday.index[i], "Elephant_Cross_Emoji"] = "🐘"
-                        intraday.at[intraday.index[i], "Elephant_Cross_Y"] = curr_f - 43  # Below Mike
+                        intraday.at[intraday.index[i], "Elephant_Cross_Y"] = curr_f - 23  # Below Mike
 
 
                
