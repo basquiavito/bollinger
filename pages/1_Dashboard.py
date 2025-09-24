@@ -6708,6 +6708,26 @@ if st.sidebar.button("Run Analysis"):
                         intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
                         intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f - 33  # Below Mike
 
+                
+                            # 🐘 NOSE LINE CROSS (👃🏽)
+                intraday["Elephant_Cross_Emoji"] = ""
+                intraday["Elephant_Cross_Y"] = np.nan
+                intraday["Nose_Level"] = max_letter_level
+                
+                for i in range(1, len(intraday)):
+                    prev_f = intraday["F_numeric"].iloc[i - 1]
+                    curr_f = intraday["F_numeric"].iloc[i]
+                    nose = intraday["Nose_Level"].iloc[i]
+                
+                    # Crossed Up: below → above Nose line
+                    if prev_f < nose and curr_f >= nose:
+                        intraday.at[intraday.index[i], "Elephant_Cross_Emoji"] = "🐘"
+                        intraday.at[intraday.index[i], "Elephant_Cross_Y"] = curr_f + 43  # Above Mike
+                
+                    # Crossed Down: above → below Nose line
+                    elif prev_f > nose and curr_f <= nose:
+                        intraday.at[intraday.index[i], "Elephant_Cross_Emoji"] = "🐘"
+                        intraday.at[intraday.index[i], "Elephant_Cross_Y"] = curr_f - 43  # Below Mike
 
 
                
@@ -11045,6 +11065,19 @@ if st.sidebar.button("Run Analysis"):
                     name="🎧 Ear Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
                 ), row=1, col=1)
+
+ 
+               # 🐘 Nose Line Cross
+               fig.add_trace(go.Scatter(
+                   x=intraday["Time"],
+                   y=intraday["Elephant_Cross_Y"],
+                   text=intraday["Elephant_Cross_Emoji"],
+                   mode="text",
+                   textfont=dict(size=14),
+                   name="🐘 Nose Cross",
+                   hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
+               ), row=1, col=1)
+
 
                 # # 🎧 Cross Plot
                 # mask_headphone = intraday["Headphone_Cross_Emoji"] == "🎧"
