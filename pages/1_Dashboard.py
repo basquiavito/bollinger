@@ -11086,19 +11086,7 @@ if st.sidebar.button("Run Analysis"):
                     ),
                     row=1, col=1
                 )
-                   # 🎧 Cross Plot
-                 fig.add_trace(go.Scatter(
-                 x=intraday["Time"],
-                 y=intraday["Headphone_Cross_Y"],
-                 text=intraday["Headphone_Cross_Emoji"],
-                 mode="text",
-                 textposition="middle center",
-                 textfont=dict(size=34),
-                 name="🎧 Ear/Nose Cross",
-                 hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-             ), row=1, col=1)
-
-
+                  
 
                 if yva_min is not None and yva_max is not None:
                     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
