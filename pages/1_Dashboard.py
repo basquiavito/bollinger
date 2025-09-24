@@ -6667,27 +6667,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply it
                 intraday = calculate_compliance_midas(intraday)
-                 # Ensure required columns exist
-                intraday["Headphone_Cross_Emoji"] = ""
-                intraday["Headphone_Cross_Y"] = np.nan
-                
-                ear = intraday["Ear_Level"]
-                nose = intraday["Nose_Level"]
-                f = intraday["F_numeric"]
-                
-                # Shifted F% to detect cross
-                prev_f = f.shift(1)
-                
-                # Cross **Up**
-                cross_up = ((prev_f < ear) & (f >= ear)) | ((prev_f < nose) & (f >= nose))
-                intraday.loc[cross_up, "Headphone_Cross_Emoji"] = "🎧"
-                intraday.loc[cross_up, "Headphone_Cross_Y"] = f + 64  # Emoji above Mike
-                
-                # Cross **Down**
-                cross_down = ((prev_f > ear) & (f <= ear)) | ((prev_f > nose) & (f <= nose))
-                intraday.loc[cross_down, "Headphone_Cross_Emoji"] = "🎧"
-                intraday.loc[cross_down, "Headphone_Cross_Y"] = f - 64  # Emoji below Mike
-
+            
 
                 def mark_compliance_bull_flip(df):
                     """
