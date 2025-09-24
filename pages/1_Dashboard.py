@@ -6669,22 +6669,25 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_compliance_midas(intraday)
                  # Ensure required columns exist
                 intraday["Headphone_Cross_Emoji"] = ""
-                intraday["Ear_Level"] = max_vol_level  # Ear Line (🦻🏼)
-                intraday["Nose_Level"] = max_letter_level  # Nose Line (👃🏽)
+                intraday["Headphone_Cross_Y"] = np.nan
                 
-                # Detect crossing either line
-                for i in range(1, len(intraday)):
-                    prev_f = intraday["F_numeric"].iloc[i - 1]
-                    curr_f = intraday["F_numeric"].iloc[i]
+                ear = intraday["Ear_Level"]
+                nose = intraday["Nose_Level"]
+                f = intraday["F_numeric"]
                 
-                    ear = intraday["Ear_Level"].iloc[i]
-                    nose = intraday["Nose_Level"].iloc[i]
+                # Shifted F% to detect cross
+                prev_f = f.shift(1)
                 
-                    crossed_ear = (prev_f < ear and curr_f >= ear) or (prev_f > ear and curr_f <= ear)
-                    crossed_nose = (prev_f < nose and curr_f >= nose) or (prev_f > nose and curr_f <= nose)
+                # Cross **Up**
+                cross_up = ((prev_f < ear) & (f >= ear)) | ((prev_f < nose) & (f >= nose))
+                intraday.loc[cross_up, "Headphone_Cross_Emoji"] = "🎧"
+                intraday.loc[cross_up, "Headphone_Cross_Y"] = f + 64  # Emoji above Mike
                 
-                    if crossed_ear or crossed_nose:
-                        intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
+                # Cross **Down**
+                cross_down = ((prev_f > ear) & (f <= ear)) | ((prev_f > nose) & (f <= nose))
+                intraday.loc[cross_down, "Headphone_Cross_Emoji"] = "🎧"
+                intraday.loc[cross_down, "Headphone_Cross_Y"] = f - 64  # Emoji below Mike
+
 
                 def mark_compliance_bull_flip(df):
                     """
@@ -11083,18 +11086,17 @@ if st.sidebar.button("Run Analysis"):
                     ),
                     row=1, col=1
                 )
-                # 🎧 Cross Plot
-                mask_headphone = intraday["Headphone_Cross_Emoji"] == "🎧"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[mask_headphone, "Time"],
-                    y=intraday.loc[mask_headphone, "F_numeric"] + 30,  # Offset above
-                    mode="text",
-                    text=["🎧"] * mask_headphone.sum(),
-                    textposition="top center",
-                    textfont=dict(size=26),
-                    name="Crossed Ear/Nose Line",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Ear/Nose Line 🎧<extra></extra>"
-                ), row=1, col=1)
+                    # 🎧 Cross Plot
+                 fig.add_trace(go.Scatter(
+                 x=intraday["Time"],
+                 y=intraday["Headphone_Cross_Y"],
+                 text=intraday["Headphone_Cross_Emoji"],
+                 mode="text",
+                 textposition="middle center",
+                 textfont=dict(size=34),
+                 name="🎧 Ear/Nose Cross",
+                 hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
+             ), row=1, col=1)
 
 
                 if yva_min is not None and yva_max is not None:
