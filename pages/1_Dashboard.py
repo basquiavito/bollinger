@@ -11034,15 +11034,28 @@ if st.sidebar.button("Run Analysis"):
                     ),
                     row=1, col=1
                 )
+
                 fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Headphone_Cross_Y"],
-                    text=intraday["Headphone_Cross_Emoji"],
-                    mode="text",
-                    textfont=dict(size=34),
-                    name="🎧 Ear Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-                ), row=1, col=1)
+                   x=intraday.loc[mask_ear_cross_above, "Time"],
+                   y=intraday.loc[mask_ear_cross_above, "F_numeric"] + 64,
+                   mode="text",
+                   text=["🎧"] * mask_ear_cross_above.sum(),
+                   textposition="top center",
+                   textfont=dict(size=34),
+                   name="Ear Line Cross (Above)",
+                   customdata=intraday.loc[mask_ear_cross_above, ["Ear_Level"]].values,
+                   hovertemplate="Time: %{x}<br>F%: %{y}<br>Ear Line: %{customdata[0]}<extra></extra>"
+               ), row=1, col=1)
+
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Headphone_Cross_Y"],
+                #     text=intraday["Headphone_Cross_Emoji"],
+                #     mode="text",
+                #     textfont=dict(size=34),
+                #     name="🎧 Ear Cross",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
+                # ), row=1, col=1)
 
                 # # 🎧 Cross Plot
                 # mask_headphone = intraday["Headphone_Cross_Emoji"] == "🎧"
