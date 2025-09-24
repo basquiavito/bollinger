@@ -11032,7 +11032,19 @@ if st.sidebar.button("Run Analysis"):
                     ),
                     row=1, col=1
                 )
-                
+                # 🎧 Cross Plot
+                mask_headphone = intraday["Headphone_Cross_Emoji"] == "🎧"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[mask_headphone, "Time"],
+                    y=intraday.loc[mask_headphone, "F_numeric"] + 30,  # Offset above
+                    mode="text",
+                    text=["🎧"] * mask_headphone.sum(),
+                    textposition="top center",
+                    textfont=dict(size=26),
+                    name="Crossed Ear/Nose Line",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Ear/Nose Line 🎧<extra></extra>"
+                ), row=1, col=1)
+
 
                 if yva_min is not None and yva_max is not None:
                     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
