@@ -6701,12 +6701,12 @@ if st.sidebar.button("Run Analysis"):
                     # Crossed Up: below → above Ear line
                     if prev_f < ear and curr_f >= ear:
                         intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
-                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f + 64  # Above Mike
+                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f + 33  # Above Mike
                 
                     # Crossed Down: above → below Ear line
                     elif prev_f > ear and curr_f <= ear:
                         intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
-                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f - 64  # Below Mike
+                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f - 33  # Below Mike
 
 
 
@@ -11041,7 +11041,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday["Headphone_Cross_Y"],
                     text=intraday["Headphone_Cross_Emoji"],
                     mode="text",
-                    textfont=dict(size=34),
+                    textfont=dict(size=14),
                     name="🎧 Ear Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
                 ), row=1, col=1)
