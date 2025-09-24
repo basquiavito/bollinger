@@ -11061,7 +11061,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday["Headphone_Cross_Y"],
                     text=intraday["Headphone_Cross_Emoji"],
                     mode="text",
-                    textfont=dict(size=14),
+                    textfont=dict(size=34),
                     name="🎧 Ear Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
                 ), row=1, col=1)
@@ -11073,7 +11073,7 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday["Elephant_Cross_Y"],
                     text=intraday["Elephant_Cross_Emoji"],
                     mode="text",
-                    textfont=dict(size=14),
+                    textfont=dict(size=34),
                     name="🐘 Nose Cross",
                     hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
                 ), row=1, col=1)
