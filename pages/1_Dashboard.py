@@ -10361,6 +10361,62 @@ if st.sidebar.button("Run Analysis"):
                 #     name="Chikou Below Price",
                 #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
                 # ), row=1, col=1) 
+# If you don't already have this, a safe "Chikou exists" mask:
+                chikou_shift_mask = intraday["F_numeric"].shift(26).notna()
+                
+                # Entry masks
+                e1_mask = (intraday["Call_FirstEntry_Emoji"] == "🎯") | (intraday["Put_FirstEntry_Emoji"] == "🎯")
+                e2_mask = (intraday["Call_SecondEntry_Emoji"] == "🎯2") | (intraday["Put_SecondEntry_Emoji"] == "🎯2")
+                
+                # ---- ORACLE AT ENTRY 1 ----
+                e1_above = chikou_shift_mask & e1_mask & (intraday["Chikou_Position"] == "above")
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[e1_above, "Time"],
+                    y=intraday.loc[e1_above, "F_numeric"] + 64,
+                    mode="text",
+                    text=["👨🏻‍✈️"] * e1_above.sum(),
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="Oracle Blessed (Entry 1)",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou above price (E1)<extra></extra>"
+                ), row=1, col=1)
+                
+                e1_below = chikou_shift_mask & e1_mask & (intraday["Chikou_Position"] == "below")
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[e1_below, "Time"],
+                    y=intraday.loc[e1_below, "F_numeric"] - 64,
+                    mode="text",
+                    text=["👮🏿‍♂️"] * e1_below.sum(),
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="Oracle Unblessed (Entry 1)",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou below price (E1)<extra></extra>"
+                ), row=1, col=1)
+                
+                # ---- ORACLE AT ENTRY 2 ----
+                e2_above = chikou_shift_mask & e2_mask & (intraday["Chikou_Position"] == "above")
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[e2_above, "Time"],
+                    y=intraday.loc[e2_above, "F_numeric"] + 64,
+                    mode="text",
+                    text=["👨🏻‍✈️"] * e2_above.sum(),
+                    textposition="top center",
+                    textfont=dict(size=30),   # slightly smaller or change color to distinguish E2
+                    name="Oracle Blessed (Entry 2)",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou above price (E2)<extra></extra>"
+                ), row=1, col=1)
+                
+                e2_below = chikou_shift_mask & e2_mask & (intraday["Chikou_Position"] == "below")
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[e2_below, "Time"],
+                    y=intraday.loc[e2_below, "F_numeric"] - 64,
+                    mode="text",
+                    text=["👮🏿‍♂️"] * e2_below.sum(),
+                    textposition="bottom center",
+                    textfont=dict(size=30),
+                    name="Oracle Unblessed (Entry 2)",
+                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou below price (E2)<extra></extra>"
+                ), row=1, col=1)
 
                 cloud_mask = intraday["Heaven_Cloud"] == "☁️"
   
