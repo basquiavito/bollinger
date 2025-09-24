@@ -8106,14 +8106,14 @@ if st.sidebar.button("Run Analysis"):
                   #       customdata=top3_ib_force_down[["IB_Electric_Force"]].values
                   #   ))
                  
-                    # fig_displacement.add_trace(go.Scatter(
-                    #   x=intraday["TimeIndex"],
-                    #   y=intraday["Kijun_Cumulative"],
-                    #   mode="lines",
-                    #   line=dict(color="green", dash="solid", width=1.5),
-                    #   name="Kijun (Cumulative)",
-                    #   hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
-                    #   ))
+                    fig_displacement.add_trace(go.Scatter(
+                      x=intraday["TimeIndex"],
+                      y=intraday["Kijun_Cumulative"],
+                      mode="lines",
+                      line=dict(color="green", dash="solid", width=1.5),
+                      name="Kijun (Cumulative)",
+                      hovertemplate="Kijun: %{y:.2f}<br>Time: %{x|%I:%M %p}<extra></extra>"
+                      ))
 
 
 
