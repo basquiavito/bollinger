@@ -8342,16 +8342,16 @@ if st.sidebar.button("Run Analysis"):
                     # # Drop rows where Chikou_F is NaN (due to shifting)
                     chikou_plot = intraday.dropna(subset=["Chikou_F"])
 
-                    # # Plot without shifting time
-                    # chikou_line = go.Scatter(
-                    #     x=chikou_plot["Time"],
-                    #     y=chikou_plot["Chikou_F"],
-                    #     mode="lines",
+                    # Plot without shifting time
+                    chikou_line = go.Scatter(
+                        x=chikou_plot["Time"],
+                        y=chikou_plot["Chikou_F"],
+                        mode="lines",
                       
-                    #     name="Chikou (F%)",
-                    #     line=dict(color="purple", dash="dash", width=1)
-                    # )
-                    # fig.add_trace(chikou_line, row=1, col=1)
+                        name="Chikou (F%)",
+                        line=dict(color="purple", dash="dash", width=1)
+                    )
+                    fig.add_trace(chikou_line, row=1, col=1)
 
                     intraday["Chikou"] = intraday["Close"].shift(-26)
 
