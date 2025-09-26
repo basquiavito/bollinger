@@ -13,14 +13,14 @@ if os.path.exists(OUTCOME_FILE):
 else:
     outcomes = pd.DataFrame(columns=[
         "Date", "Ticker", 
-        "Entry 1 Time", "Entry 1 Price", "Entry 1 Prototype","Entry 1 Type ","Entry 1 Label",
+        "Entry 1 Time", "Entry 1 Price", "Entry 1 Prototype","Entry 1 Type ","Entry 1 Label","Entry 1 PAE",
 
-        "Entry 2 Time", "Kijun Cross Type",
-        "Entry 3 Time", "IB Line Cross Type",
+        "Entry 2 Time", "Kijun Cross Type","Entry 2 PAE",
+        "Entry 3 Time", "IB Line Cross Type", "Entry 3 PAE"
         "Exit Price", "Change", "Total P&L",
-        "Mirror 1 Time", "Mirror 1 Price", "Mirror 1 Prototype", "Mirror 1 Label",              
-        "Mirror 2 Time", "Mirror 2 Kijun Cross Type",
-        "Mirror 3 Time", "Mirror 3 IB Line Cross",
+        "Mirror 1 Time", "Mirror 1 Price", "Mirror 1 Prototype", "Mirror 1 Label",  "Mirror 1 PAE",            
+        "Mirror 2 Time", "Mirror 2 Kijun Cross Type","Mirror 2 PAE",
+        "Mirror 3 Time", "Mirror 3 IB Line Cross","Mirror 3 PAE",
         "Mirror Exit Price", "Mirror Change", "Mirror P&L",
         "Notes"
     ])
@@ -50,6 +50,7 @@ label_options = [
             "Infra"]
 prefix_options = ["", "Tailbone", "Delayed"]
 mirror_prefix_options = ["", "Tailbone", "Delayed"]
+pae_options = ["", "Low", "Moderate", "High", "Very High"]
 
 # --- Form to add new outcome ---
 with st.form("outcome_entry"):
@@ -69,12 +70,15 @@ with st.form("outcome_entry"):
         e1_type = st.selectbox("Entry 1 Type", ["", "Call", "Put"])
         e1_label = st.selectbox("Entry 1 Label", label_options)
         e1_prefix = st.selectbox("Entry 1 Prefix", prefix_options)
+        e1_pae = st.selectbox("Entry 1 PAE", pae_options)
 
         e2_time = st.text_input("Entry 2 Time")
         kijun_type = st.text_input("Kijun Cross Type")
+        e2_pae = st.selectbox("Entry 2 PAE", pae_options)
 
         e3_time = st.text_input("Entry 3 Time")
         ib_type = st.text_input("IB Line Cross Type")
+        e3_pae = st.selectbox("Entry 3 PAE", pae_options)
 
         exit_price = st.number_input("Exit Price", min_value=0.0, step=0.01)
 
@@ -86,6 +90,9 @@ with st.form("outcome_entry"):
         mirror1_prefix = st.selectbox("Mirror 1 Prefix", mirror_prefix_options)
         mirror2_time = st.text_input("Mirror 2 Time")
         mirror2_kijun = st.text_input("Mirror 2 Kijun Cross Type")
+        mirror1_pae = st.selectbox("Mirror 1 PAE", pae_options)
+        mirror2_pae = st.selectbox("Mirror 2 PAE", pae_options)
+        mirror3_pae = st.selectbox("Mirror 3 PAE", pae_options)
 
         mirror3_time = st.text_input("Mirror 3 Time")
         mirror3_ib = st.text_input("Mirror 3 IB Line Cross")
@@ -109,16 +116,18 @@ if submitted:
         "Entry 1 Label": e1_label,
         "Mirror 1 Label": mirror1_label,
         "Entry 1 Prefix": e1_prefix,
+        "Entry 1 PAE": e1_pae,
         "Mirror 1 Prefix": mirror1_prefix,
 
 
-        "Entry 2 Time": e2_time, "Kijun Cross Type": kijun_type,
-        "Entry 3 Time": e3_time, "IB Line Cross Type": ib_type,
+        "Entry 2 Time": e2_time, "Kijun Cross Type": kijun_type,"Entry 2 PAE": e2_pae,
+        "Entry 3 Time": e3_time, "IB Line Cross Type": ib_type,"Entry 3 PAE": e3_pae,
         "Exit Price": exit_price, "Change": change,
         "Total P&L": total_pnl,
-        "Mirror 1 Time": mirror1_time, "Mirror 1 Price": mirror1_price, "Mirror 1 Prototype": mirror1_proto,
-        "Mirror 2 Time": mirror2_time, "Mirror 2 Kijun Cross Type": mirror2_kijun,
-        "Mirror 3 Time": mirror3_time, "Mirror 3 IB Line Cross": mirror3_ib,
+        "Mirror 1 Time": mirror1_time, "Mirror 1 Price": mirror1_price, "Mirror 1 Prototype": mirror1_proto,"Mirror 1 PAE": mirror1_pae,
+        "Mirror 2 Time": mirror2_time, "Mirror 2 Kijun Cross Type": mirror2_kijun, "Mirror 2 PAE": mirror2_pae,
+    
+        "Mirror 3 Time": mirror3_time, "Mirror 3 IB Line Cross": mirror3_ib,"Mirror 3 PAE": mirror3_pae,
         "Mirror Exit Price": mirror_exit, "Mirror Change": mirror_change, "Mirror P&L": mirror_change,
         "Notes": notes
     }
