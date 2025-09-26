@@ -13,12 +13,12 @@ if os.path.exists(OUTCOME_FILE):
 else:
     outcomes = pd.DataFrame(columns=[
         "Date", "Ticker", 
-        "Entry 1 Time", "Entry 1 Price", "Entry 1 Prototype","Entry 1 Type ",
+        "Entry 1 Time", "Entry 1 Price", "Entry 1 Prototype","Entry 1 Type ","Entry 1 Label",
 
         "Entry 2 Time", "Kijun Cross Type",
         "Entry 3 Time", "IB Line Cross Type",
         "Exit Price", "Change", "Total P&L",
-        "Mirror 1 Time", "Mirror 1 Price", "Mirror 1 Prototype",
+        "Mirror 1 Time", "Mirror 1 Price", "Mirror 1 Prototype", "Mirror 1 Label",              
         "Mirror 2 Time", "Mirror 2 Kijun Cross Type",
         "Mirror 3 Time", "Mirror 3 IB Line Cross",
         "Mirror Exit Price", "Mirror Change", "Mirror P&L",
@@ -58,6 +58,7 @@ with st.form("outcome_entry"):
         
         e1_proto = st.selectbox("Entry 1 Prototype", prototype_options)
         e1_type = st.selectbox("Entry 1 Type", ["", "Call", "Put"])
+        e1_label = st.selectbox("Entry 1 Label", ["", "Endo", "Supra", "Infra"])
 
         e2_time = st.text_input("Entry 2 Time")
         kijun_type = st.text_input("Kijun Cross Type")
@@ -71,6 +72,7 @@ with st.form("outcome_entry"):
         mirror1_time = st.text_input("Mirror 1 Time")
         mirror1_price = st.number_input("Mirror 1 Price", min_value=0.0, step=0.01)
         mirror1_proto = st.text_input("Mirror 1 Prototype")
+        mirror1_label = st.selectbox("Mirror 1 Label", ["", "Endo", "Supra", "Infra"])
 
         mirror2_time = st.text_input("Mirror 2 Time")
         mirror2_kijun = st.text_input("Mirror 2 Kijun Cross Type")
@@ -94,6 +96,9 @@ if submitted:
         "Date": date,
         "Ticker": ticker,
         "Entry 1 Time": e1_time, "Entry 1 Price": e1_price, "Entry 1 Prototype": e1_proto,"Entry 1 Type": e1_type,
+        "Entry 1 Label": e1_label,
+        "Mirror 1 Label": mirror1_label,
+
 
         "Entry 2 Time": e2_time, "Kijun Cross Type": kijun_type,
         "Entry 3 Time": e3_time, "IB Line Cross Type": ib_type,
