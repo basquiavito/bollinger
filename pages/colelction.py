@@ -62,7 +62,7 @@ with st.form("outcome_entry"):
             "", 
             "Endo-Loft", "Endo-Core", "Endo-Cellar", 
             "Supra", 
-            "Infra"
+            "Infra"]
 
         e2_time = st.text_input("Entry 2 Time")
         kijun_type = st.text_input("Kijun Cross Type")
