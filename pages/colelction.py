@@ -43,7 +43,7 @@ prototype_options = [
 "Stampede", "Bastion", "Detonator", "Void"
 ]
 
- label_options = [
+label_options = [
             "", 
             "Endo-Loft", "Endo-Core", "Endo-Cellar", 
             "Supra", 
