@@ -48,6 +48,8 @@ label_options = [
             "Endo-Loft", "Endo-Core", "Endo-Cellar", 
             "Supra", 
             "Infra"]
+prefix_options = ["", "Tailbone", "Delayed"]
+
 
 # --- Form to add new outcome ---
 with st.form("outcome_entry"):
@@ -66,6 +68,7 @@ with st.form("outcome_entry"):
         e1_proto = st.selectbox("Entry 1 Prototype", prototype_options)
         e1_type = st.selectbox("Entry 1 Type", ["", "Call", "Put"])
         e1_label = st.selectbox("Entry 1 Label", label_options)
+        e1_prefix = st.selectbox("Entry 1 Prefix", prefix_options)
 
         e2_time = st.text_input("Entry 2 Time")
         kijun_type = st.text_input("Kijun Cross Type")
@@ -105,6 +108,7 @@ if submitted:
         "Entry 1 Time": e1_time, "Entry 1 Price": e1_price, "Entry 1 Prototype": e1_proto,"Entry 1 Type": e1_type,
         "Entry 1 Label": e1_label,
         "Mirror 1 Label": mirror1_label,
+        "Entry 1 Prefix": e1_prefix,
 
 
         "Entry 2 Time": e2_time, "Kijun Cross Type": kijun_type,
