@@ -32,6 +32,16 @@ if uploaded is not None:
     outcomes.to_csv(OUTCOME_FILE, index=False)
     st.success("Outcomes restored from uploaded file ✅")
 
+
+
+
+# With a dropdown:
+prototype_options = [
+"", 
+"Ember Catch", "Ember Bounce", "Ember Rampart", "Ember Citadel", 
+"Cliff Collapse", "Cliff Dip", "Cliff Rampart", "Cliff Citadel",
+"Stampede", "Bastion", "Detonator", "Void"
+]
 # --- Form to add new outcome ---
 with st.form("outcome_entry"):
     col1, col2 = st.columns(2)
@@ -41,8 +51,13 @@ with st.form("outcome_entry"):
 
         e1_time = st.text_input("Entry 1 Time (e.g. 11:55 AM)")
         e1_price = st.number_input("Entry 1 Price", min_value=0.0, step=0.01)
-        e1_proto = st.text_input("Entry 1 Prototype")
-        e1_type = st.selectbox("Entry 1 Type", ["", "Call", "Put"])
+        # Replace this line:
+        # e1_proto = st.text_input("Entry 1 Prototype")
+        
+  
+        
+        e1_proto = st.selectbox("Entry 1 Prototype", prototype_options)
+                e1_type = st.selectbox("Entry 1 Type", ["", "Call", "Put"])
 
         e2_time = st.text_input("Entry 2 Time")
         kijun_type = st.text_input("Kijun Cross Type")
