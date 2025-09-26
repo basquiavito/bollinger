@@ -15,8 +15,8 @@ else:
         "Date", "Ticker", 
         "Entry 1 Time", "Entry 1 Price", "Entry 1 Prototype","Entry 1 Type ","Entry 1 Label","Entry 1 PAE",
 
-        "Entry 2 Time", "Kijun Cross Type","Entry 2 PAE",
-        "Entry 3 Time", "IB Line Cross Type", "Entry 3 PAE"
+        "Entry 2 Time", "Entry 2 PAE",
+        "Entry 3 Time",  "Entry 3 PAE"
         "Exit Price", "Change", "Total P&L",
         "Mirror 1 Time", "Mirror 1 Price", "Mirror 1 Prototype", "Mirror 1 Label",  "Mirror 1 PAE",            
         "Mirror 2 Time", "Mirror 2 Kijun Cross Type","Mirror 2 PAE",
@@ -73,11 +73,9 @@ with st.form("outcome_entry"):
         e1_pae = st.selectbox("Entry 1 PAE", pae_options)
 
         e2_time = st.text_input("Entry 2 Time")
-        kijun_type = st.text_input("Kijun Cross Type")
         e2_pae = st.selectbox("Entry 2 PAE", pae_options)
 
         e3_time = st.text_input("Entry 3 Time")
-        ib_type = st.text_input("IB Line Cross Type")
         e3_pae = st.selectbox("Entry 3 PAE", pae_options)
 
         exit_price = st.number_input("Exit Price", min_value=0.0, step=0.01)
@@ -120,8 +118,8 @@ if submitted:
         "Mirror 1 Prefix": mirror1_prefix,
 
 
-        "Entry 2 Time": e2_time, "Kijun Cross Type": kijun_type,"Entry 2 PAE": e2_pae,
-        "Entry 3 Time": e3_time, "IB Line Cross Type": ib_type,"Entry 3 PAE": e3_pae,
+        "Entry 2 Time": e2_time,"Entry 2 PAE": e2_pae,
+        "Entry 3 Time": e3_time, "Entry 3 PAE": e3_pae,
         "Exit Price": exit_price, "Change": change,
         "Total P&L": total_pnl,
         "Mirror 1 Time": mirror1_time, "Mirror 1 Price": mirror1_price, "Mirror 1 Prototype": mirror1_proto,"Mirror 1 PAE": mirror1_pae,
