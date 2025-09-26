@@ -49,7 +49,7 @@ label_options = [
             "Supra", 
             "Infra"]
 prefix_options = ["", "Tailbone", "Delayed"]
-
+mirror_prefix_options = ["", "Tailbone", "Delayed"]
 
 # --- Form to add new outcome ---
 with st.form("outcome_entry"):
@@ -83,7 +83,7 @@ with st.form("outcome_entry"):
         mirror1_price = st.number_input("Mirror 1 Price", min_value=0.0, step=0.01)
         mirror1_proto = st.text_input("Mirror 1 Prototype")
         mirror1_label = st.selectbox("Mirror 1 Label", label_options)
-
+        mirror1_prefix = st.selectbox("Mirror 1 Prefix", mirror_prefix_options)
         mirror2_time = st.text_input("Mirror 2 Time")
         mirror2_kijun = st.text_input("Mirror 2 Kijun Cross Type")
 
@@ -109,6 +109,7 @@ if submitted:
         "Entry 1 Label": e1_label,
         "Mirror 1 Label": mirror1_label,
         "Entry 1 Prefix": e1_prefix,
+        "Mirror 1 Prefix": mirror1_prefix,
 
 
         "Entry 2 Time": e2_time, "Kijun Cross Type": kijun_type,
