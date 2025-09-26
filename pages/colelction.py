@@ -42,6 +42,13 @@ prototype_options = [
 "Cliff Collapse", "Cliff Dip", "Cliff Rampart", "Cliff Citadel",
 "Stampede", "Bastion", "Detonator", "Void"
 ]
+
+ label_options = [
+            "", 
+            "Endo-Loft", "Endo-Core", "Endo-Cellar", 
+            "Supra", 
+            "Infra"]
+
 # --- Form to add new outcome ---
 with st.form("outcome_entry"):
     col1, col2 = st.columns(2)
@@ -58,12 +65,7 @@ with st.form("outcome_entry"):
         
         e1_proto = st.selectbox("Entry 1 Prototype", prototype_options)
         e1_type = st.selectbox("Entry 1 Type", ["", "Call", "Put"])
-        label_options = [
-            "", 
-            "Endo-Loft", "Endo-Core", "Endo-Cellar", 
-            "Supra", 
-            "Infra"]
-
+       
         e2_time = st.text_input("Entry 2 Time")
         kijun_type = st.text_input("Kijun Cross Type")
 
