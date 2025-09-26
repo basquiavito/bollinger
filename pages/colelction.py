@@ -79,7 +79,7 @@ with st.form("outcome_entry"):
         mirror1_time = st.text_input("Mirror 1 Time")
         mirror1_price = st.number_input("Mirror 1 Price", min_value=0.0, step=0.01)
         mirror1_proto = st.text_input("Mirror 1 Prototype")
-        mirror1_label = st.selectbox("Mirror 1 Label", ["", "Endo", "Supra", "Infra"])
+        mirror1_label = st.selectbox("Mirror 1 Label", label_options)
 
         mirror2_time = st.text_input("Mirror 2 Time")
         mirror2_kijun = st.text_input("Mirror 2 Kijun Cross Type")
