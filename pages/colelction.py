@@ -65,7 +65,8 @@ with st.form("outcome_entry"):
         
         e1_proto = st.selectbox("Entry 1 Prototype", prototype_options)
         e1_type = st.selectbox("Entry 1 Type", ["", "Call", "Put"])
-       
+        e1_label = st.selectbox("Entry 1 Label", label_options)
+
         e2_time = st.text_input("Entry 2 Time")
         kijun_type = st.text_input("Kijun Cross Type")
 
