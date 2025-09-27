@@ -7010,182 +7010,49 @@ if st.sidebar.button("Run Analysis"):
                 # Apply
                 intraday = add_parallel_phase(intraday)
 
+                # ---------------------------------------------------
+                # Assign Raw Prototype (Ember / Cliff) + Refinements
+                # ---------------------------------------------------
+                intraday["Prototype"] = ""   # new column
+                
+                # --- Handle Bull Anchors ---
+                anchor_idx_bull = intraday["MIDAS_Bull"].first_valid_index()
+                if anchor_idx_bull is not None:
+                    i = intraday.index.get_loc(anchor_idx_bull)
+                    f_open = intraday["F_numeric"].iloc[0]  # open move
+                    f_anchor = intraday["F_numeric"].iloc[i]
+                
+                    # RAW classification
+                    if f_anchor <= -1:   # dipped below open
+                        intraday.at[intraday.index[i], "Prototype"] = "Ember"
+                    elif f_anchor >= 1:  # pushed positive
+                        intraday.at[intraday.index[i], "Prototype"] = "Cliff"
+                
+                    # check volatility signals ±5 bars
+                    window = intraday.iloc[max(0, i-5): min(len(intraday), i+6)]
+                    has_vol = any(window["BBW Alert"].eq("🔥")) or any(window["STD_Alert"].eq("🐦‍🔥"))
+                
+                    if has_vol:
+                        if intraday.at[intraday.index[i], "Prototype"] == "Ember":
+                            if f_anchor <= -55:
+                                intraday.at[intraday.index[i], "Prototype"] = "Ember Bounce"
+                            else:
+                                intraday.at[intraday.index[i], "Prototype"] = "Ember Catch"
+                        elif intraday.at[intraday.index[i], "Prototype"] == "Cliff":
+                            if f_anchor >= 55:
+                                intraday.at[intraday.index[i], "Prototype"] = "Cliff Collapse"
+                            else:
+                                intraday.at[intraday.index[i], "Prototype"] = "Cliff Dip"
+                
+                
+                # --- Handle Bear Anchors (mirror idea if needed) ---
+                anchor_idx_bear = intraday["MIDAS_Bear"].first_valid_index()
+                if anchor_idx_bear is not None:
+                    i = intraday.index.get_loc(anchor_idx_bear)
+                    f_anchor = intraday["F_numeric"].iloc[i]
+                
+                    # same raw + refine logic can be mirrored here if you want Bear prototypes
 
-                #  # --- Collect all Entries for current intraday DataFrame ---
-                # entries = []
-                
-                # # --- PUTS ---
-                # # Put 🎯1
-                # for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
-                #     entries.append({
-                #         "Type": "Put 🎯1",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                # # Put 🎯2
-                # for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
-                #     entries.append({
-                #         "Type": "Put 🎯2",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                # # Put 🎯3
-                # for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
-                #     entries.append({
-                #         "Type": "Put 🎯3",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                
-                # # --- CALLS ---
-                # # Call 🎯1
-                # for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
-                #     entries.append({
-                #         "Type": "Call 🎯1",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                # # Call 🎯2
-                # for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
-                #     entries.append({
-                #         "Type": "Call 🎯2",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                # # Call 🎯3
-                # for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
-                #     entries.append({
-                #         "Type": "Call 🎯3",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-
-
-                 
-                # # --- Final tidy DataFrame ---
-                # entries_df = (
-                #     pd.DataFrame(entries)
-                #       .sort_values("Time")        # sort chronologically
-                #       .reset_index(drop=True)
-                # )
-        
-                
-                
-          
-               
-     
-                # # ✅ Persist the data so it survives reruns (like after download)
-                # st.session_state["entries_df"] = entries_df
-                
-                # # ✅ Stable key for the download button (unique to this data, but NOT changing each rerun)
-                # csv_bytes = st.session_state["entries_df"].to_csv(index=False).encode("utf-8")
-                # download_key = "download_entries_" + hashlib.md5(csv_bytes).hexdigest()
-                
-                # # ✅ Keep the expander open after reruns
-                # with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                #     st.dataframe(st.session_state["entries_df"], use_container_width=True)
-                
-                #     st.download_button(
-                #         label="Download Entries as CSV",
-                #         data=csv_bytes,
-                #         file_name="entries.csv",
-                #         mime="text/csv",
-                #         key=download_key
-                #     )
-               
-
-
-               # ------------------------------------------------------------------
-               # 1️⃣  Build / cache entries_df  (runs once per browser session)
-                # need_build = (
-                #     "entries_df"  not in st.session_state or
-                #     "entries_csv" not in st.session_state or
-                #     "download_key" not in st.session_state
-                # )
-
-                # if need_build:
-                
-                #     entries = []
-                
-                #     # ---------- PUTS ----------
-                #     for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
-                #         entries.append({
-                #             "Type": "Put 🎯1",
-                #             "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #             "Price ($)": intraday.at[i, "Close"]
-                #         })
-                
-                #     for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
-                #         entries.append({
-                #             "Type": "Put 🎯2",
-                #             "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #             "Price ($)": intraday.at[i, "Close"]
-                #         })
-                
-                #     for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
-                #         entries.append({
-                #             "Type": "Put 🎯3",
-                #             "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #             "Price ($)": intraday.at[i, "Close"]
-                #         })
-                
-                #     # ---------- CALLS ----------
-                #     for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
-                #         entries.append({
-                #             "Type": "Call 🎯1",
-                #             "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #             "Price ($)": intraday.at[i, "Close"]
-                #         })
-                
-                #     for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
-                #         entries.append({
-                #             "Type": "Call 🎯2",
-                #             "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #             "Price ($)": intraday.at[i, "Close"]
-                #         })
-                
-                #     for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
-                #         entries.append({
-                #             "Type": "Call 🎯3",
-                #             "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #             "Price ($)": intraday.at[i, "Close"]
-                #         })
-                
-                #     # ---- tidy dataframe & cache it ----
-                #     st.session_state.entries_df = (
-                #         pd.DataFrame(entries)
-                #           .sort_values("Time")
-                #           .reset_index(drop=True)
-                #     )
-                
-                #     # ---- prepare CSV bytes & stable key ----
-                #     csv_bytes = st.session_state.entries_df.to_csv(index=False).encode("utf-8")
-                #     st.session_state.entries_csv = csv_bytes
-                #     st.session_state.download_key = (
-                #         "download_" + hashlib.md5(csv_bytes).hexdigest()
-                #     )
-
-                # # ------------------------------------------------------------------
-                # # 2️⃣  UI (always runs, but uses cached data)
-                # # ------------------------------------------------------------------
-                # with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                #     st.dataframe(st.session_state.entries_df, use_container_width=True)
-                
-                #     st.download_button(
-                #         label="Download Entries as CSV",
-                #         data=st.session_state.entries_csv,
-                #         file_name="entries.csv",
-                #         mime="text/csv",
-                #         key=st.session_state.download_key      # ← stable across reruns
-                #     )
-                
-                         
-                
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
