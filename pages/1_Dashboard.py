@@ -7051,7 +7051,7 @@ if st.sidebar.button("Run Analysis"):
                 entries["Entry 1 Time"] = pd.to_datetime(entries["Time"]).dt.strftime("%H:%M")
                 
                 # Use raw price (not F%) -> assuming you have a 'Price' column
-                entries["Entry 1 Price ($)"] = entries["Price"]
+                entries["Entry 1 Price ($)"] = entries["Close"]  # or whatever column holds raw price
                 
                 # Identify type of entry
                 entries["Type"] = entries.apply(
