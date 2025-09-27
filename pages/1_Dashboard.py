@@ -6999,24 +6999,6 @@ if st.sidebar.button("Run Analysis"):
                 # Apply
                 intraday = add_parallel_phase(intraday)
 
-# --- PUT EXIT ---
-            first_put_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
-            
-            if not first_put_idx.empty:
-                i_start = intraday.index.get_loc(first_put_idx[0])
-            
-                # loop forward from Entry 1
-                for i in range(i_start + 1, len(intraday) - 1):
-                    prev_f = intraday["F_numeric"].iloc[i - 1]
-                    curr_f = intraday["F_numeric"].iloc[i]
-                    prev_supply = intraday["TD_Supply"].iloc[i - 1]
-                    curr_supply = intraday["TD_Supply"].iloc[i]
-            
-                    if pd.notna(prev_f) and pd.notna(curr_f) and pd.notna(prev_supply) and pd.notna(curr_supply):
-                        # crossed UP through TD Supply (opposite of Put direction)
-                        if prev_f < prev_supply and curr_f >= curr_supply:
-                            intraday.at[intraday.index[i], "Put_Exit_Emoji"] = "❌"
-                            break
 
                  # --- Collect all Entries for current intraday DataFrame ---
                 entries = []
@@ -7072,15 +7054,8 @@ if st.sidebar.button("Run Analysis"):
                         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
                     })
 
-            
-                                 # --- PUT EXIT ---
-                for i in intraday.index[intraday["Put_Exit_Emoji"] == "❌"]:
-                    entries.append({
-                        "Type": "Put Exit",
-                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                        "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                    })
 
+                 
                 # --- Final tidy DataFrame ---
                 entries_df = (
                     pd.DataFrame(entries)
@@ -7127,6 +7102,21 @@ if st.sidebar.button("Run Analysis"):
                
                
             
+                               
+                # # --- Streamlit UI ---
+                # with st.expander("Track Entry 1 · 2 · 3 🎯"):
+                #     st.dataframe(entries_df, use_container_width=True)
+                
+                #     csv = entries_df.to_csv(index=False).encode("utf-8")
+                #     st.download_button(
+                #         label="Download Entries as CSV",
+                #         data=csv,
+                #         file_name="entries.csv",
+                #         mime="text/csv",
+                #         key="download_single_ticker"  # ✅ unique, no duplicates
+                #     )
+# --- Streamlit UI ---
+
                 # --- Streamlit UI ---
                 with st.expander("Track Entry 1 · 2 · 3 🎯"):
                     st.dataframe(entries_df, use_container_width=True)
