@@ -8234,10 +8234,10 @@ if st.sidebar.button("Run Analysis"):
                     fig = make_subplots(
                         rows=1,
                         cols=1,
-                        # row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
+                        row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
 
                         vertical_spacing=0.03,
-                        subplot_titles=("Mike Volatility", "Option Flow (Call/Put)","Option vs MIDAS"),
+                        subplot_titles=("Mike Volatility),
                         shared_xaxes=True,
                        
                          
