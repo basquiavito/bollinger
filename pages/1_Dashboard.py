@@ -7080,18 +7080,7 @@ if st.sidebar.button("Run Analysis"):
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"]})
                                                     # --- PUT EXIT ---
-                                # --- Always build a DataFrame, even if empty ---
-                    df = pd.DataFrame(entries)
-                
-                    if not df.empty:
-                        df = (df.sort_values("Time").reset_index(drop=True))
-                
-                    # --- Add Prototype column (same value for all rows) ---
-                    proto = intraday["Prototype"].replace("", pd.NA).dropna().unique()
-                    prototype_value = proto[0] if len(proto) else "None"
-                    df["Prototype"] = prototype_value
-                
-                    return df
+      
                                     df = (pd.DataFrame(entries)
                             .sort_values("Time")
                             .reset_index(drop=True))
