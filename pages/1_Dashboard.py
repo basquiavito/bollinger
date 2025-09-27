@@ -7010,77 +7010,60 @@ if st.sidebar.button("Run Analysis"):
                 # Apply
                 intraday = add_parallel_phase(intraday)
 
-                # ---------------------------------------------------
-                # Assign Raw Prototype (Ember / Cliff) + Refinements
-                # ---------------------------------------------------
-                intraday["Prototype"] = ""   # new column
-                
-                # --- Handle Bull Anchors ---
-                anchor_idx_bull = intraday["MIDAS_Bull"].first_valid_index()
-                if anchor_idx_bull is not None:
-                    i = intraday.index.get_loc(anchor_idx_bull)
-                    f_open = intraday["F_numeric"].iloc[0]  # open move
-                    f_anchor = intraday["F_numeric"].iloc[i]
-                
-                    # RAW classification
-                    if f_anchor <= -1:   # dipped below open
-                        intraday.at[intraday.index[i], "Prototype"] = "Ember"
-                    elif f_anchor >= 1:  # pushed positive
-                        intraday.at[intraday.index[i], "Prototype"] = "Cliff"
-                
-                    # check volatility signals ±5 bars
-                    window = intraday.iloc[max(0, i-5): min(len(intraday), i+6)]
-                    has_vol = any(window["BBW Alert"].eq("🔥")) or any(window["STD_Alert"].eq("🐦‍🔥"))
-                
-                    if has_vol:
-                        if intraday.at[intraday.index[i], "Prototype"] == "Ember":
-                            if f_anchor <= -55:
-                                intraday.at[intraday.index[i], "Prototype"] = "Ember Bounce"
-                            else:
-                                intraday.at[intraday.index[i], "Prototype"] = "Ember Catch"
-                        elif intraday.at[intraday.index[i], "Prototype"] == "Cliff":
-                            if f_anchor >= 55:
-                                intraday.at[intraday.index[i], "Prototype"] = "Cliff Collapse"
-                            else:
-                                intraday.at[intraday.index[i], "Prototype"] = "Cliff Dip"
-                
                 
             
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
                     """Build the tidy entries table (runs once unless `intraday` changes)."""
-                    entries: List[dict] = []
+                    # entries: List[dict] = []
                 
-                    # PUTS
-                    for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
-                        entries.append({"Type": "Put 🎯1",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
-                    for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
-                        entries.append({"Type": "Put 🎯2",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
-                    for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
-                        entries.append({"Type": "Put 🎯3",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
+                    # # PUTS
+                    # for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
+                    #     entries.append({"Type": "Put 🎯1",
+                    #                     "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                    #                     "Price ($)": intraday.at[i, "Close"]})
+                    # for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
+                    #     entries.append({"Type": "Put 🎯2",
+                    #                     "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                    #                     "Price ($)": intraday.at[i, "Close"]})
+                    # for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
+                    #     entries.append({"Type": "Put 🎯3",
+                    #                     "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                    #                     "Price ($)": intraday.at[i, "Close"]})
                 
-                    # CALLS
-                    for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
-                        entries.append({"Type": "Call 🎯1",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
-                    for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
-                        entries.append({"Type": "Call 🎯2",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
-                    for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
-                        entries.append({"Type": "Call 🎯3",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
-                                                    # --- PUT EXIT ---
- 
+                    # # CALLS
+                    # for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
+                    #     entries.append({"Type": "Call 🎯1",
+                    #                     "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                    #                     "Price ($)": intraday.at[i, "Close"]})
+                    # for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
+                    #     entries.append({"Type": "Call 🎯2",
+                    #                     "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                    #                     "Price ($)": intraday.at[i, "Close"]})
+                    # for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
+                    #     entries.append({"Type": "Call 🎯3",
+                    #                     "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                    #                     "Price ($)": intraday.at[i, "Close"]})
+                                       #                                 # --- PUT EXIT ---
+                    entry_map = {
+                       "Put 🎯1": "Put_FirstEntry_Emoji",
+                       "Put 🎯2": "Put_SecondEntry_Emoji",
+                       "Put 🎯3": "Put_ThirdEntry_Emoji",
+                       "Call 🎯1": "Call_FirstEntry_Emoji",
+                       "Call 🎯2": "Call_SecondEntry_Emoji",
+                       "Call 🎯3": "Call_ThirdEntry_Emoji",
+                   }
+                   
+                   entries = []
+                   for label, col in entry_map.items():
+                       for i in intraday.index[intraday[col].notna() & (intraday[col] != "")]:
+                           entries.append({
+                               "Type": label,
+                               "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                               "Price ($)": intraday.at[i, "Close"],
+                           })
+
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
