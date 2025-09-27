@@ -7068,25 +7068,25 @@ if st.sidebar.button("Run Analysis"):
                 
           
                
-    
-               # ✅ Persist the data so it survives reruns (like after download)
-               st.session_state["entries_df"] = entries_df
-               
-               # ✅ Stable key for the download button (unique to this data, but NOT changing each rerun)
-               csv_bytes = st.session_state["entries_df"].to_csv(index=False).encode("utf-8")
-               download_key = "download_entries_" + hashlib.md5(csv_bytes).hexdigest()
-               
-               # ✅ Keep the expander open after reruns
-               with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                   st.dataframe(st.session_state["entries_df"], use_container_width=True)
-               
-                   st.download_button(
-                       label="Download Entries as CSV",
-                       data=csv_bytes,
-                       file_name="entries.csv",
-                       mime="text/csv",
-                       key=download_key
-                   )
+     
+                # ✅ Persist the data so it survives reruns (like after download)
+                st.session_state["entries_df"] = entries_df
+                
+                # ✅ Stable key for the download button (unique to this data, but NOT changing each rerun)
+                csv_bytes = st.session_state["entries_df"].to_csv(index=False).encode("utf-8")
+                download_key = "download_entries_" + hashlib.md5(csv_bytes).hexdigest()
+                
+                # ✅ Keep the expander open after reruns
+                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                    st.dataframe(st.session_state["entries_df"], use_container_width=True)
+                
+                    st.download_button(
+                        label="Download Entries as CSV",
+                        data=csv_bytes,
+                        file_name="entries.csv",
+                        mime="text/csv",
+                        key=download_key
+                    )
                
 
                 # # --- Streamlit UI ---
