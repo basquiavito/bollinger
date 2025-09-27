@@ -9276,7 +9276,7 @@ if st.sidebar.button("Run Analysis"):
                 #     hoverinfo="skip"
                 # ), row=2, col=1)
 
-                intraday["Put_BB_Tag_Lower"] = np.where(intraday["Put_Option_Smooth"] < intraday["Put_BB_Lower"], "💧", "")
+                # intraday["Put_BB_Tag_Lower"] = np.where(intraday["Put_Option_Smooth"] < intraday["Put_BB_Lower"], "💧", "")
 
                 # 💧 Tag lower band breakdowns
                 # fig.add_trace(go.Scatter(
@@ -9306,8 +9306,8 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
-                intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+                # intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                # intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
                 
                 # Plot them in Row 3
                 # fig.add_trace(go.Scatter(
@@ -9398,45 +9398,45 @@ if st.sidebar.button("Run Analysis"):
                # fig.add_hline(y=call_ib_high, showlegend=True,     
                #  line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
               
-#             # 🟡 Call IB High (hoverable)
-                fig.add_trace(go.Scatter(
-                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                    y=[call_ib_high, call_ib_high],
-                    mode='lines',
-                    line=dict(color="gold", dash="dot", width=0.6),
-                    name="Call IB High",
-                    hovertemplate="Call IB High: %{y:.2f}<extra></extra>"
-                ), row=2, col=1)
+# #             # 🟡 Call IB High (hoverable)
+#                 fig.add_trace(go.Scatter(
+#                     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+#                     y=[call_ib_high, call_ib_high],
+#                     mode='lines',
+#                     line=dict(color="gold", dash="dot", width=0.6),
+#                     name="Call IB High",
+#                     hovertemplate="Call IB High: %{y:.2f}<extra></extra>"
+#                 ), row=2, col=1)
                 
-#                 # 🟡 Call IB Low (hoverable)
-                fig.add_trace(go.Scatter(
-                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                    y=[call_ib_low, call_ib_low],
-                    mode='lines',
-                    line=dict(color="gold", dash="dot", width=0.6),
-                    name="Call IB Low",
-                    hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
-                ), row=2, col=1)
+# #                 # 🟡 Call IB Low (hoverable)
+#                 fig.add_trace(go.Scatter(
+#                     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+#                     y=[call_ib_low, call_ib_low],
+#                     mode='lines',
+#                     line=dict(color="gold", dash="dot", width=0.6),
+#                     name="Call IB Low",
+#                     hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
+#                 ), row=2, col=1)
 
-                # 🔵 Put IB High (hoverable)
-                fig.add_trace(go.Scatter(
-                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                    y=[put_ib_high, put_ib_high],
-                    mode='lines',
-                    line=dict(color="cyan", dash="dot", width=0.6),
-                    name="Put IB High",
-                    hovertemplate="Put IB High: %{y:.2f}<extra></extra>"
-                ), row=2, col=1)
+                # # 🔵 Put IB High (hoverable)
+                # fig.add_trace(go.Scatter(
+                #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                #     y=[put_ib_high, put_ib_high],
+                #     mode='lines',
+                #     line=dict(color="cyan", dash="dot", width=0.6),
+                #     name="Put IB High",
+                #     hovertemplate="Put IB High: %{y:.2f}<extra></extra>"
+                # ), row=2, col=1)
                 
-                # 🔵 Put IB Low (hoverable)
-                fig.add_trace(go.Scatter(
-                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
-                    y=[put_ib_low, put_ib_low],
-                    mode='lines',
-                    line=dict(color="cyan", dash="dot", width=0.6),
-                    name="Put IB Low",
-                    hovertemplate="Put IB Low: %{y:.2f}<extra></extra>"
-                ), row=2, col=1)
+                # # 🔵 Put IB Low (hoverable)
+                # fig.add_trace(go.Scatter(
+                #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                #     y=[put_ib_low, put_ib_low],
+                #     mode='lines',
+                #     line=dict(color="cyan", dash="dot", width=0.6),
+                #     name="Put IB Low",
+                #     hovertemplate="Put IB Low: %{y:.2f}<extra></extra>"
+                # ), row=2, col=1)
 
 
 
