@@ -7036,7 +7036,17 @@ if st.sidebar.button("Run Analysis"):
                     return df
                 
                 
-                # Apply
+         
+               
+                 # --- Gather Entry 1 info ---
+                 entry1_times = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "Time"].tolist()
+                 entry1_prices = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "F_numeric"].tolist()
+                 
+                 entry1_df = pd.DataFrame({
+                     "Time": entry1_times,
+                     "Price": entry1_prices
+                 })
+
                 intraday = calculate_midas_distensibility(intraday)
                 
                 # 🔔 Alerts: Top 3 most distensible bars in each regime
@@ -7052,16 +7062,6 @@ if st.sidebar.button("Run Analysis"):
 
  
  
-               
-               # --- Gather Entry 1 info ---
-               entry1_times = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "Time"].tolist()
-               entry1_prices = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "F_numeric"].tolist()
-               
-               entry1_df = pd.DataFrame({
-                   "Time": entry1_times,
-                   "Price": entry1_prices
-               })
-
                # --- With Expander ---
                 with st.expander("Track Entry 1 🎯"):
                     st.dataframe(entry1_df, use_container_width=True)
