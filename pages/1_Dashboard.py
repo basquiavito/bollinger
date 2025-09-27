@@ -16,7 +16,8 @@ from datetime import timedelta, datetime
 import io
 import numbers
 import uuid
-            
+import hashlib
+           
 
 def compute_value_area(
         df: pd.DataFrame,
@@ -7062,64 +7063,49 @@ if st.sidebar.button("Run Analysis"):
                       .sort_values("Time")        # sort chronologically
                       .reset_index(drop=True)
                 )
-                # def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
-                #     """
-                #     Distensibility anchored to Midas.
-                #     - Bull: anchored at Midas min
-                #     - Bear: anchored at Midas max
-                    
-                #     Formula:
-                #         Distensibility = (BBW - BBW_anchor) / (RVOL_5 * BBW_anchor)
-                #     """
-                
-                #     df["Bull_Distensibility"] = np.nan
-                #     df["Bear_Distensibility"] = np.nan
-                
-                #     # 🐂 Bull anchor
-                #     if "MIDAS_Bull" in df.columns:
-                #         bull_anchor_idx = df["MIDAS_Bull"].first_valid_index()
-                #         if bull_anchor_idx is not None:
-                #             bbw_anchor = df.loc[bull_anchor_idx, bbw_col]
-                #             df.loc[bull_anchor_idx:, "Bull_Distensibility"] = (
-                #                 (df.loc[bull_anchor_idx:, bbw_col] - bbw_anchor) /
-                #                 (df.loc[bull_anchor_idx:, vol_col].replace(0, np.nan) * bbw_anchor)
-                #             )
-                
-                #     # 🐻 Bear anchor
-                #     if "MIDAS_Bear" in df.columns:
-                #         bear_anchor_idx = df["MIDAS_Bear"].first_valid_index()
-                #         if bear_anchor_idx is not None:
-                #             bbw_anchor = df.loc[bear_anchor_idx, bbw_col]
-                #             df.loc[bear_anchor_idx:, "Bear_Distensibility"] = (
-                #                 (df.loc[bear_anchor_idx:, bbw_col] - bbw_anchor) /
-                #                 (df.loc[bear_anchor_idx:, vol_col].replace(0, np.nan) * bbw_anchor)
-                #             )
-                
-                #     return df
+        
                 
                 
           
                
+    
+               # ✅ Persist the data so it survives reruns (like after download)
+               st.session_state["entries_df"] = entries_df
                
-       
+               # ✅ Stable key for the download button (unique to this data, but NOT changing each rerun)
+               csv_bytes = st.session_state["entries_df"].to_csv(index=False).encode("utf-8")
+               download_key = "download_entries_" + hashlib.md5(csv_bytes).hexdigest()
+               
+               # ✅ Keep the expander open after reruns
+               with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                   st.dataframe(st.session_state["entries_df"], use_container_width=True)
+               
+                   st.download_button(
+                       label="Download Entries as CSV",
+                       data=csv_bytes,
+                       file_name="entries.csv",
+                       mime="text/csv",
+                       key=download_key
+                   )
+               
 
-                # --- Streamlit UI ---
-                with st.expander("Track Entry 1 · 2 · 3 🎯"):
-                    st.dataframe(entries_df, use_container_width=True)
+                # # --- Streamlit UI ---
+                # with st.expander("Track Entry 1 · 2 · 3 🎯"):
+                #     st.dataframe(entries_df, use_container_width=True)
                 
-                    # Convert DataFrame to CSV
-                    csv = entries_df.to_csv(index=False).encode("utf-8")
+                #     # Convert DataFrame to CSV
+                #     csv = entries_df.to_csv(index=False).encode("utf-8")
                 
-                    # Generate unique key each render
-                    unique_key = f"download_{uuid.uuid4()}"
+                #     # Generate unique key each render
+                #     unique_key = f"download_{uuid.uuid4()}"
                 
-                    st.download_button(
-                        label="Download Entries as CSV",
-                        data=csv,
-                        file_name="entries.csv",
-                        mime="text/csv",
-                        key=unique_key
-                    )
+                #     st.download_button(
+                #         label="Download Entries as CSV",
+                #         data=csv,
+                #         file_name="entries.csv",
+                #         mime="text/csv",
+                #         key=unique_key
+                #     )
               
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
