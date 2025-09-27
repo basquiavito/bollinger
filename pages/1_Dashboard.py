@@ -6084,7 +6084,8 @@ if st.sidebar.button("Run Analysis"):
                             intraday.at[intraday.index[i], "Call_FirstEntry_Emoji"] = "🎯"
                             break
 
-               
+                intraday["Put_Exit_Emoji"] = ""
+
                
                  # --- PUT EXIT ---
                 first_put_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
