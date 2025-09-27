@@ -6084,24 +6084,6 @@ if st.sidebar.button("Run Analysis"):
                             intraday.at[intraday.index[i], "Call_FirstEntry_Emoji"] = "🎯"
                             break
 
-                intraday["Put_Exit_Emoji"] = ""
-
-               
-                first_put_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
-                if not first_put_idx.empty:
-                    i_start = intraday.index.get_loc(first_put_idx[0])
-                    for i in range(i_start + 1, len(intraday) - 1):
-                        prev_f = intraday["F_numeric"].iloc[i - 1]
-                        curr_f = intraday["F_numeric"].iloc[i]
-                        prev_supply = intraday['TD Supply Line F'].iloc[i - 1]
-                        curr_supply = intraday['TD Supply Line F'].iloc[i]
-                
-                        if pd.notna(prev_f) and pd.notna(curr_f) and pd.notna(prev_supply) and pd.notna(curr_supply):
-                            if prev_f < prev_supply and curr_f >= curr_supply:
-                                intraday.at[intraday.index[i], "Put_Exit_Emoji"] = "❌"
-                                break
-                
-      
 
                
                
@@ -7240,13 +7222,7 @@ if st.sidebar.button("Run Analysis"):
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"]})
                                     # --- PUT EXIT ---
-                    for i in intraday.index[intraday["Put_Exit_Emoji"] == "❌"]:
-                        entries.append({
-                            "Type": "Put Exit",
-                            "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                            "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                        })
-
+                
                     df = (pd.DataFrame(entries)
                             .sort_values("Time")
                             .reset_index(drop=True))
