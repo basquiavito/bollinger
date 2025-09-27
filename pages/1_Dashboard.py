@@ -7063,17 +7063,17 @@ if st.sidebar.button("Run Analysis"):
                })
 
                # --- With Expander ---
-               with st.expander("Track Entry 1 🎯"):
-                   st.dataframe(entry1_df, use_container_width=True)
-                   
-                   # Download button
-                   csv = entry1_df.to_csv(index=False).encode("utf-8")
-                   st.download_button(
-                       label="Download Entry 1 as CSV",
-                       data=csv,
-                       file_name="entry1_calls.csv",
-                       mime="text/csv"
-                   )
+                with st.expander("Track Entry 1 🎯"):
+                    st.dataframe(entry1_df, use_container_width=True)
+                    
+                    # Download button
+                    csv = entry1_df.to_csv(index=False).encode("utf-8")
+                    st.download_button(
+                        label="Download Entry 1 as CSV",
+                        data=csv,
+                        file_name="entry1_calls.csv",
+                        mime="text/csv"
+                    )
 
  
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
