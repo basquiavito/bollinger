@@ -7010,154 +7010,154 @@ if st.sidebar.button("Run Analysis"):
                 # Apply
                 intraday = add_parallel_phase(intraday)
    
-                def compute_pae(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
-                    df = entries_df.copy()
-                    df["PAE"] = None   # raw excursion
-                    df["PAE_Level"] = None  # bucket label
+#                 def compute_pae(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
+#                     df = entries_df.copy()
+#                     df["PAE"] = None   # raw excursion
+#                     df["PAE_Level"] = None  # bucket label
                 
-                    # Map each entry row in df back to its intraday index
-                    df["_idx"] = df.apply(
-                        lambda row: intraday.index[
-                            (pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == row["Time"]) &
-                            (intraday["Close"] == row["Price ($)"])
-                        ][0],
-                        axis=1
-                    )
+#                     # Map each entry row in df back to its intraday index
+#                     df["_idx"] = df.apply(
+#                         lambda row: intraday.index[
+#                             (pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == row["Time"]) &
+#                             (intraday["Close"] == row["Price ($)"])
+#                         ][0],
+#                         axis=1
+#                     )
                 
-                    for i in range(len(df)):
-                        entry_idx = df.loc[i, "_idx"]
-                        entry_type = df.loc[i, "Type"]
-                        entry_F = intraday.at[entry_idx, "F_numeric"]
+#                     for i in range(len(df)):
+#                         entry_idx = df.loc[i, "_idx"]
+#                         entry_type = df.loc[i, "Type"]
+#                         entry_F = intraday.at[entry_idx, "F_numeric"]
                 
-                        # look ahead: until next entry or end of intraday
-                        if i < len(df) - 1:
-                            next_idx = df.loc[i + 1, "_idx"]
-                            segment = intraday.loc[entry_idx:next_idx]
-                        else:
-                            segment = intraday.loc[entry_idx:]
+#                         # look ahead: until next entry or end of intraday
+#                         if i < len(df) - 1:
+#                             next_idx = df.loc[i + 1, "_idx"]
+#                             segment = intraday.loc[entry_idx:next_idx]
+#                         else:
+#                             segment = intraday.loc[entry_idx:]
                 
-                        # worst excursion depends on trade direction
-                        if "Call" in entry_type:
-                            worst_F = segment["F_numeric"].min()
-                        else:  # Put
-                            worst_F = segment["F_numeric"].max()
+#                         # worst excursion depends on trade direction
+#                         if "Call" in entry_type:
+#                             worst_F = segment["F_numeric"].min()
+#                         else:  # Put
+#                             worst_F = segment["F_numeric"].max()
                 
-                        # compute pain
-                        pae_val = abs(entry_F - worst_F)
-                        df.loc[i, "PAE"] = pae_val
+#                         # compute pain
+#                         pae_val = abs(entry_F - worst_F)
+#                         df.loc[i, "PAE"] = pae_val
                 
-                        # bucket it
-                        if pae_val <= 10:
-                            level = "Low"
-                        elif pae_val <= 20:
-                            level = "Moderate"
-                        elif pae_val <= 50:
-                            level = "High"
-                        else:
-                            level = "Very High"
+#                         # bucket it
+#                         if pae_val <= 10:
+#                             level = "Low"
+#                         elif pae_val <= 20:
+#                             level = "Moderate"
+#                         elif pae_val <= 50:
+#                             level = "High"
+#                         else:
+#                             level = "Very High"
                 
-                        df.loc[i, "PAE_Level"] = level
+#                         df.loc[i, "PAE_Level"] = level
                 
-                    return df.drop(columns="_idx")
+#                     return df.drop(columns="_idx")
 
                 
             
-                # ----------  Helpers (cached) ----------
-                @st.cache_data(show_spinner=False)
-                def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
-                    """Build the tidy entries table (runs once unless `intraday` changes)."""
-                    entries: List[dict] = []
+#                 # ----------  Helpers (cached) ----------
+#                 @st.cache_data(show_spinner=False)
+#                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
+#                     """Build the tidy entries table (runs once unless `intraday` changes)."""
+#                     entries: List[dict] = []
                 
-                    # PUTS
-                    for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
-                        entries.append({"Type": "Put 🎯1",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-})
-                    for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
-                        entries.append({"Type": "Put 🎯2",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-})
-                    for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
-                        entries.append({"Type": "Put 🎯3",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+#                     # PUTS
+#                     for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
+#                         entries.append({"Type": "Put 🎯1",
+#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+#                                         "Price ($)": intraday.at[i, "Close"],
+#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
+# })
+#                     for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
+#                         entries.append({"Type": "Put 🎯2",
+#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+#                                         "Price ($)": intraday.at[i, "Close"],
+#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
+# })
+#                     for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
+#                         entries.append({"Type": "Put 🎯3",
+#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+#                                         "Price ($)": intraday.at[i, "Close"],
+#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
 
-                                       })
+#                                        })
                 
-                    # CALLS
-                    for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
-                        entries.append({"Type": "Call 🎯1",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-})
-                    for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
-                        entries.append({"Type": "Call 🎯2",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+#                     # CALLS
+#                     for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
+#                         entries.append({"Type": "Call 🎯1",
+#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+#                                         "Price ($)": intraday.at[i, "Close"],
+#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
+# })
+#                     for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
+#                         entries.append({"Type": "Call 🎯2",
+#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+#                                         "Price ($)": intraday.at[i, "Close"],
+#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
 
                                        
-                                       })
-                    for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
-                        entries.append({"Type": "Call 🎯3",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+#                                        })
+#                     for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
+#                         entries.append({"Type": "Call 🎯3",
+#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+#                                         "Price ($)": intraday.at[i, "Close"],
+#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
 
-                                       }),
+#                                        }),
 
           
-                    df = (pd.DataFrame(entries)
-                   .sort_values("Time")
-                   .reset_index(drop=True))
-                    return df
-                  # ✅ compute PAE before returning
-                    df = compute_pae(df, intraday)
+#                     df = (pd.DataFrame(entries)
+#                    .sort_values("Time")
+#                    .reset_index(drop=True))
+#                     return df
+#                   # ✅ compute PAE before returning
+#                     df = compute_pae(df, intraday)
                 
-                    # ✅ put PAE next to F%
-                    f_loc = df.columns.get_loc("F%")
-                    df.insert(f_loc + 1, "PAE", df.pop("PAE"))
-                    df.insert(f_loc + 2, "PAE_Level", df.pop("PAE_Level"))
+#                     # ✅ put PAE next to F%
+#                     f_loc = df.columns.get_loc("F%")
+#                     df.insert(f_loc + 1, "PAE", df.pop("PAE"))
+#                     df.insert(f_loc + 2, "PAE_Level", df.pop("PAE_Level"))
                 
-                    return df
+#                     return df
 
-                @st.cache_data(show_spinner=False)
-                def to_csv_bytes(df: pd.DataFrame) -> bytes:
-                    """Create CSV bytes from df (cached)."""
-                    return df.to_csv(index=False).encode("utf-8")
+               #  @st.cache_data(show_spinner=False)
+               #  def to_csv_bytes(df: pd.DataFrame) -> bytes:
+               #      """Create CSV bytes from df (cached)."""
+               #      return df.to_csv(index=False).encode("utf-8")
                 
                 
-                # ----------  Build once, reuse always ----------
-                entries_df = build_entries_df(intraday)           # cached by intraday content
-                csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
+               #  # ----------  Build once, reuse always ----------
+               #  entries_df = build_entries_df(intraday)           # cached by intraday content
+               #  csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
                 
-                # keep these in session_state so other code can reuse without recompute
-                # st.session_state.setdefault("entries_df", entries_df)
-                # st.session_state.setdefault("entries_csv", csv_bytes)
-                st.session_state["entries_df"] = entries_df
-                st.session_state["entries_csv"] = csv_bytes
-                # Optional: persist expander state across reruns
-                st.session_state.setdefault("expand_entries", True)
+               #  # keep these in session_state so other code can reuse without recompute
+               #  # st.session_state.setdefault("entries_df", entries_df)
+               #  # st.session_state.setdefault("entries_csv", csv_bytes)
+               #  st.session_state["entries_df"] = entries_df
+               #  st.session_state["entries_csv"] = csv_bytes
+               #  # Optional: persist expander state across reruns
+               #  st.session_state.setdefault("expand_entries", True)
 
-               # ----------  UI ----------
-                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                    st.dataframe(entries_df, use_container_width=True)
+               # # ----------  UI ----------
+               #  with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+               #      st.dataframe(entries_df, use_container_width=True)
                 
-                    # --- No-rerun download link ---
-                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-                    b64 = base64.b64encode(csv_bytes).decode("utf-8")
-                    file_name = "entries.csv"
+               #      # --- No-rerun download link ---
+               #      csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+               #      b64 = base64.b64encode(csv_bytes).decode("utf-8")
+               #      file_name = "entries.csv"
                 
-                    st.markdown(
-                        f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
-                        unsafe_allow_html=True
-                    )
+               #      st.markdown(
+               #          f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
+               #          unsafe_allow_html=True
+               #      )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
