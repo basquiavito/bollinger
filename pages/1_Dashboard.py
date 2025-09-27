@@ -7036,213 +7036,70 @@ if st.sidebar.button("Run Analysis"):
                     return df
                 
                 
-         
-               
-   
-
-                # # Example: extract both Call and Put 🎯 Entry 1s
-                # entries = intraday[
-                #     (intraday["Call_FirstEntry_Emoji"] == "🎯") | 
-                #     (intraday["Put_FirstEntry_Emoji"] == "🎯")
-                # ].copy()
-                
-                # # --- Keep only useful info ---
-                # # Strip date from time -> just HH:MM
-                # entries["Entry 1 Time"] = pd.to_datetime(entries["Time"]).dt.strftime("%H:%M")
-                
-                # # Use raw price (not F%) -> assuming you have a 'Price' column
-                # entries["Entry 1 Price ($)"] = entries["Close"]  # or whatever column holds raw price
-                
-                # # Identify type of entry
-                # entries["Type"] = entries.apply(
-                #     lambda row: "Call 🎯" if row["Call_FirstEntry_Emoji"] == "🎯" else "Put 🎯",
-                #     axis=1
-                # )
-                
-                # Select final columns for display
-                                # entry1_df = entries[["Type", "Entry 1 Time", "Entry 1 Price ($)"]]
-             
-                # entries = []
-                
-                # # --- PUTS ---
-                # # Put 🎯1
-                # for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
-                #     entries.append({
-                #         "Type": "Put 🎯1",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                # # Put 🎯2
-                # for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
-                #     entries.append({
-                #         "Type": "Put 🎯2",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                # # Put 🎯3
-                # for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
-                #     entries.append({
-                #         "Type": "Put 🎯3",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                
-                # # --- CALLS ---
-                # # Call 🎯1
-                # for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
-                #     entries.append({
-                #         "Type": "Call 🎯1",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                # # Call 🎯2
-                # for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
-                #     entries.append({
-                #         "Type": "Call 🎯2",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                # # Call 🎯3
-                # for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
-                #     entries.append({
-                #         "Type": "Call 🎯3",
-                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                #     })
-                
-                
-                # # --- Final tidy DataFrame ---
-                # entries_df = pd.DataFrame(entries)
-
-
-
-             
-                
-                
-               
-               # # --- With Expander ---
-               #  with st.expander("Track Entry 1 🎯"):
-               #      st.dataframe(entry1_df, use_container_width=True)
-                    
-               #      # Download button
-               #      csv = entry1_df.to_csv(index=False).encode("utf-8")
-               #      st.download_button(
-               #          label="Download Entry 1 as CSV",
-               #          data=csv,
-               #          file_name="entry1_calls.csv",
-               #          mime="text/csv"
-               #      )
-
-
-                
-                # with st.expander("Track Entry 1 & 2 🎯"):
-                #    st.dataframe(entries_df, use_container_width=True)
-               
-                #    # CSV download
-                #    csv = entries_df.to_csv(index=False).encode("utf-8")
-                #    st.download_button(
-                #        label="Download Entries as CSV",
-                #        data=csv,
-                #        file_name="entries.csv",
-                #        mime="text/csv"
-                #    )
-                # --- Streamlit Expander ---
-                # with st.expander("Track Entry 1, 2, 3 🎯"):
-                #     st.dataframe(entries_df, use_container_width=True)
-                
-                #     csv = entries_df.to_csv(index=False).encode("utf-8")
-                #     st.download_button(
-                #         label="Download Entries as CSV",
-                #         data=csv,
-                #         file_name="entries.csv",
-                #         mime="text/csv"
-                #     )
-
-
-                #           # Assume you are looping over tickers
-                # for tkr in tickers:
-                #     # build entries_df for that ticker...
-                
-                #     with st.expander(f"{tkr} — Track Entry 1, 2, 3 🎯"):
-                #         st.dataframe(entries_df, use_container_width=True)
-                
-                #         csv = entries_df.to_csv(index=False).encode("utf-8")
-                #         st.download_button(
-                #             label=f"Download Entries for {tkr} as CSV",
-                #             data=csv,
-                #             file_name=f"{tkr}_entries.csv",
-                #             mime="text/csv",
-                #             key=f"download_{tkr}"  # 👈 unique key per ticker
-                #         )
           
-              
-              # --- Collect all Entries for current intraday DataFrame ---
-              entries = []
-              
-              # --- PUTS ---
-              # Put 🎯1
-              for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
-                  entries.append({
-                      "Type": "Put 🎯1",
-                      "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                      "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                  })
-              
-              # Put 🎯2
-              for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
-                  entries.append({
-                      "Type": "Put 🎯2",
-                      "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                      "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                  })
-              
-              # Put 🎯3
-              for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
-                  entries.append({
-                      "Type": "Put 🎯3",
-                      "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                      "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                  })
-              
-              
-              # --- CALLS ---
-              # Call 🎯1
-              for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
-                  entries.append({
-                      "Type": "Call 🎯1",
-                      "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                      "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                  })
-              
-              # Call 🎯2
-              for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
-                  entries.append({
-                      "Type": "Call 🎯2",
-                      "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                      "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                  })
-              
-              # Call 🎯3
-              for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
-                  entries.append({
-                      "Type": "Call 🎯3",
-                      "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                      "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                  })
-              
-              
-              # --- Final tidy DataFrame ---
-              entries_df = (
-                  pd.DataFrame(entries)
-                    .sort_values("Time")        # sort chronologically
-                    .reset_index(drop=True)
-              )
-                              
+               
+               # --- Collect all Entries for current intraday DataFrame ---
+               entries = []
+               
+               # --- PUTS ---
+               # Put 🎯1
+               for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
+                   entries.append({
+                       "Type": "Put 🎯1",
+                       "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                       "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                   })
+               
+               # Put 🎯2
+               for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
+                   entries.append({
+                       "Type": "Put 🎯2",
+                       "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                       "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                   })
+               
+               # Put 🎯3
+               for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
+                   entries.append({
+                       "Type": "Put 🎯3",
+                       "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                       "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                   })
+               
+               
+               # --- CALLS ---
+               # Call 🎯1
+               for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
+                   entries.append({
+                       "Type": "Call 🎯1",
+                       "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                       "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                   })
+               
+               # Call 🎯2
+               for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
+                   entries.append({
+                       "Type": "Call 🎯2",
+                       "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                       "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                   })
+               
+               # Call 🎯3
+               for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
+                   entries.append({
+                       "Type": "Call 🎯3",
+                       "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                       "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                   })
+               
+               
+               # --- Final tidy DataFrame ---
+               entries_df = (
+                   pd.DataFrame(entries)
+                     .sort_values("Time")        # sort chronologically
+                     .reset_index(drop=True)
+               )
+                               
                 # --- Streamlit UI ---
                 with st.expander("Track Entry 1 · 2 · 3 🎯"):
                     st.dataframe(entries_df, use_container_width=True)
