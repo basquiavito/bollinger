@@ -7046,23 +7046,23 @@ if st.sidebar.button("Run Analysis"):
                 #                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                 #                         "Price ($)": intraday.at[i, "Close"]})
                                        #                                 # --- PUT EXIT ---
-                    entry_map = {
-                       "Put 🎯1": "Put_FirstEntry_Emoji",
-                       "Put 🎯2": "Put_SecondEntry_Emoji",
-                       "Put 🎯3": "Put_ThirdEntry_Emoji",
-                       "Call 🎯1": "Call_FirstEntry_Emoji",
-                       "Call 🎯2": "Call_SecondEntry_Emoji",
-                       "Call 🎯3": "Call_ThirdEntry_Emoji",
-                   }
-                   
-                   entries = []
-                   for label, col in entry_map.items():
-                       for i in intraday.index[intraday[col].notna() & (intraday[col] != "")]:
-                           entries.append({
-                               "Type": label,
-                               "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                               "Price ($)": intraday.at[i, "Close"],
-                           })
+                   entry_map = {
+                      "Put 🎯1": "Put_FirstEntry_Emoji",
+                      "Put 🎯2": "Put_SecondEntry_Emoji",
+                      "Put 🎯3": "Put_ThirdEntry_Emoji",
+                      "Call 🎯1": "Call_FirstEntry_Emoji",
+                      "Call 🎯2": "Call_SecondEntry_Emoji",
+                      "Call 🎯3": "Call_ThirdEntry_Emoji",
+                  }
+                  
+                  entries = []
+                  for label, col in entry_map.items():
+                      for i in intraday.index[intraday[col].notna() & (intraday[col] != "")]:
+                          entries.append({
+                              "Type": label,
+                              "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                              "Price ($)": intraday.at[i, "Close"],
+                          })
 
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
