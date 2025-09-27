@@ -6629,6 +6629,11 @@ if st.sidebar.button("Run Analysis"):
                 
                             # Optional for hover
                             intraday.loc[peak_idx, "Energy_Aid_Value"] = energy_val
+
+
+
+
+                 
                 def calculate_compliance_midas(df, bbw_col="F% BBW", vol_col="RVOL_5"):
                     """
                     Calculate Compliance relative to MIDAS anchors.
@@ -7047,6 +7052,29 @@ if st.sidebar.button("Run Analysis"):
 
  
  
+               
+               # --- Gather Entry 1 info ---
+               entry1_times = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "Time"].tolist()
+               entry1_prices = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "F_numeric"].tolist()
+               
+               entry1_df = pd.DataFrame({
+                   "Time": entry1_times,
+                   "Price": entry1_prices
+               })
+
+               # --- With Expander ---
+               with st.expander("Track Entry 1 🎯"):
+                   st.dataframe(entry1_df, use_container_width=True)
+                   
+                   # Download button
+                   csv = entry1_df.to_csv(index=False).encode("utf-8")
+                   st.download_button(
+                       label="Download Entry 1 as CSV",
+                       data=csv,
+                       file_name="entry1_calls.csv",
+                       mime="text/csv"
+                   )
+
  
                 with st.expander("🪞 MIDAS Anchor Table", expanded=False):
                                     st.dataframe(
