@@ -7103,41 +7103,24 @@ if st.sidebar.button("Run Analysis"):
                
        
 
-                # # --- Streamlit UI ---
-                # with st.expander("Track Entry 1 · 2 · 3 🎯"):
-                #     st.dataframe(entries_df, use_container_width=True)
-                
-                #     # Convert DataFrame to CSV
-                #     csv = entries_df.to_csv(index=False).encode("utf-8")
-                
-                #     # Generate unique key each render
-                #     unique_key = f"download_{uuid.uuid4()}"
-                
-                #     st.download_button(
-                #         label="Download Entries as CSV",
-                #         data=csv,
-                #         file_name="entries.csv",
-                #         mime="text/csv",
-                #         key=unique_key
-                #     )
-                if "entries_df" not in st.session_state:
-                    st.session_state.entries_df = entries_df
-                else:
-                    st.session_state.entries_df = entries_df  # update if needed
-                
+                # --- Streamlit UI ---
                 with st.expander("Track Entry 1 · 2 · 3 🎯"):
-                    st.dataframe(st.session_state.entries_df, use_container_width=True)
+                    st.dataframe(entries_df, use_container_width=True)
                 
-                    csv = st.session_state.entries_df.to_csv(index=False).encode("utf-8")
+                    # Convert DataFrame to CSV
+                    csv = entries_df.to_csv(index=False).encode("utf-8")
+                
+                    # Generate unique key each render
+                    unique_key = f"download_{uuid.uuid4()}"
+                
                     st.download_button(
                         label="Download Entries as CSV",
                         data=csv,
                         file_name="entries.csv",
                         mime="text/csv",
-                        key="download_btn"
+                        key=unique_key
                     )
-
-
+              
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
