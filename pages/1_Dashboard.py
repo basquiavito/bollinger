@@ -7164,22 +7164,21 @@ if st.sidebar.button("Run Analysis"):
 
 
                           # Assume you are looping over tickers
-             for tkr in tickers:
-                 # build entries_df for that ticker...
-             
-                 with st.expander(f"{tkr} — Track Entry 1, 2, 3 🎯"):
-                     st.dataframe(entries_df, use_container_width=True)
-             
-                     csv = entries_df.to_csv(index=False).encode("utf-8")
-                     st.download_button(
-                         label=f"Download Entries for {tkr} as CSV",
-                         data=csv,
-                         file_name=f"{tkr}_entries.csv",
-                         mime="text/csv",
-                         key=f"download_{tkr}"  # 👈 unique key per ticker
-                     )
+                for tkr in tickers:
+                    # build entries_df for that ticker...
+                
+                    with st.expander(f"{tkr} — Track Entry 1, 2, 3 🎯"):
+                        st.dataframe(entries_df, use_container_width=True)
+                
+                        csv = entries_df.to_csv(index=False).encode("utf-8")
+                        st.download_button(
+                            label=f"Download Entries for {tkr} as CSV",
+                            data=csv,
+                            file_name=f"{tkr}_entries.csv",
+                            mime="text/csv",
+                            key=f"download_{tkr}"  # 👈 unique key per ticker
+                        )
 
-                # st.plotly_chart(fig_displacement, use_container_width=True)
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
