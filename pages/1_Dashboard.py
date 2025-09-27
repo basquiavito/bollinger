@@ -6101,8 +6101,7 @@ if st.sidebar.button("Run Analysis"):
                                 intraday.at[intraday.index[i], "Put_Exit_Emoji"] = "❌"
                                 break
                 
-                # 4. Now build entries (this will pick up ❌)
-                entries_df = build_entries_df(intraday)
+       
 
                
                
