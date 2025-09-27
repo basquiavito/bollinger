@@ -7038,27 +7038,43 @@ if st.sidebar.button("Run Analysis"):
                 
          
                
-                # --- Gather Entry 1 info ---
-                entry1_times = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "Time"].tolist()
-                entry1_prices = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "F_numeric"].tolist()
-                
-                entry1_df = pd.DataFrame({
-                    "Time": entry1_times,
-                    "Price": entry1_prices
-                })
+   
 
-                intraday = calculate_midas_distensibility(intraday)
+                # Example: extract both Call and Put 🎯 Entry 1s
+                entries = intraday[
+                    (intraday["Call_FirstEntry_Emoji"] == "🎯") | 
+                    (intraday["Put_FirstEntry_Emoji"] == "🎯")
+                ].copy()
                 
-                # 🔔 Alerts: Top 3 most distensible bars in each regime
-                for col, alert_col in [
-                    ("Bull_Distensibility", "Bull_Dist_Alert"),
-                    ("Bear_Distensibility", "Bear_Dist_Alert")
-                ]:
-                    intraday[alert_col] = ""
-                    dist_subset = intraday.iloc[6:].copy()
-                    valid = dist_subset[dist_subset[col] > 0.05]
-                    top = valid[col].nlargest(3)
-                    intraday.loc[top.index, alert_col] = "🪟"
+                # --- Keep only useful info ---
+                # Strip date from time -> just HH:MM
+                entries["Entry 1 Time"] = pd.to_datetime(entries["Time"]).dt.strftime("%H:%M")
+                
+                # Use raw price (not F%) -> assuming you have a 'Price' column
+                entries["Entry 1 Price ($)"] = entries["Price"]
+                
+                # Identify type of entry
+                entries["Type"] = entries.apply(
+                    lambda row: "Call 🎯" if row["Call_FirstEntry_Emoji"] == "🎯" else "Put 🎯",
+                    axis=1
+                )
+                
+                # Select final columns for display
+                entry1_df = entries[["Type", "Entry 1 Time", "Entry 1 Price ($)"]]
+
+
+                # intraday = calculate_midas_distensibility(intraday)
+                
+                # # 🔔 Alerts: Top 3 most distensible bars in each regime
+                # for col, alert_col in [
+                #     ("Bull_Distensibility", "Bull_Dist_Alert"),
+                #     ("Bear_Distensibility", "Bear_Dist_Alert")
+                # ]:
+                #     intraday[alert_col] = ""
+                #     dist_subset = intraday.iloc[6:].copy()
+                #     valid = dist_subset[dist_subset[col] > 0.05]
+                #     top = valid[col].nlargest(3)
+                #     intraday.loc[top.index, alert_col] = "🪟"
 
  
  
