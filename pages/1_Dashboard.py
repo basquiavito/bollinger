@@ -7053,6 +7053,15 @@ if st.sidebar.button("Run Analysis"):
                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
                     })
+
+
+                 
+                # --- Final tidy DataFrame ---
+                entries_df = (
+                    pd.DataFrame(entries)
+                      .sort_values("Time")        # sort chronologically
+                      .reset_index(drop=True)
+                )
                 def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
                     """
                     Distensibility anchored to Midas.
@@ -7092,13 +7101,7 @@ if st.sidebar.button("Run Analysis"):
           
                
                
-               
-               # --- Final tidy DataFrame ---
-               entries_df = (
-                   pd.DataFrame(entries)
-                     .sort_values("Time")        # sort chronologically
-                     .reset_index(drop=True)
-               )
+            
                                
                 # --- Streamlit UI ---
                 with st.expander("Track Entry 1 · 2 · 3 🎯"):
