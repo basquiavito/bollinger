@@ -7009,6 +7009,56 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
+   
+                def compute_pae(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
+                    df = entries_df.copy()
+                    df["PAE"] = None   # raw excursion
+                    df["PAE_Level"] = None  # bucket label
+                
+                    # Map each entry row in df back to its intraday index
+                    df["_idx"] = df.apply(
+                        lambda row: intraday.index[
+                            (pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == row["Time"]) &
+                            (intraday["Close"] == row["Price ($)"])
+                        ][0],
+                        axis=1
+                    )
+                
+                    for i in range(len(df)):
+                        entry_idx = df.loc[i, "_idx"]
+                        entry_type = df.loc[i, "Type"]
+                        entry_F = intraday.at[entry_idx, "F_numeric"]
+                
+                        # look ahead: until next entry or end of intraday
+                        if i < len(df) - 1:
+                            next_idx = df.loc[i + 1, "_idx"]
+                            segment = intraday.loc[entry_idx:next_idx]
+                        else:
+                            segment = intraday.loc[entry_idx:]
+                
+                        # worst excursion depends on trade direction
+                        if "Call" in entry_type:
+                            worst_F = segment["F_numeric"].min()
+                        else:  # Put
+                            worst_F = segment["F_numeric"].max()
+                
+                        # compute pain
+                        pae_val = abs(entry_F - worst_F)
+                        df.loc[i, "PAE"] = pae_val
+                
+                        # bucket it
+                        if pae_val <= 10:
+                            level = "Low"
+                        elif pae_val <= 20:
+                            level = "Moderate"
+                        elif pae_val <= 50:
+                            level = "High"
+                        else:
+                            level = "Very High"
+                
+                        df.loc[i, "PAE_Level"] = level
+                
+                    return df.drop(columns="_idx")
 
                 
             
