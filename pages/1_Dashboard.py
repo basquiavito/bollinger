@@ -7044,13 +7044,14 @@ if st.sidebar.button("Run Analysis"):
                     for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
                         entries.append({"Type": "Call 🎯3",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
+                                        "Price ($)": intraday.at[i, "Close"]}),
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+
           
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
                     return df
-                    df.insert(df.columns.get_loc("Price ($)") + 1, "F%", intraday["F_numeric"].reindex(df.index).values)
 
                 @st.cache_data(show_spinner=False)
                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
