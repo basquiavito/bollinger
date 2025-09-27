@@ -6085,38 +6085,6 @@ if st.sidebar.button("Run Analysis"):
                             break
 
 
-
-                # 1) pick a raw price column
-                price_col = next((c for c in ["Close", "close", "Price", "price"] if c in intraday.columns), None)
-                
-                # 2) build exit masks SAFELY (Series defaults)
-                put_exit_mask  = (
-                    intraday.get("Put_Exit_Emoji",  pd.Series("", index=intraday.index)).eq("❌")
-                )
-                call_exit_mask = (
-                    intraday.get("Call_Exit_Emoji", pd.Series("", index=intraday.index)).eq("❌")
-                )
-                
-                put_exit_idx  = intraday.index[put_exit_mask][0]  if put_exit_mask.any()  else None
-                call_exit_idx = intraday.index[call_exit_mask][0] if call_exit_mask.any() else None
-                
-                # 3) ensure column exists on the table
-                if "Exit Price ($)" not in entries_df.columns:
-                    entries_df["Exit Price ($)"] = None
-                
-                # 4) fill Exit Price ($) only on the first Entry 1 row for each side
-                if price_col and put_exit_idx is not None:
-                    put_exit_price = intraday.at[put_exit_idx, price_col]
-                    put_entry_rows = entries_df.index[entries_df["Type"] == "Put 🎯1"]
-                    if len(put_entry_rows) > 0:
-                        entries_df.loc[put_entry_rows[0], "Exit Price ($)"] = put_exit_price
-                
-                if price_col and call_exit_idx is not None:
-                    call_exit_price = intraday.at[call_exit_idx, price_col]
-                    call_entry_rows = entries_df.index[entries_df["Type"] == "Call 🎯1"]
-                    if len(call_entry_rows) > 0:
-                        entries_df.loc[call_entry_rows[0], "Exit Price ($)"] = call_exit_price
-
               
                             
                                 # Initialize column
