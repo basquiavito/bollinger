@@ -7045,14 +7045,7 @@ if st.sidebar.button("Run Analysis"):
                                 intraday.at[intraday.index[i], "Prototype"] = "Cliff Dip"
                 
                 
-                # --- Handle Bear Anchors (mirror idea if needed) ---
-                anchor_idx_bear = intraday["MIDAS_Bear"].first_valid_index()
-                if anchor_idx_bear is not None:
-                    i = intraday.index.get_loc(anchor_idx_bear)
-                    f_anchor = intraday["F_numeric"].iloc[i]
-                
-                    # same raw + refine logic can be mirrored here if you want Bear prototypes
-
+            
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
@@ -7092,8 +7085,12 @@ if st.sidebar.button("Run Analysis"):
                             .sort_values("Time")
                             .reset_index(drop=True))
                     return df
-                
-                
+                # --- Add Prototype column (same value for all rows) ---
+                proto = intraday["Prototype"].replace("", pd.NA).dropna().unique()
+                prototype_value = proto[0] if len(proto) else "None"
+                df["Prototype"] = prototype_value
+            
+                            
                 @st.cache_data(show_spinner=False)
                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
                     """Create CSV bytes from df (cached)."""
