@@ -7028,25 +7028,39 @@ if st.sidebar.button("Run Analysis"):
                     for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
                         entries.append({"Type": "Put 🎯2",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+})
                     for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
                         entries.append({"Type": "Put 🎯3",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+
+                                       })
                 
                     # CALLS
                     for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
                         entries.append({"Type": "Call 🎯1",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+})
                     for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
                         entries.append({"Type": "Call 🎯2",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]})
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+
+                                       
+                                       })
                     for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
                         entries.append({"Type": "Call 🎯3",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"]}),
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+
+                                       }),
 
           
                     df = (pd.DataFrame(entries)
