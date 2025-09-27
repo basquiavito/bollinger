@@ -9930,24 +9930,24 @@ if st.sidebar.button("Run Analysis"):
                 # ), row=1, col=1)
 
 
-                # Wake-up Emojis 📈
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Call_Option_Smooth"] ,
-                    mode="text",
-                    text=intraday["Call_Wake_Emoji"],
-                    textposition="top center",
-                    showlegend=False
-                ), row=2, col=1)
+                # # Wake-up Emojis 📈
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Call_Option_Smooth"] ,
+                #     mode="text",
+                #     text=intraday["Call_Wake_Emoji"],
+                #     textposition="top center",
+                #     showlegend=False
+                # ), row=2, col=1)
                 
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Put_Option_Smooth"],
-                    mode="text",
-                    text=intraday["Put_Wake_Emoji"] ,
-                    textposition="bottom center",
-                    showlegend=False
-                ), row=2, col=1)
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Put_Option_Smooth"],
+                #     mode="text",
+                #     text=intraday["Put_Wake_Emoji"] ,
+                #     textposition="bottom center",
+                #     showlegend=False
+                # ), row=2, col=1)
 
            
                 # fig.add_trace(go.Scatter(
