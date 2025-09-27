@@ -7038,14 +7038,14 @@ if st.sidebar.button("Run Analysis"):
                 
          
                
-                 # --- Gather Entry 1 info ---
-                 entry1_times = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "Time"].tolist()
-                 entry1_prices = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "F_numeric"].tolist()
-                 
-                 entry1_df = pd.DataFrame({
-                     "Time": entry1_times,
-                     "Price": entry1_prices
-                 })
+                # --- Gather Entry 1 info ---
+                entry1_times = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "Time"].tolist()
+                entry1_prices = intraday.loc[intraday["Call_FirstEntry_Emoji"] == "🎯", "F_numeric"].tolist()
+                
+                entry1_df = pd.DataFrame({
+                    "Time": entry1_times,
+                    "Price": entry1_prices
+                })
 
                 intraday = calculate_midas_distensibility(intraday)
                 
