@@ -7138,9 +7138,10 @@ if st.sidebar.button("Run Analysis"):
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
                 
                 # keep these in session_state so other code can reuse without recompute
-                st.session_state.setdefault("entries_df", entries_df)
-                st.session_state.setdefault("entries_csv", csv_bytes)
-                
+                # st.session_state.setdefault("entries_df", entries_df)
+                # st.session_state.setdefault("entries_csv", csv_bytes)
+                st.session_state["entries_df"] = entries_df
+                st.session_state["entries_csv"] = csv_bytes
                 # Optional: persist expander state across reruns
                 st.session_state.setdefault("expand_entries", True)
 
