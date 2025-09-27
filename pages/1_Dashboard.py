@@ -7080,10 +7080,10 @@ if st.sidebar.button("Run Analysis"):
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"]})
                                                     # --- PUT EXIT ---
-      
-                                    df = (pd.DataFrame(entries)
-                            .sort_values("Time")
-                            .reset_index(drop=True))
+ 
+                    df = (pd.DataFrame(entries)
+                   .sort_values("Time")
+                   .reset_index(drop=True))
                     return df
           
                 @st.cache_data(show_spinner=False)
