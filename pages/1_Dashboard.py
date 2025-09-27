@@ -7103,17 +7103,38 @@ if st.sidebar.button("Run Analysis"):
                
             
                                
-                # --- Streamlit UI ---
+                # # --- Streamlit UI ---
+                # with st.expander("Track Entry 1 · 2 · 3 🎯"):
+                #     st.dataframe(entries_df, use_container_width=True)
+                
+                #     csv = entries_df.to_csv(index=False).encode("utf-8")
+                #     st.download_button(
+                #         label="Download Entries as CSV",
+                #         data=csv,
+                #         file_name="entries.csv",
+                #         mime="text/csv",
+                #         key="download_single_ticker"  # ✅ unique, no duplicates
+                #     )
+# --- Streamlit UI ---
                 with st.expander("Track Entry 1 · 2 · 3 🎯"):
                     st.dataframe(entries_df, use_container_width=True)
                 
+                    # Pick ticker name automatically if available
+                    if "Ticker" in intraday.columns:
+                        ticker_name = str(intraday["Ticker"].iloc[0])
+                    else:
+                        ticker_name = "single_ticker"
+                
+                    # Convert DataFrame to CSV
                     csv = entries_df.to_csv(index=False).encode("utf-8")
+                
+                    # Use ticker_name in file_name and key
                     st.download_button(
-                        label="Download Entries as CSV",
+                        label=f"Download {ticker_name} Entries as CSV",
                         data=csv,
-                        file_name="entries.csv",
+                        file_name=f"{ticker_name}_entries.csv",
                         mime="text/csv",
-                        key="download_single_ticker"  # ✅ unique, no duplicates
+                        key=f"download_{ticker_name}"
                     )
 
 
