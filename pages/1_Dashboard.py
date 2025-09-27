@@ -8237,8 +8237,7 @@ if st.sidebar.button("Run Analysis"):
                         row_heights=[0.60, 0.20, 0.20],  # top = 75%, bottom = 25%
 
                         vertical_spacing=0.03,
-                        subplot_titles=("Mike Volatility),
-                        shared_xaxes=True,
+                         shared_xaxes=True,
                        
                          
                  
