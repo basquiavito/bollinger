@@ -6086,7 +6086,25 @@ if st.sidebar.button("Run Analysis"):
 
                
                
- 
+                 # --- PUT EXIT ---
+                first_put_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
+                
+                if not first_put_idx.empty:
+                    i_start = intraday.index.get_loc(first_put_idx[0])
+                
+                    # loop forward from Entry 1
+                    for i in range(i_start + 1, len(intraday) - 1):
+                        prev_f = intraday["F_numeric"].iloc[i - 1]
+                        curr_f = intraday["F_numeric"].iloc[i]
+                        prev_supply = intraday['TD Supply Line F'].iloc[i - 1]
+                        curr_supply = intraday['TD Supply Line F'].iloc[i]
+                
+                        if pd.notna(prev_f) and pd.notna(curr_f) and pd.notna(prev_supply) and pd.notna(curr_supply):
+                            # crossed UP through TD Supply (opposite of Put direction)
+                            if prev_f < prev_supply and curr_f >= curr_supply:
+                                intraday.at[intraday.index[i], "Put_Exit_Emoji"] = "❌"
+                                break
+
                
                
                
@@ -6135,29 +6153,6 @@ if st.sidebar.button("Run Analysis"):
                             if next_close > curr_f:
                                 intraday.at[intraday.index[i + 1], "Call_SecondEntry_Emoji"] = "🎯2"
                                 break
-
-
-                # --- PUT EXIT ---
-                first_put_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
-                
-                if not first_put_idx.empty:
-                    i_start = intraday.index.get_loc(first_put_idx[0])
-                
-                    # loop forward from Entry 1
-                    for i in range(i_start + 1, len(intraday) - 1):
-                        prev_f = intraday["F_numeric"].iloc[i - 1]
-                        curr_f = intraday["F_numeric"].iloc[i]
-                        prev_supply = intraday["TD_Supply"].iloc[i - 1]
-                        curr_supply = intraday["TD_Supply"].iloc[i]
-                
-                        if pd.notna(prev_f) and pd.notna(curr_f) and pd.notna(prev_supply) and pd.notna(curr_supply):
-                            # crossed UP through TD Supply (opposite of Put direction)
-                            if prev_f < prev_supply and curr_f >= curr_supply:
-                                intraday.at[intraday.index[i], "Put_Exit_Emoji"] = "❌"
-                                break
-
-
-
 
 
 
