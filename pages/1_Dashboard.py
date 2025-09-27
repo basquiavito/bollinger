@@ -7009,56 +7009,53 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
-   
                 def compute_pae(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
-                    df = entries_df.copy()
-                    df["PAE"] = None   # raw excursion
-                    df["PAE_Level"] = None  # bucket label
-                
-                    # Map each entry row in df back to its intraday index
-                    df["_idx"] = df.apply(
-                        lambda row: intraday.index[
-                            (pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == row["Time"]) &
-                            (intraday["Close"] == row["Price ($)"])
-                        ][0],
-                        axis=1
-                    )
-                
-                    for i in range(len(df)):
-                        entry_idx = df.loc[i, "_idx"]
-                        entry_type = df.loc[i, "Type"]
-                        entry_F = intraday.at[entry_idx, "F_numeric"]
-                
-                        # look ahead: until next entry or end of intraday
-                        if i < len(df) - 1:
-                            next_idx = df.loc[i + 1, "_idx"]
-                            segment = intraday.loc[entry_idx:next_idx]
-                        else:
-                            segment = intraday.loc[entry_idx:]
-                
-                        # worst excursion depends on trade direction
-                        if "Call" in entry_type:
-                            worst_F = segment["F_numeric"].min()
-                        else:  # Put
-                            worst_F = segment["F_numeric"].max()
-                
-                        # compute pain
-                        pae_val = abs(entry_F - worst_F)
-                        df.loc[i, "PAE"] = pae_val
-                
-                        # bucket it
-                        if pae_val <= 10:
-                            level = "Low"
-                        elif pae_val <= 20:
-                            level = "Moderate"
-                        elif pae_val <= 50:
-                            level = "High"
-                        else:
-                            level = "Very High"
-                
-                        df.loc[i, "PAE_Level"] = level
-                
-                    return df.drop(columns="_idx")
+                 df = entries_df.copy()
+             
+                 # Expect _idx so we can slice intraday precisely; fall back only if missing.
+                 if "_idx" not in df.columns:
+                     key_intraday = (
+                         pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M")
+                         + "|" + intraday["Close"].round(4).astype(str)
+                     )
+                     idx_lookup = pd.Series(intraday.index, index=key_intraday)
+             
+                     df["_key"] = (
+                         pd.to_datetime(df["Time"]).dt.strftime("%H:%M")
+                         + "|" + df["Price ($)"].round(4).astype(str)
+                     )
+                     df["_idx"] = df["_key"].map(idx_lookup)
+                     if df["_idx"].isna().any():
+                         raise ValueError("Could not match some entries back to intraday; check time/price precision.")
+             
+                 pae_vals = []
+                 levels   = []
+             
+                 # Iterate in the current row order (already time-sorted)
+                 _idx_series = df["_idx"].astype(int).reset_index(drop=True)
+                 for i in range(len(df)):
+                     entry_idx = _idx_series.iloc[i]
+                     entry_type = df.loc[i, "Type"]
+                     entry_F = intraday.at[entry_idx, "F_numeric"]
+             
+                     # look ahead until next entry or end of intraday
+                     next_idx = _idx_series.iloc[i + 1] if i < len(df) - 1 else intraday.index[-1]
+                     segment = intraday.loc[entry_idx:next_idx]
+             
+                     worst_F = segment["F_numeric"].min() if "Call" in entry_type else segment["F_numeric"].max()
+                     pae = float(abs(entry_F - worst_F))
+                     pae_vals.append(pae)
+             
+                     levels.append(
+                         "Low" if pae <= 10 else
+                         "Moderate" if pae <= 20 else
+                         "High" if pae <= 50 else
+                         "Very High"
+                     )
+             
+                 df["PAE"] = pae_vals
+                 df["PAE_Level"] = levels
+                 return df.drop(columns=[c for c in ["_idx", "_key"] if c in df.columns])
 
                 
             
