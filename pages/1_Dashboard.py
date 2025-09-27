@@ -7079,18 +7079,24 @@ if st.sidebar.button("Run Analysis"):
                         entries.append({"Type": "Call 🎯3",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"]})
-                                    # --- PUT EXIT ---
+                                                    # --- PUT EXIT ---
+                                # --- Always build a DataFrame, even if empty ---
+                    df = pd.DataFrame(entries)
                 
-                    df = (pd.DataFrame(entries)
+                    if not df.empty:
+                        df = (df.sort_values("Time").reset_index(drop=True))
+                
+                    # --- Add Prototype column (same value for all rows) ---
+                    proto = intraday["Prototype"].replace("", pd.NA).dropna().unique()
+                    prototype_value = proto[0] if len(proto) else "None"
+                    df["Prototype"] = prototype_value
+                
+                    return df
+                                    df = (pd.DataFrame(entries)
                             .sort_values("Time")
                             .reset_index(drop=True))
                     return df
-                # --- Add Prototype column (same value for all rows) ---
-                proto = intraday["Prototype"].replace("", pd.NA).dropna().unique()
-                prototype_value = proto[0] if len(proto) else "None"
-                df["Prototype"] = prototype_value
-            
-                            
+          
                 @st.cache_data(show_spinner=False)
                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
                     """Create CSV bytes from df (cached)."""
