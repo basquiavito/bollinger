@@ -7090,15 +7090,15 @@ if st.sidebar.button("Run Analysis"):
                
 
 
-                # ------------------------------------------------------------------
-                # 1️⃣  Build / cache entries_df  (runs once per browser session)
-                 need_build = (
-                     "entries_df"  not in st.session_state or
-                     "entries_csv" not in st.session_state or
-                     "download_key" not in st.session_state
-                 )
+               # ------------------------------------------------------------------
+               # 1️⃣  Build / cache entries_df  (runs once per browser session)
+                need_build = (
+                    "entries_df"  not in st.session_state or
+                    "entries_csv" not in st.session_state or
+                    "download_key" not in st.session_state
+                )
 
-                 if need_build:
+                if need_build:
                 
                     entries = []
                 
