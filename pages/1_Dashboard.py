@@ -7040,30 +7040,82 @@ if st.sidebar.button("Run Analysis"):
                
    
 
-                # Example: extract both Call and Put 🎯 Entry 1s
-                entries = intraday[
-                    (intraday["Call_FirstEntry_Emoji"] == "🎯") | 
-                    (intraday["Put_FirstEntry_Emoji"] == "🎯")
-                ].copy()
+                # # Example: extract both Call and Put 🎯 Entry 1s
+                # entries = intraday[
+                #     (intraday["Call_FirstEntry_Emoji"] == "🎯") | 
+                #     (intraday["Put_FirstEntry_Emoji"] == "🎯")
+                # ].copy()
                 
-                # --- Keep only useful info ---
-                # Strip date from time -> just HH:MM
-                entries["Entry 1 Time"] = pd.to_datetime(entries["Time"]).dt.strftime("%H:%M")
+                # # --- Keep only useful info ---
+                # # Strip date from time -> just HH:MM
+                # entries["Entry 1 Time"] = pd.to_datetime(entries["Time"]).dt.strftime("%H:%M")
                 
-                # Use raw price (not F%) -> assuming you have a 'Price' column
-                entries["Entry 1 Price ($)"] = entries["Close"]  # or whatever column holds raw price
+                # # Use raw price (not F%) -> assuming you have a 'Price' column
+                # entries["Entry 1 Price ($)"] = entries["Close"]  # or whatever column holds raw price
                 
-                # Identify type of entry
-                entries["Type"] = entries.apply(
-                    lambda row: "Call 🎯" if row["Call_FirstEntry_Emoji"] == "🎯" else "Put 🎯",
-                    axis=1
-                )
+                # # Identify type of entry
+                # entries["Type"] = entries.apply(
+                #     lambda row: "Call 🎯" if row["Call_FirstEntry_Emoji"] == "🎯" else "Put 🎯",
+                #     axis=1
+                # )
                 
                 # Select final columns for display
-                entry1_df = entries[["Type", "Entry 1 Time", "Entry 1 Price ($)"]]
+                                # entry1_df = entries[["Type", "Entry 1 Time", "Entry 1 Price ($)"]]
+             
+                
+                # --- Collect Entry 1 & Entry 2s ---
+                entries = []
+                
+                # Put 🎯 (Entry 1)
+                for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
+                    entries.append({
+                        "Type": "Put 🎯1",
+                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                        "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                    })
+                
+                # Put 🎯2 (Second Entry)
+                for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
+                    entries.append({
+                        "Type": "Put 🎯2",
+                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                        "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                    })
+                
+                # Call 🎯 (Entry 1)
+                for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
+                    entries.append({
+                        "Type": "Call 🎯1",
+                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                        "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                    })
+                
+                # Call 🎯2 (Second Entry)
+                for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
+                    entries.append({
+                        "Type": "Call 🎯2",
+                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                        "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                    })
+                
+                # Convert to DataFrame
+                entries_df = pd.DataFrame(entries)
 
-
- 
+              # --- Show in Streamlit Expander ---
+              with st.expander("Track Entry 1 & 2 🎯"):
+                  st.dataframe(entries_df, use_container_width=True)
+              
+                  # CSV download
+                  csv = entries_df.to_csv(index=False).encode("utf-8")
+                  st.download_button(
+                      label="Download Entries as CSV",
+                      data=csv,
+                      file_name="entries.csv",
+                      mime="text/csv"
+                  )
+              
+              
+               
                # --- With Expander ---
                 with st.expander("Track Entry 1 🎯"):
                     st.dataframe(entry1_df, use_container_width=True)
