@@ -7062,11 +7062,10 @@ if st.sidebar.button("Run Analysis"):
                 # Select final columns for display
                                 # entry1_df = entries[["Type", "Entry 1 Time", "Entry 1 Price ($)"]]
              
-                
-                # --- Collect Entry 1 & Entry 2s ---
                 entries = []
                 
-                # Put 🎯 (Entry 1)
+                # --- PUTS ---
+                # Put 🎯1
                 for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
                     entries.append({
                         "Type": "Put 🎯1",
@@ -7074,7 +7073,7 @@ if st.sidebar.button("Run Analysis"):
                         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
                     })
                 
-                # Put 🎯2 (Second Entry)
+                # Put 🎯2
                 for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
                     entries.append({
                         "Type": "Put 🎯2",
@@ -7082,7 +7081,17 @@ if st.sidebar.button("Run Analysis"):
                         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
                     })
                 
-                # Call 🎯 (Entry 1)
+                # Put 🎯3
+                for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
+                    entries.append({
+                        "Type": "Put 🎯3",
+                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                        "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                    })
+                
+                
+                # --- CALLS ---
+                # Call 🎯1
                 for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
                     entries.append({
                         "Type": "Call 🎯1",
@@ -7090,7 +7099,7 @@ if st.sidebar.button("Run Analysis"):
                         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
                     })
                 
-                # Call 🎯2 (Second Entry)
+                # Call 🎯2
                 for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
                     entries.append({
                         "Type": "Call 🎯2",
@@ -7098,8 +7107,18 @@ if st.sidebar.button("Run Analysis"):
                         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
                     })
                 
-                # Convert to DataFrame
+                # Call 🎯3
+                for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
+                    entries.append({
+                        "Type": "Call 🎯3",
+                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                        "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                    })
+                
+                
+                # --- Final tidy DataFrame ---
                 entries_df = pd.DataFrame(entries)
+                
 
              
                 
@@ -7120,19 +7139,29 @@ if st.sidebar.button("Run Analysis"):
 
 
                 
-                with st.expander("Track Entry 1 & 2 🎯"):
-                   st.dataframe(entries_df, use_container_width=True)
+                # with st.expander("Track Entry 1 & 2 🎯"):
+                #    st.dataframe(entries_df, use_container_width=True)
                
-                   # CSV download
-                   csv = entries_df.to_csv(index=False).encode("utf-8")
-                   st.download_button(
-                       label="Download Entries as CSV",
-                       data=csv,
-                       file_name="entries.csv",
-                       mime="text/csv"
-                   )
-
+                #    # CSV download
+                #    csv = entries_df.to_csv(index=False).encode("utf-8")
+                #    st.download_button(
+                #        label="Download Entries as CSV",
+                #        data=csv,
+                #        file_name="entries.csv",
+                #        mime="text/csv"
+                #    )
+                # --- Streamlit Expander ---
+                with st.expander("Track Entry 1, 2, 3 🎯"):
+                    st.dataframe(entries_df, use_container_width=True)
                 
+                    csv = entries_df.to_csv(index=False).encode("utf-8")
+                    st.download_button(
+                        label="Download Entries as CSV",
+                        data=csv,
+                        file_name="entries.csv",
+                        mime="text/csv"
+                    )
+                                
                 # st.plotly_chart(fig_displacement, use_container_width=True)
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
