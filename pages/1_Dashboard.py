@@ -7103,22 +7103,38 @@ if st.sidebar.button("Run Analysis"):
                
        
 
-                # --- Streamlit UI ---
+                # # --- Streamlit UI ---
+                # with st.expander("Track Entry 1 · 2 · 3 🎯"):
+                #     st.dataframe(entries_df, use_container_width=True)
+                
+                #     # Convert DataFrame to CSV
+                #     csv = entries_df.to_csv(index=False).encode("utf-8")
+                
+                #     # Generate unique key each render
+                #     unique_key = f"download_{uuid.uuid4()}"
+                
+                #     st.download_button(
+                #         label="Download Entries as CSV",
+                #         data=csv,
+                #         file_name="entries.csv",
+                #         mime="text/csv",
+                #         key=unique_key
+                #     )
+                if "entries_df" not in st.session_state:
+                    st.session_state.entries_df = entries_df
+                else:
+                    st.session_state.entries_df = entries_df  # update if needed
+                
                 with st.expander("Track Entry 1 · 2 · 3 🎯"):
-                    st.dataframe(entries_df, use_container_width=True)
+                    st.dataframe(st.session_state.entries_df, use_container_width=True)
                 
-                    # Convert DataFrame to CSV
-                    csv = entries_df.to_csv(index=False).encode("utf-8")
-                
-                    # Generate unique key each render
-                    unique_key = f"download_{uuid.uuid4()}"
-                
+                    csv = st.session_state.entries_df.to_csv(index=False).encode("utf-8")
                     st.download_button(
                         label="Download Entries as CSV",
                         data=csv,
                         file_name="entries.csv",
                         mime="text/csv",
-                        key=unique_key
+                        key="download_btn"
                     )
 
 
