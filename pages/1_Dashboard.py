@@ -7111,13 +7111,13 @@ if st.sidebar.button("Run Analysis"):
                     })
 
             
-                                 # --- PUT EXIT ---
-                for i in intraday.index[intraday["Put_Exit_Emoji"] == "❌"]:
-                    entries.append({
-                        "Type": "Put Exit",
-                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                        "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
-                    })
+                #                  # --- PUT EXIT ---
+                # for i in intraday.index[intraday["Put_Exit_Emoji"] == "❌"]:
+                #     entries.append({
+                #         "Type": "Put Exit",
+                #         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                #         "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                #     })
 
                 # --- Final tidy DataFrame ---
                 entries_df = (
