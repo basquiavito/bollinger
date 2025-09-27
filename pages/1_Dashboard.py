@@ -7227,6 +7227,37 @@ if st.sidebar.button("Run Analysis"):
                 
                     return df
 
+                @st.cache_data(show_spinner=False)
+                def to_csv_bytes(df: pd.DataFrame) -> bytes:
+                    """Create CSV bytes from df (cached)."""
+                    return df.to_csv(index=False).encode("utf-8")
+                
+                
+                # ----------  Build once, reuse always ----------
+                entries_df = build_entries_df(intraday)           # cached by intraday content
+                csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
+                
+                # keep these in session_state so other code can reuse without recompute
+                # st.session_state.setdefault("entries_df", entries_df)
+                # st.session_state.setdefault("entries_csv", csv_bytes)
+                st.session_state["entries_df"] = entries_df
+                st.session_state["entries_csv"] = csv_bytes
+                # Optional: persist expander state across reruns
+                st.session_state.setdefault("expand_entries", True)
+
+               # ----------  UI ----------
+                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                    st.dataframe(entries_df, use_container_width=True)
+                
+                    # --- No-rerun download link ---
+                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                    b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                    file_name = "entries.csv"
+                
+                    st.markdown(
+                        f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
+                        unsafe_allow_html=True
+                    )
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
