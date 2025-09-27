@@ -7158,6 +7158,74 @@ if st.sidebar.button("Run Analysis"):
                #          f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
                #          unsafe_allow_html=True
                #      )
+               @st.cache_data(show_spinner=False)
+               def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
+                   """Return entries table with F%, PAE, and PAE_Level columns."""
+                   entries: list[dict] = []
+               
+                   # ---------- build rows ----------
+                   mapping = {
+                       "Put 🎯1": "Put_FirstEntry_Emoji",
+                       "Put 🎯2": "Put_SecondEntry_Emoji",
+                       "Put 🎯3": "Put_ThirdEntry_Emoji",
+                       "Call 🎯1": "Call_FirstEntry_Emoji",
+                       "Call 🎯2": "Call_SecondEntry_Emoji",
+                       "Call 🎯3": "Call_ThirdEntry_Emoji",
+                   }
+               
+                   for label, col in mapping.items():
+                       for i in intraday.index[intraday[col] == col.split()[1]]:  # "🎯", "🎯2", etc.
+                           entries.append({
+                               "Type": label,
+                               "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                               "Price ($)": intraday.at[i, "Close"],
+                               "F%": intraday.at[i, "F_numeric"],
+                               "_idx": i,                 # keep original intraday index
+                           })
+               
+                   df = (
+                       pd.DataFrame(entries)
+                       .sort_values("Time")
+                       .reset_index(drop=True)
+                   )
+               
+                   # ---------- compute PAE ----------
+                   df["PAE"] = 0
+                   df["PAE_Level"] = ""
+               
+                   for j in range(len(df)):
+                       entry_idx   = df.loc[j, "_idx"]
+                       entry_type  = df.loc[j, "Type"]
+                       entry_F     = intraday.at[entry_idx, "F_numeric"]
+               
+                       # slice until next entry or EoD
+                       if j < len(df) - 1:
+                           next_idx = df.loc[j + 1, "_idx"]
+                           segment  = intraday.loc[entry_idx:next_idx]
+                       else:
+                           segment  = intraday.loc[entry_idx:]
+               
+                       worst_F = segment["F_numeric"].min() if "Call" in entry_type else segment["F_numeric"].max()
+                       pae_val = abs(entry_F - worst_F)
+                       df.at[j, "PAE"] = pae_val
+               
+                       # bucket
+                       df.at[j, "PAE_Level"] = (
+                           "Low"        if pae_val <= 10 else
+                           "Moderate"   if pae_val <= 20 else
+                           "High"       if pae_val <= 50 else
+                           "Very High"
+                       )
+               
+                   # tidy up
+                   df.drop(columns="_idx", inplace=True)
+               
+                   # put PAE columns right after F%
+                   f_loc = df.columns.get_loc("F%")
+                   df.insert(f_loc + 1, "PAE",        df.pop("PAE"))
+                   df.insert(f_loc + 2, "PAE_Level",  df.pop("PAE_Level"))
+               
+                   return df
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
