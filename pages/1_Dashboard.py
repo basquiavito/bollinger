@@ -7158,106 +7158,109 @@ if st.sidebar.button("Run Analysis"):
                #          f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
                #          unsafe_allow_html=True
                #      )
-                @st.cache_data(show_spinner=False)
-                def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
-                    """Return entries table with F%, PAE, and PAE_Level columns."""
-                    entries: list[dict] = []
-                
-                    # ---------- build rows ----------
-                    mapping = {
-                        "Put 🎯1": "Put_FirstEntry_Emoji",
-                        "Put 🎯2": "Put_SecondEntry_Emoji",
-                        "Put 🎯3": "Put_ThirdEntry_Emoji",
-                        "Call 🎯1": "Call_FirstEntry_Emoji",
-                        "Call 🎯2": "Call_SecondEntry_Emoji",
-                        "Call 🎯3": "Call_ThirdEntry_Emoji",
-                    }
-                
-                    for label, col in mapping.items():
-                        for i in intraday.index[intraday[col] == col.split()[1]]:  # "🎯", "🎯2", etc.
-                            entries.append({
-                                "Type": label,
-                                "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                "Price ($)": intraday.at[i, "Close"],
-                                "F%": intraday.at[i, "F_numeric"],
-                                "_idx": i,                 # keep original intraday index
-                            })
-                
-                    df = (
-                        pd.DataFrame(entries)
-                        .sort_values("Time")
-                        .reset_index(drop=True)
-                    )
-                
-                    # ---------- compute PAE ----------
-                    df["PAE"] = 0
-                    df["PAE_Level"] = ""
-                
-                    for j in range(len(df)):
-                        entry_idx   = df.loc[j, "_idx"]
-                        entry_type  = df.loc[j, "Type"]
-                        entry_F     = intraday.at[entry_idx, "F_numeric"]
-                
-                        # slice until next entry or EoD
-                        if j < len(df) - 1:
-                            next_idx = df.loc[j + 1, "_idx"]
-                            segment  = intraday.loc[entry_idx:next_idx]
-                        else:
-                            segment  = intraday.loc[entry_idx:]
-                
-                        worst_F = segment["F_numeric"].min() if "Call" in entry_type else segment["F_numeric"].max()
-                        pae_val = abs(entry_F - worst_F)
-                        df.at[j, "PAE"] = pae_val
-                
-                        # bucket
-                        df.at[j, "PAE_Level"] = (
-                            "Low"        if pae_val <= 10 else
-                            "Moderate"   if pae_val <= 20 else
-                            "High"       if pae_val <= 50 else
-                            "Very High"
-                        )
-                
-                    # tidy up
-                    df.drop(columns="_idx", inplace=True)
-                
-                    # put PAE columns right after F%
-                    f_loc = df.columns.get_loc("F%")
-                    df.insert(f_loc + 1, "PAE",        df.pop("PAE"))
-                    df.insert(f_loc + 2, "PAE_Level",  df.pop("PAE_Level"))
-                
-                    return df
-
-                @st.cache_data(show_spinner=False)
-                def to_csv_bytes(df: pd.DataFrame) -> bytes:
-                    """Create CSV bytes from df (cached)."""
-                    return df.to_csv(index=False).encode("utf-8")
-                
-                
-                # ----------  Build once, reuse always ----------
-                entries_df = build_entries_df(intraday)           # cached by intraday content
-                csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
-                
-                # keep these in session_state so other code can reuse without recompute
-                # st.session_state.setdefault("entries_df", entries_df)
-                # st.session_state.setdefault("entries_csv", csv_bytes)
-                st.session_state["entries_df"] = entries_df
-                st.session_state["entries_csv"] = csv_bytes
-                # Optional: persist expander state across reruns
-                st.session_state.setdefault("expand_entries", True)
-
+     # ----------  Helpers (cached) ----------
+               @st.cache_data(show_spinner=False)
+               def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
+                   """Return entries table with F%, PAE, and PAE_Level columns."""
+                   entries: list[dict] = []
+               
+                   # ---------- build rows ----------
+                   mapping = [
+                       ("Put 🎯1", "Put_FirstEntry_Emoji", "🎯"),
+                       ("Put 🎯2", "Put_SecondEntry_Emoji", "🎯2"),
+                       ("Put 🎯3", "Put_ThirdEntry_Emoji", "🎯3"),
+                       ("Call 🎯1", "Call_FirstEntry_Emoji", "🎯"),
+                       ("Call 🎯2", "Call_SecondEntry_Emoji", "🎯2"),
+                       ("Call 🎯3", "Call_ThirdEntry_Emoji", "🎯3"),
+                   ]
+               
+                   for label, col, marker in mapping:
+                       for i in intraday.index[intraday[col] == marker]:
+                           entries.append({
+                               "Type": label,
+                               "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                               "Price ($)": intraday.at[i, "Close"],
+                               "F%": intraday.at[i, "F_numeric"],
+                               "_idx": i,   # keep intraday index for PAE calc
+                           })
+               
+                   df = (
+                       pd.DataFrame(entries)
+                       .sort_values("Time")
+                       .reset_index(drop=True)
+                   )
+               
+                   # ---------- compute PAE ----------
+                   df["PAE"] = 0
+                   df["PAE_Level"] = ""
+               
+                   for j in range(len(df)):
+                       entry_idx   = df.loc[j, "_idx"]
+                       entry_type  = df.loc[j, "Type"]
+                       entry_F     = intraday.at[entry_idx, "F_numeric"]
+               
+                       # slice until next entry or EoD
+                       if j < len(df) - 1:
+                           next_idx = df.loc[j + 1, "_idx"]
+                           segment  = intraday.loc[entry_idx:next_idx]
+                       else:
+                           segment  = intraday.loc[entry_idx:]
+               
+                       worst_F = segment["F_numeric"].min() if "Call" in entry_type else segment["F_numeric"].max()
+                       pae_val = abs(entry_F - worst_F)
+                       df.at[j, "PAE"] = pae_val
+               
+                       # bucket into levels
+                       df.at[j, "PAE_Level"] = (
+                           "Low"        if pae_val <= 10 else
+                           "Moderate"   if pae_val <= 20 else
+                           "High"       if pae_val <= 50 else
+                           "Very High"
+                       )
+               
+                   # ---------- tidy up ----------
+                   df.drop(columns="_idx", inplace=True)
+               
+                   # put PAE columns right after F%
+                   f_loc = df.columns.get_loc("F%")
+                   df.insert(f_loc + 1, "PAE",       df.pop("PAE"))
+                   df.insert(f_loc + 2, "PAE_Level", df.pop("PAE_Level"))
+               
+                   return df
+               
+               
+               @st.cache_data(show_spinner=False)
+               def to_csv_bytes(df: pd.DataFrame) -> bytes:
+                   """Create CSV bytes from df (cached)."""
+                   return df.to_csv(index=False).encode("utf-8")
+               
+               
+               # ----------  Build once, reuse always ----------
+               entries_df = build_entries_df(intraday)           # cached by intraday content
+               csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
+               
+               # keep these in session_state so other code can reuse without recompute
+               st.session_state["entries_df"] = entries_df
+               st.session_state["entries_csv"] = csv_bytes
+               
+               # Optional: persist expander state across reruns
+               st.session_state.setdefault("expand_entries", True)
+               
+               
                # ----------  UI ----------
-                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                    st.dataframe(entries_df, use_container_width=True)
-                
-                    # --- No-rerun download link ---
-                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-                    b64 = base64.b64encode(csv_bytes).decode("utf-8")
-                    file_name = "entries.csv"
-                
-                    st.markdown(
-                        f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
-                        unsafe_allow_html=True
-                    )
+               with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                   st.dataframe(entries_df, use_container_width=True)
+               
+                   # --- No-rerun download link ---
+                   csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                   b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                   file_name = "entries.csv"
+               
+                   st.markdown(
+                       f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
+                       unsafe_allow_html=True
+                   )
+
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
