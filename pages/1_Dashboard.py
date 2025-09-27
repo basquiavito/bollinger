@@ -7065,13 +7065,13 @@ if st.sidebar.button("Run Analysis"):
                     """Build the tidy entries table (runs once unless `intraday` changes)."""
                     entries: List[dict] = []
                 def push(i, typ):
-                entries.append({
-                    "Type": typ,
-                    "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                    "Price ($)": intraday.at[i, "Close"],
-                    "F%": intraday.at[i, "F_numeric"],
-                    "_idx": int(i),                     # <= carry the intraday index!
-                })
+                    entries.append({
+                        "Type": typ,
+                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                        "Price ($)": intraday.at[i, "Close"],
+                        "F%": intraday.at[i, "F_numeric"],
+                        "_idx": int(i),                     # <= carry the intraday index!
+                    })
                             # PUTS
                     for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
                         entries.append({"Type": "Put 🎯1",
