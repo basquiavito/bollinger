@@ -7050,7 +7050,8 @@ if st.sidebar.button("Run Analysis"):
                    .sort_values("Time")
                    .reset_index(drop=True))
                     return df
-          
+                    df.insert(df.columns.get_loc("Price ($)") + 1, "F%", intraday["F_numeric"].reindex(df.index).values)
+
                 @st.cache_data(show_spinner=False)
                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
                     """Create CSV bytes from df (cached)."""
