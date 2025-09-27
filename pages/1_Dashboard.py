@@ -6083,6 +6083,49 @@ if st.sidebar.button("Run Analysis"):
                         if intraday.iloc[i]["Heaven_Cloud"] == "☁️":
                             intraday.at[intraday.index[i], "Call_FirstEntry_Emoji"] = "🎯"
                             break
+
+               
+               
+               
+               # --- Initialize Exit Columns ---
+               intraday["Put_Exit_Emoji"] = ""
+               intraday["Call_Exit_Emoji"] = ""
+               
+               # --- PUT EXIT ---
+               first_put_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
+               if not first_put_idx.empty:
+                   i_start = intraday.index.get_loc(first_put_idx[0])
+                   for i in range(i_start + 1, len(intraday) - 1):
+                       prev_f = intraday["F_numeric"].iloc[i - 1]
+                       curr_f = intraday["F_numeric"].iloc[i]
+                       prev_supply = intraday["TD_Supply"].iloc[i - 1]
+                       curr_supply = intraday["TD_Supply"].iloc[i]
+               
+                       if pd.notna(prev_f) and pd.notna(curr_f) and pd.notna(prev_supply) and pd.notna(curr_supply):
+                           # ❌ Exit when Put direction breaks up through TD Supply
+                           if prev_f < prev_supply and curr_f >= curr_supply:
+                               intraday.at[intraday.index[i], "Put_Exit_Emoji"] = "❌"
+                               break
+               
+               # --- CALL EXIT ---
+               first_call_idx = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
+               if not first_call_idx.empty:
+                   i_start = intraday.index.get_loc(first_call_idx[0])
+                   for i in range(i_start + 1, len(intraday) - 1):
+                       prev_f = intraday["F_numeric"].iloc[i - 1]
+                       curr_f = intraday["F_numeric"].iloc[i]
+                       prev_demand = intraday["TD_Demand"].iloc[i - 1]
+                       curr_demand = intraday["TD_Demand"].iloc[i]
+               
+                       if pd.notna(prev_f) and pd.notna(curr_f) and pd.notna(prev_demand) and pd.notna(curr_demand):
+                           # ❌ Exit when Call direction breaks down through TD Demand
+                           if prev_f > prev_demand and curr_f <= curr_demand:
+                               intraday.at[intraday.index[i], "Call_Exit_Emoji"] = "❌"
+                               break
+               
+               
+               
+               
                             
                                 # Initialize column
                 intraday["Put_SecondEntry_Emoji"] = ""
