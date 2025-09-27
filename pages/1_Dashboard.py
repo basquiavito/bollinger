@@ -6998,8 +6998,46 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
-
-# --- PUT EXIT ---
+      # def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
+      #               """
+      #               Distensibility anchored to Midas.
+      #               - Bull: anchored at Midas min
+      #               - Bear: anchored at Midas max
+                    
+      #               Formula:
+      #                   Distensibility = (BBW - BBW_anchor) / (RVOL_5 * BBW_anchor)
+      #               """
+                
+      #               df["Bull_Distensibility"] = np.nan
+      #               df["Bear_Distensibility"] = np.nan
+                
+      #               # 🐂 Bull anchor
+      #               if "MIDAS_Bull" in df.columns:
+      #                   bull_anchor_idx = df["MIDAS_Bull"].first_valid_index()
+      #                   if bull_anchor_idx is not None:
+      #                       bbw_anchor = df.loc[bull_anchor_idx, bbw_col]
+      #                       df.loc[bull_anchor_idx:, "Bull_Distensibility"] = (
+      #                           (df.loc[bull_anchor_idx:, bbw_col] - bbw_anchor) /
+      #                           (df.loc[bull_anchor_idx:, vol_col].replace(0, np.nan) * bbw_anchor)
+      #                       )
+                
+      #               # 🐻 Bear anchor
+      #               if "MIDAS_Bear" in df.columns:
+      #                   bear_anchor_idx = df["MIDAS_Bear"].first_valid_index()
+      #                   if bear_anchor_idx is not None:
+      #                       bbw_anchor = df.loc[bear_anchor_idx, bbw_col]
+      #                       df.loc[bear_anchor_idx:, "Bear_Distensibility"] = (
+      #                           (df.loc[bear_anchor_idx:, bbw_col] - bbw_anchor) /
+      #                           (df.loc[bear_anchor_idx:, vol_col].replace(0, np.nan) * bbw_anchor)
+      #                       )
+                
+      #               return df
+                
+                
+          
+               
+               
+            
             first_put_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
             
             if not first_put_idx.empty:
@@ -7087,46 +7125,7 @@ if st.sidebar.button("Run Analysis"):
                       .sort_values("Time")        # sort chronologically
                       .reset_index(drop=True)
                 )
-                def calculate_midas_distensibility(df, bbw_col="F% BBW", vol_col="RVOL_5"):
-                    """
-                    Distensibility anchored to Midas.
-                    - Bull: anchored at Midas min
-                    - Bear: anchored at Midas max
-                    
-                    Formula:
-                        Distensibility = (BBW - BBW_anchor) / (RVOL_5 * BBW_anchor)
-                    """
-                
-                    df["Bull_Distensibility"] = np.nan
-                    df["Bear_Distensibility"] = np.nan
-                
-                    # 🐂 Bull anchor
-                    if "MIDAS_Bull" in df.columns:
-                        bull_anchor_idx = df["MIDAS_Bull"].first_valid_index()
-                        if bull_anchor_idx is not None:
-                            bbw_anchor = df.loc[bull_anchor_idx, bbw_col]
-                            df.loc[bull_anchor_idx:, "Bull_Distensibility"] = (
-                                (df.loc[bull_anchor_idx:, bbw_col] - bbw_anchor) /
-                                (df.loc[bull_anchor_idx:, vol_col].replace(0, np.nan) * bbw_anchor)
-                            )
-                
-                    # 🐻 Bear anchor
-                    if "MIDAS_Bear" in df.columns:
-                        bear_anchor_idx = df["MIDAS_Bear"].first_valid_index()
-                        if bear_anchor_idx is not None:
-                            bbw_anchor = df.loc[bear_anchor_idx, bbw_col]
-                            df.loc[bear_anchor_idx:, "Bear_Distensibility"] = (
-                                (df.loc[bear_anchor_idx:, bbw_col] - bbw_anchor) /
-                                (df.loc[bear_anchor_idx:, vol_col].replace(0, np.nan) * bbw_anchor)
-                            )
-                
-                    return df
-                
-                
           
-               
-               
-            
                 # --- Streamlit UI ---
                 with st.expander("Track Entry 1 · 2 · 3 🎯"):
                     st.dataframe(entries_df, use_container_width=True)
