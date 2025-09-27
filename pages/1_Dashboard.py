@@ -11132,8 +11132,146 @@ if st.sidebar.button("Run Analysis"):
 
             except Exception as e:
                 st.error(f"Error fetching data for {t}: {e}")
+            
+                       # --- Export detected entries: Entry1 + Entry2 (time + price) in an expander ---
+            import streamlit as st
+            import pandas as pd
+            from io import BytesIO
+            
+            def find_price_col(df):
+                """Prefer F_numeric or Mike, fall back to Close."""
+                for c in ("F_numeric", "Mike", "Close"):
+                    if c in df.columns:
+                        return c
+                # if nothing found, try any numeric price-like column
+                for c in df.columns:
+                    if df[c].dtype.kind in "fiu" and "price" in c.lower() or "close" in c.lower():
+                        return c
+                return None
+            
+            def extract_entries_for_export(intraday: pd.DataFrame, ticker: str = None):
+                """
+                Looks for Entry1 and Entry2 signals in intraday DF and returns one row:
+                {Ticker, Entry1_Time, Entry1_Price, Entry2_Time, Entry2_Price}
+                - Entry1 detection: looks for first '🎯' in known FirstEntry columns
+                - Entry2 detection: tries a few candidate columns (Kijun-related or Entry2 markers)
+                """
+                # Copy to avoid side-effects
+                df = intraday.copy()
+            
+                # Ensure we have a Time and price column
+                if "Time" not in df.columns:
+                    if "Date" in df.columns and pd.api.types.is_datetime64_any_dtype(df["Date"]):
+                        df["Time"] = df["Date"].dt.strftime("%I:%M %p")
+                    else:
+                        # fallback: try to build from index
+                        try:
+                            df["Time"] = pd.to_datetime(df.index).strftime("%I:%M %p")
+                        except Exception:
+                            df["Time"] = ""
+            
+                price_col = find_price_col(df)
+                if price_col is None:
+                    # Can't find price column: return empty row
+                    return {
+                        "Ticker": ticker or "",
+                        "Entry 1 Time": "",
+                        "Entry 1 Price": None,
+                        "Entry 2 Time": "",
+                        "Entry 2 Price": None,
+                    }
+            
+                # Candidate columns for Entry1 and Entry2 - extend if your pipeline uses different names
+                entry1_candidates = [
+                    "Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji",
+                    "Entry1_Emoji", "FirstEntry_Emoji", "Entry_1_Emoji", "E1_Emoji"
+                ]
+                entry2_candidates = [
+                    "Call_SecondEntry_Emoji", "Put_SecondEntry_Emoji",
+                    "Entry2_Emoji", "SecondEntry_Emoji", "Entry_2_Emoji",
+                    # market structure markers (Kijun) - common names
+                    "Kijun_Cross", "Kijun_Cross_Type", "Kijun_Cross_Emoji", "Kijun_Crossed"
+                ]
+            
+                # Helper to find first matching row for a list of candidate columns
+                def find_first_marker_row(marker_cols):
+                    for col in marker_cols:
+                        if col in df.columns:
+                            # treat presence of '🎯' or a non-empty non-false value as a hit
+                            mask = df[col].notna() & (df[col] != "") & (df[col] != False)
+                            # If values are emoji/text, look for '🎯' specifically first
+                            if mask.any():
+                                # prefer exact '🎯' if present
+                                if (df[col] == "🎯").any():
+                                    idx = df.index[df[col] == "🎯"][0]
+                                    return idx, col
+                                # otherwise return first non-empty
+                                idx = df.index[mask][0]
+                                return idx, col
+                    return None, None
+            
+                # Find Entry 1
+                e1_idx, e1_col = find_first_marker_row(entry1_candidates)
+                if e1_idx is not None:
+                    e1_time = df.at[e1_idx, "Time"] if "Time" in df.columns else ""
+                    e1_price = df.at[e1_idx, price_col]
+                else:
+                    e1_time, e1_price = "", None
+            
+                # Find Entry 2
+                e2_idx, e2_col = find_first_marker_row(entry2_candidates)
+                if e2_idx is not None:
+                    e2_time = df.at[e2_idx, "Time"] if "Time" in df.columns else ""
+                    e2_price = df.at[e2_idx, price_col]
+                else:
+                    # fallback: if you have an "E1 mirror" logic (mirror as second), try mirror columns
+                    mirror_candidates = ["Mirror_1_Time", "Mirror1_Time", "Mirror1_Emoji"]
+                    e2_time, e2_price = "", None
+            
+                return {
+                    "Ticker": ticker or "",
+                    "Entry 1 Time": e1_time,
+                    "Entry 1 Price": e1_price,
+                    "Entry 2 Time": e2_time,
+                    "Entry 2 Price": e2_price,
+                }
+            
+            # ------------------------------
+            # Usage inside your ticker loop
+            # ------------------------------
+            # assume `intraday` is your DataFrame for ticker 't' (already computed)
+            # e.g. after your detection code:
+            # intraday[...]  # contains Call_FirstEntry_Emoji or Put_FirstEntry_Emoji etc.
+            
+            # Collect rows per-ticker
+            collected_rows = []
+            
+            # Example: run for a single ticker after building intraday
+            row = extract_entries_for_export(intraday, ticker=t)
+            collected_rows.append(row)
+            
+            # (If you analyze multiple tickers in a session you can append each ticker's row)
+            
+            # Build DataFrame
+            export_df = pd.DataFrame(collected_rows, columns=[
+                "Ticker", "Entry 1 Time", "Entry 1 Price", "Entry 2 Time", "Entry 2 Price"
+            ])
+            
+            # Display + Download inside an expander
+            with st.expander("📥 Detected Entries (quick export)"):
+                if export_df.empty:
+                    st.info("No detected entries for this run.")
+                else:
+                    st.dataframe(export_df, use_container_width=True)
+            
+                    csv = export_df.to_csv(index=False).encode("utf-8")
+                    st.download_button(
+                        label="Download Entries CSV",
+                        data=csv,
+                        file_name="detected_entries.csv",
+                        mime="text/csv"
+                    )
 
-           
   
             # Assuming you already have 'intraday' DataFrame with 'Compliance' and 'Smoothed_Compliance' columns.
             
