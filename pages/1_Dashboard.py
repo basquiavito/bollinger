@@ -7241,7 +7241,14 @@ if st.sidebar.button("Run Analysis"):
                         entries.append({"Type": "Call 🎯3",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"]})
-                
+                                    # --- PUT EXIT ---
+                    for i in intraday.index[intraday["Put_Exit_Emoji"] == "❌"]:
+                        entries.append({
+                            "Type": "Put Exit",
+                            "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                            "Price ($)": intraday.at[i, "Close"] if "Close" in intraday.columns else None
+                        })
+
                     df = (pd.DataFrame(entries)
                             .sort_values("Time")
                             .reset_index(drop=True))
