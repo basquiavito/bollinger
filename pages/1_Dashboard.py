@@ -7235,18 +7235,18 @@ if st.sidebar.button("Run Analysis"):
                 st.session_state.setdefault("expand_entries", True)
 
                # ----------  UI ----------
-              with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                  st.dataframe(entries_df, use_container_width=True)
-              
-                  # --- No-rerun download link ---
-                  csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-                  b64 = base64.b64encode(csv_bytes).decode("utf-8")
-                  file_name = "entries.csv"
-              
-                  st.markdown(
-                      f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
-                      unsafe_allow_html=True
-                  )
+               with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                   st.dataframe(entries_df, use_container_width=True)
+               
+                   # --- No-rerun download link ---
+                   csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                   b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                   file_name = "entries.csv"
+               
+                   st.markdown(
+                       f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
+                       unsafe_allow_html=True
+                   )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
