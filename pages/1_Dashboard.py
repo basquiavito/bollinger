@@ -7351,6 +7351,7 @@ if st.sidebar.button("Run Analysis"):
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
                     df = add_exit_columns(df)   # ✅ just like the others, but cleaner
+                    df = compute_pae_1to2(df, intraday)
 
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
                     df["Prefix"] = df.apply(
