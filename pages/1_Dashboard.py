@@ -7755,8 +7755,7 @@ if st.sidebar.button("Run Analysis"):
                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
 
                                        }),
-                    start_date = datetime.date.today().strftime("%Y-%m-%d")
-
+ 
           
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
