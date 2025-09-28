@@ -7033,73 +7033,73 @@ if st.sidebar.button("Run Analysis"):
                     elif "Put 🎯1" in row["Type"]:
                         return "Cliff"
                     return ""
-                # def add_exit_columns(entries_df: pd.DataFrame) -> pd.DataFrame:
-                #          """
-                #          For every Entry 1 (Call 🎯1 or Put 🎯1), find the first opposite Entry 1 after it.
-                #          Add Exit_Time and Exit_Price to the table.
-                #          If no opposite entry exists later, exit stays blank.
-                #          """
+                def add_exit_columns(entries_df: pd.DataFrame) -> pd.DataFrame:
+                         """
+                         For every Entry 1 (Call 🎯1 or Put 🎯1), find the first opposite Entry 1 after it.
+                         Add Exit_Time and Exit_Price to the table.
+                         If no opposite entry exists later, exit stays blank.
+                         """
                      
-                #          # Make a copy so we don’t mutate original
-                #          df = entries_df.copy()
+                         # Make a copy so we don’t mutate original
+                         df = entries_df.copy()
                      
-                #          # Ensure time is datetime for ordering
-                #          df["Time_dt"] = pd.to_datetime(df["Time"], format="%H:%M")
+                         # Ensure time is datetime for ordering
+                         df["Time_dt"] = pd.to_datetime(df["Time"], format="%H:%M")
                      
-                #          # Loop through Entry 1s
-                #          for idx, row in df.iterrows():
-                #              if "🎯1" not in row["Type"]:
-                #                  continue  # Only work on Entry 1s
+                         # Loop through Entry 1s
+                         for idx, row in df.iterrows():
+                             if "🎯1" not in row["Type"]:
+                                 continue  # Only work on Entry 1s
                      
-                #              entry_type = row["Type"]
-                #              entry_time = row["Time_dt"]
+                             entry_type = row["Type"]
+                             entry_time = row["Time_dt"]
                      
-                #              # Define what opposite means
-                #              if "Call" in entry_type:
-                #                  opposite_mask = df["Type"].str.contains("Put 🎯1")
-                #              else:
-                #                  opposite_mask = df["Type"].str.contains("Call 🎯1")
+                             # Define what opposite means
+                             if "Call" in entry_type:
+                                 opposite_mask = df["Type"].str.contains("Put 🎯1")
+                             else:
+                                 opposite_mask = df["Type"].str.contains("Call 🎯1")
                      
-                #              # Find the first opposite entry *after* this entry
-                #              opposite_rows = df[opposite_mask & (df["Time_dt"] > entry_time)]
-                #              if not opposite_rows.empty:
-                #                  first_opposite = opposite_rows.iloc[0]
-                #                  df.at[idx, "Exit_Time"] = first_opposite["Time"]
-                #                  df.at[idx, "Exit_Price"] = first_opposite["Price ($)"]
+                             # Find the first opposite entry *after* this entry
+                             opposite_rows = df[opposite_mask & (df["Time_dt"] > entry_time)]
+                             if not opposite_rows.empty:
+                                 first_opposite = opposite_rows.iloc[0]
+                                 df.at[idx, "Exit_Time"] = first_opposite["Time"]
+                                 df.at[idx, "Exit_Price"] = first_opposite["Price ($)"]
                      
-                #          # Clean up helper column
-                #          df.drop(columns=["Time_dt"], inplace=True)
+                         # Clean up helper column
+                         df.drop(columns=["Time_dt"], inplace=True)
                      
-                #          return df
-                def add_exit_columns(df: pd.DataFrame) -> pd.DataFrame:
-                    """
-                    For each Call 🎯1 → find the next Put 🎯1 and set Exit Time/Exit Price.
-                    For each Put 🎯1 → find the next Call 🎯1 and set Exit Time/Exit Price.
-                    Works row-by-row so multiple Entry 1s in the same day are handled independently.
-                    """
+                         return df
+                # def add_exit_columns(df: pd.DataFrame) -> pd.DataFrame:
+                #     """
+                #     For each Call 🎯1 → find the next Put 🎯1 and set Exit Time/Exit Price.
+                #     For each Put 🎯1 → find the next Call 🎯1 and set Exit Time/Exit Price.
+                #     Works row-by-row so multiple Entry 1s in the same day are handled independently.
+                #     """
                 
-                    df = df.copy()
-                    df["Exit Time"] = ""
-                    df["Exit Price ($)"] = ""
+                #     df = df.copy()
+                #     df["Exit Time"] = ""
+                #     df["Exit Price ($)"] = ""
                 
-                    for i, row in df.iterrows():
-                        if row["Type"] == "Call 🎯1":
-                            # look forward for next Put 🎯1
-                            opposite = df[(df.index > i) & (df["Type"] == "Put 🎯1")]
-                            if not opposite.empty:
-                                exit_row = opposite.iloc[0]
-                                df.at[i, "Exit Time"] = exit_row["Time"]
-                                df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
+                #     for i, row in df.iterrows():
+                #         if row["Type"] == "Call 🎯1":
+                #             # look forward for next Put 🎯1
+                #             opposite = df[(df.index > i) & (df["Type"] == "Put 🎯1")]
+                #             if not opposite.empty:
+                #                 exit_row = opposite.iloc[0]
+                #                 df.at[i, "Exit Time"] = exit_row["Time"]
+                #                 df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
                 
-                        elif row["Type"] == "Put 🎯1":
-                            # look forward for next Call 🎯1
-                            opposite = df[(df.index > i) & (df["Type"] == "Call 🎯1")]
-                            if not opposite.empty:
-                                exit_row = opposite.iloc[0]
-                                df.at[i, "Exit Time"] = exit_row["Time"]
-                                df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
+                #         elif row["Type"] == "Put 🎯1":
+                #             # look forward for next Call 🎯1
+                #             opposite = df[(df.index > i) & (df["Type"] == "Call 🎯1")]
+                #             if not opposite.empty:
+                #                 exit_row = opposite.iloc[0]
+                #                 df.at[i, "Exit Time"] = exit_row["Time"]
+                #                 df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
                 
-                    return df
+                #     return df
 
                 def anchor_vol_confirm(intraday: pd.DataFrame, lookaround: int = 7) -> str:
                     """
