@@ -7033,7 +7033,47 @@ if st.sidebar.button("Run Analysis"):
                     elif "Put 🎯1" in row["Type"]:
                         return "Cliff"
                     return ""
-
+                def assign_suffix(row, intraday, threshold=55, lookback=5):
+                    """
+                    Assigns suffix (Bounce, Catch, or plain) for Ember prototypes.
+                    Only applies if row is Call 🎯1 (Ember).
+                    
+                    Logic:
+                    1. From open → anchor: check dip/surge vs ±threshold.
+                    2. Within ±lookback bars of anchor: must see 🔥 or 🐦‍🔥.
+                    """
+                
+                    # Only Ember (Call 🎯1)
+                    if "Call 🎯1" not in row["Type"]:
+                        return ""
+                
+                    # --- find Bull anchor
+                    anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
+                    if anchor_idx is None:
+                        return ""
+                
+                    anchor_loc = intraday.index.get_loc(anchor_idx)
+                
+                    # --- open to anchor window
+                    open_loc = 0
+                    window = intraday.iloc[open_loc:anchor_loc+1]
+                    if window.empty:
+                        return ""
+                
+                    open_f = window["F_numeric"].iloc[0]
+                    min_f  = window["F_numeric"].min()
+                    max_f  = window["F_numeric"].max()
+                
+                    # --- candidate classification
+                    candidate = ""
+                    if (open_f - min_f) >= threshold:      # dip ≥ threshold
+                        candidate = "Bounce"
+                    elif (max_f - open_f) >= threshold:    # surge ≥ threshold
+                        candidate = "Catch"
+                
+                    if not candidate:
+                        return ""   # no suffix → plain Ember
+                
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
                      Prefix = 'Tailbone' if any 🪶 Tail exists from (anchor-3 bars) through the entry bar,
@@ -7079,47 +7119,7 @@ if st.sidebar.button("Run Analysis"):
                      # Tailbone if any window bin is a tail bin (covers tails at/just before anchor, or soon after)
                      return "Tailbone" if any(b in tail_bins for b in window_bins) else ""
              
-                 def assign_suffix(row, intraday, threshold=55, lookback=5):
-                     """
-                     Assigns suffix (Bounce, Catch, or plain) for Ember prototypes.
-                     Only applies if row is Call 🎯1 (Ember).
-                     
-                     Logic:
-                     1. From open → anchor: check dip/surge vs ±threshold.
-                     2. Within ±lookback bars of anchor: must see 🔥 or 🐦‍🔥.
-                     """
-                 
-                     # Only Ember (Call 🎯1)
-                     if "Call 🎯1" not in row["Type"]:
-                         return ""
-                 
-                     # --- find Bull anchor
-                     anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
-                     if anchor_idx is None:
-                         return ""
-                 
-                     anchor_loc = intraday.index.get_loc(anchor_idx)
-                 
-                     # --- open to anchor window
-                     open_loc = 0
-                     window = intraday.iloc[open_loc:anchor_loc+1]
-                     if window.empty:
-                         return ""
-                 
-                     open_f = window["F_numeric"].iloc[0]
-                     min_f  = window["F_numeric"].min()
-                     max_f  = window["F_numeric"].max()
-                 
-                     # --- candidate classification
-                     candidate = ""
-                     if (open_f - min_f) >= threshold:      # dip ≥ threshold
-                         candidate = "Bounce"
-                     elif (max_f - open_f) >= threshold:    # surge ≥ threshold
-                         candidate = "Catch"
-                 
-                     if not candidate:
-                         return ""   # no suffix → plain Ember
-                 
+
                      # --- volatility confirmation (±lookback bars around anchor)
                      anchor_window = intraday.iloc[
                          max(0, anchor_loc - lookback): min(len(intraday), anchor_loc + lookback + 1)
