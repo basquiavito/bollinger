@@ -7096,7 +7096,7 @@ if st.sidebar.button("Run Analysis"):
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
-                   df["Label"] = df.apply(assign_label, axis=1, args=(intraday, profile_df))
+                    df["Label"] = df.apply(assign_label, axis=1, args=(intraday, profile_df))
 
                     return df
                   # ✅ compute PAE before returning
