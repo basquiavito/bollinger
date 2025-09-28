@@ -21,15 +21,7 @@ import uuid
 import hashlib
 from typing import List
            
-import cloudinary
-import cloudinary.uploader
 
-# Configure Cloudinary (replace with your credentials)
-cloudinary.config( 
-  cloud_name = "hooperos", 
-  api_key = "523537287514847", 
-  api_secret = "HnXtdjTNBxWnefVTqqhqqutnKkQ" 
-)
 
 def compute_value_area(
         df: pd.DataFrame,
