@@ -7080,7 +7080,64 @@ if st.sidebar.button("Run Analysis"):
                         entries_df.at[idx, "PAE_1to2"] = pae
                 
                     return entries_df
-
+               
+               def compute_pae_2to3(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
+                   """
+                   Compute PAE (Pain After Entry) from Entry 2 ➝ Entry 3.
+                   For each Call 🎯2 or Put 🎯2, measure the worst move against the trade
+                   until the next same-side Entry 3.
+                   """
+                   pae_values = []
+               
+                   for i, row in entries_df.iterrows():
+                       entry_type = row["Type"]
+               
+                       if "🎯2" not in entry_type:
+                           pae_values.append(None)
+                           continue
+               
+                       # Find the next Entry 3 of the same side (Call or Put)
+                       side = "Call" if "Call" in entry_type else "Put"
+                       later_rows = entries_df.iloc[i+1:]
+                       next_entry3 = later_rows[later_rows["Type"] == f"{side} 🎯3"]
+               
+                       if next_entry3.empty:
+                           pae_values.append(None)
+                           continue
+               
+                       # Define entry and exit times
+                       entry_time = row["Time"]
+                       exit_time = next_entry3.iloc[0]["Time"]
+               
+                       # Map times to intraday indices
+                       entry_idx = intraday.index[
+                           pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                       ][0]
+                       exit_idx = intraday.index[
+                           pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == exit_time
+                       ][0]
+               
+                       # Clip scan range
+                       scan = intraday.loc[entry_idx:exit_idx, "F_numeric"]
+               
+                       if scan.empty:
+                           pae_values.append(None)
+                           continue
+               
+                       entry_f = scan.iloc[0]
+               
+                       if side == "Call":
+                           # Pain = max dip below entry
+                           pain = (scan.min() - entry_f)
+                       else:  # Put
+                           # Pain = max rise above entry
+                           pain = (scan.max() - entry_f)
+               
+                       # Express pain as absolute F% units (positive number = painful move)
+                       pae_values.append(abs(int(round(pain, 0))))
+               
+                   entries_df["PAE_2to3"] = pae_values
+                   return entries_df
 
              
                 def assign_prototype(row):
