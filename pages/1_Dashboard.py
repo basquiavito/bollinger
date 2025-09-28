@@ -8781,60 +8781,13 @@ if st.sidebar.button("Run Analysis"):
           
 
 
-                # # Get y-range from F_numeric (or your price_col)
-                # y_min = intraday[price_col].min()
-                # y_max = intraday[price_col].max()
-                # margin = (y_max - y_min) * 0.05  # 15% buffer
-                
-                # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
-                
-                #Columns: price_col = 'F_numeric', BB_upper = 'BB_upper'
-
-                # #Step 1: Get data range including Bollinger Bands
-                # y_min = min(intraday[[price_col, 'F% Lower']].min())
-                # y_max_data = max(intraday[[price_col, 'F% Upper']].max())
-                
-                # # Step 2: Account for emoji buffer (emojis plotted at y + 3)
-                # emoji_buffer = 4
-                # y_max = y_max_data + emoji_buffer
-                
-                # # Step 3: Margin
-                # margin = (y_max - y_min) * 0.05
-                
-                # # Final update (only apply to first subplot)
-                # fig.update_yaxes(range=[y_min - margin, y_max + margin], row=1, col=1)
-
+      
                                             
                                 
                 
 
-
-                # # 💀 plot for Bear Displacement Doubling
-                # bear_double_points = intraday[intraday["Bear_Displacement_Double"] == "💀"]
-                # fig.add_trace(go.Scatter(
-                #     x=bear_double_points["Time"],
-                #     y=bear_double_points[price_col] - 12,  # Lower than 🎻 to avoid overlap
-                #     text=bear_double_points["Bear_Displacement_Double"],
-                #     mode="text",
-                #     textfont=dict(size=18),
-                #     textposition="bottom center",
-                #     showlegend=True,
-                #     hovertemplate="Time: %{x}<br>Bear_Displacement_Double: %{y}<br>💀 Bear_Displacement_Double<extra></extra>"
-                # ))
-                # # 👑 plot for Bull Displacement Doubling
-                # bull_double_points = intraday[intraday["Bull_Displacement_Double"] == "👑"]
-                # fig.add_trace(go.Scatter(
-                #     x=bull_double_points["Time"],
-                #     y=bull_double_points[price_col] + 12,  # Lower than 💀 and 🎻 to avoid clutter
-                #     text=bull_double_points["Bull_Displacement_Double"],
-                #     mode="text",
-                #     textfont=dict(size=10),
-                #     textposition="bottom center",
-                #     showlegend=False
-                # ))
-
-
-   (A.1) 40ish Reversal (star markers)
+ 
+   #(A.1) 40ish Reversal (star markers)
                 mask_40ish = intraday["40ish"] != ""
                 scatter_40ish = go.Scatter(
                     x=intraday.loc[mask_40ish, "Time"],
