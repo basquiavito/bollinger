@@ -7034,9 +7034,6 @@ if st.sidebar.button("Run Analysis"):
                         return "Cliff"
                     return ""
 
-
-
-        
                 def assign_prefix(row, intraday):
                     entry_time = row["Time"]
                     entry_type = row["Type"]
@@ -7053,20 +7050,25 @@ if st.sidebar.button("Run Analysis"):
                     if anchor_idx is None:
                         return ""
                 
-                    # 1️⃣ First check the anchor bar itself
-                    if "Tail" in intraday.columns and intraday.at[anchor_idx, "Tail"] == "🪶":
-                        return "Tailbone"
-                
-                    # 2️⃣ Else scan between anchor and entry
+                    # Locations
                     anchor_loc = intraday.index.get_loc(anchor_idx)
                     entry_loc = intraday.index.get_loc(entry_idx)
-                    if entry_loc > anchor_loc:
-                        segment = intraday.iloc[anchor_loc:entry_loc+1]
-                        if "Tail" in segment.columns and (segment["Tail"] == "🪶").any():
-                            return "Tailbone"
+                
+                    # Expand the window to 3 bars before anchor
+                    start_loc = max(0, anchor_loc - 3)
+                    end_loc = entry_loc
+                
+                    if end_loc <= start_loc:
+                        return ""  # entry is before or same as anchor window
+                
+                    # Slice and check Tail
+                    segment = intraday.iloc[start_loc:end_loc+1]
+                    if "Tail" in segment.columns and (segment["Tail"] == "🪶").any():
+                        return "Tailbone"
                 
                     return ""
 
+ 
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
