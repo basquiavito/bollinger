@@ -7009,53 +7009,36 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
-                def compute_pae(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
-                 df = entries_df.copy()
-             
-                 # Expect _idx so we can slice intraday precisely; fall back only if missing.
-                 if "_idx" not in df.columns:
-                     key_intraday = (
-                         pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M")
-                         + "|" + intraday["Close"].round(4).astype(str)
-                     )
-                     idx_lookup = pd.Series(intraday.index, index=key_intraday)
-             
-                     df["_key"] = (
-                         pd.to_datetime(df["Time"]).dt.strftime("%H:%M")
-                         + "|" + df["Price ($)"].round(4).astype(str)
-                     )
-                     df["_idx"] = df["_key"].map(idx_lookup)
-                     if df["_idx"].isna().any():
-                         raise ValueError("Could not match some entries back to intraday; check time/price precision.")
-             
-                 pae_vals = []
-                 levels   = []
-             
-                 # Iterate in the current row order (already time-sorted)
-                 _idx_series = df["_idx"].astype(int).reset_index(drop=True)
-                 for i in range(len(df)):
-                     entry_idx = _idx_series.iloc[i]
-                     entry_type = df.loc[i, "Type"]
-                     entry_F = intraday.at[entry_idx, "F_numeric"]
-             
-                     # look ahead until next entry or end of intraday
-                     next_idx = _idx_series.iloc[i + 1] if i < len(df) - 1 else intraday.index[-1]
-                     segment = intraday.loc[entry_idx:next_idx]
-             
-                     worst_F = segment["F_numeric"].min() if "Call" in entry_type else segment["F_numeric"].max()
-                     pae = float(abs(entry_F - worst_F))
-                     pae_vals.append(pae)
-             
-                     levels.append(
-                         "Low" if pae <= 10 else
-                         "Moderate" if pae <= 20 else
-                         "High" if pae <= 50 else
-                         "Very High"
-                     )
-             
-                 df["PAE"] = pae_vals
-                 df["PAE_Level"] = levels
-                 return df.drop(columns=[c for c in ["_idx", "_key"] if c in df.columns])
+                def assign_label(row, intraday, profile_df):
+                    # Only label Entry 1 and 2
+                    if not any(tag in row["Type"] for tag in ["🎯1", "🎯2"]):
+                        return ""
+                
+                    f_val = row["F%"]
+                
+                    # Look up Ear/Nose markers from profile_df
+                    profile_row = profile_df.loc[profile_df["F% Level"] == f_val]
+                    ear = "🦻🏼" in profile_row.get("🦻🏼", "").values
+                    nose = "👃🏽" in profile_row.get("👃🏽", "").values
+                
+                    # IB bounds
+                    ib_low = intraday["IB_Low"].iloc[0]
+                    ib_high = intraday["IB_High"].iloc[0]
+                
+                    if ear or nose:
+                        if ib_low <= f_val <= ib_high:
+                            if intraday["Loft_Low"].iloc[0] <= f_val <= intraday["Loft_High"].iloc[0]:
+                                return "Endo-Loft"
+                            elif intraday["Core_Low"].iloc[0] <= f_val <= intraday["Core_High"].iloc[0]:
+                                return "Endo-Core"
+                            else:
+                                return "Endo-Cellar"
+                        elif f_val > ib_high:
+                            return "Supra"
+                        elif f_val < ib_low:
+                            return "Infra"
+                
+                    return ""
 
                 
             
@@ -7113,6 +7096,8 @@ if st.sidebar.button("Run Analysis"):
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
+                   df["Label"] = df.apply(assign_label, axis=1, args=(intraday, profile_df))
+
                     return df
                   # ✅ compute PAE before returning
                     # df = compute_pae(df, intraday)
