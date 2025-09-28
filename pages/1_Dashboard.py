@@ -7340,39 +7340,39 @@ if st.sidebar.button("Run Analysis"):
                         pd.to_datetime(r["Time"]).strftime("%H:%M"),
                         r["Close"]
                     ])
-               def map_t1_after_entry(row, intraday):
-                   """
-                   For a given entry row, find the first ⏩ after that bar and return (emoji, time, price).
-                   """
-                   # OPTIONAL: only attach T1 to Entry 1 rows. If you want it on all rows, delete this guard.
-                   if "🎯1" not in row.get("Type", ""):
-                       return pd.Series(["", "", ""])
-               
-                   # locate the entry bar by HH:MM
-                   entry_time = row["Time"]
-                   locs = intraday.index[
-                       pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                   ]
-                   if len(locs) == 0:
-                       return pd.Series(["", "", ""])
-               
-                   entry_idx = locs[0]
-                   entry_loc = intraday.index.get_loc(entry_idx)
-               
-                   # scan forward for the first ⏩
-                   fwd = intraday.iloc[entry_loc + 1 :]
-                   if "T1_Emoji" not in fwd.columns:
-                       return pd.Series(["", "", ""])
-                   hits = fwd[fwd["T1_Emoji"] == "⏩"]
-                   if hits.empty:
-                       return pd.Series(["", "", ""])
-               
-                   r = hits.iloc[0]
-                   return pd.Series([
-                       "⏩",
-                       pd.to_datetime(r["Time"]).strftime("%H:%M"),
-                       r["Close"],
-                   ])
+                def map_t1_after_entry(row, intraday):
+                    """
+                    For a given entry row, find the first ⏩ after that bar and return (emoji, time, price).
+                    """
+                    # OPTIONAL: only attach T1 to Entry 1 rows. If you want it on all rows, delete this guard.
+                    if "🎯1" not in row.get("Type", ""):
+                        return pd.Series(["", "", ""])
+                
+                    # locate the entry bar by HH:MM
+                    entry_time = row["Time"]
+                    locs = intraday.index[
+                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                    ]
+                    if len(locs) == 0:
+                        return pd.Series(["", "", ""])
+                
+                    entry_idx = locs[0]
+                    entry_loc = intraday.index.get_loc(entry_idx)
+                
+                    # scan forward for the first ⏩
+                    fwd = intraday.iloc[entry_loc + 1 :]
+                    if "T1_Emoji" not in fwd.columns:
+                        return pd.Series(["", "", ""])
+                    hits = fwd[fwd["T1_Emoji"] == "⏩"]
+                    if hits.empty:
+                        return pd.Series(["", "", ""])
+                
+                    r = hits.iloc[0]
+                    return pd.Series([
+                        "⏩",
+                        pd.to_datetime(r["Time"]).strftime("%H:%M"),
+                        r["Close"],
+                    ])
 
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
