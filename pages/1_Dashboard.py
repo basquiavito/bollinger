@@ -7766,16 +7766,16 @@ if st.sidebar.button("Run Analysis"):
                     df = add_exit_columns(df)   # ✅ just like the others, but cleaner
                     df = compute_pae_1to2(df, intraday)
                                     # 👉 map the next stall (🚪) *after* each entry row
-                    df[["T0_Emoji", "T0_Time", "T0 Price ($)"]] = df.apply(
+                    df[["T0_Emoji", "T0_Time", "T0_Price"]] = df.apply(
                         map_stall_after_entry, axis=1, args=(intraday,), result_type="expand"
                     )
                     # 🏇🏼 map the first acceleration beyond band after each entry (typically after Entry 1)
-                    df[["T1_Emoji", "T1_Time", "T1 Price ($)"]] = df.apply(
+                    df[["T1_Emoji", "T1_Time", "T1_Price)"]] = df.apply(
                         map_t1_after_entry, axis=1, args=(intraday,), result_type="expand"
                     )
 
                                      # 🔁 Map T2 (⚡) to each entry row
-                    df[["T2_Emoji", "T2_Time", "T2 Price ($)"]] = df.apply(
+                    df[["T2_Emoji", "T2_Time", "T2_Price)"]] = df.apply(
                         map_t2_after_entry, axis=1, args=(intraday,), result_type="expand"
                     )
 
@@ -7784,12 +7784,12 @@ if st.sidebar.button("Run Analysis"):
                      )
 
                     # E2 route
-                    df[["Goldmine_E2_Emoji", "Goldmine_E2_Time", "Goldmine_E2 Price ($)"]] = df.apply(
+                    df[["Goldmine_E2_Emoji", "Goldmine_E2_Time", "Goldmine_E2 Price"]] = df.apply(
                         map_goldmine_after_e2, axis=1, args=(intraday,), result_type="expand"
                     )
                     
                     # T1 route
-                    df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price ($)"]] = df.apply(
+                    df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price"]] = df.apply(
                         map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
                     )
                  
