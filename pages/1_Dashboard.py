@@ -7858,13 +7858,15 @@ if st.sidebar.button("Run Analysis"):
                         unsafe_allow_html=True
                     )
                 
-                    # --- JSON Download ---
-                    json_str = entries_df.to_json(orient="records", indent=2)
-                    json_b64 = base64.b64encode(json_str.encode()).decode("utf-8")
+                  # --- JSON Download (preserve emojis) ---
+                    json_str = entries_df.to_json(orient="records", indent=2, force_ascii=False)
+                    json_b64 = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
                     st.markdown(
                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
                     )
+
+              
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
