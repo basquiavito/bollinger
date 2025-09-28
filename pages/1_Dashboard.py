@@ -7811,6 +7811,7 @@ if st.sidebar.button("Run Analysis"):
                   
               
 
+                    df["Date"] = df["Date"].astype(str)
 
                     return df
         
