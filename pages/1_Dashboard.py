@@ -7454,57 +7454,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                def add_princess(intraday, tol=120):
-                    """
-                    Marks 👸 Princess:
-                    Achieved only if after T2 & Parallel, Mike rides Marengo at least ±120F% away from Kijun.
-                    - For calls: F_numeric >= Kijun_F + tol
-                    - For puts:  F_numeric <= Kijun_F - tol
-                    """
-                    out = intraday.copy()
-                    out["Princess_Emoji"] = ""
-                
-                    # Need T2 and Parallel to exist
-                    if "T2_Emoji" not in out.columns or "Parallel_Emoji" not in out.columns:
-                        return out
-                
-                    # Find T2
-                    t2_idx = out.index[out["T2_Emoji"] == "⚡"]
-                    if len(t2_idx) == 0:
-                        return out
-                    start_i = out.index.get_loc(t2_idx[0])
-                
-                    # Determine side from Entry 1
-                    side = None
-                    if any(out["Call_FirstEntry_Emoji"] == "🎯"):
-                        side = "call"
-                    elif any(out["Put_FirstEntry_Emoji"] == "🎯"):
-                        side = "put"
-                
-                    if side is None:
-                        return out
-                
-                    # Loop forward bar by bar
-                    for i in range(start_i + 1, len(out)):
-                        mike = out.at[out.index[i], "F_numeric"]
-                        kijun = out.at[out.index[i], "Kijun_F"]
-                
-                        if pd.isna(mike) or pd.isna(kijun):
-                            continue
-                
-                        # Princess condition
-                        if side == "call" and mike >= kijun + tol:
-                            out.at[out.index[i], "Princess_Emoji"] = "👸"
-                            break
-                        elif side == "put" and mike <= kijun - tol:
-                            out.at[out.index[i], "Princess_Emoji"] = "👸"
-                            break
-                
-                    return out
-                
-             # Apply
-                intraday = add_princess(intraday, tol=120)
-
+               
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
                      Prefix = 'Tailbone' if any 🪶 Tail exists from (anchor-3 bars) through the entry bar,
@@ -7646,9 +7596,7 @@ if st.sidebar.button("Run Analysis"):
                     map_parallel_after_t2, axis=1, args=(intraday,)
                      )
                     # 👸 Map the Princess milestone (distance from Kijun after T2 + Parallel)
-                    df[["Princess_Emoji", "Princess_Time", "Princess Price ($)"]] = df.apply(
-                        map_princess_after_t2, axis=1, args=(intraday,), result_type="expand"
-                    )
+                   
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
                  
