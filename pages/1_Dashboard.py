@@ -7802,12 +7802,7 @@ if st.sidebar.button("Run Analysis"):
 
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
-                    df["slug"] = (
-                       df["name"] + "-" + df["Date"] + "-" +
-                       df["Prototype"].astype(str) + "-" +
-                   )
-                    
-                
+               
                     df["Prefix"] = df.apply(
                         assign_prefix_tailbone,
                         axis=1,
