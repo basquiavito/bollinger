@@ -7258,9 +7258,8 @@ if st.sidebar.button("Run Analysis"):
                    .sort_values("Time")
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
-                    # session_confirm = anchor_vol_confirm(intraday)   # "Confirmed" or ""
-                    # df["Suffix"] = session_confirm                   # same value for every row
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
+                    df = add_exit_columns(df)   # ✅ just like the others, but cleaner
 
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
                     df["Prefix"] = df.apply(
