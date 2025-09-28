@@ -7078,17 +7078,16 @@ if st.sidebar.button("Run Analysis"):
                  
                      # Tailbone if any window bin is a tail bin (covers tails at/just before anchor, or soon after)
                      return "Tailbone" if any(b in tail_bins for b in window_bins) else ""
-               
                      def assign_delayed(row, intraday, max_bars=7):
                          entry_time = row["Time"]
-                         entry_type = row["Type"]
                      
-                         # Find entry index
-                         entry_idx = intraday.index[
-                             pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                         ][0]
+                         # Match entry bar
+                         entry_match = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
+                         if len(entry_match) == 0:
+                             return ""
+                         entry_idx = entry_match[0]
                      
-                         # Pick the right anchor
+                         # Select correct anchor
                          if "Call" in row["Type"]:
                              anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
                          else:
@@ -7099,26 +7098,26 @@ if st.sidebar.button("Run Analysis"):
                      
                          anchor_loc = intraday.index.get_loc(anchor_idx)
                          entry_loc = intraday.index.get_loc(entry_idx)
-                     
                          if entry_loc <= anchor_loc:
                              return ""
                      
-                         # Look up to 7 bars after anchor
+                         # Look forward up to max_bars
                          window = intraday.iloc[anchor_loc: min(len(intraday), anchor_loc + max_bars + 1)]
                          anchor_f = intraday.at[anchor_idx, "F_numeric"]
                      
                          if "Call" in row["Type"]:
                              went_against = (window["F_numeric"] < anchor_f).any()
-                             broke_forward = (window["F_numeric"].max() > anchor_f)
+                             broke_forward = (window["F_numeric"].iloc[-1] > anchor_f)
                              if went_against and broke_forward:
                                  return "Delayed"
                          else:  # Put
                              went_against = (window["F_numeric"] > anchor_f).any()
-                             broke_forward = (window["F_numeric"].min() < anchor_f)
+                             broke_forward = (window["F_numeric"].iloc[-1] < anchor_f)
                              if went_against and broke_forward:
                                  return "Delayed"
                      
                          return ""
+
 
 
                 # ----------  Helpers (cached) ----------
