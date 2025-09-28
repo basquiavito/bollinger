@@ -7374,6 +7374,40 @@ if st.sidebar.button("Run Analysis"):
                         r["Close"],
                     ])
 
+
+   
+                def map_t2_after_entry(row, intraday):
+                    """
+                    For a given entry row, find the first T2 (⚡) AFTER that bar.
+                    Returns (emoji, HH:MM time, price). Blank if none.
+                    """
+                    # Locate the entry bar by HH:MM
+                    entry_time = row["Time"]
+                    locs = intraday.index[
+                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                    ]
+                    if len(locs) == 0:
+                        return pd.Series(["", "", ""])
+                
+                    entry_idx = locs[0]
+                    entry_loc = intraday.index.get_loc(entry_idx)
+                
+                    # Scan forward for the first ⚡
+                    fwd = intraday.iloc[entry_loc + 1 :]
+                    if "T2_Emoji" not in fwd.columns:
+                        return pd.Series(["", "", ""])
+                
+                    hits = fwd[fwd["T2_Emoji"] == "⚡"]
+                    if hits.empty:
+                        return pd.Series(["", "", ""])
+                
+                    r = hits.iloc[0]
+                    return pd.Series([
+                        "⚡",
+                        pd.to_datetime(r["Time"]).strftime("%H:%M"),
+                        r["Close"],
+                    ])
+
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
                      Prefix = 'Tailbone' if any 🪶 Tail exists from (anchor-3 bars) through the entry bar,
@@ -7504,6 +7538,11 @@ if st.sidebar.button("Run Analysis"):
                     # 🏇🏼 map the first acceleration beyond band after each entry (typically after Entry 1)
                     df[["T1_Emoji", "T1_Time", "T1 Price ($)"]] = df.apply(
                         map_t1_after_entry, axis=1, args=(intraday,), result_type="expand"
+                    )
+
+                                     # 🔁 Map T2 (⚡) to each entry row
+                    df[["T2_Emoji", "T2_Time", "T2 Price ($)"]] = df.apply(
+                        map_t2_after_entry, axis=1, args=(intraday,), result_type="expand"
                     )
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
