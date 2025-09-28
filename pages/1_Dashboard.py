@@ -7034,64 +7034,38 @@ if st.sidebar.button("Run Analysis"):
                         return "Cliff"
                     return ""
   
-                def assign_suffix(row, intraday: pd.DataFrame, threshold: int = 55, lookback: int = 5) -> str:
+ 
+                def assign_suffix_simple(row, intraday: pd.DataFrame, lookaround: int = 7) -> str:
                     """
-                    Suffix for Ember only:
-                      - Look from OPEN -> Bull anchor:
-                          * If dip >= threshold  -> 'Bounce'
-                          * If surge >= threshold -> 'Catch'
-                      - Confirm within ±lookback bars of anchor: 🔥 (BBW) or 🐦‍🔥 (STD)
-                      - If no confirm, return '' (plain Ember)
+                    For Ember only:
+                      Return 'Confirmed' if within ±lookaround bars of the MIDAS_Bull anchor
+                      we detect either a Fire (BBW expansion) or a Phoenix (STD expansion).
+                      Otherwise return ''.
                     """
-                
-                    # Only apply to Ember (your Prototype column already sets this)
+                    # Only apply to Ember prototypes
                     if row.get("Prototype", "") != "Ember":
                         return ""
                 
-                    # Locate Bull MIDAS anchor
+                    # Find Bull anchor (first valid)
                     anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
                     if anchor_idx is None:
                         return ""
                 
                     anchor_loc = intraday.index.get_loc(anchor_idx)
                 
-                    # OPEN -> ANCHOR window (use the first row of intraday as "open")
-                    if anchor_loc < 0:
-                        return ""
-                    pre_win = intraday.iloc[0:anchor_loc + 1]
-                    if pre_win.empty or "F_numeric" not in pre_win.columns:
-                        return ""
+                    # Slice ±lookaround bars around the anchor
+                    lo = max(0, anchor_loc - lookaround)
+                    hi = min(len(intraday), anchor_loc + lookaround + 1)
+                    win = intraday.iloc[lo:hi]
                 
-                    open_f = pre_win["F_numeric"].iloc[0]
-                    min_f  = pre_win["F_numeric"].min()
-                    max_f  = pre_win["F_numeric"].max()
+                    # Support both naming variants
+                    bbw_cols = [c for c in ["BBW Expansion Alert", "BBW_Alert", "BBW Alert"] if c in win.columns]
+                    std_cols = [c for c in ["F% STD Expansion", "STD_Alert", "STD Alert"] if c in win.columns]
                 
-                    # Candidate classification from pre-anchor behavior
-                    candidate = ""
-                    if (open_f - min_f) >= threshold:       # dipped below open by >= threshold
-                        candidate = "Bounce"
-                    elif (max_f - open_f) >= threshold:     # surged above open by >= threshold
-                        candidate = "Catch"
-                    else:
-                        return ""  # plain Ember (no suffix)
+                    has_fire = any(win[c].astype(str).str.contains("🔥").any() for c in bbw_cols) if bbw_cols else False
+                    has_phnx = any(win[c].astype(str).str.contains("🐦‍🔥").any() for c in std_cols) if std_cols else False
                 
-                    # Volatility confirmation within ±lookback bars of anchor
-                    lo = max(0, anchor_loc - lookback)
-                    hi = min(len(intraday), anchor_loc + lookback + 1)
-                    around = intraday.iloc[lo:hi]
-                
-                    # Handle both possible column spellings
-                    std_col = "STD_Alert" if "STD_Alert" in around.columns else ("STD Alert" if "STD Alert" in around.columns else None)
-                    bbw_col = "BBW_Alert" if "BBW_Alert" in around.columns else ("BBW Alert" if "BBW Alert" in around.columns else None)
-                
-                    has_std  = False
-                    has_bbw  = False
-                    if std_col is not None:
-                        has_std = around[std_col].astype(str).str.contains("🐦‍🔥").any()
-                    if bbw_col is not None:
-                        has_bbw = around[bbw_col].astype(str).str.contains("🔥").any()
-                
-                    return candidate if (has_std or has_bbw) else ""
+                    return "Confirmed" if (has_fire or has_phnx) else ""
 
                 
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
