@@ -7654,7 +7654,7 @@ if st.sidebar.button("Run Analysis"):
             
                 df[["Change ($)", "Duration (min)"]] = df.apply(_calc, axis=1)
                 return df
-                df = add_exit_columns(df)
+                df = add_change_and_duration(df)
 
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
