@@ -7034,6 +7034,35 @@ if st.sidebar.button("Run Analysis"):
                         return "Cliff"
                     return ""
 
+
+
+
+                def add_tailbone_prefix(entries_df, profile_df):
+                    """Prepend 'Tailbone' to Prototype if a Tail 🪶 exists before the entry anchor."""
+                    new_prototypes = []
+                    for _, row in entries_df.iterrows():
+                        proto = row["Prototype"]
+                
+                        # Skip if prototype is empty
+                        if not proto:
+                            new_prototypes.append(proto)
+                            continue
+                
+                        # Find matching F% bin in profile_df
+                        f_val = row["F%"]
+                        profile_row = profile_df.loc[profile_df["F% Level"] == f_val]
+                
+                        # Check Tail marker in profile
+                        tail_exists = "🪶" in profile_row.get("Tail", "").values
+                
+                        if tail_exists:
+                            new_prototypes.append(f"Tailbone {proto}")
+                        else:
+                            new_prototypes.append(proto)
+                
+                    entries_df["Prototype"] = new_prototypes
+                    return entries_df
+
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
