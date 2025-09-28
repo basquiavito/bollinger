@@ -7620,41 +7620,41 @@ if st.sidebar.button("Run Analysis"):
                         gain_f
                     ])
 
-               
-               def add_change_and_duration(df: pd.DataFrame) -> pd.DataFrame:
-                """
-                For each row:
-                  Change ($)   = signed price change from Entry → Exit (Call: exit-entry, Put: entry-exit)
-                  Duration (min) = minutes from Entry Time → Exit Time
-                Assumes df has: Type, Time (HH:MM), Price ($), Exit_Time (HH:MM), Exit Price ($)
-                """
-                def _calc(row):
-                    exit_time = row.get("Exit_Time", "")
-                    exit_px   = row.get("Exit Price ($)", np.nan)
-                    if exit_time in ("", None) or pd.isna(exit_px):
-                        return pd.Series(["", ""])  # no exit → leave blank
-            
-                    entry_px = row["Price ($)"]
-            
-                    # signed change by direction
-                    if "Call" in row["Type"]:
-                        change_dollars = round(float(exit_px) - float(entry_px), 2)
-                    else:  # Put
-                        change_dollars = round(float(entry_px) - float(exit_px), 2)
-            
-                    # duration in minutes
-                    try:
-                        t_entry = pd.to_datetime(row["Time"], format="%H:%M")
-                        t_exit  = pd.to_datetime(exit_time,   format="%H:%M")
-                        duration_min = int((t_exit - t_entry).total_seconds() // 60)
-                    except Exception:
-                        duration_min = ""
-            
-                    return pd.Series([change_dollars, duration_min])
-            
-                df[["Change ($)", "Duration (min)"]] = df.apply(_calc, axis=1)
-                return df
-                df = add_change_and_duration(df)
+                
+                def add_change_and_duration(df: pd.DataFrame) -> pd.DataFrame:
+                 """
+                 For each row:
+                   Change ($)   = signed price change from Entry → Exit (Call: exit-entry, Put: entry-exit)
+                   Duration (min) = minutes from Entry Time → Exit Time
+                 Assumes df has: Type, Time (HH:MM), Price ($), Exit_Time (HH:MM), Exit Price ($)
+                 """
+                 def _calc(row):
+                     exit_time = row.get("Exit_Time", "")
+                     exit_px   = row.get("Exit Price ($)", np.nan)
+                     if exit_time in ("", None) or pd.isna(exit_px):
+                         return pd.Series(["", ""])  # no exit → leave blank
+             
+                     entry_px = row["Price ($)"]
+             
+                     # signed change by direction
+                     if "Call" in row["Type"]:
+                         change_dollars = round(float(exit_px) - float(entry_px), 2)
+                     else:  # Put
+                         change_dollars = round(float(entry_px) - float(exit_px), 2)
+             
+                     # duration in minutes
+                     try:
+                         t_entry = pd.to_datetime(row["Time"], format="%H:%M")
+                         t_exit  = pd.to_datetime(exit_time,   format="%H:%M")
+                         duration_min = int((t_exit - t_entry).total_seconds() // 60)
+                     except Exception:
+                         duration_min = ""
+             
+                     return pd.Series([change_dollars, duration_min])
+             
+                 df[["Change ($)", "Duration (min)"]] = df.apply(_calc, axis=1)
+                 return df
+                 df = add_change_and_duration(df)
 
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
