@@ -7656,6 +7656,49 @@ if st.sidebar.button("Run Analysis"):
                  return df
                  df = add_change_and_duration(df)
 
+
+                 def map_change_and_duration(row, intraday: pd.DataFrame):
+                     """
+                     For a given Entry 1 row, find its paired Exit and return
+                     (emoji, duration, change in price).
+                     """
+                     entry_time = row["Time"]
+                 
+                     # Only act on Entry 1 rows
+                     if row.get("Call_FirstEntry_Emoji", "") != "🎯" and row.get("Put_FirstEntry_Emoji", "") != "🎯":
+                         return pd.Series(["", "", ""])
+                 
+                     # Locate the entry bar by HH:MM
+                     locs = intraday.index[
+                         pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                     ]
+                     if len(locs) == 0:
+                         return pd.Series(["", "", ""])
+                 
+                     entry_idx = locs[0]
+                     entry_loc = intraday.index.get_loc(entry_idx)
+                     entry_price = intraday.at[entry_idx, "Close"]
+                 
+                     # Scan forward for the first Exit (🚪Exit_Emoji, or whatever column your exits use)
+                     fwd = intraday.iloc[entry_loc+1:]
+                     hits = fwd[fwd.get("Exit_Emoji", "") == "🚪"]  # <-- adjust to your actual exit column
+                     if hits.empty:
+                         return pd.Series(["", "", ""])
+                 
+                     r = hits.iloc[0]
+                     exit_time = pd.to_datetime(r["Time"])
+                     exit_price = r["Close"]
+                 
+                     # Compute change and duration
+                     change = exit_price - entry_price
+                     duration = (exit_time - pd.to_datetime(entry_time)).seconds // 60  # minutes
+                 
+                     return pd.Series([
+                         "📊",   # emoji marker for change/duration
+                         duration,
+                         change
+                     ])
+
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
                      Prefix = 'Tailbone' if any 🪶 Tail exists from (anchor-3 bars) through the entry bar,
