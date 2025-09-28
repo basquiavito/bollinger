@@ -7027,6 +7027,12 @@ if st.sidebar.button("Run Analysis"):
                 
                     return ""
 
+                def assign_prototype(row):
+                    if "Call 🎯1" in row["Type"]:
+                        return "Ember"
+                    elif "Put 🎯1" in row["Type"]:
+                        return "Cliff"
+                    return ""
 
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
@@ -7083,6 +7089,8 @@ if st.sidebar.button("Run Analysis"):
                    .sort_values("Time")
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
+                    df["Prototype"] = df.apply(assign_prototype, axis=1)
+
 
                     return df
                   # ✅ compute PAE before returning
