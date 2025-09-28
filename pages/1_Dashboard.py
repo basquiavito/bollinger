@@ -7585,6 +7585,58 @@ if st.sidebar.button("Run Analysis"):
                         gain_f
                     ])
 
+                def map_goldmine_after_e2(row, intraday: pd.DataFrame, dist=120):
+                    """
+                    For a given Entry 2 row, find the first 💰 Goldmine milestone.
+                    Goldmine = price (F_numeric) reaching at least `dist` F% beyond Kijun_F
+                    in the correct trade direction.
+                    Returns: (emoji, time, price)
+                    """
+                    entry_time = row["Time"]
+                
+                    # locate the entry 2 row by HH:MM
+                    locs = intraday.index[
+                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                    ]
+                    if len(locs) == 0:
+                        return pd.Series(["", "", ""])
+                
+                    entry_idx = locs[0]
+                    entry_loc = intraday.index.get_loc(entry_idx)
+                
+                    # determine trade side
+                    side = None
+                    if row.get("Call_SecondEntry_Emoji", "") == "🎯":
+                        side = "call"
+                    elif row.get("Put_SecondEntry_Emoji", "") == "🎯":
+                        side = "put"
+                
+                    if side is None:
+                        return pd.Series(["", "", ""])
+                
+                    # scan forward from Entry 2 for goldmine hit
+                    fwd = intraday.iloc[entry_loc+1:]
+                    for _, r in fwd.iterrows():
+                        mike = r.get("F_numeric", None)
+                        kijun = r.get("Kijun_F", None)
+                
+                        if pd.isna(mike) or pd.isna(kijun):
+                            continue
+                
+                        if side == "call" and mike - kijun >= dist:
+                            return pd.Series([
+                                "💰",
+                                pd.to_datetime(r["Time"]).strftime("%H:%M"),
+                                r["Close"]
+                            ])
+                        elif side == "put" and kijun - mike >= dist:
+                            return pd.Series([
+                                "💰",
+                                pd.to_datetime(r["Time"]).strftime("%H:%M"),
+                                r["Close"]
+                            ])
+                
+                    return pd.Series(["", "", ""])
 
 
                
