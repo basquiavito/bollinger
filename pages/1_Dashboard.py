@@ -7199,44 +7199,7 @@ if st.sidebar.button("Run Analysis"):
                     return ""
 
 
-                def add_marengo_T0(intraday, tol=5):
-                    """
-                    Detects first Stall Gate (🚪) after each Entry 1.
-                    Adds Stall Price and Stall Time for reference.
-                    """
-                    out = intraday.copy()
-                
-                    # Ensure required columns
-                    need_cols = ["Side_Dist_F", "Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji"]
-                    for col in need_cols:
-                        if col not in out.columns:
-                            out["T0_Emoji"] = ""
-                            out["T0_Price"] = None
-                            out["T0_Time"] = None
-                            return out
-                
-                    # Init columns
-                    out["T0_Emoji"] = ""
-                    out["T0_Price"] = None
-                    out["T0_Time"] = None
-                
-                    # All Entry 1 events (both Call & Put)
-                    entry_idx = list(out.index[out["Call_FirstEntry_Emoji"] == "🎯"]) + \
-                                list(out.index[out["Put_FirstEntry_Emoji"]  == "🎯"])
-                    entry_idx = sorted(entry_idx)
-                
-                    # Loop each Entry 1
-                    for start in entry_idx:
-                        for i in range(start + 1, len(out)):
-                            dist = out.at[out.index[i], "Side_Dist_F"]
-                            if pd.notna(dist) and dist <= tol:
-                                out.at[out.index[i], "T0_Emoji"] = "🚪"
-                                out.at[out.index[i], "T0_Price"] = out.at[out.index[i], "Close"]
-                                out.at[out.index[i], "T0_Time"] = out.at[out.index[i], "Time"]
-                                break  # only first stall per entry
-                
-                    return out
-                intraday = add_marengo_T0(intraday, tol=5)
+             
 
              
                 def add_exit_columns(entries_df: pd.DataFrame) -> pd.DataFrame:
@@ -7512,16 +7475,7 @@ if st.sidebar.button("Run Analysis"):
                         axis=1,
                         args=(intraday, profile_df, f_bins)  # pass your existing profile_df and f_bins
                     )
-                    # ---- Map Stall info ----
-                    df["Stall_Emoji"] = df["Time"].map(
-                        intraday.set_index("Time")["T0_Emoji"]
-                    )
-                    df["Stall_Price"] = df["Time"].map(
-                        intraday.set_index("Time")["T0_Price"]
-                    )
-                    df["Stall_Time"] = df["Time"].map(
-                        intraday.set_index("Time")["T0_Time"]
-                    )
+                  
                     
 
 
