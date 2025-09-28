@@ -7033,45 +7033,33 @@ if st.sidebar.button("Run Analysis"):
                     elif "Put 🎯1" in row["Type"]:
                         return "Cliff"
                     return ""
- 
-                def assign_suffix_simple(row, intraday: pd.DataFrame, lookaround: int = 7) -> str:
+      
+                def anchor_vol_confirm(intraday: pd.DataFrame, lookaround: int = 7) -> str:
                     """
-                    For Ember rows only:
-                      • Find the first MIDAS_Bull anchor.
-                      • Slice ±lookaround bars around that anchor.
-                      • If either '🔥' in 'BBW Expansion Alert' OR
-                        '🐦‍🔥' in 'F% STD Expansion' is present → 'Confirmed'.
-                      • Else '' (plain Ember).
+                    One-liner result for the session:
+                      'Confirmed' if ±lookaround bars around the first MIDAS_Bull anchor
+                      contain 🔥 in 'BBW Alert'   OR
+                               🐦‍🔥 in 'STD_Alert'.
+                      Otherwise returns ''.
                     """
-                
-                    # 1️⃣ Only act on Ember prototypes
-                    if row.get("Prototype", "") != "Ember":
-                        return ""
-                
-                    # 2️⃣ Locate the Bull MIDAS anchor
+                    # 1️⃣ Locate first Bull anchor
                     anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
-                    if anchor_idx is None:
-                        return ""             # no anchor, no suffix
+                    if anchor_idx is None:                 # no anchor this session
+                        return ""
                 
                     anchor_loc = intraday.index.get_loc(anchor_idx)
                 
-                    # 3️⃣ Slice ±lookaround bars around the anchor
+                    # 2️⃣ Window around the anchor
                     lo = max(0, anchor_loc - lookaround)
                     hi = min(len(intraday) - 1, anchor_loc + lookaround)
                     win = intraday.iloc[lo : hi + 1]
                 
-                    # 4️⃣ Check the two exact columns you gave
-                    has_fire = (
-                        "BBW Expansion Alert" in win.columns
-                        and win["BBW Expansion Alert"].astype(str).str.contains("🔥").any()
-                    )
-                    has_phnx = (
-                        "F% STD Expansion" in win.columns
-                        and win["F% STD Expansion"].astype(str).str.contains("🐦‍🔥").any()
-                    )
+                    # 3️⃣ Look for either alert (exact column names you showed)
+                    fire_seen   = win["BBW Alert"].astype(str).str.contains("🔥").any()   if "BBW Alert" in win.columns else False
+                    phoenix_seen = win["STD_Alert"].astype(str).str.contains("🐦‍🔥").any() if "STD_Alert" in win.columns else False
                 
-                    return "Confirmed" if (has_fire or has_phnx) else ""
-   
+                    return "Confirmed" if (fire_seen or phoenix_seen) else ""
+
 
                 
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
@@ -7187,7 +7175,8 @@ if st.sidebar.button("Run Analysis"):
                    .sort_values("Time")
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
-                    df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
+                    session_confirm = anchor_vol_confirm(intraday)   # "Confirmed" or ""
+                    df["Suffix"] = session_confirm                   # same value for every row
 
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
                     df["Prefix"] = df.apply(
