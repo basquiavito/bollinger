@@ -7009,7 +7009,31 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
-           
+                def assign_label_simple(row, intraday):
+                    # Only label Entry 1 and 2
+                    if not any(tag in row["Type"] for tag in ["🎯1", "🎯2"]):
+                        return ""
+                
+                    f_val = row["F%"]
+                
+                    # IB boundaries
+                    ib_low = intraday["IB_Low"].iloc[0]
+                    ib_high = intraday["IB_High"].iloc[0]
+                
+                    if ib_low <= f_val <= ib_high:
+                        if intraday["Loft_Low"].iloc[0] <= f_val <= intraday["Loft_High"].iloc[0]:
+                            return "Endo-Loft"
+                        elif intraday["Core_Low"].iloc[0] <= f_val <= intraday["Core_High"].iloc[0]:
+                            return "Endo-Core"
+                        else:
+                            return "Endo-Cellar"
+                    elif f_val > ib_high:
+                        return "Supra"
+                    elif f_val < ib_low:
+                        return "Infra"
+                
+                    return ""
+
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
@@ -7064,6 +7088,7 @@ if st.sidebar.button("Run Analysis"):
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
+                    df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
 
                     return df
                   # ✅ compute PAE before returning
