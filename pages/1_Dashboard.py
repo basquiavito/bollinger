@@ -7119,6 +7119,7 @@ if st.sidebar.button("Run Analysis"):
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
+                    df = add_tailbone_prefix(df, profile_df)
 
 
                     return df
