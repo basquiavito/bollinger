@@ -7236,6 +7236,7 @@ if st.sidebar.button("Run Analysis"):
                                 break  # only first stall per entry
                 
                     return out
+                intraday = add_marengo_T0(intraday, tol=5)
 
              
                 def add_exit_columns(entries_df: pd.DataFrame) -> pd.DataFrame:
@@ -7497,6 +7498,7 @@ if st.sidebar.button("Run Analysis"):
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
+                    df["Prototype"] = df.apply(assign_prototype, axis=1)
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
                     df = add_exit_columns(df)   # ✅ just like the others, but cleaner
@@ -7504,13 +7506,23 @@ if st.sidebar.button("Run Analysis"):
                 
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
-                    df["Prototype"] = df.apply(assign_prototype, axis=1)
+                 
                     df["Prefix"] = df.apply(
                         assign_prefix_tailbone,
                         axis=1,
                         args=(intraday, profile_df, f_bins)  # pass your existing profile_df and f_bins
                     )
-
+                    # ---- Map Stall info ----
+                    df["Stall_Emoji"] = df["Time"].map(
+                        intraday.set_index("Time")["T0_Emoji"]
+                    )
+                    df["Stall_Price"] = df["Time"].map(
+                        intraday.set_index("Time")["T0_Price"]
+                    )
+                    df["Stall_Time"] = df["Time"].map(
+                        intraday.set_index("Time")["T0_Time"]
+                    )
+                    
 
 
                     return df
