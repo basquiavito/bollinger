@@ -7115,14 +7115,14 @@ if st.sidebar.button("Run Analysis"):
                    .reset_index(drop=True))
                     return df
                   # ✅ compute PAE before returning
-                    df = compute_pae(df, intraday)
+                    # df = compute_pae(df, intraday)
                 
-                    # ✅ put PAE next to F%
-                    f_loc = df.columns.get_loc("F%")
-                    df.insert(f_loc + 1, "PAE", df.pop("PAE"))
-                    df.insert(f_loc + 2, "PAE_Level", df.pop("PAE_Level"))
+                    # # ✅ put PAE next to F%
+                    # f_loc = df.columns.get_loc("F%")
+                    # df.insert(f_loc + 1, "PAE", df.pop("PAE"))
+                    # df.insert(f_loc + 2, "PAE_Level", df.pop("PAE_Level"))
                 
-                    return df
+                    # return df
 
                 @st.cache_data(show_spinner=False)
                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
