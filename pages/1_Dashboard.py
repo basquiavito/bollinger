@@ -7800,15 +7800,16 @@ if st.sidebar.button("Run Analysis"):
 
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
-                 
+                if "Price ($)" in df.columns and "Price" not in df.columns:
+                    df["Price"] = df["Price ($)"]
+
                     df["Prefix"] = df.apply(
                         assign_prefix_tailbone,
                         axis=1,
                         args=(intraday, profile_df, f_bins)  # pass your existing profile_df and f_bins
                     )
                   
-                    if "Price ($)" in df.columns and "Price" not in df.columns:
-                    df["Price"] = df["Price ($)"]
+              
 
 
                     return df
