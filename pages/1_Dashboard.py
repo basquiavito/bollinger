@@ -7033,7 +7033,45 @@ if st.sidebar.button("Run Analysis"):
                     elif "Put 🎯1" in row["Type"]:
                         return "Cliff"
                     return ""
-      
+                def add_exit_columns(entries_df: pd.DataFrame) -> pd.DataFrame:
+                         """
+                         For every Entry 1 (Call 🎯1 or Put 🎯1), find the first opposite Entry 1 after it.
+                         Add Exit_Time and Exit_Price to the table.
+                         If no opposite entry exists later, exit stays blank.
+                         """
+                     
+                         # Make a copy so we don’t mutate original
+                         df = entries_df.copy()
+                     
+                         # Ensure time is datetime for ordering
+                         df["Time_dt"] = pd.to_datetime(df["Time"], format="%H:%M")
+                     
+                         # Loop through Entry 1s
+                         for idx, row in df.iterrows():
+                             if "🎯1" not in row["Type"]:
+                                 continue  # Only work on Entry 1s
+                     
+                             entry_type = row["Type"]
+                             entry_time = row["Time_dt"]
+                     
+                             # Define what opposite means
+                             if "Call" in entry_type:
+                                 opposite_mask = df["Type"].str.contains("Put 🎯1")
+                             else:
+                                 opposite_mask = df["Type"].str.contains("Call 🎯1")
+                     
+                             # Find the first opposite entry *after* this entry
+                             opposite_rows = df[opposite_mask & (df["Time_dt"] > entry_time)]
+                             if not opposite_rows.empty:
+                                 first_opposite = opposite_rows.iloc[0]
+                                 df.at[idx, "Exit_Time"] = first_opposite["Time"]
+                                 df.at[idx, "Exit_Price"] = first_opposite["Price ($)"]
+                     
+                         # Clean up helper column
+                         df.drop(columns=["Time_dt"], inplace=True)
+                     
+                         return df
+
                 def anchor_vol_confirm(intraday: pd.DataFrame, lookaround: int = 7) -> str:
                     """
                     One-liner result for the session:
@@ -7059,7 +7097,7 @@ if st.sidebar.button("Run Analysis"):
                     phoenix_seen = win["STD_Alert"].astype(str).str.contains("🐦‍🔥").any() if "STD_Alert" in win.columns else False
                 
                     return "Confirmed" if (fire_seen or phoenix_seen) else ""
-                
+           
                 def assign_suffix_simple(row, intraday, perimeter=7):
                     """
                     Detect suffix for Ember/Cliff entries:
