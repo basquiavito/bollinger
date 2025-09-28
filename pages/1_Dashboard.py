@@ -7342,7 +7342,7 @@ if st.sidebar.button("Run Analysis"):
                     ])
                 def map_t1_after_entry(row, intraday):
                     """
-                    For a given entry row, find the first ⏩ after that bar and return (emoji, time, price).
+                    For a given entry row, find the first 🏇🏼 after that bar and return (emoji, time, price).
                     """
                     # OPTIONAL: only attach T1 to Entry 1 rows. If you want it on all rows, delete this guard.
                     if "🎯1" not in row.get("Type", ""):
@@ -7359,17 +7359,17 @@ if st.sidebar.button("Run Analysis"):
                     entry_idx = locs[0]
                     entry_loc = intraday.index.get_loc(entry_idx)
                 
-                    # scan forward for the first ⏩
+                    # scan forward for the first 🏇🏼
                     fwd = intraday.iloc[entry_loc + 1 :]
                     if "T1_Emoji" not in fwd.columns:
                         return pd.Series(["", "", ""])
-                    hits = fwd[fwd["T1_Emoji"] == "⏩"]
+                    hits = fwd[fwd["T1_Emoji"] == "🏇🏼"]
                     if hits.empty:
                         return pd.Series(["", "", ""])
                 
                     r = hits.iloc[0]
                     return pd.Series([
-                        "⏩",
+                        "🏇🏼",
                         pd.to_datetime(r["Time"]).strftime("%H:%M"),
                         r["Close"],
                     ])
