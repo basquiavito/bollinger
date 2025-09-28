@@ -7119,11 +7119,11 @@ if st.sidebar.button("Run Analysis"):
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
-                    df = add_tailbone_prefix(df, profile_df)
-                    entries_df = df
+                    entries_df = build_entries_df(intraday)
+                    entries_df = add_tailbone_prefix(entries_df, profile_df)
 
 
-                    # return df
+                    return df
                   # ✅ compute PAE before returning
                     # df = compute_pae(df, intraday)
                 
