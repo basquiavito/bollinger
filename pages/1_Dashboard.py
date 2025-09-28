@@ -7033,39 +7033,45 @@ if st.sidebar.button("Run Analysis"):
                     elif "Put 🎯1" in row["Type"]:
                         return "Cliff"
                     return ""
-  
  
                 def assign_suffix_simple(row, intraday: pd.DataFrame, lookaround: int = 7) -> str:
                     """
-                    For Ember only:
-                      Return 'Confirmed' if within ±lookaround bars of the MIDAS_Bull anchor
-                      we detect either a Fire (BBW expansion) or a Phoenix (STD expansion).
-                      Otherwise return ''.
+                    For Ember rows only:
+                      • Find the first MIDAS_Bull anchor.
+                      • Slice ±lookaround bars around that anchor.
+                      • If either '🔥' in 'BBW Expansion Alert' OR
+                        '🐦‍🔥' in 'F% STD Expansion' is present → 'Confirmed'.
+                      • Else '' (plain Ember).
                     """
-                    # Only apply to Ember prototypes
+                
+                    # 1️⃣ Only act on Ember prototypes
                     if row.get("Prototype", "") != "Ember":
                         return ""
                 
-                    # Find Bull anchor (first valid)
+                    # 2️⃣ Locate the Bull MIDAS anchor
                     anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
                     if anchor_idx is None:
-                        return ""
+                        return ""             # no anchor, no suffix
                 
                     anchor_loc = intraday.index.get_loc(anchor_idx)
                 
-                    # Slice ±lookaround bars around the anchor
+                    # 3️⃣ Slice ±lookaround bars around the anchor
                     lo = max(0, anchor_loc - lookaround)
-                    hi = min(len(intraday), anchor_loc + lookaround + 1)
-                    win = intraday.iloc[lo:hi]
+                    hi = min(len(intraday) - 1, anchor_loc + lookaround)
+                    win = intraday.iloc[lo : hi + 1]
                 
-                    # Support both naming variants
-                    bbw_cols = [c for c in ["BBW Expansion Alert", "BBW_Alert", "BBW Alert"] if c in win.columns]
-                    std_cols = [c for c in ["F% STD Expansion", "STD_Alert", "STD Alert"] if c in win.columns]
-                
-                    has_fire = any(win[c].astype(str).str.contains("🔥").any() for c in bbw_cols) if bbw_cols else False
-                    has_phnx = any(win[c].astype(str).str.contains("🐦‍🔥").any() for c in std_cols) if std_cols else False
+                    # 4️⃣ Check the two exact columns you gave
+                    has_fire = (
+                        "BBW Expansion Alert" in win.columns
+                        and win["BBW Expansion Alert"].astype(str).str.contains("🔥").any()
+                    )
+                    has_phnx = (
+                        "F% STD Expansion" in win.columns
+                        and win["F% STD Expansion"].astype(str).str.contains("🐦‍🔥").any()
+                    )
                 
                     return "Confirmed" if (has_fire or has_phnx) else ""
+   
 
                 
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
