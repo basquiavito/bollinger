@@ -9288,21 +9288,21 @@ if st.sidebar.button("Run Analysis"):
                 )
 
                     # 💰 Goldmine markers
-                goldmine_mask = intraday["Goldmine_Emoji"] == "💰"
+                # goldmine_mask = intraday["Goldmine_Emoji"] == "💰"
                 
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[goldmine_mask, "Time"],
-                        y=intraday.loc[goldmine_mask, "F_numeric"] + 33,   # offset so emoji floats above
-                        mode="text",
-                        text=["💰"] * goldmine_mask.sum(),
-                        textposition="top center",
-                        textfont=dict(size=40, color="gold"),
-                        name="Goldmine 💰",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Reached the Goldmine 💰<extra></extra>"
-                    ),
-                    row=1, col=1
-                )
+                # fig.add_trace(
+                #     go.Scatter(
+                #         x=intraday.loc[goldmine_mask, "Time"],
+                #         y=intraday.loc[goldmine_mask, "F_numeric"] + 33,   # offset so emoji floats above
+                #         mode="text",
+                #         text=["💰"] * goldmine_mask.sum(),
+                #         textposition="top center",
+                #         textfont=dict(size=40, color="gold"),
+                #         name="Goldmine 💰",
+                #         hovertemplate="Time: %{x}<br>F%: %{y}<br>Reached the Goldmine 💰<extra></extra>"
+                #     ),
+                #     row=1, col=1
+                # )
 
 
                 fig.add_trace(go.Scatter(
