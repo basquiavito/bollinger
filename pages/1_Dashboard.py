@@ -7137,7 +7137,58 @@ if st.sidebar.button("Run Analysis"):
                         pae_values.append(abs(int(round(pain, 0))))
                 
                     entries_df["PAE_2to3"] = pae_values
-                    return entries_df
+                                     return entries_df
+                 def compute_pae_3to40F(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
+                     """Compute PAE from Entry 3 until reaching +40F% in favor of the trade."""
+                     pae_values = []
+                 
+                     for _, row in entries_df.iterrows():
+                         if "🎯3" not in row["Type"]:
+                             pae_values.append("")
+                             continue
+                 
+                         entry_time = row["Time"]
+                         entry_type = row["Type"]
+                         entry_f = row["F%"]
+                 
+                         # Locate the entry index
+                         entry_idx = intraday.index[
+                             pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                         ][0]
+                         entry_loc = intraday.index.get_loc(entry_idx)
+                 
+                         # Scan forward from entry
+                         forward = intraday.iloc[entry_loc + 1 :]
+                         f_series = forward["F_numeric"]
+                 
+                         # Track pain and stop once target is reached
+                         worst_pain = 0
+                         target_reached = False
+                 
+                         for f in f_series:
+                             if "Call" in entry_type:
+                                 # Pain is dip below entry
+                                 if f < entry_f:
+                                     worst_pain = max(worst_pain, entry_f - f)
+                 
+                                 # Target = +40F
+                                 if f >= entry_f + 40:
+                                     target_reached = True
+                                     break
+                 
+                             else:  # Put
+                                 if f > entry_f:
+                                     worst_pain = max(worst_pain, f - entry_f)
+                 
+                                 if f <= entry_f - 40:
+                                     target_reached = True
+                                     break
+                 
+                         # Assign result
+                         pae_values.append(worst_pain if target_reached else "")
+                 
+                     entries_df["PAE_3to40F"] = pae_values
+                     return entries_df
 
              
                 def assign_prototype(row):
