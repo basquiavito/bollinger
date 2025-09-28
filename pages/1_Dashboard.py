@@ -7059,7 +7059,52 @@ if st.sidebar.button("Run Analysis"):
                     phoenix_seen = win["STD_Alert"].astype(str).str.contains("🐦‍🔥").any() if "STD_Alert" in win.columns else False
                 
                     return "Confirmed" if (fire_seen or phoenix_seen) else ""
-
+                
+                def assign_suffix_simple(row, intraday, perimeter=7):
+                    """
+                    Detect suffix for Ember/Cliff entries:
+                    - If 🔥 or 🐦‍🔥 appears → VolConfirmed
+                    - If NO volatility but RVOL spike > 1.2 → Stampede
+                    """
+                
+                    entry_time = row["Time"]
+                    entry_type = row["Type"]
+                
+                    # Pick the right anchor
+                    if "Call" in entry_type:
+                        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
+                    else:
+                        anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
+                
+                    if anchor_idx is None:
+                        return ""
+                
+                    # Find entry index
+                    entry_locs = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
+                    if len(entry_locs) == 0:
+                        return ""
+                    entry_idx = entry_locs[0]
+                
+                    anchor_loc = intraday.index.get_loc(anchor_idx)
+                
+                    # Window around anchor → [anchor-7 … anchor+7]
+                    start_loc = max(0, anchor_loc - perimeter)
+                    end_loc   = min(len(intraday), anchor_loc + perimeter + 1)
+                    window = intraday.iloc[start_loc:end_loc]
+                
+                    # --- Check volatility signals
+                    vol_confirm = (window["BBW Alert"] == "🔥").any() or (window["STD_Alert"] == "🐦‍🔥").any()
+                
+                    # --- Check RVOL spike
+                    vol_spike = (window["RVOL_5"] > 1.2).any()
+                
+                    # Logic
+                    if vol_confirm:
+                        return "VolConfirmed"
+                    elif vol_spike:
+                        return "Stampede"
+                
+                    return ""
 
                 
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
@@ -7175,8 +7220,9 @@ if st.sidebar.button("Run Analysis"):
                    .sort_values("Time")
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
-                    session_confirm = anchor_vol_confirm(intraday)   # "Confirmed" or ""
-                    df["Suffix"] = session_confirm                   # same value for every row
+                    # session_confirm = anchor_vol_confirm(intraday)   # "Confirmed" or ""
+                    # df["Suffix"] = session_confirm                   # same value for every row
+                    df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
 
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
                     df["Prefix"] = df.apply(
