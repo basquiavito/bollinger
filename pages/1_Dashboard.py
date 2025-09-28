@@ -7071,35 +7071,35 @@ if st.sidebar.button("Run Analysis"):
                 #          df.drop(columns=["Time_dt"], inplace=True)
                      
                 #          return df
-                  def add_exit_columns(df: pd.DataFrame) -> pd.DataFrame:
-                      """
-                      For each Call 🎯1 → find the next Put 🎯1 and set Exit Time/Exit Price.
-                      For each Put 🎯1 → find the next Call 🎯1 and set Exit Time/Exit Price.
-                      Works row-by-row so multiple Entry 1s in the same day are handled independently.
-                      """
-                  
-                      df = df.copy()
-                      df["Exit Time"] = ""
-                      df["Exit Price ($)"] = ""
-                  
-                      for i, row in df.iterrows():
-                          if row["Type"] == "Call 🎯1":
-                              # look forward for next Put 🎯1
-                              opposite = df[(df.index > i) & (df["Type"] == "Put 🎯1")]
-                              if not opposite.empty:
-                                  exit_row = opposite.iloc[0]
-                                  df.at[i, "Exit Time"] = exit_row["Time"]
-                                  df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
-                  
-                          elif row["Type"] == "Put 🎯1":
-                              # look forward for next Call 🎯1
-                              opposite = df[(df.index > i) & (df["Type"] == "Call 🎯1")]
-                              if not opposite.empty:
-                                  exit_row = opposite.iloc[0]
-                                  df.at[i, "Exit Time"] = exit_row["Time"]
-                                  df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
-                  
-                      return df
+                 def add_exit_columns(df: pd.DataFrame) -> pd.DataFrame:
+                     """
+                     For each Call 🎯1 → find the next Put 🎯1 and set Exit Time/Exit Price.
+                     For each Put 🎯1 → find the next Call 🎯1 and set Exit Time/Exit Price.
+                     Works row-by-row so multiple Entry 1s in the same day are handled independently.
+                     """
+                 
+                     df = df.copy()
+                     df["Exit Time"] = ""
+                     df["Exit Price ($)"] = ""
+                 
+                     for i, row in df.iterrows():
+                         if row["Type"] == "Call 🎯1":
+                             # look forward for next Put 🎯1
+                             opposite = df[(df.index > i) & (df["Type"] == "Put 🎯1")]
+                             if not opposite.empty:
+                                 exit_row = opposite.iloc[0]
+                                 df.at[i, "Exit Time"] = exit_row["Time"]
+                                 df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
+                 
+                         elif row["Type"] == "Put 🎯1":
+                             # look forward for next Call 🎯1
+                             opposite = df[(df.index > i) & (df["Type"] == "Call 🎯1")]
+                             if not opposite.empty:
+                                 exit_row = opposite.iloc[0]
+                                 df.at[i, "Exit Time"] = exit_row["Time"]
+                                 df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
+                 
+                     return df
 
                 def anchor_vol_confirm(intraday: pd.DataFrame, lookaround: int = 7) -> str:
                     """
