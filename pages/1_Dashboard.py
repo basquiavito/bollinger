@@ -7755,6 +7755,7 @@ if st.sidebar.button("Run Analysis"):
                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
 
                                        }),
+                    start_date = datetime.date.today().strftime("%Y-%m-%d")
 
           
                     df = (pd.DataFrame(entries)
@@ -7763,6 +7764,8 @@ if st.sidebar.button("Run Analysis"):
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
+                    df["Date"] = start_date
+
                     df = add_exit_columns(df)   # ✅ just like the others, but cleaner
                     df = compute_pae_1to2(df, intraday)
                                     # 👉 map the next stall (🚪) *after* each entry row
