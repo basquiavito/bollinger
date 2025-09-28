@@ -7620,8 +7620,38 @@ if st.sidebar.button("Run Analysis"):
                         gain_f
                     ])
 
+               
+                def map_change_and_duration(row, intraday: pd.DataFrame):
+                   """
+                   For a given entry row, find its exit and compute:
+                   - Change in $ and F%
+                   - Duration (minutes)
+                   """
+                   entry_time = row["Time"]
+                   locs = intraday.index[
+                       pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                   ]
+                   if len(locs) == 0:
+                       return pd.Series(["", "", ""])
+                   
+                   entry_idx = locs[0]
+                   entry_loc = intraday.index.get_loc(entry_idx)
+               
+                   # Scan forward for first Exit emoji (❌) if you have one
+                   fwd = intraday.iloc[entry_loc+1:]
+                   hits = fwd[fwd.get("Exit_Emoji", "") == "❌"]
+                   if hits.empty:
+                       return pd.Series(["", "", ""])
+               
+                   r = hits.iloc[0]
+               
+                   # Compute metrics
+                   change_dollar = r["Close"] - row["Price ($)"]
+                   change_f = r["F_numeric"] - row["F%"]
+                   duration = (pd.to_datetime(r["Time"]) - pd.to_datetime(row["Time"])).seconds // 60
+               
+                   return pd.Series([change_dollar, change_f, duration])
 
- 
 
                
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
@@ -7774,9 +7804,12 @@ if st.sidebar.button("Run Analysis"):
                     df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price ($)"]] = df.apply(
                         map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
                     )
-
-
-
+                    df[["Change ($)", "Change (F%)", "Duration (min)"]] = df.apply(
+                        map_change_and_duration, axis=1, args=(intraday,), result_type="expand"
+                    )
+                    
+                    
+                    
 
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
