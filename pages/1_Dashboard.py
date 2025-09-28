@@ -7833,20 +7833,38 @@ if st.sidebar.button("Run Analysis"):
                 # Optional: persist expander state across reruns
                 st.session_state.setdefault("expand_entries", True)
 
-               # ----------  UI ----------
-                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                    st.dataframe(entries_df, use_container_width=True)
+               # # ----------  UI ----------
+               #  with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+               #      st.dataframe(entries_df, use_container_width=True)
                 
-                    # --- No-rerun download link ---
-                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-                    b64 = base64.b64encode(csv_bytes).decode("utf-8")
-                    file_name = "entries.csv"
+               #      # --- No-rerun download link ---
+               #      csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+               #      b64 = base64.b64encode(csv_bytes).decode("utf-8")
+               #      file_name = "entries.csv"
                 
-                    st.markdown(
-                        f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
-                        unsafe_allow_html=True
-                    )
-  
+               #      st.markdown(
+               #          f'<a href="data:text/csv;base64,{b64}" download="{file_name}">⬇️ Download Entries (no rerun)</a>',
+               #          unsafe_allow_html=True
+               #      )
+  # ----------  UI ----------
+               with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                   st.dataframe(entries_df, use_container_width=True)
+               
+                   # --- CSV Download ---
+                   csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                   csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                   st.markdown(
+                       f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
+                       unsafe_allow_html=True
+                   )
+               
+                   # --- JSON Download ---
+                   json_str = entries_df.to_json(orient="records", indent=2)
+                   json_b64 = base64.b64encode(json_str.encode()).decode("utf-8")
+                   st.markdown(
+                       f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
+                       unsafe_allow_html=True
+                   )
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
