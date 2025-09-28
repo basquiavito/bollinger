@@ -6891,7 +6891,7 @@ if st.sidebar.button("Run Analysis"):
                             continue
                 
                         if out.at[out.index[i], "Side_Dist_F"] <= tol:
-                            out.at[out.index[i], "T1_Emoji"] = "⏩"
+                            out.at[out.index[i], "T1_Emoji"] = "🏇🏼"
                             break  # only first acceleration
                     return out
                 
@@ -7501,7 +7501,7 @@ if st.sidebar.button("Run Analysis"):
                     df[["T0_Emoji", "T0_Time", "T0 Price ($)"]] = df.apply(
                         map_stall_after_entry, axis=1, args=(intraday,), result_type="expand"
                     )
-                    # ⏩ map the first acceleration beyond band after each entry (typically after Entry 1)
+                    # 🏇🏼 map the first acceleration beyond band after each entry (typically after Entry 1)
                     df[["T1_Emoji", "T1_Time", "T1 Price ($)"]] = df.apply(
                         map_t1_after_entry, axis=1, args=(intraday,), result_type="expand"
                     )
