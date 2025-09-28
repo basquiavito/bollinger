@@ -7038,11 +7038,11 @@ if st.sidebar.button("Run Analysis"):
 
 
                 def assign_prefix(row, profile_df):
-                f_val = row["F%"]
-                # Find row in profile_df with matching F% level
-                profile_row = profile_df.loc[profile_df["F% Level"] == f_val]
-                tail_exists = not profile_row.empty and "🪶" in profile_row.get("Tail", "").values
-                return "Tailbone" if tail_exists else ""
+                    f_val = row["F%"]
+                    # Find row in profile_df with matching F% level
+                    profile_row = profile_df.loc[profile_df["F% Level"] == f_val]
+                    tail_exists = not profile_row.empty and "🪶" in profile_row.get("Tail", "").values
+                    return "Tailbone" if tail_exists else ""
 
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
