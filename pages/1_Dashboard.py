@@ -7621,8 +7621,7 @@ if st.sidebar.button("Run Analysis"):
                     ])
 
 
-                print(intraday["Type"].value_counts())
-
+ 
 
                
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
@@ -7763,16 +7762,17 @@ if st.sidebar.button("Run Analysis"):
                     )
 
                     df[["Parallel_Emoji", "Parallel_Time", "Parallel_Gain"]] = df.apply(
-                    map_parallel_after_t2, axis=1, args=(intraday,)
+                    map_parallel_after_t2, axis=1, args=(intraday,), result_type="expand"
                      )
 
-                    df[["Goldmine_Emoji", "Goldmine_Time", "Goldmine Price ($)"]] = df.apply(
-                    map_goldmine_after_e2, axis=1, args=(intraday,), result_type="expand"
-                     )
-
-
-                    df[["Goldmine_Emoji", "Goldmine_Time", "Goldmine Price ($)"]] = df.apply(
-                    map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
+                    # E2 route
+                    df[["Goldmine_E2_Emoji", "Goldmine_E2_Time", "Goldmine_E2 Price ($)"]] = df.apply(
+                        map_goldmine_after_e2, axis=1, args=(intraday,), result_type="expand"
+                    )
+                    
+                    # T1 route
+                    df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price ($)"]] = df.apply(
+                        map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
                     )
 
                     df =  compute_pae_2to3(df, intraday)
