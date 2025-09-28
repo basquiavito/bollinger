@@ -6930,7 +6930,7 @@ if st.sidebar.button("Run Analysis"):
                     start_i = min(i for i in [first_call_i, first_put_i] if i is not None)
                 
                     # Find T1
-                    t1_idx = out.index[out["T1_Emoji"] == "⏩"]
+                    t1_idx = out.index[out["T1_Emoji"] == "🏇🏼"]
                     if len(t1_idx) == 0:
                         out["T2_Emoji"] = ""
                         return out
@@ -6974,7 +6974,7 @@ if st.sidebar.button("Run Analysis"):
                     out["Parallel_Emoji"] = ""
                 
                     # Find T1
-                    t1_idx = out.index[out["T1_Emoji"] == "⏩"]
+                    t1_idx = out.index[out["T1_Emoji"] == "🏇🏼"]
                     if len(t1_idx) == 0:
                         return out
                 
