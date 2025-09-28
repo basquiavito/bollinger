@@ -7448,23 +7448,63 @@ if st.sidebar.button("Run Analysis"):
                             return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
                 
                     return pd.Series(["", "", ""])
-                def add_goldmine(intraday, dist=120):
+
+
+                def add_goldmine_from_e2(intraday, dist=120):
                     """
-                    Marks 💰 Goldmine:
-                    After T1 (🏇🏼), when price (F_numeric) has moved at least `dist` F%
-                    away from Kijun_F in the correct direction.
+                    Marks 💰 Goldmine from Entry 2:
+                    After Call/Put Entry 2 (Kijun cross), when price (F_numeric) moves at least
+                    `dist` F% away from Kijun_F in the correct direction.
                     """
                     out = intraday.copy()
-                    out["Goldmine_Emoji"] = ""
+                    out["Goldmine_E2_Emoji"] = ""
+                
+                    # Find Entry 2 indexes
+                    entry2_idx = list(out.index[out["Call_SecondEntry_Emoji"] == "🎯2"]) + \
+                                 list(out.index[out["Put_SecondEntry_Emoji"]  == "🎯2"])
+                    entry2_idx = sorted(entry2_idx)
+                
+                    if not entry2_idx:
+                        return out
+                
+                    for start in entry2_idx:
+                        # Determine trade side
+                        side = "call" if out.at[start, "Call_SecondEntry_Emoji"] == "🎯2" else "put"
+                
+                        for i in range(start + 1, len(out)):
+                            mike = out.at[out.index[i], "F_numeric"]
+                            kijun = out.at[out.index[i], "Kijun_F"]
+                
+                            if pd.isna(mike) or pd.isna(kijun):
+                                continue
+                
+                            if side == "call" and mike - kijun >= dist:
+                                out.at[out.index[i], "Goldmine_E2_Emoji"] = "💰"
+                                break
+                            if side == "put" and kijun - mike >= dist:
+                                out.at[out.index[i], "Goldmine_E2_Emoji"] = "💰"
+                                break
+                
+                    return out
+                
+                
+                def add_goldmine_from_t1(intraday, dist=120):
+                    """
+                    Marks 💰 Goldmine from T1 (🏇🏼):
+                    After T1, when price (F_numeric) has moved at least `dist` F% away from Kijun_F
+                    in the correct direction.
+                    """
+                    out = intraday.copy()
+                    out["Goldmine_T1_Emoji"] = ""
                 
                     # Find T1
                     t1_idx = out.index[out["T1_Emoji"] == "🏇🏼"]
                     if len(t1_idx) == 0:
                         return out
                 
-                    start_i = out.index.get_loc(t1_idx[0])
+                    start = out.index.get_loc(t1_idx[0])
                 
-                    # Determine trade side
+                    # Determine side (from Entry 1)
                     side = None
                     if any(out["Call_FirstEntry_Emoji"] == "🎯"):
                         side = "call"
@@ -7474,28 +7514,32 @@ if st.sidebar.button("Run Analysis"):
                     if side is None:
                         return out
                 
-                    # Scan forward for Goldmine
-                    for i in range(start_i + 1, len(out)):
+                    for i in range(start + 1, len(out)):
                         mike = out.at[out.index[i], "F_numeric"]
                         kijun = out.at[out.index[i], "Kijun_F"]
                 
                         if pd.isna(mike) or pd.isna(kijun):
                             continue
                 
-                        # Call case
                         if side == "call" and mike - kijun >= dist:
-                            out.at[out.index[i], "Goldmine_Emoji"] = "💰"
+                            out.at[out.index[i], "Goldmine_T1_Emoji"] = "💰"
                             break
-                        # Put case
                         if side == "put" and kijun - mike >= dist:
-                            out.at[out.index[i], "Goldmine_Emoji"] = "💰"
+                            out.at[out.index[i], "Goldmine_T1_Emoji"] = "💰"
                             break
                 
                     return out
                 
-                # Apply
-                intraday = add_goldmine(intraday)
+                
+                # ✅ Apply both
+                intraday = add_goldmine_from_e2(intraday, dist=120)
+                intraday = add_goldmine_from_t1(intraday, dist=120)
+                
+                
 
+
+
+             
                 def map_parallel_after_t2(row, intraday: pd.DataFrame):
                     """
                     For a given entry row, find T2 (⚡), then track the Parallel phase.
