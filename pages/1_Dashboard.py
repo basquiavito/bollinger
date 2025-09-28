@@ -7621,7 +7621,6 @@ if st.sidebar.button("Run Analysis"):
                     ])
 
             
-                 df = add_change_and_duration(df)
 
     
                 def add_change_and_duration(df: pd.DataFrame) -> pd.DataFrame:
@@ -7657,6 +7656,13 @@ if st.sidebar.button("Run Analysis"):
              
                  df[["Change ($)", "Duration (min)"]] = df.apply(_calc, axis=1)
                  return df
+                 
+                 
+                 
+                 
+                 df = add_change_and_duration(df)
+
+                 
                  def map_change_and_duration(row, intraday: pd.DataFrame):
                      """
                      For a given Entry 1 row, find its paired Exit and return
