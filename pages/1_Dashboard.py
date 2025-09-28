@@ -7448,6 +7448,53 @@ if st.sidebar.button("Run Analysis"):
                             return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
                 
                     return pd.Series(["", "", ""])
+                def add_goldmine(intraday, dist=120):
+                    """
+                    Marks 💰 Goldmine:
+                    After T1 (🏇🏼), when price (F_numeric) has moved at least `dist` F%
+                    away from Kijun_F in the correct direction.
+                    """
+                    out = intraday.copy()
+                    out["Goldmine_Emoji"] = ""
+                
+                    # Find T1
+                    t1_idx = out.index[out["T1_Emoji"] == "🏇🏼"]
+                    if len(t1_idx) == 0:
+                        return out
+                
+                    start_i = out.index.get_loc(t1_idx[0])
+                
+                    # Determine trade side
+                    side = None
+                    if any(out["Call_FirstEntry_Emoji"] == "🎯"):
+                        side = "call"
+                    elif any(out["Put_FirstEntry_Emoji"] == "🎯"):
+                        side = "put"
+                
+                    if side is None:
+                        return out
+                
+                    # Scan forward for Goldmine
+                    for i in range(start_i + 1, len(out)):
+                        mike = out.at[out.index[i], "F_numeric"]
+                        kijun = out.at[out.index[i], "Kijun_F"]
+                
+                        if pd.isna(mike) or pd.isna(kijun):
+                            continue
+                
+                        # Call case
+                        if side == "call" and mike - kijun >= dist:
+                            out.at[out.index[i], "Goldmine_Emoji"] = "💰"
+                            break
+                        # Put case
+                        if side == "put" and kijun - mike >= dist:
+                            out.at[out.index[i], "Goldmine_Emoji"] = "💰"
+                            break
+                
+                    return out
+                
+                # Apply
+                intraday = add_goldmine(intraday)
 
                 def map_parallel_after_t2(row, intraday: pd.DataFrame):
                     """
@@ -9237,19 +9284,7 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-                # # 🎧 Cross Plot
-                # mask_headphone = intraday["Headphone_Cross_Emoji"] == "🎧"
-                # fig.add_trace(go.Scatter(
-                #     x=intraday.loc[mask_headphone, "Time"],
-                #     y=intraday.loc[mask_headphone, "F_numeric"] + 30,  # Offset above
-                #     mode="text",
-                #     text=["🎧"] * mask_headphone.sum(),
-                #     textposition="top center",
-                #     textfont=dict(size=26),
-                #     name="Crossed Ear/Nose Line",
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Ear/Nose Line 🎧<extra></extra>"
-                # ), row=1, col=1)
-
+            
 
                 if yva_min is not None and yva_max is not None:
                     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
