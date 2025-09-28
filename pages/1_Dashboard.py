@@ -8787,20 +8787,19 @@ if st.sidebar.button("Run Analysis"):
                 
 
  
-   #(A.1) 40ish Reversal (star markers)
                 mask_40ish = intraday["40ish"] != ""
                 scatter_40ish = go.Scatter(
-                    x=intraday.loc[mask_40ish, "Time"],
-                    y=intraday.loc[mask_40ish, "F_numeric"] + 89,
-                    mode="markers",
-                    marker_symbol="star",
-                    marker_size=18,
-                    marker_color="gold",
-                    name="40ish Reversal",
-                    text=intraday.loc[mask_40ish, "40ish"],
+                x=intraday.loc[mask_40ish, "Time"],
+                y=intraday.loc[mask_40ish, "F_numeric"] + 89,
+                mode="markers",
+                marker_symbol="star",
+                marker_size=18,
+                marker_color="gold",
+                name="40ish Reversal",
+                text=intraday.loc[mask_40ish, "40ish"],
 
-                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                # )
+                hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+             
                 fig.add_trace(scatter_40ish, row=1, col=1)
 
                 astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
