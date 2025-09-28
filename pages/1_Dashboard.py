@@ -9160,7 +9160,7 @@ if st.sidebar.button("Run Analysis"):
                 fig.update_layout(
                     title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=2000,  # Increase overall figure height (default ~450-600)
+                    height=1080,  # Increase overall figure height (default ~450-600)
                     showlegend=False,
                 
 
