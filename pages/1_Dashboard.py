@@ -7770,30 +7770,30 @@ if st.sidebar.button("Run Analysis"):
                     #     map_goldmine_after_e2, axis=1, args=(intraday,), result_type="expand"
                     # )
                     
-                    # # T1 route
-                    # df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price ($)"]] = df.apply(
-                    #     map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
-                    # )
+                    # T1 route
+                    df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price ($)"]] = df.apply(
+                        map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
+                    )
 
 
-                      df[["Goldmine_E2_Emoji",
-                     "Goldmine_E2_Time",
-                     "Goldmine_E2 Price ($)"]] = df.apply(
-                         map_goldmine_after_e2,
-                         axis=1,
-                         args=(intraday,),
-                         result_type="expand"
-                 )
+                    df[["Goldmine_E2_Emoji",
+                   "Goldmine_E2_Time",
+                   "Goldmine_E2 Price ($)"]] = df.apply(
+                       map_goldmine_after_e2,
+                       axis=1,
+                       args=(intraday,),
+                       result_type="expand"
+               )
  
-                      # --- Goldmine measured from T1 (horse kick) ---
-                     df[["Goldmine_T1_Emoji",
-                         "Goldmine_T1_Time",
-                         "Goldmine_T1 Price ($)"]] = df.apply(
-                             map_goldmine_after_t1,
-                             axis=1,
-                             args=(intraday,),
-                             result_type="expand"
-                     )
+                     # --- Goldmine measured from T1 (horse kick) ---
+                    df[["Goldmine_T1_Emoji",
+                        "Goldmine_T1_Time",
+                        "Goldmine_T1 Price ($)"]] = df.apply(
+                            map_goldmine_after_t1,
+                            axis=1,
+                            args=(intraday,),
+                            result_type="expand"
+                    )
 
 
                     df =  compute_pae_2to3(df, intraday)
