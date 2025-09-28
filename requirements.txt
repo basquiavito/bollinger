@@ -8,4 +8,6 @@ kaleido
 streamlit_autorefresh
 ta
 scipy
+cloudinary
+
 requests_cache
