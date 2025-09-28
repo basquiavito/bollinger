@@ -7012,7 +7012,7 @@ if st.sidebar.button("Run Analysis"):
            
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
-                def build_entries_df(intraday: pd.DataFrame, profile_df: pd.DataFrame, f_bins) -> pd.DataFrame:
+                def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
                     """Build the tidy entries table (runs once unless `intraday` changes)."""
                     entries: List[dict] = []
             
