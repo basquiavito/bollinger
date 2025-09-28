@@ -7824,6 +7824,8 @@ if st.sidebar.button("Run Analysis"):
                 @st.cache_data(show_spinner=False)
                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
                     """Create CSV bytes from df (cached)."""
+                    df = clean_column_names(df)
+
                     return df.to_csv(index=False).encode("utf-8")
                 
                 
