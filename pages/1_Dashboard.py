@@ -9090,8 +9090,8 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[parallel_mask, "Time"],
                         y=intraday.loc[parallel_mask, "F_numeric"] + 33,
                         mode="text",
-                        n = int(parallel_mask.sum()),
-                        text = ["⚡"] * n,
+                        text=["⚡"] * parallel_mask.sum()   # ❌ numpy.int64 can break this
+
                         textposition="top center",
                         textfont=dict(size=21, color="orange"),
                         name="Parallel ⚡",
