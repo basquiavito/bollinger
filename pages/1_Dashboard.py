@@ -7645,8 +7645,11 @@ if st.sidebar.button("Run Analysis"):
                     df[["Parallel_Emoji", "Parallel_Time", "Parallel_Gain"]] = df.apply(
                     map_parallel_after_t2, axis=1, args=(intraday,)
                      )
-
-                    df =  compute_pae_2to3(df, intraday)
+                    # 👸 Map the Princess milestone (distance from Kijun after T2 + Parallel)
+                    df[["Princess_Emoji", "Princess_Time", "Princess Price ($)"]] = df.apply(
+                        map_princess_after_t2, axis=1, args=(intraday,), result_type="expand"
+                    )
+                                        df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
                  
                     df["Prefix"] = df.apply(
