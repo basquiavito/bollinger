@@ -7342,7 +7342,33 @@ if st.sidebar.button("Run Analysis"):
                 
                     return ""
 
+                def map_stall_after_entry(row, intraday: pd.DataFrame):
+                    """For a given entry row, find the first 🚪 after that bar and return (emoji, time, price)."""
+                    # locate the entry bar by HH:MM
+                    entry_time = row["Time"]
+                    locs = intraday.index[
+                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                    ]
+                    if len(locs) == 0:
+                        return pd.Series(["", "", ""])
                 
+                    entry_idx = locs[0]
+                    entry_loc = intraday.index.get_loc(entry_idx)
+                
+                    # scan forward for the first door
+                    fwd = intraday.iloc[entry_loc+1:]
+                    hits = fwd[fwd.get("T0_Emoji", "") == "🚪"]
+                    if hits.empty:
+                        return pd.Series(["", "", ""])
+                
+                    r = hits.iloc[0]
+                    # return emoji, time (HH:MM), and price
+                    return pd.Series([
+                        "🚪",
+                        pd.to_datetime(r["Time"]).strftime("%H:%M"),
+                        r["Close"]
+                    ])
+
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
                      Prefix = 'Tailbone' if any 🪶 Tail exists from (anchor-3 bars) through the entry bar,
@@ -7466,7 +7492,11 @@ if st.sidebar.button("Run Analysis"):
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
                     df = add_exit_columns(df)   # ✅ just like the others, but cleaner
                     df = compute_pae_1to2(df, intraday)
-                
+                                    # 👉 map the next stall (🚪) *after* each entry row
+                    df[["T0_Emoji", "T0_Time", "T0 Price ($)"]] = df.apply(
+                        map_stall_after_entry, axis=1, args=(intraday,), result_type="expand"
+                    )
+
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
                  
