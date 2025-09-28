@@ -7408,46 +7408,46 @@ if st.sidebar.button("Run Analysis"):
                         r["Close"],
                     ])
  
-              def map_goldmine_after_t1(row, intraday: pd.DataFrame, thresh=120):
-                  """
-                  From T1 forward, check if Mike reaches the Goldmine 💰.
-                  Goldmine = ±120 F% beyond Kijun_F.
-                  Works for both Call and Put entries.
-                  """
-                  # locate entry row
-                  entry_time = row["Time"]
-                  locs = intraday.index[
-                      pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                  ]
-                  if len(locs) == 0:
-                      return pd.Series(["", "", ""])
-              
-                  entry_idx = locs[0]
-                  entry_loc = intraday.index.get_loc(entry_idx)
-              
-                  # find T1
-                  fwd = intraday.iloc[entry_loc+1:]
-                  t1_hits = fwd[fwd.get("T1_Emoji", "") == "🏇🏼"]
-                  if t1_hits.empty:
-                      return pd.Series(["", "", ""])
-                  t1_idx = t1_hits.index[0]
-                  t1_loc = intraday.index.get_loc(t1_idx)
-              
-                  # scan forward from T1
-                  fwd_after_t1 = intraday.iloc[t1_loc+1:]
-                  for i, r in fwd_after_t1.iterrows():
-                      mike = r["F_numeric"]
-                      kijun = r.get("Kijun_F", None)
-              
-                      if pd.isna(mike) or pd.isna(kijun):
-                          continue
-              
-                      if "Call" in row["Type"] and mike >= kijun + thresh:
-                          return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
-                      if "Put" in row["Type"] and mike <= kijun - thresh:
-                          return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
-              
-                  return pd.Series(["", "", ""])
+                def map_goldmine_after_t1(row, intraday: pd.DataFrame, thresh=120):
+                    """
+                    From T1 forward, check if Mike reaches the Goldmine 💰.
+                    Goldmine = ±120 F% beyond Kijun_F.
+                    Works for both Call and Put entries.
+                    """
+                    # locate entry row
+                    entry_time = row["Time"]
+                    locs = intraday.index[
+                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                    ]
+                    if len(locs) == 0:
+                        return pd.Series(["", "", ""])
+                
+                    entry_idx = locs[0]
+                    entry_loc = intraday.index.get_loc(entry_idx)
+                
+                    # find T1
+                    fwd = intraday.iloc[entry_loc+1:]
+                    t1_hits = fwd[fwd.get("T1_Emoji", "") == "🏇🏼"]
+                    if t1_hits.empty:
+                        return pd.Series(["", "", ""])
+                    t1_idx = t1_hits.index[0]
+                    t1_loc = intraday.index.get_loc(t1_idx)
+                
+                    # scan forward from T1
+                    fwd_after_t1 = intraday.iloc[t1_loc+1:]
+                    for i, r in fwd_after_t1.iterrows():
+                        mike = r["F_numeric"]
+                        kijun = r.get("Kijun_F", None)
+                
+                        if pd.isna(mike) or pd.isna(kijun):
+                            continue
+                
+                        if "Call" in row["Type"] and mike >= kijun + thresh:
+                            return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
+                        if "Put" in row["Type"] and mike <= kijun - thresh:
+                            return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
+                
+                    return pd.Series(["", "", ""])
 
                 def map_parallel_after_t2(row, intraday: pd.DataFrame):
                     """
