@@ -7009,15 +7009,18 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
-                def assign_label(row, intraday, profile_df):
-                    # Only label Entry 1 and 2
+                def assign_label(row, intraday, profile_df, f_bins):
+            # Only label Entry 1 and 2
                     if not any(tag in row["Type"] for tag in ["🎯1", "🎯2"]):
                         return ""
                 
                     f_val = row["F%"]
                 
-                    # Look up Ear/Nose markers from profile_df
-                    profile_row = profile_df.loc[profile_df["F% Level"] == f_val]
+                    # Align F% with profile bins
+                    bin_val = f_bins[np.digitize([f_val], f_bins) - 1][0]
+                
+                    # Get profile row for that bin
+                    profile_row = profile_df.loc[profile_df["F% Level"] == bin_val]
                     ear = "🦻🏼" in profile_row.get("🦻🏼", "").values
                     nose = "👃🏽" in profile_row.get("👃🏽", "").values
                 
@@ -7040,11 +7043,10 @@ if st.sidebar.button("Run Analysis"):
                 
                     return ""
 
-                
             
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
-                def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
+                def build_entries_df(intraday: pd.DataFrame, profile_df: pd.DataFrame, f_bins) -> pd.DataFrame:
                     """Build the tidy entries table (runs once unless `intraday` changes)."""
                     entries: List[dict] = []
             
@@ -7096,7 +7098,7 @@ if st.sidebar.button("Run Analysis"):
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
-                    df["Label"] = df.apply(assign_label, axis=1, args=(intraday, profile_df))
+                    df["Label"] = df.apply(assign_label, axis=1, args=(intraday, profile_df, f_bins))
 
                     return df
                   # ✅ compute PAE before returning
