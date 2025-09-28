@@ -7621,7 +7621,7 @@ if st.sidebar.button("Run Analysis"):
                     ])
 
 
-                print(df["Type"].value_counts())
+                print(intraday["Type"].value_counts())
 
 
                
