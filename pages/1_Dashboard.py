@@ -7137,7 +7137,7 @@ if st.sidebar.button("Run Analysis"):
                         pae_values.append(abs(int(round(pain, 0))))
                 
                     entries_df["PAE_2to3"] = pae_values
-                                     return entries_df
+                        return entries_df
                 def compute_pae_3to40F(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
                     """Compute PAE from Entry 3 until reaching +40F% in favor of the trade."""
                     pae_values = []
