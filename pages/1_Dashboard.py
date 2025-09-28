@@ -7027,6 +7027,62 @@ if st.sidebar.button("Run Analysis"):
                 
                     return ""
 
+
+                
+                def compute_pae_1to2(entries_df, intraday):
+                    # Initialize PAE column
+                    entries_df["PAE_1to2"] = ""
+                
+                    for idx, row in entries_df.iterrows():
+                        if "🎯1" not in row["Type"]:
+                            continue  # only process Entry 1
+                
+                        entry_time = row["Time"]
+                        entry_type = row["Type"]
+                        entry_f = row["F%"]
+                
+                        # Locate entry index in intraday
+                        entry_idx = intraday.index[
+                            pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                        ][0]
+                
+                        # Find the next Entry 2 of the same side
+                        if "Call" in entry_type:
+                            next_entries = entries_df[
+                                (entries_df["Type"] == "Call 🎯2") &
+                                (entries_df.index > idx)
+                            ]
+                        else:
+                            next_entries = entries_df[
+                                (entries_df["Type"] == "Put 🎯2") &
+                                (entries_df.index > idx)
+                            ]
+                
+                        if next_entries.empty:
+                            continue  # no Entry 2 found → leave blank
+                
+                        # Take the first matching Entry 2
+                        exit_time = next_entries.iloc[0]["Time"]
+                        exit_idx = intraday.index[
+                            pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == exit_time
+                        ][0]
+                
+                        # Subset intraday from entry to exit
+                        window = intraday.loc[entry_idx:exit_idx]
+                
+                        if "Call" in entry_type:
+                            min_f = window["F_numeric"].min()
+                            pae = max(0, entry_f - min_f)
+                        else:  # Put
+                            max_f = window["F_numeric"].max()
+                            pae = max(0, max_f - entry_f)
+                
+                        entries_df.at[idx, "PAE_1to2"] = pae
+                
+                    return entries_df
+
+
+             
                 def assign_prototype(row):
                     if "Call 🎯1" in row["Type"]:
                         return "Ember"
@@ -7232,6 +7288,12 @@ if st.sidebar.button("Run Analysis"):
                      else:
                          return ""   # fallback to plain Ember
 
+
+
+                     
+
+
+             
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
