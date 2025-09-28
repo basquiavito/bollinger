@@ -7824,7 +7824,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 
                 # ----------  Build once, reuse always ----------
-                entries_df = build_entries_df(intraday)
+                entries_df = build_entries_df(intraday).round(2)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
                 
                 # keep these in session_state so other code can reuse without recompute
