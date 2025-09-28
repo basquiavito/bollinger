@@ -7036,13 +7036,36 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-
-                def assign_prefix(row, profile_df):
-                    f_val = row["F%"]
-                    # Find row in profile_df with matching F% level
-                    profile_row = profile_df.loc[profile_df["F% Level"] == f_val]
-                    tail_exists = not profile_row.empty and "🪶" in profile_row.get("Tail", "").values
-                    return "Tailbone" if tail_exists else ""
+        
+                def assign_prefix(row, intraday):
+                    entry_time = row["Time"]
+                    entry_type = row["Type"]
+                
+                    # Find entry index in intraday
+                    entry_idx = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time][0]
+                
+                    # Pick the right anchor
+                    if "Call" in entry_type:
+                        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
+                    else:  # Put
+                        anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
+                
+                    if anchor_idx is None:
+                        return ""
+                
+                    # 1️⃣ First check the anchor bar itself
+                    if "Tail" in intraday.columns and intraday.at[anchor_idx, "Tail"] == "🪶":
+                        return "Tailbone"
+                
+                    # 2️⃣ Else scan between anchor and entry
+                    anchor_loc = intraday.index.get_loc(anchor_idx)
+                    entry_loc = intraday.index.get_loc(entry_idx)
+                    if entry_loc > anchor_loc:
+                        segment = intraday.iloc[anchor_loc:entry_loc+1]
+                        if "Tail" in segment.columns and (segment["Tail"] == "🪶").any():
+                            return "Tailbone"
+                
+                    return ""
 
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
@@ -7100,7 +7123,7 @@ if st.sidebar.button("Run Analysis"):
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
-                    df["Prefix"] = df.apply(assign_prefix, axis=1, args=(profile_df,))
+                    df["Prefix"] = df.apply(assign_prefix, axis=1, args=(intraday,))
 
 
 
