@@ -7588,6 +7588,11 @@ if st.sidebar.button("Run Analysis"):
                     df[["T2_Emoji", "T2_Time", "T2 Price ($)"]] = df.apply(
                         map_t2_after_entry, axis=1, args=(intraday,), result_type="expand"
                     )
+
+                    df[["Parallel_Emoji", "Parallel_Time", "Parallel_Gain"]] = df.apply(
+                    map_parallel_after_t2, axis=1, args=(intraday,)
+                     )
+
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
                  
