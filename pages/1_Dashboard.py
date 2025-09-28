@@ -7683,6 +7683,24 @@ if st.sidebar.button("Run Analysis"):
                          return ""   # fallback to plain Ember
 
 
+                def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
+                    """
+                    Normalize column names before CSV export:
+                    - Lowercase
+                    - Replace spaces with underscores
+                    - Remove parentheses, $, and other special chars
+                    """
+                    df = df.copy()
+                    df.columns = (
+                        df.columns
+                        .str.strip()
+                        .str.lower()
+                        .str.replace(r"[ $()]", "", regex=True)   # remove $, (, )
+                        .str.replace(" ", "_", regex=True)        # replace spaces with underscores
+                    )
+                    return df
+
+
 
                      
 
