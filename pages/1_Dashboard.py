@@ -7409,42 +7409,33 @@ if st.sidebar.button("Run Analysis"):
                     ])
  
                 def add_goldmine_from_e2(intraday, dist=120):
-                    """
-                    Marks 💰 Goldmine from Entry 2:
-                    After Call/Put Entry 2 (Kijun cross), when price (F_numeric) moves at least
-                    `dist` F% away from Kijun_F in the correct direction.
-                    """
                     out = intraday.copy()
                     out["Goldmine_E2_Emoji"] = ""
-                
-                    # Find Entry 2 indexes
-                    entry2_idx = list(out.index[out["Call_SecondEntry_Emoji"] == "🎯2"]) + \
-                                 list(out.index[out["Put_SecondEntry_Emoji"]  == "🎯2"])
-                    entry2_idx = sorted(entry2_idx)
-                
-                    if not entry2_idx:
+                    # all E2 bars
+                    e2_idx = list(out.index[out["Call_SecondEntry_Emoji"] == "🎯2"]) + \
+                             list(out.index[out["Put_SecondEntry_Emoji"]  == "🎯2"])
+                    e2_idx = sorted(e2_idx)
+                    if not e2_idx:
                         return out
                 
-                    for start in entry2_idx:
-                        # Determine trade side
-                        side = "call" if out.at[start, "Call_SecondEntry_Emoji"] == "🎯2" else "put"
-                
-                        for i in range(start + 1, len(out)):
-                            mike = out.at[out.index[i], "F_numeric"]
-                            kijun = out.at[out.index[i], "Kijun_F"]
-                
-                            if pd.isna(mike) or pd.isna(kijun):
+                    for idx in e2_idx:
+                        is_call = (out.at[idx, "Call_SecondEntry_Emoji"] == "🎯2")
+                        f_anchor = out.at[idx, "F_numeric"]
+                        if pd.isna(f_anchor):
+                            continue
+                        start = out.index.get_loc(idx)
+                        for j in range(start + 1, len(out)):
+                            f = out.iloc[j]["F_numeric"]
+                            if pd.isna(f):
                                 continue
-                
-                            if side == "call" and mike - kijun >= dist:
-                                out.at[out.index[i], "Goldmine_E2_Emoji"] = "💰"
+                            if is_call and f >= f_anchor + dist:
+                                out.iat[j, out.columns.get_loc("Goldmine_E2_Emoji")] = "💰"
                                 break
-                            if side == "put" and kijun - mike >= dist:
-                                out.at[out.index[i], "Goldmine_E2_Emoji"] = "💰"
+                            if (not is_call) and f <= f_anchor - dist:
+                                out.iat[j, out.columns.get_loc("Goldmine_E2_Emoji")] = "💰"
                                 break
-                
                     return out
-                
+
                 
                 def add_goldmine_from_t1(intraday, dist=120):
                     """
@@ -7536,18 +7527,16 @@ if st.sidebar.button("Run Analysis"):
                             return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
                 
                     return pd.Series(["", "", ""])
-
-
+                
                 def map_goldmine_after_e2(row, intraday: pd.DataFrame, dist=120):
                     """
-                    For a given Entry 2 row, find the first 💰 Goldmine milestone.
-                    Goldmine = price (F_numeric) reaching at least `dist` F% beyond Kijun_F
-                    in the correct trade direction.
-                    Returns: (emoji, time, price)
+                    From the Entry 2 bar (the row's time), find the first 💰 hit measured
+                    as ±dist F% from the *E2 bar's F_numeric* (fixed anchor).
+                    Works when df['Type'] contains 'Call 🎯2' or 'Put 🎯2'.
+                    Returns (emoji, time, price).
                     """
+                    # 1) Locate the E2 bar by HH:MM
                     entry_time = row["Time"]
-                
-                    # locate the entry 2 row by HH:MM
                     locs = intraday.index[
                         pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
                     ]
@@ -7557,39 +7546,33 @@ if st.sidebar.button("Run Analysis"):
                     entry_idx = locs[0]
                     entry_loc = intraday.index.get_loc(entry_idx)
                 
-                    # determine trade side
-                    side = None
-                    if row.get("Call_SecondEntry_Emoji", "") == "🎯":
-                        side = "call"
-                    elif row.get("Put_SecondEntry_Emoji", "") == "🎯":
-                        side = "put"
-                
-                    if side is None:
+                    # 2) Infer side/level from df['Type'] (not from emoji columns)
+                    t = str(row.get("Type", ""))
+                    is_call_e2 = ("Call" in t) and ("🎯2" in t)
+                    is_put_e2  = ("Put"  in t) and ("🎯2" in t)
+                    if not (is_call_e2 or is_put_e2):
                         return pd.Series(["", "", ""])
                 
-                    # scan forward from Entry 2 for goldmine hit
-                    fwd = intraday.iloc[entry_loc+1:]
-                    for _, r in fwd.iterrows():
-                        mike = r.get("F_numeric", None)
-                        kijun = r.get("Kijun_F", None)
+                    # 3) Fixed anchor at the E2 bar's F%
+                    f_anchor = intraday.at[entry_idx, "F_numeric"]
+                    if pd.isna(f_anchor):
+                        return pd.Series(["", "", ""])
                 
-                        if pd.isna(mike) or pd.isna(kijun):
+                    # 4) Scan forward for +/− dist F% from that anchor
+                    fwd = intraday.iloc[entry_loc + 1 :]
+                    for _, r in fwd.iterrows():
+                        f = r.get("F_numeric", None)
+                        if pd.isna(f):
                             continue
                 
-                        if side == "call" and mike - kijun >= dist:
-                            return pd.Series([
-                                "💰",
-                                pd.to_datetime(r["Time"]).strftime("%H:%M"),
-                                r["Close"]
-                            ])
-                        elif side == "put" and kijun - mike >= dist:
-                            return pd.Series([
-                                "💰",
-                                pd.to_datetime(r["Time"]).strftime("%H:%M"),
-                                r["Close"]
-                            ])
+                        if is_call_e2 and f >= f_anchor + dist:
+                            return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
+                
+                        if is_put_e2 and f <= f_anchor - dist:
+                            return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
                 
                     return pd.Series(["", "", ""])
+
 
              
                 def map_parallel_after_t2(row, intraday: pd.DataFrame):
