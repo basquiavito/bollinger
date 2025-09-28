@@ -7037,7 +7037,13 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-            
+                def assign_prefix(row, profile_df):
+                f_val = row["F%"]
+                # Find row in profile_df with matching F% level
+                profile_row = profile_df.loc[profile_df["F% Level"] == f_val]
+                tail_exists = not profile_row.empty and "🪶" in profile_row.get("Tail", "").values
+                return "Tailbone" if tail_exists else ""
+
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
@@ -7094,7 +7100,8 @@ if st.sidebar.button("Run Analysis"):
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
-                
+                    df["Prefix"] = df.apply(assign_prefix, axis=1, args=(profile_df,))
+
 
 
                     return df
