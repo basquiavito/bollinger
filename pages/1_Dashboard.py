@@ -7009,41 +7009,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
-                def assign_label(row, intraday, profile_df, f_bins):
-            # Only label Entry 1 and 2
-                    if not any(tag in row["Type"] for tag in ["🎯1", "🎯2"]):
-                        return ""
-                
-                    f_val = row["F%"]
-                
-                    # Align F% with profile bins
-                    bin_val = f_bins[np.digitize([f_val], f_bins) - 1][0]
-                
-                    # Get profile row for that bin
-                    profile_row = profile_df.loc[profile_df["F% Level"] == bin_val]
-                    ear = "🦻🏼" in profile_row.get("🦻🏼", "").values
-                    nose = "👃🏽" in profile_row.get("👃🏽", "").values
-                
-                    # IB bounds
-                    ib_low = intraday["IB_Low"].iloc[0]
-                    ib_high = intraday["IB_High"].iloc[0]
-                
-                    if ear or nose:
-                        if ib_low <= f_val <= ib_high:
-                            if intraday["Loft_Low"].iloc[0] <= f_val <= intraday["Loft_High"].iloc[0]:
-                                return "Endo-Loft"
-                            elif intraday["Core_Low"].iloc[0] <= f_val <= intraday["Core_High"].iloc[0]:
-                                return "Endo-Core"
-                            else:
-                                return "Endo-Cellar"
-                        elif f_val > ib_high:
-                            return "Supra"
-                        elif f_val < ib_low:
-                            return "Infra"
-                
-                    return ""
-
-            
+           
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame, profile_df: pd.DataFrame, f_bins) -> pd.DataFrame:
@@ -7098,7 +7064,6 @@ if st.sidebar.button("Run Analysis"):
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
-                    df["Label"] = df.apply(assign_label, axis=1, args=(intraday, profile_df, f_bins))
 
                     return df
                   # ✅ compute PAE before returning
@@ -7118,7 +7083,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 
                 # ----------  Build once, reuse always ----------
-                entries_df = build_entries_df(intraday, profile_df, f_bins)
+                entries_df = build_entries_df(intraday)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
                 
                 # keep these in session_state so other code can reuse without recompute
