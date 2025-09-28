@@ -7034,41 +7034,52 @@ if st.sidebar.button("Run Analysis"):
                         return "Cliff"
                     return ""
 
-                def assign_prefix(row, intraday):
-                    entry_time = row["Time"]
-                    entry_type = row["Type"]
+                def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
+                     """
+                     Prefix = 'Tailbone' if any 🪶 Tail exists from (anchor-3 bars) through the entry bar,
+                     using profile *bins* (not raw F% equality).
+                     Works for Call/Put; uses Bull/Bear MIDAS first-valid index as the anchor.
+                     """
+                 
+                     # --- which anchor to use based on entry type
+                     if "Call" in row["Type"]:
+                         anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
+                     else:
+                         anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
+                 
+                     if anchor_idx is None:
+                         return ""  # no anchor → no Tailbone
+                 
+                     # --- locate entry bar by time (HH:MM) — simple and robust enough on 5-min data
+                     entry_time = row["Time"]
+                     entry_locs = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
+                     if len(entry_locs) == 0:
+                         return ""  # couldn't map entry to intraday
+                     entry_idx = entry_locs[0]
+                 
+                     anchor_loc = intraday.index.get_loc(anchor_idx)
+                     entry_loc  = intraday.index.get_loc(entry_idx)
+                     if entry_loc <= anchor_loc - pre_anchor_buffer:
+                         return ""  # entry occurs before our anchor window
+                 
+                     # --- window: [anchor-3 ... entry]
+                     start_loc = max(0, anchor_loc - pre_anchor_buffer)
+                     end_loc   = entry_loc
+                 
+                     segment_F = intraday.iloc[start_loc:end_loc+1]["F_numeric"].to_numpy()
+                 
+                     # map every bar's F% in the window to its profile bin
+                     # note: np.digitize returns 1..N; subtract 1 to index into f_bins
+                     bin_ix = np.clip(np.digitize(segment_F, f_bins) - 1, 0, len(f_bins)-1)
+                     window_bins = pd.unique(f_bins[bin_ix])
+                 
+                     # all profile bins that have a Tail 🪶
+                     tail_bins = set(profile_df.loc[profile_df["Tail"] == "🪶", "F% Level"].tolist())
+                 
+                     # Tailbone if any window bin is a tail bin (covers tails at/just before anchor, or soon after)
+                     return "Tailbone" if any(b in tail_bins for b in window_bins) else ""
+               
                 
-                    # Find entry index in intraday
-                    entry_idx = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time][0]
-                
-                    # Pick the right anchor
-                    if "Call" in entry_type:
-                        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
-                    else:  # Put
-                        anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
-                
-                    if anchor_idx is None:
-                        return ""
-                
-                    # Locations
-                    anchor_loc = intraday.index.get_loc(anchor_idx)
-                    entry_loc = intraday.index.get_loc(entry_idx)
-                
-                    # Expand the window to 3 bars before anchor
-                    start_loc = max(0, anchor_loc - 3)
-                    end_loc = entry_loc
-                
-                    if end_loc <= start_loc:
-                        return ""  # entry is before or same as anchor window
-                
-                    # Slice and check Tail
-                    segment = intraday.iloc[start_loc:end_loc+1]
-                    if "Tail" in segment.columns and (segment["Tail"] == "🪶").any():
-                        return "Tailbone"
-                
-                    return ""
-
- 
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
@@ -7125,7 +7136,11 @@ if st.sidebar.button("Run Analysis"):
                    .reset_index(drop=True))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
-                    df["Prefix"] = df.apply(assign_prefix, axis=1, args=(intraday,))
+                    df["Prefix"] = df.apply(
+                        assign_prefix_tailbone,
+                        axis=1,
+                        args=(intraday, profile_df, f_bins)  # pass your existing profile_df and f_bins
+                    )
 
 
 
