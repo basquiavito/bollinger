@@ -7240,35 +7240,7 @@ if st.sidebar.button("Run Analysis"):
                          df.drop(columns=["Time_dt"], inplace=True)
                      
                          return df
-                # def add_exit_columns(df: pd.DataFrame) -> pd.DataFrame:
-                #     """
-                #     For each Call 🎯1 → find the next Put 🎯1 and set Exit Time/Exit Price.
-                #     For each Put 🎯1 → find the next Call 🎯1 and set Exit Time/Exit Price.
-                #     Works row-by-row so multiple Entry 1s in the same day are handled independently.
-                #     """
-                
-                #     df = df.copy()
-                #     df["Exit Time"] = ""
-                #     df["Exit Price ($)"] = ""
-                
-                #     for i, row in df.iterrows():
-                #         if row["Type"] == "Call 🎯1":
-                #             # look forward for next Put 🎯1
-                #             opposite = df[(df.index > i) & (df["Type"] == "Put 🎯1")]
-                #             if not opposite.empty:
-                #                 exit_row = opposite.iloc[0]
-                #                 df.at[i, "Exit Time"] = exit_row["Time"]
-                #                 df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
-                
-                #         elif row["Type"] == "Put 🎯1":
-                #             # look forward for next Call 🎯1
-                #             opposite = df[(df.index > i) & (df["Type"] == "Call 🎯1")]
-                #             if not opposite.empty:
-                #                 exit_row = opposite.iloc[0]
-                #                 df.at[i, "Exit Time"] = exit_row["Time"]
-                #                 df.at[i, "Exit Price ($)"] = exit_row["Price ($)"]
-                
-                #     return df
+        
 
                 def anchor_vol_confirm(intraday: pd.DataFrame, lookaround: int = 7) -> str:
                     """
@@ -7368,6 +7340,39 @@ if st.sidebar.button("Run Analysis"):
                         pd.to_datetime(r["Time"]).strftime("%H:%M"),
                         r["Close"]
                     ])
+               def map_t1_after_entry(row, intraday):
+                   """
+                   For a given entry row, find the first ⏩ after that bar and return (emoji, time, price).
+                   """
+                   # OPTIONAL: only attach T1 to Entry 1 rows. If you want it on all rows, delete this guard.
+                   if "🎯1" not in row.get("Type", ""):
+                       return pd.Series(["", "", ""])
+               
+                   # locate the entry bar by HH:MM
+                   entry_time = row["Time"]
+                   locs = intraday.index[
+                       pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
+                   ]
+                   if len(locs) == 0:
+                       return pd.Series(["", "", ""])
+               
+                   entry_idx = locs[0]
+                   entry_loc = intraday.index.get_loc(entry_idx)
+               
+                   # scan forward for the first ⏩
+                   fwd = intraday.iloc[entry_loc + 1 :]
+                   if "T1_Emoji" not in fwd.columns:
+                       return pd.Series(["", "", ""])
+                   hits = fwd[fwd["T1_Emoji"] == "⏩"]
+                   if hits.empty:
+                       return pd.Series(["", "", ""])
+               
+                   r = hits.iloc[0]
+                   return pd.Series([
+                       "⏩",
+                       pd.to_datetime(r["Time"]).strftime("%H:%M"),
+                       r["Close"],
+                   ])
 
                 def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
                      """
@@ -7496,7 +7501,10 @@ if st.sidebar.button("Run Analysis"):
                     df[["T0_Emoji", "T0_Time", "T0 Price ($)"]] = df.apply(
                         map_stall_after_entry, axis=1, args=(intraday,), result_type="expand"
                     )
-
+                    # ⏩ map the first acceleration beyond band after each entry (typically after Entry 1)
+                    df[["T1_Emoji", "T1_Time", "T1 Price ($)"]] = df.apply(
+                        map_t1_after_entry, axis=1, args=(intraday,), result_type="expand"
+                    )
                     df =  compute_pae_2to3(df, intraday)
                     df = compute_pae_3to40F(df, intraday)
                  
