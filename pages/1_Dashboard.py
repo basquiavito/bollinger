@@ -9374,8 +9374,36 @@ if st.sidebar.button("Run Analysis"):
                 ), row=1, col=1)
 
 
-            
+                gm_e2_mask = intraday["Goldmine_E2_Emoji"] == "💰"
+                gm_t1_mask = intraday["Goldmine_T1_Emoji"] == "💰"
+   
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[gm_e2_mask, "Time"],
+                    y=intraday.loc[gm_e2_mask, "F_numeric"] + 33,   # float above price
+                    mode="text",
+                    text=["💰"] * int(gm_e2_mask.sum()),
+                    textposition="top center",
+                    textfont=dict(size=21, color="gold"),
+                    name="Goldmine (E2)",
+                    hovertemplate="E2 Goldmine<br>Time: %{x}<br>F%: %{y}<extra></extra>",
+                ),
+                   row=1, col=1
+            )
+                fig.add_trace(
+                    go.Scatter(
+                        x=intraday.loc[gm_t1_mask, "Time"],
+                        y=intraday.loc[gm_t1_mask, "F_numeric"] + 45,   # a bit higher so icons don’t overlap
+                        mode="text",
+                        text=["💰"] * int(gm_t1_mask.sum()),
+                        textposition="top center",
+                        textfont=dict(size=21, color="limegreen"),      # distinct hue
+                        name="Goldmine (T1)",
+                        hovertemplate="T1 Goldmine<br>Time: %{x}<br>F%: %{y}<extra></extra>",
+                    ),
+                    row=1, col=1
+                )
 
+            
                 if yva_min is not None and yva_max is not None:
                     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
                 if prev_close:
