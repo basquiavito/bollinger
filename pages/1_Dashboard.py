@@ -7849,9 +7849,10 @@ if st.sidebar.button("Run Analysis"):
                     df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price ($)"]] = df.apply(
                         map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
                     )
-                    df[["Change ($)", "Change (F%)", "Duration (min)"]] = df.apply(
-                        map_change_and_duration, axis=1, args=(intraday,), result_type="expand"
-                    )
+                    df[["Change_Emoji", "Duration_min", "Change_$"]] = df.apply(
+                    map_change_and_duration, axis=1, args=(intraday,), result_type="expand"
+                )
+
                     
                     
                     
