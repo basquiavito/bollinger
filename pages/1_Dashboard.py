@@ -7200,9 +7200,23 @@ if st.sidebar.button("Run Analysis"):
                     return ""
 
 
-             
-
-             
+                             
+                # after you create/load `intraday`, normalize its columns once
+                intraday = intraday.copy()
+                intraday.columns = intraday.columns.str.strip()
+                
+                if "Time" not in intraday.columns:
+                    # try common variants and alias them to "Time"
+                    for cand in ["time", "Time ", "timestamp", "Timestamp", "date_time", "DateTime"]:
+                        if cand in intraday.columns:
+                            intraday = intraday.rename(columns={cand: "Time"})
+                            break
+                
+                # (optional but helpful) make sure it's string-like HH:MM for your match logic
+                # if Time already has full timestamps, this still works
+                # intraday["Time_HHMM"] = pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M")
+                
+                             
                 def add_exit_columns(entries_df: pd.DataFrame) -> pd.DataFrame:
                          """
                          For every Entry 1 (Call 🎯1 or Put 🎯1), find the first opposite Entry 1 after it.
@@ -7752,7 +7766,7 @@ if st.sidebar.button("Run Analysis"):
                                        })
                     for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
                         entries.append({"Type": "Call 🎯3",
-                                        "Time": pd.to_datetime(intraday.at[i, "time"]).strftime("%H:%M"),
+                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"],
                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
 
