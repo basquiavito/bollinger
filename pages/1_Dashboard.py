@@ -7683,6 +7683,7 @@ if st.sidebar.button("Run Analysis"):
                      else:
                          return ""   # fallback to plain Ember
 
+                intraday = intraday.rename(columns={"time": "Time"})
 
                 def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
                     """
