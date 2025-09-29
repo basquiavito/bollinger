@@ -7751,7 +7751,7 @@ if st.sidebar.button("Run Analysis"):
                                        })
                     for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
                         entries.append({"Type": "Call 🎯3",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                                        "Time": pd.to_datetime(intraday.at[i, "time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"],
                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
 
