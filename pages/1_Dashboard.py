@@ -9321,7 +9321,7 @@ if st.sidebar.button("Run Analysis"):
                 )
 
                  # 🏇🏼 Marengo T1 Marker (acceleration after Entry 1)
-                t1_mask = intraday["T1_Emoji"] == "⏩"
+                t1_mask = intraday["T1_Emoji"] == "🏇🏼"
                 
                 fig.add_trace(
                     go.Scatter(
