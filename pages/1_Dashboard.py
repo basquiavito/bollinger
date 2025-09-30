@@ -7878,14 +7878,39 @@ if st.sidebar.button("Run Analysis"):
                     )
                 
                   # --- JSON Download (preserve emojis) ---
-                    json_str = entries_df.to_json(orient="records", indent=2, force_ascii=False)
+                    # json_str = entries_df.to_json(orient="records", indent=2, force_ascii=False)
+                    # json_b64 = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                    # st.markdown(
+                    #     f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
+                    #     unsafe_allow_html=True
+                                        # )
+                    # --- Group entries by Ticker + Date before JSON export ---
+                    grouped = {}
+                    for row in entries_df.to_dict(orient="records"):
+                        key = f"{row.get('name','Unknown')}_{row['Date']}"
+                        if key not in grouped:
+                            grouped[key] = {
+                                "name": row.get("name", "Unknown"),
+                                "date": row["Date"],
+                                "prototype": row.get("Prototype", ""),
+                                "label": row.get("Label", ""),
+                                "suffix": row.get("Suffix", ""),
+                                "prefix": row.get("Prefix", ""),
+                                "entries": []
+                            }
+                        grouped[key]["entries"].append(row)
+                    
+                    # Convert grouped dict → list
+                    grouped_list = list(grouped.values())
+                    
+                    # --- JSON Download (grouped, preserves emojis) ---
+                    json_str = json.dumps(grouped_list, indent=2, ensure_ascii=False)
                     json_b64 = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
                     st.markdown(
                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
                     )
-
-              
+                                  
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
