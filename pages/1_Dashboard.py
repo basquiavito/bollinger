@@ -7940,6 +7940,15 @@ if st.sidebar.button("Run Analysis"):
                                         "time"  : row.get("T1_Time",  ""),
                                         "price" : row.get("T1_Price", "")
                                     },
+                                 
+                                    "T2"   : {
+                                          "emoji" : row.get("T2_Emoji", ""),
+                                          "time"  : row.get("T2_Time",  ""),
+                                          "price" : row.get("T2_Price", "")
+                                      },
+
+                                 
+                                  
                                     # keep any other milestone fields you like...
                                 },
                                 "extraEntries": []                   # will hold 🎯2, 🎯3 …
