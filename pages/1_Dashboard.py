@@ -7886,70 +7886,70 @@ if st.sidebar.button("Run Analysis"):
                                         )
     
 
-                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                     st.dataframe(entries_df, use_container_width=True)
-                 
-                     # ---------- CSV (unchanged) ----------
-                     csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-                     csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
-                     st.markdown(
-                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
-                         unsafe_allow_html=True
-                     )
-                 
-                     # ---------- JSON (grouped) ----------
-                     grouped_docs = {}
-                 
-                     for row in entries_df.to_dict(orient="records"):
-                         # identify ticker + date key  (adjust the column names if yours differ)
-                         ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
-                         date   = row["Date"]
-                         key = f"{ticker}_{date}"
-                 
-                         # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
-                         entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
-                 
-                         # create shell doc if first time
-                         if key not in grouped_docs:
-                             grouped_docs[key] = {
-                                 "name"      : ticker,
-                                 "date"      : date,
-                                 "prototype" : row.get("Prototype", ""),
-                                 "label"     : row.get("Label", ""),
-                                 "suffix"    : row.get("Suffix", ""),
-                                 "prefix"    : row.get("Prefix", ""),
-                                 "entry1"    : {                      # full data for the first entry
-                                     "Type" : row["Type"],
-                                     "Time" : row["Time"],
-                                     "Price": row["Price ($)"],
-                                     "F%"   : row.get("F%", ""),
-                                     "T0"   : {
-                                         "emoji" : row.get("T0_Emoji", ""),
-                                         "time"  : row.get("T0_Time",  ""),
-                                         "price" : row.get("T0_Price", "")
-                                     },
-                                     # keep any other milestone fields you like...
-                                 },
-                                 "extraEntries": []                   # will hold 🎯2, 🎯3 …
-                             }
-                         else:
-                             # if this row is NOT 🎯1, add the minimalist checkpoint
-                             if entry_num != "1":
-                                 grouped_docs[key]["extraEntries"].append({
-                                     "Type" : row["Type"],
-                                     "Time" : row["Time"],
-                                     "Price": row["Price ($)"]
-                                 })
-                 
-                     # final list to export
-                     json_ready = list(grouped_docs.values())
-                 
-                     json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
-                     json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
-                     st.markdown(
-                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
-                         unsafe_allow_html=True
-                     )
+                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                    st.dataframe(entries_df, use_container_width=True)
+                
+                    # ---------- CSV (unchanged) ----------
+                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                    csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                    st.markdown(
+                        f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
+                        unsafe_allow_html=True
+                    )
+                
+                    # ---------- JSON (grouped) ----------
+                    grouped_docs = {}
+                
+                    for row in entries_df.to_dict(orient="records"):
+                        # identify ticker + date key  (adjust the column names if yours differ)
+                        ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        date   = row["Date"]
+                        key = f"{ticker}_{date}"
+                
+                        # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
+                        entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
+                
+                        # create shell doc if first time
+                        if key not in grouped_docs:
+                            grouped_docs[key] = {
+                                "name"      : ticker,
+                                "date"      : date,
+                                "prototype" : row.get("Prototype", ""),
+                                "label"     : row.get("Label", ""),
+                                "suffix"    : row.get("Suffix", ""),
+                                "prefix"    : row.get("Prefix", ""),
+                                "entry1"    : {                      # full data for the first entry
+                                    "Type" : row["Type"],
+                                    "Time" : row["Time"],
+                                    "Price": row["Price ($)"],
+                                    "F%"   : row.get("F%", ""),
+                                    "T0"   : {
+                                        "emoji" : row.get("T0_Emoji", ""),
+                                        "time"  : row.get("T0_Time",  ""),
+                                        "price" : row.get("T0_Price", "")
+                                    },
+                                    # keep any other milestone fields you like...
+                                },
+                                "extraEntries": []                   # will hold 🎯2, 🎯3 …
+                            }
+                        else:
+                            # if this row is NOT 🎯1, add the minimalist checkpoint
+                            if entry_num != "1":
+                                grouped_docs[key]["extraEntries"].append({
+                                    "Type" : row["Type"],
+                                    "Time" : row["Time"],
+                                    "Price": row["Price ($)"]
+                                })
+                
+                    # final list to export
+                    json_ready = list(grouped_docs.values())
+                
+                    json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
+                    json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                    st.markdown(
+                        f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
+                        unsafe_allow_html=True
+                    )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
