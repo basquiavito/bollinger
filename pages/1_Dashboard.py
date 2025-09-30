@@ -7869,26 +7869,7 @@ if st.sidebar.button("Run Analysis"):
   # ----------  UI ----------
  
                 
-                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                    st.dataframe(entries_df, use_container_width=True)
-                
-                    # CSV (unchanged)
-                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-                    csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
-                    st.markdown(
-                        f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
-                        unsafe_allow_html=True
-                    )
-                
-              
-                    # # JSON download (preserve emojis)
-                    # json_str = json.dumps(grouped_list, indent=2, ensure_ascii=False)
-                    # json_b64 = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
-                    # st.markdown(
-                    #     f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
-                    #     unsafe_allow_html=True
-                    # )
-
+          
                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
                     st.dataframe(entries_df, use_container_width=True)
                 
