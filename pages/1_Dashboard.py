@@ -7913,9 +7913,12 @@ if st.sidebar.button("Run Analysis"):
                 
                         # create shell doc if first time
                         if key not in grouped_docs:
+                            ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
+
+
                             grouped_docs[key] = {
                               
-                                 "name"      : str(row.get("ticker") or row.get("name") or row.get("Ticker") or "UNKNOWN").lower(),
+                                 "name": str(ticker or "UNKNOWN").lower(),
 
                                 "date"      : date,
                                 "prototype" : row.get("Prototype", ""),
