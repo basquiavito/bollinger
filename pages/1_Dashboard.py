@@ -7914,6 +7914,9 @@ if st.sidebar.button("Run Analysis"):
                         # create shell doc if first time
                         if key not in grouped_docs:
                             ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
+                            slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
+                            slug = slug.lower().replace(" ", "-")
+                      
 
 
                             grouped_docs[key] = {
@@ -7927,6 +7930,8 @@ if st.sidebar.button("Run Analysis"):
                                 "prefix"    : row.get("Prefix", ""),
                                 "entry1"    : {                      # full data for the first entry
                                     "Type" : row["Type"],
+                                    "slug": slug,   # 👈 NEW
+
                                     "Time" : row["Time"],
                                     "Price ($)": row["Price ($)"],
                                     "F%"   : row.get("F%", ""),
