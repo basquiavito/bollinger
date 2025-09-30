@@ -7869,81 +7869,81 @@ if st.sidebar.button("Run Analysis"):
   # ----------  UI ----------
  
                 
-                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                     st.dataframe(entries_df, use_container_width=True)
-                 
-                     # CSV (unchanged)
-                     csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-                     csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
-                     st.markdown(
-                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
-                         unsafe_allow_html=True
-                     )
-                 
-                     # Group rows by ticker+date for nested JSON
-                     grouped = {}
-                     for row in entries_df.to_dict(orient="records"):
-                         ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
-                         date   = row.get("Date") or row.get("date") or ""
-                         key = f"{ticker}_{date}"
-                         if key not in grouped:
-                             grouped[key] = {
-                                 "name": ticker,
-                                 "date": str(date),
-                                 "prototype": row.get("Prototype", ""),
-                                 "label": row.get("Label", ""),
-                                 "suffix": row.get("Suffix", ""),
-                                 "prefix": row.get("Prefix", ""),
-                                 "entries": []
-                             }
-                         # keep only entry-relevant fields inside entries[]
-                         grouped[key]["entries"].append({
-                             "Type": row.get("Type"),
-                             "Time": row.get("Time"),
-                             "Price ($)": row.get("Price ($)"),
-                             "F%": row.get("F%"),
-                             "PAE_1to2": row.get("PAE_1to2"),
-                             "PAE_2to3": row.get("PAE_2to3"),
-                             "T0_Emoji": row.get("T0_Emoji"),
-                             "T0_Time": row.get("T0_Time"),
-                             "T0_Price": row.get("T0_Price"),
-                             "T1_Emoji": row.get("T1_Emoji"),
-                             "T1_Time": row.get("T1_Time"),
-                             "T1_Price": row.get("T1_Price)"),
-                             "T2_Emoji": row.get("T2_Emoji"),
-                             "T2_Time": row.get("T2_Time"),
-                             "T2_Price": row.get("T2_Price)"),
-                             "Parallel_Emoji": row.get("Parallel_Emoji"),
-                             "Parallel_Time": row.get("Parallel_Time"),
-                             "Parallel_Gain": row.get("Parallel_Gain"),
-                             "Goldmine_T1_Emoji": row.get("Goldmine_T1_Emoji"),
-                             "Goldmine_T1_Time": row.get("Goldmine_T1_Time"),
-                             "Goldmine_T1 Price": row.get("Goldmine_T1 Price"),
-                             "Goldmine_E2_Emoji": row.get("Goldmine_E2_Emoji"),
-                             "Goldmine_E2_Time": row.get("Goldmine_E2_Time"),
-                             "Goldmine_E2 Price": row.get("Goldmine_E2 Price"),
-                         })
-                 
-                     grouped_list = list(grouped.values())
-                 
-                     # JSON download (preserve emojis)
-                     json_str = json.dumps(grouped_list, indent=2, ensure_ascii=False)
-                     json_b64 = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
-                     st.markdown(
-                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
-                         unsafe_allow_html=True
-                     )
-
                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
                     st.dataframe(entries_df, use_container_width=True)
                 
-                    # --- CSV Download ---
+                    # CSV (unchanged)
                     csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
                     csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
                     st.markdown(
                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
                         unsafe_allow_html=True
                     )
+                
+                    # Group rows by ticker+date for nested JSON
+                    grouped = {}
+                    for row in entries_df.to_dict(orient="records"):
+                        ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        date   = row.get("Date") or row.get("date") or ""
+                        key = f"{ticker}_{date}"
+                        if key not in grouped:
+                            grouped[key] = {
+                                "name": ticker,
+                                "date": str(date),
+                                "prototype": row.get("Prototype", ""),
+                                "label": row.get("Label", ""),
+                                "suffix": row.get("Suffix", ""),
+                                "prefix": row.get("Prefix", ""),
+                                "entries": []
+                            }
+                        # keep only entry-relevant fields inside entries[]
+                        grouped[key]["entries"].append({
+                            "Type": row.get("Type"),
+                            "Time": row.get("Time"),
+                            "Price ($)": row.get("Price ($)"),
+                            "F%": row.get("F%"),
+                            "PAE_1to2": row.get("PAE_1to2"),
+                            "PAE_2to3": row.get("PAE_2to3"),
+                            "T0_Emoji": row.get("T0_Emoji"),
+                            "T0_Time": row.get("T0_Time"),
+                            "T0_Price": row.get("T0_Price"),
+                            "T1_Emoji": row.get("T1_Emoji"),
+                            "T1_Time": row.get("T1_Time"),
+                            "T1_Price": row.get("T1_Price)"),
+                            "T2_Emoji": row.get("T2_Emoji"),
+                            "T2_Time": row.get("T2_Time"),
+                            "T2_Price": row.get("T2_Price)"),
+                            "Parallel_Emoji": row.get("Parallel_Emoji"),
+                            "Parallel_Time": row.get("Parallel_Time"),
+                            "Parallel_Gain": row.get("Parallel_Gain"),
+                            "Goldmine_T1_Emoji": row.get("Goldmine_T1_Emoji"),
+                            "Goldmine_T1_Time": row.get("Goldmine_T1_Time"),
+                            "Goldmine_T1 Price": row.get("Goldmine_T1 Price"),
+                            "Goldmine_E2_Emoji": row.get("Goldmine_E2_Emoji"),
+                            "Goldmine_E2_Time": row.get("Goldmine_E2_Time"),
+                            "Goldmine_E2 Price": row.get("Goldmine_E2 Price"),
+                        })
+                
+                    grouped_list = list(grouped.values())
+                
+                    # JSON download (preserve emojis)
+                    json_str = json.dumps(grouped_list, indent=2, ensure_ascii=False)
+                    json_b64 = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                    st.markdown(
+                        f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
+                        unsafe_allow_html=True
+                    )
+
+                # with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                #     st.dataframe(entries_df, use_container_width=True)
+                
+                #     # --- CSV Download ---
+                #     csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                #     csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                #     st.markdown(
+                #         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
+                #         unsafe_allow_html=True
+                #     )
                 
                   # --- JSON Download (preserve emojis) ---
                     # json_str = entries_df.to_json(orient="records", indent=2, force_ascii=False)
