@@ -7925,6 +7925,9 @@ if st.sidebar.button("Run Analysis"):
                                     "F%"   : row.get("F%", ""),
                                     "Exit_Time":row.get("Exit_Time", ""),
                                     "Exit_Price":row.get("Exit_Price", ""),
+                                    "PAE_1to2":row.get("PAE_1to2", ""),
+                                  
+
                                     "T0"   : {
                                         "emoji" : row.get("T0_Emoji", ""),
                                         "time"  : row.get("T0_Time",  ""),
