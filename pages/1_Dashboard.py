@@ -7924,13 +7924,14 @@ if st.sidebar.button("Run Analysis"):
                                  "name": str(ticker or "UNKNOWN").lower(),
 
                                 "date"      : date,
+                                 "slug": slug,   # 👈 NEW
                                 "prototype" : row.get("Prototype", ""),
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
                                 "prefix"    : row.get("Prefix", ""),
                                 "entry1"    : {                      # full data for the first entry
                                     "Type" : row["Type"],
-                                    "slug": slug,   # 👈 NEW
+                                 
 
                                     "Time" : row["Time"],
                                     "Price ($)": row["Price ($)"],
