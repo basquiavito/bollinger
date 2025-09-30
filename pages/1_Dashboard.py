@@ -7925,6 +7925,8 @@ if st.sidebar.button("Run Analysis"):
                                     "Exit_Time":row.get("Exit_Time", ""),
                                     "Exit_Price":row.get("Exit_Price", ""),
                                     "PAE_1to2":row.get("PAE_1to2", ""),
+                                    "PAE_2to3":row.get("PAE_2to32", ""),
+                                    "PAE_3to40F":row.get("PAE_3to40F", ""),
                                   
 
                                     "T0"   : {
