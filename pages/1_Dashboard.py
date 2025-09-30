@@ -7898,7 +7898,7 @@ if st.sidebar.button("Run Analysis"):
                                  "value":"",
                                  "opus":"",
                                  "note":"",
-                                "prototype" : row.get("Prototype", ""),
+                                "Prototype" : row.get("Prototype", ""),
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
                                 "prefix"    : row.get("Prefix", ""),
