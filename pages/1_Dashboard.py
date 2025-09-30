@@ -1,4 +1,3 @@
- 
 
 import streamlit as st
 import numpy as np
@@ -7946,8 +7945,28 @@ if st.sidebar.button("Run Analysis"):
                                           "time"  : row.get("T2_Time",  ""),
                                           "price" : row.get("T2_Price", "")
                                       },
-
-                                 
+                            
+                                                             
+                                    # 🔽 Add Parallel
+                                    "Parallel" : {
+                                        "emoji" : row.get("Parallel_Emoji", ""),
+                                        "time"  : row.get("Parallel_Time", ""),
+                                        "gain"  : row.get("Parallel_Gain", "")
+                                    },
+                            
+                                    # 🔽 Add Goldmine E2
+                                    "Goldmine_E2" : {
+                                        "emoji" : row.get("Goldmine_E2_Emoji", ""),
+                                        "time"  : row.get("Goldmine_E2_Time", ""),
+                                        "price" : row.get("Goldmine_E2 Price", "")
+                                    },
+                            
+                                    # 🔽 Add Goldmine T1
+                                    "Goldmine_T1" : {
+                                        "emoji" : row.get("Goldmine_T1_Emoji", ""),
+                                        "time"  : row.get("Goldmine_T1_Time", ""),
+                                        "price" : row.get("Goldmine_T1 Price", "")
+                                    }
                                   
                                     # keep any other milestone fields you like...
                                 },
