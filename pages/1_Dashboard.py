@@ -7921,7 +7921,7 @@ if st.sidebar.button("Run Analysis"):
                                 "entry1"    : {                      # full data for the first entry
                                     "Type" : row["Type"],
                                     "Time" : row["Time"],
-                                    "Price": row["Price ($)"],
+                                    "Price ($)": row["Price ($)"],
                                     "F%"   : row.get("F%", ""),
                                     "T0"   : {
                                         "emoji" : row.get("T0_Emoji", ""),
