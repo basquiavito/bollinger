@@ -7926,7 +7926,10 @@ if st.sidebar.button("Run Analysis"):
                                 "date"      : date,
                                  "slug": slug,   # 👈 NEW
                                  "archive": False,   # 👈 always included by default
-
+                                 "cardPng":"",
+                                 "value":"",
+                                 "opus":"",
+                                 "note":"",
                                 "prototype" : row.get("Prototype", ""),
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
