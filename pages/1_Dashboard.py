@@ -2664,7 +2664,7 @@ if st.sidebar.button("Run Analysis"):
                 #     x = (s - s.min()) / (s.max() - s.min())
                 #     idx = np.clip((x * (len(bins)-1)).round().astype(int), 0, len(bins)-1)
                 #     return "".join(bins[i] for i in idx)
-                def _sparkline(series, bins="▁▂▃▄▅▆▇█"):
+                  def _sparkline(series, bins="▁▂▃▄▅▆▇█"):
                           """
                           Generates sparklines for last 9, 26, and 52 values of `series`.
                           Returns a single string like:
