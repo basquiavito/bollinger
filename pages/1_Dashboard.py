@@ -5247,23 +5247,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-               def detect_new_highs_above_yesterday_high(intraday):
-                          intraday["Astronaut_Emoji"] = ""
-                          y_high_f = intraday["Yesterday High F%"].iloc[0]
-                          highest_so_far = y_high_f
-                      
-                          for i in range(1, len(intraday)):
-                              curr_f = intraday["F_numeric"].iloc[i]
-                      
-                              # Only allow astronauts if above yesterday's high
-                              if curr_f > y_high_f:
-                                  if curr_f > highest_so_far:
-                                      intraday.loc[intraday.index[i], "Astronaut_Emoji"] = "👨🏽‍🚀"
-                                      highest_so_far = curr_f
-                      
-                   return intraday
-
-                
+               
              
                     # Quick check:
                     # intraday.loc[intraday["Omen_On"], ["Time","Omen_Label","Omen_Direction","Omen_Strength"]].head()
