@@ -7840,8 +7840,6 @@ if st.sidebar.button("Run Analysis"):
                 
                 
                 # ----------  Build once, reuse always ----------
-                tickers = entries_df["Ticker"].unique()
-
                 entries_df = build_entries_df(intraday).round(2)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
                 # Force a ticker column so downstream JSON always has it
@@ -7868,15 +7866,15 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
                         unsafe_allow_html=True
                     )
- 
+                
                     # ---------- JSON (grouped) ----------
                     grouped_docs = {}
                 
                     for row in entries_df.to_dict(orient="records"):
                         # identify ticker + date key  (adjust the column names if yours differ)
-                        ticker = (row.get('Ticker') or row.get('ticker') or row.get('name') or 'UNKNOWN').strip().upper()
+                        ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
                         date   = row["Date"]
-                        key = f"{(row.get('Ticker') or row.get('ticker') or row.get('name') or 'UNKNOWN').strip().upper()}_{str(row.get('Date')).split(' ')[0]}"
+                        key = f"{ticker}_{date}"
                 
                         # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
                         entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
