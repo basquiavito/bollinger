@@ -9601,21 +9601,4 @@ if st.sidebar.button("Run Analysis"):
             
 
   
-            
-           with st.expander("📥 Download Options"):
-                  
-                    ticker_name = tickers[0] if tickers else "TICKER"
-                    start_str = start_date.strftime("%Y-%m-%d")
-              
-                    buf = io.BytesIO()
-                    fig.write_image(buf, format="png")  # for Plotly figs
-                    buf.seek(0)
-              
-                    filename = f"{ticker_name}_{start_str}.png"
-              
-                    st.download_button(
-                       label=f"Download {ticker_name} Chart",
-                       data=buf,
-                       file_name=filename,
-                       mime="image/png"
-                  )
+           
