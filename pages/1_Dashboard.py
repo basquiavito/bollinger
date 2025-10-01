@@ -7873,7 +7873,9 @@ if st.sidebar.button("Run Analysis"):
                 
                     for row in entries_df.to_dict(orient="records"):
                         # identify ticker + date key  (adjust the column names if yours differ)
-                        ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        # ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        ticker = (row.get("Ticker") or row.get("ticker") or row.get("name") or "UNKNOWN").strip().upper()
+
                         date   = row["Date"]
                         key = f"{ticker}_{date}"
                 
