@@ -7884,7 +7884,7 @@ if st.sidebar.button("Run Analysis"):
                 
                         # create shell doc if first time
                         if key not in grouped_docs:
-                            ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
+                            # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
                             slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
                             slug = slug.lower().replace(" ", "-")
                       
