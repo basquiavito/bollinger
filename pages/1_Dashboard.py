@@ -7868,13 +7868,14 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
                         unsafe_allow_html=True
                     )
-                
+                    entries_df = build_entries_df(intraday).round(2)
+
                     # ---------- JSON (grouped) ----------
                     grouped_docs = {}
                 
                     for row in entries_df.to_dict(orient="records"):
                         # identify ticker + date key  (adjust the column names if yours differ)
-                        ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        ticker = (row.get('Ticker') or row.get('ticker') or row.get('name') or 'UNKNOWN').strip().upper()
                         date   = row["Date"]
                         key = f"{(row.get('Ticker') or row.get('ticker') or row.get('name') or 'UNKNOWN').strip().upper()}_{str(row.get('Date')).split(' ')[0]}"
                 
