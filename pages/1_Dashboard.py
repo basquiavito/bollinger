@@ -7874,6 +7874,11 @@ if st.sidebar.button("Run Analysis"):
                         # identify ticker + date key  (adjust the column names if yours differ)
                         ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
                         date   = row["Date"]
+
+                        entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
+                      
+                      # Call vs Put direction
+                        direction = "call" if "Call" in row["Type"] else "put"
                         # key = f"{ticker}_{date}"
                         key = f"{ticker}_{date}_{direction}"
 
@@ -7881,10 +7886,7 @@ if st.sidebar.button("Run Analysis"):
                         # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
                         # entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
                       # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
-                        entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
-                      
-                      # Call vs Put direction
-                        direction = "call" if "Call" in row["Type"] else "put"
+                  
 
                 
                         # create shell doc if first time
