@@ -7867,7 +7867,10 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
                         unsafe_allow_html=True
                     )
-                
+                # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
+                    entries_df = entries_df.where(pd.notnull(entries_df), None)
+                    if "Ticker" not in entries_df.columns:
+                        entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
                     # ---------- JSON (grouped) ----------
                     grouped_docs = {}
                 
