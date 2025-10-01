@@ -7976,7 +7976,7 @@ if st.sidebar.button("Run Analysis"):
                     json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
                     json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
                     st.markdown(
-                        f'<a href="data:application/json;base64,{json_b64}" download=f"{key}.json>⬇️ Download Entries (JSON)</a>',
+                        f'<a href="data:application/json;base64,{json_b64}" download={key}.json>⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
                     )
             
