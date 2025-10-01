@@ -7868,8 +7868,7 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
                         unsafe_allow_html=True
                     )
-                    entries_df = build_entries_df(intraday).round(2)
-
+ 
                     # ---------- JSON (grouped) ----------
                     grouped_docs = {}
                 
