@@ -2664,36 +2664,7 @@ if st.sidebar.button("Run Analysis"):
                     x = (s - s.min()) / (s.max() - s.min())
                     idx = np.clip((x * (len(bins)-1)).round().astype(int), 0, len(bins)-1)
                     return "".join(bins[i] for i in idx)
-                def _sparkline(series, bins="▁▂▃▄▅▆▇█"):
-                          """
-                          Generates sparklines for last 9, 26, and 52 values of `series`.
-                          Returns a single string like:
-                          "9: ▂▃▄█ | 26: ▃▅▄▆ | 52: ▁▃▅█"
-                          """
-                     s = pd.Series(series).astype(float)
-                     if len(s) == 0 or s.nunique() == 1:
-                         return "—"
-                      
-                     def encode(sub):
-                         if len(sub) == 0 or sub.nunique() == 1:
-                             return "—"
-                         x = (sub - sub.min()) / (sub.max() - sub.min())
-                         idx = np.clip((x * (len(bins)-1)).round().astype(int), 0, len(bins)-1)
-                         return "".join(bins[i] for i in idx)
-                      
-                          # compute for each horizon
-                     parts = []
-                     for n in [9, 26, 52]:
-                         sub = s.tail(n)
-                         parts.append(f"{n}: {encode(sub)}")
-                      
-                     return " | ".join(parts)
 
-                def _fmt_delta(x, pos="▲", neg="▼", zero="→", unit=""):
-                    if x > 0:  return f"{pos}{abs(x):.2f}{unit}"
-                    if x < 0:  return f"{neg}{abs(x):.2f}{unit}"
-                    return f"{zero}{abs(x):.2f}{unit}"
-                
                 def generate_market_snapshot(df, current_time, current_price, prev_close, symbol, last_n=26):
                     """
                     Vibrant, glanceable snapshot with:
