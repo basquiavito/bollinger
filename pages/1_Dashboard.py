@@ -8309,7 +8309,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
                         mode="lines",
-                        line=dict(color="gray", dash="dash",width=0.3),
+                        line=dict(color="white", dash="dash",width=0.3),
                         name="Yesterday Open (F%)",
                         yaxis="y2",              # << ✅ this is key
                         showlegend=False,
