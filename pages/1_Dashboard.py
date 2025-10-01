@@ -7874,10 +7874,18 @@ if st.sidebar.button("Run Analysis"):
                         # identify ticker + date key  (adjust the column names if yours differ)
                         ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
                         date   = row["Date"]
-                        key = f"{ticker}_{date}"
+                        # key = f"{ticker}_{date}"
+                        key = f"{ticker}_{date}_{direction}"
+
                 
                         # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
+                        # entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
+                      # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
                         entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
+                      
+                      # Call vs Put direction
+                        direction = "call" if "Call" in row["Type"] else "put"
+
                 
                         # create shell doc if first time
                         if key not in grouped_docs:
@@ -7975,6 +7983,21 @@ if st.sidebar.button("Run Analysis"):
                 
                     json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
                     json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                           # final list to export
+                    json_ready = list(grouped_docs.values())
+                      
+                      # ---- MODE toggle ----
+                    mode = "all"  # change to "main" if you only want the last play of the day
+                      
+                    if mode == "main":
+                          latest = {}
+                          for doc in json_ready:
+                              base_key = f"{doc['name']}_{doc['date']}"
+                              # keep the one with the latest Entry 1 time
+                              if base_key not in latest or doc["entry1"]["Time"] > latest[base_key]["entry1"]["Time"]:
+                                  latest[base_key] = doc
+                          json_ready = list(latest.values())
+
                     st.markdown(
                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
