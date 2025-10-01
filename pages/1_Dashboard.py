@@ -7857,7 +7857,10 @@ if st.sidebar.button("Run Analysis"):
 
 
                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                    st.dataframe(entries_df, use_container_width=True)
+                    ticker_col = "Ticker" if "Ticker" in entries_df.columns else "name"
+                    df_t = entries_df[entries_df[ticker_col].str.upper() == ticker.upper()].copy()
+
+                    st.dataframe(df_t, use_container_width=True)
                 
                     # ---------- CSV (unchanged) ----------
                     csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
@@ -7870,26 +7873,26 @@ if st.sidebar.button("Run Analysis"):
                     # ---------- JSON (grouped) ----------
                     grouped_docs = {}
                 
-                    for row in entries_df.to_dict(orient="records"):
+                    for row in df_t.to_dict(orient="records"):
                         # identify ticker + date key  (adjust the column names if yours differ)
-                        ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        row_ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
                         date   = row["Date"]
-                        key = f"{ticker}_{date}"
+                        key = f"{row_ticker}_{date}"
                 
                         # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
                         entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
                 
                         # create shell doc if first time
                         if key not in grouped_docs:
-                            ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
-                            slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
+                            slug_ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
+                            slug_ = f"{slug_ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
                             slug = slug.lower().replace(" ", "-")
                       
 
 
                             grouped_docs[key] = {
                               
-                                 "name": str(ticker or "UNKNOWN").lower(),
+                                 "name": str(slug_ticker or "UNKNOWN").lower(),
 
                                 "date"      : date,
                                  "slug": slug,   # 👈 NEW
@@ -7975,6 +7978,8 @@ if st.sidebar.button("Run Analysis"):
                 
                     json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
                     json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                    filename = f"{ticker}_{start_date:%Y-%m-%d}.json"
+
                     st.markdown(
                         f'<a href="data:application/json;base64,{json_b64}" download={key}.json>⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
