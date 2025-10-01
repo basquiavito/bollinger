@@ -2757,11 +2757,11 @@ if st.sidebar.button("Run Analysis"):
                     snapshot = (
                         f"📌 {current_time_str} — **{symbol}** {bias_badge} **${current_price:.2f}**  "
                         f"({arrow_price} | {arrow_f})\n"
-                        # f"{range_line}\n"
-                        # f"🧠 Position: {pos_kijun} \n"
+                        f"{range_line}\n"
+                        f"🧠 Position: {pos_kijun} \n"
                         f"{kijun_line} \n"
-                        # f"🪙 Signal: **{signal_text}**{signal_age}\n"
-                        # f"📈 {spark}\n"
+                        f"🪙 Signal: **{signal_text}**{signal_age}\n"
+                        f"📈 {spark}\n"
                     )
                     return snapshot
                 
@@ -9172,20 +9172,20 @@ if st.sidebar.button("Run Analysis"):
 
  
               
-                astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
+#                 astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
-                scatter_astronaut = go.Scatter(
-                    x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 124,  # Higher offset
-                    mode="text",
-                    text=astronaut_points["Astronaut_Emoji"],
-                    textposition="top center",
-                    name="New Highs 👨🏽‍🚀",
-                    textfont=dict(size=21),
-                 )
+#                 scatter_astronaut = go.Scatter(
+#                     x=astronaut_points["Time"],
+#                     y=astronaut_points["F_numeric"] + 124,  # Higher offset
+#                     mode="text",
+#                     text=astronaut_points["Astronaut_Emoji"],
+#                     textposition="top center",
+#                     name="New Highs 👨🏽‍🚀",
+#                     textfont=dict(size=21),
+#                  )
  
-#                     # Add to figure
-                # fig.add_trace(up_high_trace, row=1, col=1)
+# #                     # Add to figure
+#                 # fig.add_trace(up_high_trace, row=1, col=1)
  
 
 
