@@ -7853,8 +7853,10 @@ if st.sidebar.button("Run Analysis"):
                 st.session_state["entries_csv"] = csv_bytes
                 # Optional: persist expander state across reruns
                 st.session_state.setdefault("expand_entries", True)
+        ticker_tabs = st.tabs([t.upper() for t in tickers])
 
-
+        for i, tkr in enumerate(tickers):
+            with ticker_tabs[i]:
 
                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
                     ticker_col = "Ticker" if "Ticker" in entries_df.columns else "name"
