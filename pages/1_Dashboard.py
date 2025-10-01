@@ -7979,23 +7979,23 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
                     )
-	        with st.expander("📥 Download Options"):
-		  
-		  ticker_name = tickers[0] if tickers else "TICKER"
-		  start_str = start_date.strftime("%Y-%m-%d")
-	      
-		  buf = io.BytesIO()
-		  fig.write_image(buf, format="png")  # for Plotly figs
-		  buf.seek(0)
-	      
-		  filename = f"{ticker_name}_{start_str}.png"
-	      
-		  st.download_button(
-		      label=f"Download {ticker_name} Chart",
-		      data=buf,
-		      file_name=filename,
-		      mime="image/png"
-		  )
+                with st.expander("📥 Download Options"):
+                  
+                    ticker_name = tickers[0] if tickers else "TICKER"
+                    start_str = start_date.strftime("%Y-%m-%d")
+              
+                    buf = io.BytesIO()
+                    fig.write_image(buf, format="png")  # for Plotly figs
+                    buf.seek(0)
+              
+                    filename = f"{ticker_name}_{start_str}.png"
+              
+                    st.download_button(
+                       label=f"Download {ticker_name} Chart",
+                       data=buf,
+                       file_name=filename,
+                       mime="image/png"
+                  )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
