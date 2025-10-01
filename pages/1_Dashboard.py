@@ -8371,6 +8371,7 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig.add_trace(scatter_bishop_tight, row=1, col=1)
 
+                    fig.add_traces([y_open_f_line, y_high_f_line, y_low_f_line, y_close_f_line])
 
 
 
