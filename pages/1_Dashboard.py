@@ -7843,8 +7843,9 @@ if st.sidebar.button("Run Analysis"):
                 entries_df = build_entries_df(intraday).round(2)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
                 # Force a ticker column so downstream JSON always has it
-                if "Ticker" not in entries_df.columns:
-                          entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+                # if "Ticker" not in entries_df.columns:
+                #           entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
 
                 # keep these in session_state so other code can reuse without recompute
                 # st.session_state.setdefault("entries_df", entries_df)
