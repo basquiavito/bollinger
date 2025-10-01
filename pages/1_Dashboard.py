@@ -7775,6 +7775,10 @@ if st.sidebar.button("Run Analysis"):
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
+
+           # ✅ normalize the price column name (PUT block had a trailing space)
+                    if "Price ($) " in df.columns:
+                    df = df.rename(columns={"Price ($) ": "Price ($)"})
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
@@ -7897,113 +7901,121 @@ if st.sidebar.button("Run Analysis"):
                       
 
 
-                            grouped_docs[key] = {
-                              
-                                 "name": str(ticker or "UNKNOWN").lower(),
-
-                                "date"      : date,
-                                 "slug": slug,   # 👈 NEW
-                                 "archive": False,   # 👈 always included by default
-                                 "cardPng":"",
-                                 "value":"",
-                                 "opus":"",
-                                 "note":"",
-                                "Prototype" : row.get("Prototype", ""),
-                                "label"     : row.get("Label", ""),
-                                "suffix"    : row.get("Suffix", ""),
-                                "prefix"    : row.get("Prefix", ""),
-                                "entry1"    : {                      # full data for the first entry
-                                    "Type" : row["Type"],
-                                 
-
-                                    "Time" : row["Time"],
-                                    "Price ($)": row["Price ($)"],
-                                    "F%"   : row.get("F%", ""),
-                                    "Exit_Time":row.get("Exit_Time", ""),
-                                    "Exit_Price":row.get("Exit_Price", ""),
-                                    "PAE_1to2":row.get("PAE_1to2", ""),
-                                    "PAE_2to3":row.get("PAE_2to32", ""),
-                                    "PAE_3to40F":row.get("PAE_3to40F", ""),
-                                  
-
-                                    "T0"   : {
-                                        "emoji" : row.get("T0_Emoji", ""),
-                                        "time"  : row.get("T0_Time",  ""),
-                                        "price" : row.get("T0_Price", "")
-                                    },
-
-                                 
-                                    "T1"   : {
-                                        "emoji" : row.get("T1_Emoji", ""),
-                                        "time"  : row.get("T1_Time",  ""),
-                                        "price" : row.get("T1_Price", "")
-                                    },
-                                 
-                                    "T2"   : {
-                                          "emoji" : row.get("T2_Emoji", ""),
-                                          "time"  : row.get("T2_Time",  ""),
-                                          "price" : row.get("T2_Price", "")
+                            # ---------- JSON (grouped) ----------
+                      grouped_docs = {}
+                      
+                      for row in entries_df.to_dict(orient="records"):
+                          # --- ids
+                          ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                          date   = row["Date"]
+                      
+                          # 🎯
+                          entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
+                      
+                          # call/put
+                          direction = "call" if "Call" in row["Type"] else "put"
+                      
+                          # key separates call vs put so you can get 2 docs same day
+                          key = f"{ticker}_{date}_{direction}"
+                      
+                          # build slug (include direction to avoid duplicate slugs)
+                          slug = f"{ticker}-{date}-{direction}-{row.get('Prefix','')}-{row.get('Prototype','')}"
+                          slug = slug.lower().replace(" ", "-")
+                      
+                          # --- create shell if first time we see this direction
+                          if key not in grouped_docs:
+                              tkr_for_doc = row.get("Ticker") or row.get("ticker") or row.get("name")
+                              grouped_docs[key] = {
+                                  "name": str(tkr_for_doc or "UNKNOWN").lower(),
+                                  "date": date,
+                                  "slug": slug,
+                                  "archive": False,
+                                  "cardPng": "",
+                                  "value": "",
+                                  "opus": "",
+                                  "note": "",
+                                  "Prototype": row.get("Prototype", ""),
+                                  "label": row.get("Label", ""),
+                                  "suffix": row.get("Suffix", ""),
+                                  "prefix": row.get("Prefix", ""),
+                                  "entry1": {
+                                      "Type": row["Type"],
+                                      "Time": row["Time"],
+                                      "Price ($)": row.get("Price ($)"),  # ✅ consistent key
+                                      "F%": row.get("F%", ""),
+                                      "Exit_Time": row.get("Exit_Time", ""),
+                                      "Exit_Price": row.get("Exit_Price", ""),
+                                      "PAE_1to2": row.get("PAE_1to2", ""),
+                                      "PAE_2to3": row.get("PAE_2to3", ""),        # ✅ typo fixed
+                                      "PAE_3to40F": row.get("PAE_3to40F", ""),
+                      
+                                      "T0": {
+                                          "emoji": row.get("T0_Emoji", ""),
+                                          "time":  row.get("T0_Time",  ""),
+                                          "price": row.get("T0_Price", "")
                                       },
-                            
-                                                             
-                                    # 🔽 Add Parallel
-                                    "Parallel" : {
-                                        "emoji" : row.get("Parallel_Emoji", ""),
-                                        "time"  : row.get("Parallel_Time", ""),
-                                        "gain"  : row.get("Parallel_Gain", "")
-                                    },
-                            
-                                    # 🔽 Add Goldmine E2
-                                    "Goldmine_E2" : {
-                                        "emoji" : row.get("Goldmine_E2_Emoji", ""),
-                                        "time"  : row.get("Goldmine_E2_Time", ""),
-                                        "price" : row.get("Goldmine_E2 Price", "")
-                                    },
-                            
-                                    # 🔽 Add Goldmine T1
-                                    "Goldmine_T1" : {
-                                        "emoji" : row.get("Goldmine_T1_Emoji", ""),
-                                        "time"  : row.get("Goldmine_T1_Time", ""),
-                                        "price" : row.get("Goldmine_T1 Price", "")
-                                    }
-                                  
-                                    # keep any other milestone fields you like...
-                                },
-                                "extraEntries": []                   # will hold 🎯2, 🎯3 …
-                            }
-                        else:
-                            # if this row is NOT 🎯1, add the minimalist checkpoint
-                            if entry_num != "1":
-                                grouped_docs[key]["extraEntries"].append({
-                                    "Type" : row["Type"],
-                                    "Time" : row["Time"],
-                                    "Price": row["Price ($)"]
-                                })
-                
-                    # # final list to export
-                    # json_ready = list(grouped_docs.values())
-                
-                    # json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
-                    # json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
-                           # final list to export
-                    json_ready = list(grouped_docs.values())
+                                      "T1": {
+                                          "emoji": row.get("T1_Emoji", ""),
+                                          "time":  row.get("T1_Time",  ""),
+                                          "price": row.get("T1_Price", "")
+                                      },
+                                      "T2": {
+                                          "emoji": row.get("T2_Emoji", ""),
+                                          "time":  row.get("T2_Time",  ""),
+                                          "price": row.get("T2_Price", "")
+                                      },
+                      
+                                      "Parallel": {
+                                          "emoji": row.get("Parallel_Emoji", ""),
+                                          "time":  row.get("Parallel_Time", ""),
+                                          "gain":  row.get("Parallel_Gain", "")
+                                      },
+                      
+                                      "Goldmine_E2": {
+                                          "emoji": row.get("Goldmine_E2_Emoji", ""),
+                                          "time":  row.get("Goldmine_E2_Time", ""),
+                                          "price": row.get("Goldmine_E2 Price", "")
+                                      },
+                      
+                                      "Goldmine_T1": {
+                                          "emoji": row.get("Goldmine_T1_Emoji", ""),
+                                          "time":  row.get("Goldmine_T1_Time", ""),
+                                          "price": row.get("Goldmine_T1 Price", "")
+                                      }
+                                  },
+                                  "extraEntries": []
+                              }
+                      
+                          # --- add 🎯2/🎯3 as checkpoints
+                          if entry_num != "1":
+                              grouped_docs[key]["extraEntries"].append({
+                                  "Type": row["Type"],
+                                  "Time": row["Time"],
+                                  "Price": row.get("Price ($)")
+                              })
+                      
+                      # ---- finalize
+                      json_ready = list(grouped_docs.values())
                       
                       # ---- MODE toggle ----
-                    mode = "all"  # change to "main" if you only want the last play of the day
+                      mode = "all"   # change to "main" to keep only the latest Entry 1 per ticker/date
+                      if mode == "main":
+                          latest = {}
+                          for doc in json_ready:
+                              base_key = f"{doc['name']}_{doc['date']}"
+                              if base_key not in latest or doc["entry1"]["Time"] > latest[base_key]["entry1"]["Time"]:
+                                  latest[base_key] = doc
+                          json_ready = list(latest.values())
                       
-                    if mode == "main":
-                         latest = {}
-                         for doc in json_ready:
-                             base_key = f"{doc['name']}_{doc['date']}"
-                              # keep the one with the latest Entry 1 time
-                             if base_key not in latest or doc["entry1"]["Time"] > latest[base_key]["entry1"]["Time"]:
-                                 latest[base_key] = doc
-                         json_ready = list(latest.values())
+                      # ✅ you had this commented out; bring it back so json_b64 exists
+                      json_str = json.dumps(json_ready, indent=2, ensure_ascii=False)
+                      json_b64 = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                      
+                      st.markdown(
+                          f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
+                          unsafe_allow_html=True
+                      )
 
-                    st.markdown(
-                        f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
-                        unsafe_allow_html=True
-                    )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
