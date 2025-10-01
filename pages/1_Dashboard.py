@@ -8305,7 +8305,7 @@ if st.sidebar.button("Run Analysis"):
 
 # # ------------------------
                     # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
-                    y_high_f_line = go.Scatter(
+                    y_open_f_line = go.Scatter(
                         x=intraday["Time"],
                         y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
                         mode="lines",
@@ -8353,6 +8353,7 @@ if st.sidebar.button("Run Analysis"):
                     )
 
                
+                    fig.add_traces([y_open_f_line, y_high_f_line, y_low_f_line, y_close_f_line])
 
 
                              # BBW Tight → Pink Bishops ♗
@@ -9578,7 +9579,12 @@ if st.sidebar.button("Run Analysis"):
                     margin=dict(l=30, r=30, t=50, b=30),
                     height=1080,  # Increase overall figure height (default ~450-600)
                     showlegend=False,
-                
+                    yaxis2=dict(
+                        overlaying="y",
+                        side="right",
+                        showgrid=False,
+                        title="F% Scale"
+                    )
 
                      
                 )
