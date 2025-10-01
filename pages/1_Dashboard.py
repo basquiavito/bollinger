@@ -7776,7 +7776,7 @@ if st.sidebar.button("Run Analysis"):
                    .sort_values("Time")
                    .reset_index(drop=True))
                     if "Price ($) " in df.columns:
-                    df = df.rename(columns={"Price ($) ": "Price ($)"})
+                       df = df.rename(columns={"Price ($) ": "Price ($)"})
                     df["Prototype"] = df.apply(assign_prototype, axis=1)
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
