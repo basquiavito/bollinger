@@ -9525,7 +9525,7 @@ if st.sidebar.button("Run Analysis"):
                 mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
                 # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                 scatter_tk_sun = go.Scatter(
+                scatter_tk_sun = go.Scatter(
                     x=intraday.loc[mask_tk_sun, "Time"],
                     y=intraday.loc[mask_tk_sun, "F_numeric"] + 104,  # Offset for visibility
                     mode="text",
@@ -9537,7 +9537,7 @@ if st.sidebar.button("Run Analysis"):
                 )
 
                 # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                 scatter_tk_moon = go.Scatter(
+                scatter_tk_moon = go.Scatter(
                     x=intraday.loc[mask_tk_moon, "Time"],
                     y=intraday.loc[mask_tk_moon, "F_numeric"] - 104,  # Offset for visibility
                     mode="text",
