@@ -7845,7 +7845,14 @@ if st.sidebar.button("Run Analysis"):
                 # Force a ticker column so downstream JSON always has it
                 # if "Ticker" not in entries_df.columns:
                 #           entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
+                # entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
+                      # ✅ Ensure no NaN values so Mongo won’t choke
+                entries_df = entries_df.where(pd.notnull(entries_df), "")
+                      
+                      # ✅ Force a Ticker column if missing or empty
+                if "Ticker" not in entries_df.columns or entries_df["Ticker"].isnull().all() or (entries_df["Ticker"] == "").all():
+                          # if you always run one ticker at a time, this will grab it
+                    entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
 
                 # keep these in session_state so other code can reuse without recompute
                 # st.session_state.setdefault("entries_df", entries_df)
