@@ -9575,6 +9575,18 @@ if st.sidebar.button("Run Analysis"):
                     row=1, col=1
                 )
 
+                emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
+  
+                fig.add_trace(go.Scatter(
+                    x=emoji_df["TimeIndex"],
+                    y=emoji_df["F_numeric"] - 13,
+                    mode="text",
+                    text=emoji_df["Mike_Kijun_Bee_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Mike x Kijun + Bees",
+                    showlegend=False
+                ))
             
                 if yva_min is not None and yva_max is not None:
                     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
