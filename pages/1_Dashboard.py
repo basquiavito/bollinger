@@ -7831,46 +7831,46 @@ if st.sidebar.button("Run Analysis"):
                     return df
         
 
-                @st.cache_data(show_spinner=False)
-                def to_csv_bytes(df: pd.DataFrame) -> bytes:
-                    """Create CSV bytes from df (cached)."""
-                    df = clean_column_names(df)
+            #     @st.cache_data(show_spinner=False)
+            #     def to_csv_bytes(df: pd.DataFrame) -> bytes:
+            #         """Create CSV bytes from df (cached)."""
+            #         df = clean_column_names(df)
 
-                    return df.to_csv(index=False).encode("utf-8")
+            #         return df.to_csv(index=False).encode("utf-8")
                 
                 
-                # ----------  Build once, reuse always ----------
-                entries_df = build_entries_df(intraday).round(2)
-                csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
-                # Force a ticker column so downstream JSON always has it
-                # if "Ticker" not in entries_df.columns:
-                #           entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
-                      # ✅ Ensure no NaN values so Mongo won’t choke
-                # entries_df = entries_df.where(pd.notnull(entries_df), "")
+            #     # ----------  Build once, reuse always ----------
+            #     entries_df = build_entries_df(intraday).round(2)
+            #     csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
+            #     # Force a ticker column so downstream JSON always has it
+            #     # if "Ticker" not in entries_df.columns:
+            #     #           entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+            #     entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
+            #           # ✅ Ensure no NaN values so Mongo won’t choke
+            #     # entries_df = entries_df.where(pd.notnull(entries_df), "")
                       
-                #       # ✅ Force a Ticker column if missing or empty
-            # ✅ Ensure no NaN values so Mongo won’t choke
+            #     #       # ✅ Force a Ticker column if missing or empty
+            # # ✅ Ensure no NaN values so Mongo won’t choke
  
            
-                #       # ✅ Fix ticker column intelligently
-                # if "Ticker" not in entries_df.columns or entries_df["Ticker"].isnull().all() or (entries_df["Ticker"] == "").all():
-                #     if "ticker" in entries_df.columns:
-                #         entries_df["Ticker"] = entries_df["ticker"].astype(str).str.upper()
-                #     elif "name" in entries_df.columns:
-                #         entries_df["Ticker"] = entries_df["name"].astype(str).str.upper()
-                #     else:
-                #               # only fallback if truly nothing else available
-                #         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+            #     #       # ✅ Fix ticker column intelligently
+            #     # if "Ticker" not in entries_df.columns or entries_df["Ticker"].isnull().all() or (entries_df["Ticker"] == "").all():
+            #     #     if "ticker" in entries_df.columns:
+            #     #         entries_df["Ticker"] = entries_df["ticker"].astype(str).str.upper()
+            #     #     elif "name" in entries_df.columns:
+            #     #         entries_df["Ticker"] = entries_df["name"].astype(str).str.upper()
+            #     #     else:
+            #     #               # only fallback if truly nothing else available
+            #     #         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
 
 
-                # keep these in session_state so other code can reuse without recompute
-                # st.session_state.setdefault("entries_df", entries_df)
-                # st.session_state.setdefault("entries_csv", csv_bytes)
-                st.session_state["entries_df"] = entries_df
-                st.session_state["entries_csv"] = csv_bytes
-                # Optional: persist expander state across reruns
-                st.session_state.setdefault("expand_entries", True)
+            #     # keep these in session_state so other code can reuse without recompute
+            #     # st.session_state.setdefault("entries_df", entries_df)
+            #     # st.session_state.setdefault("entries_csv", csv_bytes)
+            #     st.session_state["entries_df"] = entries_df
+            #     st.session_state["entries_csv"] = csv_bytes
+            #     # Optional: persist expander state across reruns
+            #     st.session_state.setdefault("expand_entries", True)
 
 
 
