@@ -7854,14 +7854,14 @@ if st.sidebar.button("Run Analysis"):
  
            
                       # ✅ Fix ticker column intelligently
-                 if "Ticker" not in entries_df.columns or entries_df["Ticker"].isnull().all() or (entries_df["Ticker"] == "").all():
-                     if "ticker" in entries_df.columns:
-                         entries_df["Ticker"] = entries_df["ticker"].astype(str).str.upper()
-                     elif "name" in entries_df.columns:
-                         entries_df["Ticker"] = entries_df["name"].astype(str).str.upper()
-                     else:
+                if "Ticker" not in entries_df.columns or entries_df["Ticker"].isnull().all() or (entries_df["Ticker"] == "").all():
+                    if "ticker" in entries_df.columns:
+                        entries_df["Ticker"] = entries_df["ticker"].astype(str).str.upper()
+                    elif "name" in entries_df.columns:
+                        entries_df["Ticker"] = entries_df["name"].astype(str).str.upper()
+                    else:
                               # only fallback if truly nothing else available
-                         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+                        entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
 
 
                 # keep these in session_state so other code can reuse without recompute
