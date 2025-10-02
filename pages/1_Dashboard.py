@@ -9549,8 +9549,8 @@ if st.sidebar.button("Run Analysis"):
                 )
 
 
-               fig.add_trace(scatter_tk_sun, row=1, col=1)
-               fig.add_trace(scatter_tk_moon, row=1, col=1)
+                fig.add_trace(scatter_tk_sun, row=1, col=1)
+                fig.add_trace(scatter_tk_moon, row=1, col=1)
                 fig.add_trace(go.Scatter(
                     x=intraday["Time"],
                     y=intraday["Headphone_Cross_Y"],
