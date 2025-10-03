@@ -7198,6 +7198,30 @@ if st.sidebar.button("Run Analysis"):
                     return ""
 
 
+                def classify_prototype(row, intraday):
+                    entry_type = row["Type"]
+                    open_f = intraday["F_numeric"].iloc[0]
+                      
+                    if "Call 🎯1" in entry_type:
+                              # Find first Midas Bull anchor
+                        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
+                        if anchor_idx is None:
+                            return "Ember"
+                        anchor_f = intraday.loc[anchor_idx, "F_numeric"]
+                      
+                        return "Ember Catch" if (anchor_f - open_f) <= -50 else "Ember Bounce"
+                      
+                   elif "Put 🎯1" in entry_type:
+                              # Find first Midas Bear anchor
+                         anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
+                         if anchor_idx is None:
+                             return "Cliff"
+                         anchor_f = intraday.loc[anchor_idx, "F_numeric"]
+                      
+                         return "Cliff Catch" if (anchor_f - open_f) >= 50 else "Cliff Bounce"
+                      
+                   return ""
+
                              
                 # after you create/load `intraday`, normalize its columns once
                 intraday = intraday.copy()
