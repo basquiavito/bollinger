@@ -7211,7 +7211,7 @@ if st.sidebar.button("Run Analysis"):
                       
                         return "Ember Catch" if (anchor_f - open_f) <= -50 else "Ember Bounce"
                       
-                   elif "Put 🎯1" in entry_type:
+                    elif "Put 🎯1" in entry_type:
                               # Find first Midas Bear anchor
                          anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
                          if anchor_idx is None:
@@ -7220,7 +7220,7 @@ if st.sidebar.button("Run Analysis"):
                       
                          return "Cliff Catch" if (anchor_f - open_f) >= 50 else "Cliff Bounce"
                       
-                   return ""
+                 return ""
 
                              
                 # after you create/load `intraday`, normalize its columns once
