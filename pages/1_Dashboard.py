@@ -7900,8 +7900,11 @@ if st.sidebar.button("Run Analysis"):
                         key = f"{ticker}_{date}"
                 
                         # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
-                        entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
-                
+                        # entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
+                # Detect Call vs Put
+                        entry_type = row.get("Type", "")
+                        side = "callPath" if "Call" in entry_type else "putPath"
+
                         # create shell doc if first time
                         if key not in grouped_docs:
                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
@@ -7916,7 +7919,7 @@ if st.sidebar.button("Run Analysis"):
 
                                 "date"      : date,
                                  "slug": slug,   # 👈 NEW
-                                 "archive": False,   # 👈 always included by default
+                                 "archive": True,   # 👈 always included by default
                                  "cardPng":"",
                                  "value":"",
                                  "opus":"",
@@ -7925,73 +7928,95 @@ if st.sidebar.button("Run Analysis"):
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
                                 "prefix"    : row.get("Prefix", ""),
-                                "entry1"    : {                      # full data for the first entry
-                                    "Type" : row["Type"],
+                                # "entry1"    : {                      # full data for the first entry
+                                #     "Type" : row["Type"],
                                  
 
-                                    "Time" : row["Time"],
-                                    "Price ($)": row["Price ($)"],
-                                    "F%"   : row.get("F%", ""),
-                                    "Exit_Time":row.get("Exit_Time", ""),
-                                    "Exit_Price":row.get("Exit_Price", ""),
-                                    "PAE_1to2":row.get("PAE_1to2", ""),
-                                    "PAE_2to3":row.get("PAE_2to32", ""),
-                                    "PAE_3to40F":row.get("PAE_3to40F", ""),
+                                #     "Time" : row["Time"],
+                                #     "Price ($)": row["Price ($)"],
+                                #     "F%"   : row.get("F%", ""),
+                                #     "Exit_Time":row.get("Exit_Time", ""),
+                                #     "Exit_Price":row.get("Exit_Price", ""),
+                                #     "PAE_1to2":row.get("PAE_1to2", ""),
+                                #     "PAE_2to3":row.get("PAE_2to32", ""),
+                                #     "PAE_3to40F":row.get("PAE_3to40F", ""),
                                   
 
-                                    "T0"   : {
-                                        "emoji" : row.get("T0_Emoji", ""),
-                                        "time"  : row.get("T0_Time",  ""),
-                                        "price" : row.get("T0_Price", "")
-                                    },
+                                #     "T0"   : {
+                                #         "emoji" : row.get("T0_Emoji", ""),
+                                #         "time"  : row.get("T0_Time",  ""),
+                                #         "price" : row.get("T0_Price", "")
+                                #     },
 
                                  
-                                    "T1"   : {
-                                        "emoji" : row.get("T1_Emoji", ""),
-                                        "time"  : row.get("T1_Time",  ""),
-                                        "price" : row.get("T1_Price", "")
-                                    },
+                                #     "T1"   : {
+                                #         "emoji" : row.get("T1_Emoji", ""),
+                                #         "time"  : row.get("T1_Time",  ""),
+                                #         "price" : row.get("T1_Price", "")
+                                #     },
                                  
-                                    "T2"   : {
-                                          "emoji" : row.get("T2_Emoji", ""),
-                                          "time"  : row.get("T2_Time",  ""),
-                                          "price" : row.get("T2_Price", "")
-                                      },
+                                #     "T2"   : {
+                                #           "emoji" : row.get("T2_Emoji", ""),
+                                #           "time"  : row.get("T2_Time",  ""),
+                                #           "price" : row.get("T2_Price", "")
+                                #       },
                             
                                                              
-                                    # 🔽 Add Parallel
-                                    "Parallel" : {
-                                        "emoji" : row.get("Parallel_Emoji", ""),
-                                        "time"  : row.get("Parallel_Time", ""),
-                                        "gain"  : row.get("Parallel_Gain", "")
-                                    },
+                                #     # 🔽 Add Parallel
+                                #     "Parallel" : {
+                                #         "emoji" : row.get("Parallel_Emoji", ""),
+                                #         "time"  : row.get("Parallel_Time", ""),
+                                #         "gain"  : row.get("Parallel_Gain", "")
+                                #     },
                             
-                                    # 🔽 Add Goldmine E2
-                                    "Goldmine_E2" : {
-                                        "emoji" : row.get("Goldmine_E2_Emoji", ""),
-                                        "time"  : row.get("Goldmine_E2_Time", ""),
-                                        "price" : row.get("Goldmine_E2 Price", "")
-                                    },
+                                #     # 🔽 Add Goldmine E2
+                                #     "Goldmine_E2" : {
+                                #         "emoji" : row.get("Goldmine_E2_Emoji", ""),
+                                #         "time"  : row.get("Goldmine_E2_Time", ""),
+                                #         "price" : row.get("Goldmine_E2 Price", "")
+                                #     },
                             
-                                    # 🔽 Add Goldmine T1
-                                    "Goldmine_T1" : {
-                                        "emoji" : row.get("Goldmine_T1_Emoji", ""),
-                                        "time"  : row.get("Goldmine_T1_Time", ""),
-                                        "price" : row.get("Goldmine_T1 Price", "")
-                                    }
+                                #     # 🔽 Add Goldmine T1
+                                #     "Goldmine_T1" : {
+                                #         "emoji" : row.get("Goldmine_T1_Emoji", ""),
+                                #         "time"  : row.get("Goldmine_T1_Time", ""),
+                                #         "price" : row.get("Goldmine_T1 Price", "")
+                                #     }
                                   
-                                    # keep any other milestone fields you like...
-                                },
+                                #     # keep any other milestone fields you like...
+                                # },
+
+                                "callPath": {"entries": [], "milestones": {}},
+                                "putPath": {"entries": [], "milestones": {}}
                                 "extraEntries": []                   # will hold 🎯2, 🎯3 …
                             }
-                        else:
-                            # if this row is NOT 🎯1, add the minimalist checkpoint
-                            if entry_num != "1":
-                                grouped_docs[key]["extraEntries"].append({
-                                    "Type" : row["Type"],
-                                    "Time" : row["Time"],
-                                    "Price": row["Price ($)"]
-                                })
+                        doc = grouped_docs[key]
+                        entry_obj = {
+                              "Type" : entry_type,
+                              "Time" : row.get("Time", ""),
+                              "Price": row.get("Price ($)", "")
+                          }
+
+                        if "🎯1" in entry_type:
+                            milestones = {
+                                "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
+                                "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
+                                "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
+                                "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
+                                "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
+                                "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")}
+                            }
+                            doc[side]["milestones"] = milestones
+# Always append the entry
+                        doc[side]["entries"].append(entry_obj)
+                        # else:
+                        #     # if this row is NOT 🎯1, add the minimalist checkpoint
+                        #     if entry_num != "1":
+                        #         grouped_docs[key]["extraEntries"].append({
+                        #             "Type" : row["Type"],
+                        #             "Time" : row["Time"],
+                        #             "Price": row["Price ($)"]
+                        #         })
                 
                     # final list to export
                     json_ready = list(grouped_docs.values())
