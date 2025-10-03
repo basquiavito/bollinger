@@ -7987,7 +7987,7 @@ if st.sidebar.button("Run Analysis"):
                                 # },
 
                                 "callPath": {"entries": [], "milestones": {}},
-                                "putPath": {"entries": [], "milestones": {}}
+                                "putPath": {"entries": [], "milestones": {}},
                                 "extraEntries": []                   # will hold 🎯2, 🎯3 …
                             }
                         doc = grouped_docs[key]
