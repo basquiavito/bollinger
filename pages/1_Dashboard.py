@@ -7998,13 +7998,24 @@ if st.sidebar.button("Run Analysis"):
                           }
 
                         if "🎯1" in entry_type:
+
                             milestones = {
                                 "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
                                 "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
                                 "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
                                 "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
                                 "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
-                                "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")}
+                                "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")},
+                                         # 👇 Add side-specific PAE here
+
+
+                                 pae_key = "callPae" if side == "callPath" else "putPae"
+
+                                "callPae" if side == "callPath" else "putPae": {
+                                "1to2": row.get("PAE_1to2", ""),
+                                "2to3": row.get("PAE_2to3", ""),
+                                "3to40F": row.get("PAE_3to40F", "")
+        }
                             }
                             doc[side]["milestones"] = milestones
 # Always append the entry
