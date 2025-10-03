@@ -8011,11 +8011,12 @@ if st.sidebar.button("Run Analysis"):
 
                                  pae_key = "callPae" if side == "callPath" else "putPae"
 
-                                "callPae" if side == "callPath" else "putPae": {
-                                "1to2": row.get("PAE_1to2", ""),
-                                "2to3": row.get("PAE_2to3", ""),
-                                "3to40F": row.get("PAE_3to40F", "")
-        }
+                                milestones[pae_key] = {
+                               "1to2": row.get("PAE_1to2", ""),
+                               "2to3": row.get("PAE_2to3", ""),
+                               "3to40F": row.get("PAE_3to40F", "")
+                          
+                                         }
                             }
                             doc[side]["milestones"] = milestones
 # Always append the entry
