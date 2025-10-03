@@ -8011,7 +8011,7 @@ if st.sidebar.button("Run Analysis"):
 
                           
                                          }
-                            }
+                            
                             doc[side]["milestones"] = milestones
 # Always append the entry
                         doc[side]["entries"].append(entry_obj)
