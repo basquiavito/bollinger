@@ -8064,14 +8064,19 @@ if st.sidebar.button("Run Analysis"):
 
                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
                         if sideways_note:
-                            doc[side]["milestones"]["Sideways"] = {
-                                "note": sideways_note,
-                                "from": row["Time"],  # entry start time
+                            doc[side]["Sideways"] = {
+                                "note": str(sideways_note),
+                                "from": str(row.get("Time", "")),  # entry start time
                                                 }
 
-                                                 # --- Add sideways condition ---
+#                                                  # --- Add sideways condition ---
                   
-                        
+#                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+# if sideways_note:
+#     doc[side]["sideways"] = {
+#         "note": str(sideways_note),
+#         "from": str(row.get("Time", ""))  # always string-safe
+#     }
                 
                     # final list to export
                     json_ready = list(grouped_docs.values())
