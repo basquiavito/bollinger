@@ -7944,28 +7944,11 @@ if st.sidebar.button("Run Analysis"):
                 # ----------  Build once, reuse always ----------
                 entries_df = build_entries_df(intraday).round(2)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
-                # Force a ticker column so downstream JSON always has it
-                # if "Ticker" not in entries_df.columns:
-                #           entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+            
                 entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
-                      # ✅ Ensure no NaN values so Mongo won’t choke
-                # entries_df = entries_df.where(pd.notnull(entries_df), "")
-                      
-                #       # ✅ Force a Ticker column if missing or empty
-            # ✅ Ensure no NaN values so Mongo won’t choke
- 
+                
            
-                #       # ✅ Fix ticker column intelligently
-                # if "Ticker" not in entries_df.columns or entries_df["Ticker"].isnull().all() or (entries_df["Ticker"] == "").all():
-                #     if "ticker" in entries_df.columns:
-                #         entries_df["Ticker"] = entries_df["ticker"].astype(str).str.upper()
-                #     elif "name" in entries_df.columns:
-                #         entries_df["Ticker"] = entries_df["name"].astype(str).str.upper()
-                #     else:
-                #               # only fallback if truly nothing else available
-                #         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-
-
+           
                 # keep these in session_state so other code can reuse without recompute
                 # st.session_state.setdefault("entries_df", entries_df)
                 # st.session_state.setdefault("entries_csv", csv_bytes)
@@ -8030,63 +8013,7 @@ if st.sidebar.button("Run Analysis"):
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
                                 "prefix"    : row.get("Prefix", ""),
-                                # "entry1"    : {                      # full data for the first entry
-                                #     "Type" : row["Type"],
-                                 
-
-                                #     "Time" : row["Time"],
-                                #     "Price ($)": row["Price ($)"],
-                                #     "F%"   : row.get("F%", ""),
-                                #     "Exit_Time":row.get("Exit_Time", ""),
-                                #     "Exit_Price":row.get("Exit_Price", ""),
-                                #     "PAE_1to2":row.get("PAE_1to2", ""),
-                                #     "PAE_2to3":row.get("PAE_2to32", ""),
-                                #     "PAE_3to40F":row.get("PAE_3to40F", ""),
-                                  
-
-                                #     "T0"   : {
-                                #         "emoji" : row.get("T0_Emoji", ""),
-                                #         "time"  : row.get("T0_Time",  ""),
-                                #         "price" : row.get("T0_Price", "")
-                                #     },
-
-                                 
-                                #     "T1"   : {
-                                #         "emoji" : row.get("T1_Emoji", ""),
-                                #         "time"  : row.get("T1_Time",  ""),
-                                #         "price" : row.get("T1_Price", "")
-                                #     },
-                                 
-                                #     "T2"   : {
-                                #           "emoji" : row.get("T2_Emoji", ""),
-                                #           "time"  : row.get("T2_Time",  ""),
-                                #           "price" : row.get("T2_Price", "")
-                                #       },
-                            
-                                                             
-                                #     # 🔽 Add Parallel
-                                #     "Parallel" : {
-                                #         "emoji" : row.get("Parallel_Emoji", ""),
-                                #         "time"  : row.get("Parallel_Time", ""),
-                                #         "gain"  : row.get("Parallel_Gain", "")
-                                #     },
-                            
-                                #     # 🔽 Add Goldmine E2
-                                #     "Goldmine_E2" : {
-                                #         "emoji" : row.get("Goldmine_E2_Emoji", ""),
-                                #         "time"  : row.get("Goldmine_E2_Time", ""),
-                                #         "price" : row.get("Goldmine_E2 Price", "")
-                                #     },
-                            
-                                #     # 🔽 Add Goldmine T1
-                                #     "Goldmine_T1" : {
-                                #         "emoji" : row.get("Goldmine_T1_Emoji", ""),
-                                #         "time"  : row.get("Goldmine_T1_Time", ""),
-                                #         "price" : row.get("Goldmine_T1 Price", "")
-                                #     }
-                                  
-                                #     # keep any other milestone fields you like...
-                                # },
+                             
 
                                 "callPath": {"entries": [], "milestones": {}},
                                 "putPath": {"entries": [], "milestones": {}},
@@ -8114,40 +8041,27 @@ if st.sidebar.button("Run Analysis"):
                           
                                          }
 
-                      # 👇 Add PAE as just another milestone
-                            milestones["callPae" if side == "callPath" else "putPae"] = {
-                               "1to2": row.get("PAE_1to2", ""),
-                               "2to3": row.get("PAE_2to3", ""),
-                               "3to40F": row.get("PAE_3to40F", "")
-                            }
-
+                     
 
                                    
                             doc[side]["milestones"] = milestones
 # Always append the entry
-                        doc[side]["entries"].append(entry_obj)
-                        #👇 must be here (not outside the loop)
-                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        if sideways_note:
-                            doc[side]["sideways"] = sideways_note
+                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+						if sideways_note:
+						    doc[side]["milestones"]["Sideways"] = {
+						        "note": sideways_note,
+						        "from": row["Time"],
+						    }
 
-                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        if sideways_note:
-                            doc[side]["milestones"]["Sideways"] = {
-                                "note": sideways_note,
-                                "from": row["Time"],  # entry start time
-                                                }
+                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        # if sideways_note:
+                        #     doc[side]["milestones"]["Sideways"] = {
+                        #         "note": sideways_note,
+                        #         "from": row["Time"],  # entry start time
+                        #                         }
 
                                                  # --- Add sideways condition ---
-                  
-                        # else:
-                        #     # if this row is NOT 🎯1, add the minimalist checkpoint
-                        #     if entry_num != "1":
-                        #         grouped_docs[key]["extraEntries"].append({
-                        #             "Type" : row["Type"],
-                        #             "Time" : row["Time"],
-                        #             "Price": row["Price ($)"]
-                        #         })
+               
                 
                     # final list to export
                     json_ready = list(grouped_docs.values())
