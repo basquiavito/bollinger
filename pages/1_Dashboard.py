@@ -7200,7 +7200,6 @@ if st.sidebar.button("Run Analysis"):
 
                 def classify_prototype(row, intraday):
                     entry_type = row["Type"]
-                    open_f = intraday["F_numeric"].iloc[0]
                       
                     if "Call 🎯1" in entry_type:
                               # Find first Midas Bull anchor
@@ -7208,17 +7207,26 @@ if st.sidebar.button("Run Analysis"):
                         if anchor_idx is None:
                             return "Ember"
                         anchor_f = intraday.loc[anchor_idx, "F_numeric"]
-                      
-                        return "Ember Catch" if (anchor_f - open_f) <= -50 else "Ember Bounce"
-                      
+
+
+                        pre_high = intraday.loc[:anchor_idx, "F_numeric"].max()
+
+                        fall_depth = anchor_f - pre_high   # should be negative
+      
+                               
+                        return "Ember Catch" if fall_depth <= -50 else "Ember Bounce"
+
+                           
                     elif "Put 🎯1" in entry_type:
                               # Find first Midas Bear anchor
                          anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
                          if anchor_idx is None:
                              return "Cliff"
                          anchor_f = intraday.loc[anchor_idx, "F_numeric"]
-                      
-                         return "Cliff Catch" if (anchor_f - open_f) >= 50 else "Cliff Bounce"
+                         pre_low = intraday.loc[:anchor_idx, "F_numeric"].min()
+                         rise_height = anchor_f - pre_low   # should be positive
+
+                         return "Cliff Catch" if rise_height >= 50 else "Cliff Bounce"
                       
                     return ""
 
