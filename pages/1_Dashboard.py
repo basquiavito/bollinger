@@ -7970,7 +7970,7 @@ if st.sidebar.button("Run Analysis"):
                     )
                 # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
                     entries_df = entries_df.where(pd.notnull(entries_df), None)
-					entries_df = entries_df.replace({np.nan: None})
+                    entries_df = entries_df.where(pd.notnull(entries_df), None)
 
                     if "Ticker" not in entries_df.columns:
                         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
