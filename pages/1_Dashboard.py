@@ -7190,12 +7190,12 @@ if st.sidebar.button("Run Analysis"):
                     return entries_df
 
              
-                def assign_prototype(row):
-                    if "Call 🎯1" in row["Type"]:
-                        return "Ember"
-                    elif "Put 🎯1" in row["Type"]:
-                        return "Cliff"
-                    return ""
+                # def assign_prototype(row):
+                #     if "Call 🎯1" in row["Type"]:
+                #         return "Ember"
+                #     elif "Put 🎯1" in row["Type"]:
+                #         return "Cliff"
+                #     return ""
 
 
                 def classify_prototype(row, intraday):
@@ -7799,7 +7799,7 @@ if st.sidebar.button("Run Analysis"):
                    .sort_values("Time")
                    .reset_index(drop=True))
                  
-                    df["Prototype"] = df.apply(assign_prototype, axis=1)
+                    df["Prototype"] = df.apply(classify_prototype, axis=1)
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
                     df["Date"] = start_date
