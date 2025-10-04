@@ -134,6 +134,7 @@ tickers = st.sidebar.multiselect(
     options=default_tickers,
     default=["NVDA"]  # Start with one selected
 )
+selected_ticker = tickers[0] if tickers else "UNKNOWN"
 
 # Date range inputs
 start_date = st.sidebar.date_input("Start Date", value=date(2025, 8, 1))
