@@ -7929,7 +7929,7 @@ if st.sidebar.button("Run Analysis"):
                         return ""
 
               
-           )
+           
                 @st.cache_data(show_spinner=False)
                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
                     """Create CSV bytes from df (cached)."""
