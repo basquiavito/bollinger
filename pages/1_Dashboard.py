@@ -7991,8 +7991,8 @@ if st.sidebar.button("Run Analysis"):
                         side = "callPath" if "Call" in entry_type else "putPath"
 
 
-                        entry_type = row.get("Type", "")
-                        side = "callPath" if "Call" in entry_type else "putPath"
+                        open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
+                        close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
                         # create shell doc if first time
                         if key not in grouped_docs:
                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
