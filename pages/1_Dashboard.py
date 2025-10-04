@@ -138,7 +138,7 @@ tickers = st.sidebar.multiselect(
 
 active_ticker = st.sidebar.selectbox(
 	"Active ticker for export",
-	options=tickers if tickers else ["UNKOWN],
+	options=tickers if tickers else ["UNKNOWN"],
 	index=0,
 	key="active_ticker"
 )
