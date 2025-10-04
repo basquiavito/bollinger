@@ -8055,19 +8055,19 @@ if st.sidebar.button("Run Analysis"):
                         # if sideways_note:
                         #     doc[side]["sideways"] = sideways_note
 
-					    sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        if sideways_note:
-                            doc[side]["sideways"] = {
-                            "note": str(sideways_note),
-                            "from": str(row.get("Time", ""))   # safe for None
-    								}
+					    # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+         #                if sideways_note:
+         #                    doc[side]["sideways"] = {
+         #                    "note": str(sideways_note),
+         #                    "from": str(row.get("Time", ""))   # safe for None
+    					# 			}
 
-                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        # if sideways_note:
-                        #     doc[side]["milestones"]["Sideways"] = {
-                        #         "note": sideways_note,
-                        #         "from": row["Time"],  # entry start time
-                        #                         }
+                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        if sideways_note:
+                            doc[side]["milestones"]["Sideways"] = {
+                                "note": sideways_note,
+                                "from": row["Time"],  # entry start time
+                                                }
 
                                                  # --- Add sideways condition ---
                   
