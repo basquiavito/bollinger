@@ -7678,6 +7678,60 @@ if st.sidebar.button("Run Analysis"):
                         pd.to_datetime(last["Time"]).strftime("%H:%M"),
                         gain_f
                     ])
+                    def detect_sideways(intraday, ib_low, ib_high, entry_time, min_bars=4):
+               """
+               Detect sideways condition relative to IB thirds.
+               Returns a string like 'Sideways in Core for 30 min' or '' if no condition met.
+               """
+           
+               # --- Divide IB into thirds ---
+                        ib_third = (ib_high - ib_low) / 3
+                        cellar = (ib_low, ib_low + ib_third)
+                        core   = (ib_low + ib_third, ib_low + 2*ib_third)
+                        loft   = (ib_low + 2*ib_third, ib_high)
+           
+                        def zone_for_price(price):
+                            if cellar[0] <= price < cellar[1]:
+                                  return "Cellar"
+                            elif core[0] <= price < core[1]:
+                                  return "Core"
+                            elif loft[0] <= price <= loft[1]:
+                                return "Loft"
+                            return None
+                      
+                          # --- Locate entry index ---
+                        entry_locs = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
+                        if len(entry_locs) == 0:
+                            return ""
+                        entry_idx = entry_locs[0]
+                      
+                          # --- Scan forward from entry ---
+                        f_values = intraday.loc[entry_idx:, "F_numeric"].tolist()
+                      
+                        current_zone = None
+                        count = 0
+                      
+                        for f in f_values:
+                            z = zone_for_price(f)
+                            if z is None:
+                                break
+                      
+                            if z == current_zone:
+                                   count += 1
+                            else:
+                                  # new zone → check if last zone was sideways
+                                if current_zone and count >= min_bars:
+                                    minutes = count * 5
+                                    return f"Sideways in {current_zone} for {minutes} min"
+                                current_zone = z
+                                count = 1
+                      
+                          # check at the end
+                        if current_zone and count >= min_bars:
+                           minutes = count * 5
+                           return f"Sideways in {current_zone} for {minutes} min"
+                      
+                        return ""
 
             
 
