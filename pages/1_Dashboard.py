@@ -1,10 +1,6 @@
-
 import streamlit as st
 import numpy as np
 import string       
-import matplotlib.pyplot as plt
-from math import log, sqrt
-from scipy.stats import norm
 import yfinance as yf
 import pandas as pd
 import plotly.express as px
@@ -13,14 +9,7 @@ from plotly.subplots import make_subplots
 from datetime import date
 from datetime import timedelta, datetime
 import io
-import numbers
-import base64  # <-- add this at the top of your file (with other imports)
-import json
-import uuid
-import hashlib
-from typing import List
-           
-
+                
 
 def compute_value_area(
         df: pd.DataFrame,
@@ -106,10 +95,10 @@ def compute_value_area(
 
     va_min, va_max = min(va_levels), max(va_levels)
 
-    # # (optional) flag collapse
-    # if va_min == va_max:
-    #     st.warning("⚠️ Value area collapsed to one level – "
-    #                "range too narrow, even after adaptive binning.")
+    # (optional) flag collapse
+    if va_min == va_max:
+        st.warning("⚠️ Value area collapsed to one level – "
+                   "range too narrow, even after adaptive binning.")
 
     return va_min, va_max, profile_df
 
@@ -123,12 +112,14 @@ st.set_page_config(
 )
 
 
+st.title("VOLMIKE.COM")
+
 # ======================================
 # Sidebar - User Inputs & Advanced Options
 # ======================================
 st.sidebar.header("Input Options")
 
-default_tickers = ["SPY","VIXY","SOXX","NVDA","AMZN","MU","NQ=F","AMD","QCOM","SMCI","MSFT","uber", "AVGO","MRVL","QQQ","PLTR","AAPL","GOOGL","META","XLY","TSLA","nke","GM","c","DKNG","CHWY","ETSY","CART","W","KBE","wfc","hood","PYPL","coin","bac","jpm","BTC-USD","ETH-USD","XRP-USD","ADA-USD","SOL-USD","DOGE-USD"]
+default_tickers = ["QQQ","SPY","NVDA","MU", "AVGO","MSFT","PLTR","AMD","MRVL","uber","AMZN","AAPL","googl","META","SMCI","nke","GM","c","wfc","hood","coin","bac","jpm","HIMS","TXM","QCOM","MU","INTC","CRDO","RMBS","ON","ORCL", "CRWD","PANW","APP","MSTR","IBM","AMAT","DELL","WDC","CRM","CHWY","ETSY","CART","W"]
 tickers = st.sidebar.multiselect(
     "Select Tickers",
     options=default_tickers,
@@ -136,7 +127,7 @@ tickers = st.sidebar.multiselect(
 )
 
 # Date range inputs
-start_date = st.sidebar.date_input("Start Date", value=date(2025, 8, 1))
+start_date = st.sidebar.date_input("Start Date", value=date(2025, 5, 1))
 end_date = st.sidebar.date_input("End Date", value=date.today())
 
 # Timeframe selection
@@ -368,10 +359,6 @@ if st.sidebar.button("Run Analysis"):
                 # Add a Range column
                 intraday["Range"] = intraday["High"] - intraday["Low"]
 
-
-
-              # 1) Define a helper function to calculate *historical* annualized volatility
-             
                 # ================
                 # 3) Calculate Gap Alerts
                 # ================
@@ -390,15 +377,15 @@ if st.sidebar.button("Run Analysis"):
                     # Calculate the gap percentage
                     gap_percentage = (first_open - prev_close) / prev_close
 
-                    # # **Corrected Logic**
-                    # if first_open > prev_high:  # Must open *above* previous high to count as gap up
-                    #     if gap_percentage > gap_threshold_decimal:
-                    #         gap_alert = "🚀 UP GAP ALERT"
-                    #         gap_type = "UP"
-                    # elif first_open < prev_low:  # Must open *below* previous low to count as gap down
-                    #     if gap_percentage < -gap_threshold_decimal:
-                    #         gap_alert = "🔻 DOWN GAP ALERT"
-                    #         gap_type = "DOWN"
+                    # **Corrected Logic**
+                    if first_open > prev_high:  # Must open *above* previous high to count as gap up
+                        if gap_percentage > gap_threshold_decimal:
+                            gap_alert = "🚀 UP GAP ALERT"
+                            gap_type = "UP"
+                    elif first_open < prev_low:  # Must open *below* previous low to count as gap down
+                        if gap_percentage < -gap_threshold_decimal:
+                            gap_alert = "🔻 DOWN GAP ALERT"
+                            gap_type = "DOWN"
 
 
                            # 4) High of Day / Low of Day
@@ -561,889 +548,6 @@ if st.sidebar.button("Run Analysis"):
                     return intraday_df
 
                 intraday = calculate_f_percentage(intraday, prev_close)
- 
-              
-
-                def add_unit_percentage(intraday_df):
-                    if intraday_df.empty:
-                        intraday_df["Unit%"] = ""
-                        return intraday_df
-                
-                    intraday_df = intraday_df.copy()
-                    intraday_df["Unit%"] = ""
-                
-                    for i in range(len(intraday_df)):
-                        open_price = intraday_df.iloc[i]["Open"]
-                        close_price = intraday_df.iloc[i]["Close"]
-                
-                        if open_price > 0:
-                            unit_mike = ((close_price - open_price) / open_price) * 10000
-                            unit_mike = round(unit_mike, 0)
-                            unit_mike_str = f"{int(unit_mike)}%"
-                            intraday_df.at[i, "Unit%"] = unit_mike_str
-                        else:
-                            intraday_df.at[i, "Unit%"] = ""
-                
-                    return intraday_df
-                intraday = add_unit_percentage(intraday)
-
-                def calculate_vector_percentage(intraday_df):
-                    if intraday_df.empty:
-                        intraday_df["Vector%"] = ""
-                        return intraday_df
-                
-                    intraday_df = intraday_df.copy()
-                    intraday_df["Vector%"] = ""  # ← blank instead of "N/A"
-                
-                    total_rows = len(intraday_df)
-                    num_vectors = total_rows // 3
-                
-                    for i in range(num_vectors):
-                        i0 = i * 3
-                        i2 = i0 + 2
-                
-                        open_price = intraday_df.iloc[i0]["Open"]
-                        close_price = intraday_df.iloc[i2]["Close"]
-                
-                        vector_mike = ((close_price - open_price) / open_price) * 10000
-                        vector_mike = round(vector_mike, 0)
-                        vector_mike_str = f"{int(vector_mike)}%"
-                
-                        # Assign only to the third (last) bar of the vector
-                        intraday_df.at[i2, "Vector%"] = vector_mike_str
-                
-                    return intraday_df
-
-                intraday = calculate_vector_percentage(intraday)
-
-                def add_unit_velocity(intraday_df):
-                    if intraday_df.empty or "Unit%" not in intraday_df.columns:
-                        intraday_df["Unit Velocity"] = ""
-                        return intraday_df
-                
-                    intraday_df = intraday_df.copy()
-                    intraday_df["Unit Velocity"] = ""
-                
-                    for i in range(1, len(intraday_df)):
-                        prev = intraday_df.iloc[i - 1]["Unit%"]
-                        curr = intraday_df.iloc[i]["Unit%"]
-                
-                        if isinstance(prev, str) and prev.strip().endswith("%") and \
-                           isinstance(curr, str) and curr.strip().endswith("%"):
-                
-                            prev_val = int(prev.strip().replace("%", ""))
-                            curr_val = int(curr.strip().replace("%", ""))
-                            velocity = curr_val - prev_val
-                
-                            intraday_df.at[i, "Unit Velocity"] = f"{velocity:+d}%"
-                        else:
-                            intraday_df.at[i, "Unit Velocity"] = ""
-                
-                    # First row has no previous unit, so remains blank
-                    intraday_df.at[0, "Unit Velocity"] = ""
-                
-                    return intraday_df
-
-                intraday = add_unit_velocity(intraday)
-                def add_vector_velocity(intraday_df):
-                    if intraday_df.empty or "Vector%" not in intraday_df.columns:
-                        intraday_df["Velocity"] = ""
-                        return intraday_df
-                
-                    intraday_df = intraday_df.copy()
-                    intraday_df["Velocity"] = ""
-                
-                    previous_vector_val = None
-                
-                    for i in range(len(intraday_df)):
-                        vector_val = intraday_df.iloc[i]["Vector%"]
-                
-                        if isinstance(vector_val, str) and vector_val.strip().endswith("%") and vector_val.strip() != "":
-                            current_val = int(vector_val.strip().replace("%", ""))
-                
-                            if previous_vector_val is not None:
-                                velocity = current_val - previous_vector_val
-                                intraday_df.at[i, "Velocity"] = f"{velocity:+d}%"
-                            else:
-                                intraday_df.at[i, "Velocity"] = ""
-                
-                            previous_vector_val = current_val
-                
-                    return intraday_df
-
-                intraday = add_vector_velocity(intraday)
-
-                
-               
-
-                def add_unit_acceleration(intraday_df):
-                    if intraday_df.empty or "Unit Velocity" not in intraday_df.columns:
-                        intraday_df["Unit Acceleration"] = ""
-                        return intraday_df
-                
-                    intraday_df = intraday_df.copy()
-                    intraday_df["Unit Acceleration"] = ""
-                
-                    for i in range(2, len(intraday_df)):
-                        prev = intraday_df.iloc[i - 1]["Unit Velocity"]
-                        curr = intraday_df.iloc[i]["Unit Velocity"]
-                
-                        if isinstance(prev, str) and prev.strip().endswith("%") and \
-                           isinstance(curr, str) and curr.strip().endswith("%"):
-                
-                            prev_val = int(prev.strip().replace("%", ""))
-                            curr_val = int(curr.strip().replace("%", ""))
-                            accel = curr_val - prev_val
-                
-                            intraday_df.at[i, "Unit Acceleration"] = f"{accel:+d}%"
-                        else:
-                            intraday_df.at[i, "Unit Acceleration"] = ""
-                
-                    return intraday_df
-
-                intraday = add_unit_acceleration(intraday)
-
-
-                
-                def add_vector_acceleration(intraday_df):
-                    if intraday_df.empty or "Velocity" not in intraday_df.columns:
-                        intraday_df["Acceleration"] = ""
-                        return intraday_df
-                
-                    intraday_df = intraday_df.copy()
-                    intraday_df["Acceleration"] = ""
-                
-                    last_vector_row = None
-                    last_velocity_val = None
-                
-                    for i in range(len(intraday_df)):
-                        velocity_str = intraday_df.iloc[i]["Velocity"]
-                
-                        if isinstance(velocity_str, str) and velocity_str.strip().endswith("%") and velocity_str.strip() != "":
-                            current_velocity = int(velocity_str.strip().replace("%", ""))
-                
-                            if last_velocity_val is not None:
-                                acceleration = current_velocity - last_velocity_val
-                                intraday_df.at[i, "Acceleration"] = f"{acceleration:+d}%"
-                            else:
-                                intraday_df.at[i, "Acceleration"] = ""
-                
-                            last_velocity_val = current_velocity
-                            last_vector_row = i
-                
-                    return intraday_df
-
-                intraday = add_vector_acceleration(intraday)
-                def add_integrated_unit_acceleration(df):
-                    """
-                    Adds a column: 'Integrated_Unit_Acceleration'
-                    which is the cumulative sum of Unit Acceleration.
-                    """
-                    df = df.copy()
-                
-                    # Clean Unit Acceleration
-                    unit_accel_clean = (
-                        df["Unit Acceleration"]
-                        .fillna("0%")
-                        .replace("", "0%")
-                        .astype(str)
-                        .str.replace("%", "", regex=False)
-                    )
-                
-                    df["Unit_Acceleration_numeric"] = pd.to_numeric(unit_accel_clean, errors="coerce").fillna(0)
-                
-                    # Cumulative sum
-                    df["Integrated_Unit_Acceleration"] = df["Unit_Acceleration_numeric"].cumsum()
-                
-                    return df
-                
-                # ✅ Apply to your dataframe
-                intraday = add_integrated_unit_acceleration(intraday)
-
-                def detect_acceleration_bursts(df, column="Acceleration", window=5, accel_threshold=15):
-                    """
-                    Detects clusters of acceleration bursts.
-                    Flags 🔥 if ≥3 of the last `window` acceleration values exceed `accel_threshold`.
-                    """
-                    if column not in df.columns:
-                        return df
-                
-                    # Create empty alert column
-                    df["Acceleration_Alert"] = ""
-                
-                    # Clean and convert to numeric
-                    accel_numeric = df[column].str.replace("%", "").replace("", np.nan).astype("float")
-                    df["Accel_Spike"] = accel_numeric.abs() >= accel_threshold
-                
-                    # Rolling window cluster logic
-                    for i in range(window, len(df)):
-                        recent = df["Accel_Spike"].iloc[i - window:i]
-                        if recent.sum() >= 5:
-                            df.at[df.index[i], "Acceleration_Alert"] = "🔥"
-                
-                    return df
-
-                intraday = detect_acceleration_bursts(intraday)
-
-    
-    
-    
-
-              
-                def add_dual_jerk(df):
-                  """
-                  Adds:
-                    - Jerk_Unit   = Δ(Unit Acceleration) on every bar
-                    - Jerk_Vector = Δ(Vector Acceleration) ONLY on the last bar of each 3-bar vector
-                  """
-                  df = df.copy()
-              
-                  # --- Parse Unit Acceleration to numeric ---
-                  ua = (
-                      df["Unit Acceleration"]
-                      .fillna("")           # blanks → ""
-                      .replace("", "0%")    # interpret blank as 0%
-                      .astype(str)
-                      .str.replace("%", "", regex=False)
-                  )
-                  df["Unit_Acc_num"] = pd.to_numeric(ua, errors="coerce").fillna(0)
-              
-                  # --- Parse Vector Acceleration to numeric ---
-                  va = (
-                      df["Acceleration"]
-                      .fillna("")           # blanks → ""
-                      .replace("", "0%")
-                      .astype(str)
-                      .str.replace("%", "", regex=False)
-                  )
-                  df["Vector_Acc_num"] = pd.to_numeric(va, errors="coerce").fillna(0)
-              
-                  # --- Unit Jerk: Δ(Unit Acceleration) every bar ---
-                  df["Jerk_Unit"] = df["Unit_Acc_num"].diff().fillna(0)
-              
-                  # --- Full Vector Jerk diff series ---
-                  full_vec_diff = df["Vector_Acc_num"].diff().fillna(0)
-              
-                  # --- Vector Jerk only on 3rd bar of each vector (0-based idx 2,5,8...) ---
-                  vec_jerk = pd.Series(0.0, index=df.index)
-                  for i in range(len(df)):
-                      if i % 3 == 2:
-                          vec_jerk.iloc[i] = full_vec_diff.iloc[i]
-                  df["Jerk_Vector"] = vec_jerk
-                  df["Snap"] = df["Jerk_Vector"].diff()
- 
-
-                  return df
-
-                intraday = add_dual_jerk(intraday)
-                def mark_threshold_crosses(series, threshold=100):
-                    """
-                    Returns a boolean Series where:
-                    - True at first bar where value crosses above `threshold`
-                    - Ignores sustained values above threshold
-                    - Re-arms after value falls back below
-                    """
-                    crosses = pd.Series(False, index=series.index)
-                    armed = True
-                
-                    for i in range(1, len(series)):
-                        curr = series.iloc[i]
-                        prev = series.iloc[i - 1]
-                
-                        if armed and curr > threshold and prev <= threshold:
-                            crosses.iloc[i] = True
-                            armed = False
-                        elif not armed and curr <= threshold:
-                            armed = True
-                
-                    return crosses
-                # Apply threshold logic on Jerk_Vector
-                intraday["Jerk_Spike_Alert"] = mark_threshold_crosses(intraday["Jerk_Vector"], threshold=100)
-
-                        
-       
-        
-                def add_market_capacitance(df):
-                    """
-                    Computes a vector-style Capacitance:
-                      - Charge = sum of RVOL_5 over 3 bars × direction of Velocity
-                      - Voltage = abs(Vector Velocity)
-                      - Capacitance = Charge / Voltage × 100 (scaled)
-                
-                    Assumes:
-                      - 'RVOL_5' is bar-level volume
-                      - 'Velocity' is already 3-bar vector velocity (in "%")
-                    """
-                    df = df.copy()
-                
-                    # Parse Velocity into numeric and sign
-                    velocity_str = df["Velocity"].astype(str).str.strip()
-                    df["Velocity_Sign"] = velocity_str.str[0].map({"+": 1, "-": -1}).fillna(0)
-                    df["Voltage"] = pd.to_numeric(velocity_str.str.replace("%", "", regex=False), errors="coerce").abs()
-                
-                    # Initialize columns
-                    df["Vector_Charge"] = 0.0
-                    df["Vector_Capacitance"] = 0.0
-                
-                    # Only calculate every 3rd row (assuming Velocity is vector-style)
-                    for i in range(2, len(df), 3):
-                        charge_sum = df.loc[i-2:i, "RVOL_5"].sum()
-                        sign = df.at[i, "Velocity_Sign"]
-                        voltage = df.at[i, "Voltage"]
-                
-                        signed_charge = charge_sum * sign
-                
-                        df.at[i, "Vector_Charge"] = signed_charge
-                        df.at[i, "Vector_Capacitance"] = (signed_charge / voltage * 100) if voltage not in [0, None, float("nan")] else 0
-                
-                    return df
-                intraday =  add_market_capacitance(intraday)
-
-
-                def add_charge_polarity(df):
-                    """
-                    Adds 'Charge_Polarity' and 'Charge_Bias' columns:
-                      - Charge_Bias: 3-bar rolling sum of (Velocity_sign * RVOL_5)
-                      - Charge_Polarity:
-                          '🔴 Protonic'   → positive (bullish charge)
-                          '🔵 Electronic' → negative (bearish charge)
-                          '⚪ Neutral'     → near zero bias
-                    """
-                    df = df.copy()
-                
-                    # Ensure RVOL_5 is numeric
-                    df["RVOL_5"] = pd.to_numeric(df["RVOL_5"], errors="coerce").fillna(0)
-                
-                    # Get sign of vector velocity (from column 'Velocity' as string with '%')
-                    velocity_str = df["Velocity"].astype(str).str.strip()
-                    velocity_sign = velocity_str.str[0].map({"+": 1, "-": -1}).fillna(0)
-                
-                    # Compute signed charge (1 bar)
-                    df["Signed_Charge"] = velocity_sign * df["RVOL_5"]
-                
-                    # 3-bar rolling sum = Charge Bias
-                    df["Charge_Bias"] = df["Signed_Charge"].rolling(window=3, min_periods=1).sum()
-                
-                    # Interpret polarity
-                    def classify_bias(val, threshold=0.5):
-                        if val > threshold:
-                            return "🔵"
-                        elif val < -threshold:
-                            return "🔴"
-                        else:
-                            return "⚪"
-                
-                    df["Charge_Polarity"] = df["Charge_Bias"].apply(classify_bias)
-                
-                    return df
-                intraday = add_charge_polarity(intraday)
-
-
-
-              
-                def add_unit_momentum_rvol(df):
-                    if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
-                        df["Unit Momentum"] = ""
-                        return df
-                
-                    df = df.copy()
-                    df["Unit Momentum"] = ""
-                
-                    for i in range(len(df)):
-                        v_str  = df.iloc[i]["Unit Velocity"]
-                        rvol   = df.iloc[i]["RVOL_5"]
-                
-                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
-                            try:
-                                v_val = int(v_str.strip().replace("%", ""))
-                                df.at[i, "Unit Momentum"] = v_val * rvol
-                            except ValueError:
-                                df.at[i, "Unit Momentum"] = ""
-                
-                    return df
-                intraday = add_unit_momentum_rvol(intraday)
-
-                def add_vector_momentum_rvol(df):
-                    if df.empty or "Velocity" not in df.columns or "RVOL_5" not in df.columns:
-                        df["Vector Momentum"] = ""
-                        return df
-                
-                    df = df.copy()
-                    df["Vector Momentum"] = ""
-                
-                    for i in range(2, len(df), 3):  # Every third bar
-                        v_str = df.iloc[i]["Velocity"]
-                        rvol_sum = df.iloc[i-2:i+1]["RVOL_5"].sum()
-                
-                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
-                            try:
-                                v_val = int(v_str.strip().replace("%", ""))
-                                df.at[i, "Vector Momentum"] = v_val * rvol_sum
-                            except ValueError:
-                                df.at[i, "Vector Momentum"] = ""
-                
-                    return df
-
-                intraday = add_vector_momentum_rvol(intraday)
-
-                def add_unit_force(intraday_df):
-                      if intraday_df.empty or "Unit Acceleration" not in intraday_df.columns or "RVOL_5" not in intraday_df.columns:
-                          intraday_df["Unit Force"] = ""
-                          return intraday_df
-                  
-                      intraday_df = intraday_df.copy()
-                      intraday_df["Unit Force"] = ""
-                  
-                      for i in range(len(intraday_df)):
-                          accel_str = intraday_df.iloc[i]["Unit Acceleration"]
-                          rvol = intraday_df.iloc[i]["RVOL_5"]
-                  
-                          if isinstance(accel_str, str) and accel_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
-                              try:
-                                  accel_val = int(accel_str.strip().replace("%", ""))
-                                  force = accel_val * rvol
-                                  intraday_df.at[i, "Unit Force"] = force
-                              except ValueError:
-                                  intraday_df.at[i, "Unit Force"] = ""
-                          else:
-                              intraday_df.at[i, "Unit Force"] = ""
-  
-                      return intraday_df
-                intraday = add_unit_force(intraday)
-  
-                def add_vector_force(intraday_df):
-                  if intraday_df.empty or "Acceleration" not in intraday_df.columns or "RVOL_5" not in intraday_df.columns:
-                      intraday_df["Vector Force"] = ""
-                      return intraday_df
-              
-                  intraday_df = intraday_df.copy()
-                  intraday_df["Vector Force"] = ""
-              
-                  for i in range(2, len(intraday_df), 3):
-                      accel_str = intraday_df.iloc[i]["Acceleration"]
-                      rvol_sum = intraday_df.iloc[i - 2:i + 1]["RVOL_5"].sum()
-              
-                      if isinstance(accel_str, str) and accel_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
-                          try:
-                              accel_val = int(accel_str.strip().replace("%", ""))
-                              force = accel_val * rvol_sum
-                              intraday_df.at[i, "Vector Force"] = force
-                          except ValueError:
-                              intraday_df.at[i, "Vector Force"] = ""
-                      else:
-                          intraday_df.at[i, "Vector Force"] = ""
-              
-                  return intraday_df
-
-                intraday = add_vector_force(intraday)
-
-                def add_mike_power(df):
-                    df = df.copy()
-                
-                    if "Vector Force" not in df.columns or "Velocity" not in df.columns:
-                        df["Power"] = ""
-                        return df
-                
-                    # --- Clean velocity column ---
-                    velocity_clean = (
-                        df["Velocity"]
-                        .fillna("0%")              # fill NaNs
-                        .replace("", "0%")         # replace empty strings
-                        .str.replace("%", "", regex=False)
-                        .astype(float)
-                    )
-                
-                    # --- Clean vector force column ---
-                    force_clean = pd.to_numeric(df["Vector Force"], errors="coerce").fillna(0)
-                
-                    # --- Compute power ---
-                    df["Power"] = force_clean * velocity_clean
-                
-                    return df
-
-                intraday = add_mike_power(intraday)
-
-
-              
-                
-                              
-                def add_unit_energy(df):
-                    if df.empty or "Unit Velocity" not in df.columns or "RVOL_5" not in df.columns:
-                        df["Unit Energy"] = ""
-                        return df
-                
-                    df = df.copy()
-                    df["Unit Energy"] = ""
-                
-                    for i in range(len(df)):
-                        v_str = df.iloc[i]["Unit Velocity"]
-                        rvol = df.iloc[i]["RVOL_5"]
-                
-                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol, numbers.Number):
-                            try:
-                                v_val = int(v_str.strip().replace("%", ""))
-                                energy = rvol * (v_val ** 2)
-                                df.at[i, "Unit Energy"] = energy
-                            except ValueError:
-                                df.at[i, "Unit Energy"] = ""
-                        else:
-                            df.at[i, "Unit Energy"] = ""
-                
-                    return df
-
-                intraday = add_unit_energy(intraday)
-                def add_vector_energy(df):
-                    if df.empty or "Velocity" not in df.columns or "RVOL_5" not in df.columns:
-                        df["Vector Energy"] = ""
-                        return df
-                
-                    df = df.copy()
-                    df["Vector Energy"] = ""
-                
-                    for i in range(2, len(df), 3):
-                        v_str = df.iloc[i]["Velocity"]
-                        rvol_sum = df.iloc[i - 2:i + 1]["RVOL_5"].sum()
-                
-                        if isinstance(v_str, str) and v_str.strip().endswith("%") and isinstance(rvol_sum, numbers.Number):
-                            try:
-                                v_val = int(v_str.strip().replace("%", ""))
-                                energy = rvol_sum * (v_val ** 2)
-                                df.at[i, "Vector Energy"] = energy
-                            except ValueError:
-                                df.at[i, "Vector Energy"] = ""
-                        else:
-                            df.at[i, "Vector Energy"] = ""
-                
-                    return df
-
-                intraday = add_vector_energy(intraday)
-
-
-
- 
-
-                def add_force_efficiency(df):
-                    """
-                    Adds two columns:
-                      - Force_per_Range: Vector Force divided by last bar's Range
-                      - Force_per_3bar_Range: Vector Force divided by 3-bar cumulative Range
-                    """
-                    if df.empty or "Vector Force" not in df.columns or "Range" not in df.columns:
-                        df["Force_per_Range"] = ""
-                        df["Force_per_3bar_Range"] = ""
-                        return df
-                
-                    df = df.copy()
-                    df["Force_per_Range"] = ""
-                    df["Force_per_3bar_Range"] = ""
-                
-                    for i in range(2, len(df), 3):  # Only vector rows
-                        force = df.iloc[i]["Vector Force"]
-                        last_range = df.iloc[i]["Range"]
-                        three_bar_range = df.iloc[i - 2:i + 1]["Range"].sum()
-                
-                        # Force / last bar range
-                        if isinstance(force, numbers.Number) and isinstance(last_range, numbers.Number) and last_range != 0:
-                            df.at[i, "Force_per_Range"] = force / last_range
-                
-                        # Force / 3-bar range
-                        if isinstance(force, numbers.Number) and isinstance(three_bar_range, numbers.Number) and three_bar_range != 0:
-                            df.at[i, "Force_per_3bar_Range"] = force / three_bar_range
-                
-                    return df
-                
-                # Apply it
-                intraday = add_force_efficiency(intraday)
-
-
-                
-                def add_energy_efficiency(df):
-                    """
-                    Adds:
-                    - Unit_Energy_per_Range: Unit Energy ÷ Range (each bar)
-                    - Vector_Energy_per_3bar_Range: Vector Energy ÷ 3-bar cumulative Range (every 3rd bar)
-                    """
-                    df = df.copy()
-                
-                    # Initialize new columns
-                    df["Unit_Energy_per_Range"] = ""
-                    df["Vector_Energy_per_3bar_Range"] = ""
-                
-                    # --- Unit Energy per single-bar Range ---
-                    for i in range(len(df)):
-                        energy = df.iloc[i].get("Unit Energy")
-                        rng = df.iloc[i].get("Range")
-                
-                        if isinstance(energy, numbers.Number) and isinstance(rng, numbers.Number) and rng != 0:
-                            df.at[i, "Unit_Energy_per_Range"] = energy / rng
-                
-                    # --- Vector Energy per 3-bar Range ---
-                    for i in range(2, len(df), 3):
-                        energy = df.iloc[i].get("Vector Energy")
-                        rng_sum = df.iloc[i - 2:i + 1]["Range"].sum()
-                
-                        if isinstance(energy, numbers.Number) and isinstance(rng_sum, numbers.Number) and rng_sum != 0:
-                            df.at[i, "Vector_Energy_per_3bar_Range"] = energy / rng_sum
-                
-                    return df
-                
-                # Apply to intraday
-                intraday = add_energy_efficiency(intraday)
-
-
-
-
-                def calculate_kijun_sen(df, period=26):
-                    highest_high = df["High"].rolling(window=period, min_periods=1).max()
-                    lowest_low = df["Low"].rolling(window=period, min_periods=1).min()
-                    df["Kijun_sen"] = (highest_high + lowest_low) / 2
-                    return df
-
-                intraday = calculate_kijun_sen(intraday, period=26)
-                # Use the previous close (prev_close) from your daily data
-                intraday["Kijun_F"] = ((intraday["Kijun_sen"] - prev_close) / prev_close) * 10000
-
-
-                # Apply the function to your intraday data
-                intraday = calculate_kijun_sen(intraday, period=26)
-
-             
-
-                intraday["Acceleration_numeric"] = pd.to_numeric(intraday["Acceleration"].str.replace("%", ""), errors="coerce")
- 
-                            # Convert Unit% to numeric
-                intraday["Unit%_Numeric"] = (
-                    intraday["Unit%"].str.replace("%", "", regex=False).replace("", "0").astype(float)
-                )
-                
-                # Calculate cumulative sum
-                intraday["Cumulative_Unit"] = intraday["Unit%_Numeric"].cumsum()
-
-
-                def add_kijun_displacement(df, period=26):
-                    """
-                    Adds 'Kijun_Cumulative' column to df:
-                    Midpoint of highest and lowest Cumulative_Unit over a rolling period.
-                    This is the Ichimoku Kijun-sen, but computed in displacement space.
-                    """
-                    df = df.copy()
-                
-                    # Ensure Cumulative_Unit is numeric
-                    df["Cumulative_Unit"] = pd.to_numeric(df["Cumulative_Unit"], errors="coerce")
-                
-                    # Rolling midpoint of displacement
-                    df["Kijun_Cumulative"] = (
-                        df["Cumulative_Unit"]
-                        .rolling(window=period, min_periods=1)
-                        .apply(lambda x: (x.max() + x.min()) / 2)
-                    )
-                
-                    return df
-                
-                # Apply to your intraday DataFrame
-                intraday = add_kijun_displacement(intraday)
-
-                def add_wave_intensity(df):
-                    """
-                    Adds 'Intensity' column to represent wave energy intensity:
-                        Intensity = Power / Distance
-                    where:
-                        - Power is from your physics engine (already computed)
-                        - Distance is the absolute change in Cumulative_Unit (price movement)
-                
-                    Notes:
-                        - Handles division by zero or missing values gracefully.
-                        - Outputs 0 when Power is 0 or no movement occurred.
-                    """
-                    df = df.copy()
-                
-                    # Ensure required columns are present and clean
-                    df["Power"] = pd.to_numeric(df["Power"], errors="coerce").fillna(0)
-                    df["Cumulative_Unit"] = pd.to_numeric(df["Cumulative_Unit"], errors="coerce")
-                
-                    # Calculate distance = movement of price (like amplitude)
-                    df["Distance"] = df["Cumulative_Unit"].diff().abs().fillna(0)
-                
-                    # Avoid divide-by-zero by replacing 0 distances with np.nan temporarily
-                    df["Intensity"] = df.apply(
-                        lambda row: row["Power"] / row["Distance"] if row["Distance"] != 0 else 0,
-                        axis=1
-                    )
-                
-                    return df
-                
-                intraday = add_wave_intensity(intraday)
-
-                def add_market_field_force(df, resistance_col="Kijun_F"):
-                            df = df.copy()
-                            
-                            # Voltage = Velocity (numeric)
-                            df["V_numeric"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
-                            
-                            # Charge = RVOL_5
-                            Q = df["RVOL_5"]
-                            
-                            # Distance = |resistance - current level|
-                            d = (df[resistance_col] - df["Cumulative_Unit"]).abs().replace(0, np.nan)
-                            
-                            # Field = V / d
-                            df["Field_Intensity"] = df["V_numeric"] / d
-                            
-                            # Force = Q * (V / d)
-                            df["Electric_Force"] = Q * df["Field_Intensity"]
-                            
-                            return df
-                        
-                                  
-                intraday = add_market_field_force(intraday)
-     
-                def add_wave_intensity(df):
-                    """
-                    Adds 'Wave_Intensity' = Power / Range, representing how much power is delivered per unit price movement.
-                    Assumes 'Power' and 'Range' columns are already in df.
-                    """
-                    df = df.copy()
-                    
-                    # Ensure numeric values
-                    power = pd.to_numeric(df["Power"], errors="coerce")
-                    range_ = pd.to_numeric(df["Range"], errors="coerce").replace(0, np.nan)  # avoid div-by-zero
-                
-                    # Compute intensity
-                    df["Wave_Intensity"] = power / range_
-                    
-                    return df
-                
-                intraday = add_wave_intensity(intraday)
-
-                def add_integrated_accelerations(df):
-                    """
-                    Adds cumulative (integrated) acceleration:
-                      - 'Acceleration_numeric' and 'Unit_Acceleration_numeric' = cleaned % values
-                      - 'Integrated_Vector_Acceleration' = cumsum of vector acceleration
-                      - 'Integrated_Unit_Acceleration' = cumsum of unit acceleration
-                    """
-                    df = df.copy()
-                
-                    # --- Clean Vector Acceleration ---
-                    vec_accel = (
-                        df["Acceleration"]
-                        .fillna("0%")
-                        .replace("", "0%")
-                        .astype(str)
-                        .str.replace("%", "", regex=False)
-                    )
-                    df["Acceleration_numeric"] = pd.to_numeric(vec_accel, errors="coerce").fillna(0)
-                
-                    # --- Clean Unit Acceleration ---
-                    unit_accel = (
-                        df["Unit Acceleration"]
-                        .fillna("0%")
-                        .replace("", "0%")
-                        .astype(str)
-                        .str.replace("%", "", regex=False)
-                    )
-                    df["Unit_Acceleration_numeric"] = pd.to_numeric(unit_accel, errors="coerce").fillna(0)
-                
-                    # --- Integrals (Cumulative Sums) ---
-                    df["Integrated_Vector_Acceleration"] = df["Acceleration_numeric"].cumsum()
-                    df["Integrated_Unit_Acceleration"] = df["Unit_Acceleration_numeric"].cumsum()
-                
-                    return df
-                
-                # ✅ Apply it
-                intraday = add_integrated_accelerations(intraday)
-                
-
- 
-                def add_volatility_composite(df, window=10, alpha=1.0, beta=1.0, gamma=1.0):
-                    """
-                    Adds rolling volatility measures and a composite Volatility_Composite to the DataFrame.
-                    
-                    New columns:
-                      - Range                    = High − Low
-                      - Acceleration_numeric     = cleaned acceleration values as float
-                      - Jerk_numeric             = cleaned jerk values as float
-                      - Volatility_Range         = rolling std of Range
-                      - Volatility_Acceleration  = rolling std of Acceleration_numeric
-                      - Volatility_Jerk          = rolling std of Jerk_numeric
-                      - Volatility_Composite     = alpha*Volatility_Range + beta*Volatility_Acceleration + gamma*Volatility_Jerk
-                    """
-                    df = df.copy()
-                    
-                    # 1) Compute Range
-                    df["Range"] = pd.to_numeric(df["High"], errors="coerce") - pd.to_numeric(df["Low"], errors="coerce")
-                    
-                    # 2) Prepare Acceleration_numeric
-                    if "Acceleration_numeric" in df.columns:
-                        accel_raw = df["Acceleration_numeric"].astype(float)
-                    else:
-                        accel_raw = df.get("Acceleration", pd.Series("0%", index=df.index))
-                    # Clean and convert to float
-                    accel_series = (
-                        accel_raw
-                        .astype(str)
-                        .str.replace("%", "", regex=False)
-                        .replace("", "0")
-                        .astype(float)
-                    )
-                    df["Acceleration_numeric"] = accel_series.fillna(0)
-                    
-                    # 3) Prepare Jerk_numeric
-                    jerk_raw = df.get("Jerk", pd.Series("0%", index=df.index))
-                    jerk_series = (
-                        jerk_raw
-                        .astype(str)
-                        .str.replace("%", "", regex=False)
-                        .replace("", "0")
-                        .astype(float)
-                    )
-                    df["Jerk_numeric"] = jerk_series.fillna(0)
-                    
-                    # 4) Rolling standard deviations
-                    df["Volatility_Range"] = df["Range"].rolling(window, min_periods=1).std()
-                    df["Volatility_Acceleration"] = df["Acceleration_numeric"].rolling(window, min_periods=1).std()
-                    df["Volatility_Jerk"] = df["Jerk_numeric"].rolling(window, min_periods=1).std()
-                    
-                    # 5) Composite score
-                    df["Volatility_Composite"] = (
-                        alpha * df["Volatility_Range"]
-                        + beta * df["Volatility_Acceleration"]
-                        + gamma * df["Volatility_Jerk"]
-                    )
-                    
-                    return df
-
-# Example usage:
-# intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
-
-                # Apply to intraday
-                intraday = add_volatility_composite(intraday, window=10, alpha=1.0, beta=1.0, gamma=1.0)
-
-                def add_gravity_break_signal(df, threshold=9.8, source_col="Volatility_Composite"):
-                    """
-                    Detects bars where the volatility composite jumps by more than the gravity threshold (default 9.8).
-                    
-                    Adds:
-                      - Volatility_Composite_Diff: change from previous bar
-                      - Gravity_Break_Alert: emoji 🪂 if diff > threshold
-                    """
-                    df = df.copy()
-                
-                    # Calculate bar-to-bar difference
-                    df["Volatility_Composite_Diff"] = df[source_col].diff()
-                
-                    # Mark gravity break events
-                    df["Gravity_Break_Alert"] = df["Volatility_Composite_Diff"].apply(
-                        lambda x: "🪂" if x > threshold else ""
-                    )
-                
-                    return df
-                intraday = add_gravity_break_signal(intraday)
-
-
-
-
-
               
                 def compute_option_value(df, premium=64, contracts=100):
                     """
@@ -1469,9 +573,7 @@ if st.sidebar.button("Run Analysis"):
                 
                     # 3️⃣ Price moves
                     df["F%_Move"]            = df["F_numeric"] - f_open
-                    # df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
-                    df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * prev_close
-
+                    df["Dollar_Move_From_F"] = (df["F%_Move"] / 10_000) * spot_open
                     df["Sim_Spot"]           = spot_open + df["Dollar_Move_From_F"]
                 
                     # 4️⃣ Moneyness
@@ -1534,8 +636,8 @@ if st.sidebar.button("Run Analysis"):
                     df["Put_BBW_Is_Tight"]  = df["Put_BBW"]  < put_bbw_thresh
                     
                     # 🐝 Mark tight zones if 3 of last 5 are tight
-                    df["Call_BBW_Tight_Emoji"] = df["Call_BBW_Is_Tight"].rolling(3).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
-                    df["Put_BBW_Tight_Emoji"]  = df["Put_BBW_Is_Tight"] .rolling(3).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
+                    df["Call_BBW_Tight_Emoji"] = df["Call_BBW_Is_Tight"].rolling(5).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
+                    df["Put_BBW_Tight_Emoji"]  = df["Put_BBW_Is_Tight"] .rolling(5).apply(lambda x: x.sum() >= 3).fillna(0).astype(bool).map({True: "🐝", False: ""})
 
                     # 1️⃣ Raw speed of the call option value
                     df["Call_Option_Speed"] = df["Call_Option_Value"].diff()
@@ -1670,150 +772,12 @@ if st.sidebar.button("Run Analysis"):
                     return df
 
 
-                  
-
-
 
                 intraday = compute_option_value(intraday)      
 
 
-  
-
-                def compute_option_price_elasticity(
-                    intraday,
-                    fcol="F_numeric",
-                    call_col="Call_Option_Smooth",
-                    put_col="Put_Option_Smooth",
-                    smooth_window=3,
-                    median_window=50,
-                    threshold_scale=1.2,
-                    eps_replace_zero=True,
-                ):
-                    """
-                    PE = ΔOption  /  ΔF_numeric_points
-                         (cents)    (1 pt = 0.01 % move in underlying)
-                
-                    The smoothed PE is multiplied by 100 so a value like 23.4 means:
-                    ~23 ¢ option move for every 1-point change in F_numeric.
-                    """
-                
-                    intraday = intraday.copy()
-                
-                    # 1⃣  ΔF as point change in F_numeric
-                    intraday["dF"] = intraday[fcol].diff().abs()
-                    if eps_replace_zero:
-                        intraday["dF"] = intraday["dF"].replace(0, np.nan)
-                
-                    # 2⃣  raw elasticity
-                    intraday["Call_PE_raw"] = intraday[call_col].diff() / intraday["dF"]
-                    intraday["Put_PE_raw"]  = intraday[put_col].diff()  / intraday["dF"]
-                
-                    # 3⃣  smoothed PE
-                    intraday["Call_PE"] = intraday["Call_PE_raw"].rolling(smooth_window, min_periods=1).mean()
-                    intraday["Put_PE"]  = intraday["Put_PE_raw"].rolling(smooth_window, min_periods=1).mean()
-                
-                    # 4⃣  **readable PE** (×100) ―-> option-cents per F-point
-                    intraday["Call_PE_x100"] = (intraday["Call_PE"] * 100).round(2)
-                    intraday["Put_PE_x100"]  = (intraday["Put_PE"]  * 100).round(2)
-                
-                    # 5⃣  rolling-median gates on the ×100 series
-                    call_med = intraday["Call_PE_x100"].rolling(median_window, min_periods=1).median()
-                    put_med  = intraday["Put_PE_x100"].rolling(median_window, min_periods=1).median()
-                
-                    intraday["call_ok"] = intraday["Call_PE_x100"] > call_med * threshold_scale
-                    intraday["put_ok"]  = intraday["Put_PE_x100"]  > put_med  * threshold_scale
-                
-                    intraday["call_ok"] = intraday["call_ok"].fillna(False)
-                    intraday["put_ok"]  = intraday["put_ok"].fillna(False)
-
-                    flat = intraday["dF"] < intraday["dF"].rolling(20).quantile(0.25)
-                    
-                    intraday["Call_LF"] = (intraday["Call_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
-                    intraday["Put_LF"]  = (intraday["Put_Option_Smooth"].diff().rolling(3).mean() > 0) & flat
-                    # Boolean crossovers
-                    intraday["PE_Cross_Bull"] = (intraday["Call_PE"] > intraday["Put_PE"]) & \
-                                                (intraday["Call_PE"].shift(1) <= intraday["Put_PE"].shift(1))
-                    
-                    intraday["PE_Cross_Bear"] = (intraday["Put_PE"] > intraday["Call_PE"]) & \
-                                                (intraday["Put_PE"].shift(1) <= intraday["Call_PE"].shift(1))
-
-
-                    conditions_call = (intraday["Call_PE"] > intraday["Put_PE"] * 1.5) & (intraday["Call_PE"] > 0.50)
-                    conditions_put  = (intraday["Put_PE"] > intraday["Call_PE"] * 1.5) & (intraday["Put_PE"] > 0.50)
-                    
-                    intraday["PE_Kill_Shot"] = np.select(
-                        [conditions_call, conditions_put],
-                        ["🟢", "🔴"],
-                        default=None
-                    )
-
-                    intraday["PE_Same_Side"] = (
-                        (intraday["Call_PE"] > intraday["Put_PE"]) == (intraday["Call_PE"].shift(1) > intraday["Put_PE"].shift(1))
-                    )
-                    intraday["PE_Streak"] = intraday["PE_Same_Side"].rolling(3).sum() >= 3
-                    intraday["PE_Timer"] = np.where(intraday["PE_Streak"], "🔁", "")
-                    intraday["PE_PCR"] = intraday["Put_PE"] / intraday["Call_PE"]
-
-
-
-                    intraday["PE_PCR"] = intraday["PE_PCR"].clip(upper=5)
-                     # Calculate PE-based PCR and clip for extreme stability
-                    intraday["PE_PCR"] = (intraday["Put_PE"] / intraday["Call_PE"]).clip(upper=5)
-
-                    return intraday
-
-
-                intraday = compute_option_price_elasticity(intraday)      
-
-                 
-                
-                # --- make sure we have numeric versions (no % strings) ---
-                intraday["Vector_Energy_num"] = pd.to_numeric(intraday.get("Vector Energy"), errors="coerce").fillna(0)
-                intraday["Jerk_Vector_num"]   = pd.to_numeric(intraday.get("Jerk_Vector"),  errors="coerce").fillna(0)
-                intraday["VolComp_num"]       = pd.to_numeric(intraday.get("Volatility_Composite"), errors="coerce").fillna(0)
-                
-                def winsorize(s, lo=0.01, hi=0.99):
-                    qlo, qhi = s.quantile(lo), s.quantile(hi)
-                    return s.clip(qlo, qhi)
-                
-                def zscore(s):
-                    s = s.astype(float)
-                    mu = s.mean()
-                    sd = s.std(ddof=0)
-                    return (s - mu) / (sd if sd > 0 else 1.0)
-                
-                # --- clip outliers then z-score (session standardization) ---
-                vecE_w = winsorize(intraday["Vector_Energy_num"])
-                jerk_w = winsorize(intraday["Jerk_Vector_num"])
-                vcomp_w= winsorize(intraday["VolComp_num"])
-                
-                intraday["z_vecE"]  = zscore(vecE_w).clip(-4, 4)
-                intraday["z_jerk"]  = zscore(jerk_w).clip(-4, 4)
-                intraday["z_vcomp"] = zscore(vcomp_w).clip(-4, 4)
-
-                def armed_cross_down(series, down=-2.0, up=-1.0):
-                    hit = np.zeros(len(series), dtype=bool)
-                    armed = True
-                    for i in range(1, len(series)):
-                        prev, curr = series.iat[i-1], series.iat[i]
-                        if armed and curr < down and prev >= down:
-                            hit[i] = True
-                            armed = False
-                        elif not armed and curr > up:
-                            armed = True
-                    return hit
-
-                intraday["BRAKE"] = armed_cross_down(intraday["z_jerk"], down=-2.0, up=-1.0)
-
-       
-                rng3 = intraday["Range"].rolling(3, min_periods=3).sum()
-                intraday["Force_per_3bar_Range"] = (
-                      pd.to_numeric(intraday.get("Vector Force"), errors="coerce").fillna(0) / rng3.replace(0, np.nan)
-                  )
               
-                vec_idx = intraday.index[intraday.index % 3 == 2]  # your 3rd bars
-                eff = intraday.loc[vec_idx, "Force_per_3bar_Range"].astype(float)
-
+                
                 def detect_option_speed_explosion(df, lookback=3, strong_ratio=2.0, mild_ratio=1.5, percentile=90):
                     """
                     Detects call/put speed explosions using a ratio test and percentile filter.
@@ -1931,8 +895,6 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                
-
 
                 def calculate_f_bbw(df, scale_factor=10):
                             """
@@ -2031,19 +993,7 @@ if st.sidebar.button("Run Analysis"):
                 # Mark them with the window emoji
                 intraday.loc[top_distensible.index, "Distensibility Alert"] = "🪟"
 
-                def armed_cross_up(series, up=2.0, down=1.0):
-                    hit = np.zeros(len(series), dtype=bool)
-                    armed = True
-                    for i in range(1, len(series)):
-                        prev, curr = series.iat[i-1], series.iat[i]
-                        if armed and curr > up and prev <= up:
-                            hit[i] = True
-                            armed = False
-                        elif not armed and curr < down:
-                            armed = True
-                    return hit
-                
-                intraday["IGNITION"] = armed_cross_up(intraday["z_vecE"], up=2.0, down=1.0)
+
               
                 def calculate_compliance(df):
                     """
@@ -2346,11 +1296,6 @@ if st.sidebar.button("Run Analysis"):
                 # Apply the function to your intraday data
                 intraday = calculate_kijun_sen(intraday, period=26)
 
-
-
-              
-         
-
                 def f_ichimoku_confirmation(row):
                     if row["Close"] > row["Kijun_sen"]:
                         # Price is above Kijun → bullish bias
@@ -2614,157 +1559,49 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                # def generate_market_snapshot(df, current_time, current_price, prev_close, symbol):
-                #     """
-                #     Generates a concise market snapshot:
-                #     - Time and current price
-                #     - Opening price & where it stands now
-                #     - F% change in raw dollars
-                #     - Price position relative to Kijun and Bollinger Mid
-                #     - Latest Buy/Sell Signal
-                #     """
-
-                #     # Convert time to 12-hour format (e.g., "03:55 PM")
-                #     current_time_str = pd.to_datetime(current_time).strftime("%I:%M %p")
-
-                #     # Get today's opening price
-                #     open_price = df["Open"].iloc[0]
-
-                #     # Calculate today's price changes
-                #     price_change = current_price - prev_close
-                #     f_percent_change = (price_change / prev_close) * 10000  # F%
-
-                #     # Identify price position relative to Kijun and Bollinger Middle
-                #     last_kijun = df["Kijun_sen"].iloc[-1]
-                #     last_mid_band = df["F% MA"].iloc[-1]
-
-                #     position_kijun = "above Kijun" if current_price > last_kijun else "below Kijun"
-                #     position_mid = "above Mid Band" if current_price > last_mid_band else "below Mid Band"
-
-                #     # Get the latest Buy/Sell signal
-                #     latest_signal = df.loc[df["Wealth Signal"] != "", ["Wealth Signal"]].tail(1)
-                #     signal_text = latest_signal["Wealth Signal"].values[0] if not latest_signal.empty else "No Signal"
-
-                #     # Construct the message
-                #     snapshot = (
-                #         f"📌 {current_time_str} – **{symbol}** is trading at **${current_price:.2f}**\n\n"
-                #         f"• Opened at **${open_price:.2f}** and is now sitting at **${current_price:.2f}**\n"
-                #         f"• F% Change: **{f_percent_change:.0f} F%** (${price_change:.2f})\n"
-                #         f"• Price is **{position_kijun}** & **{position_mid}**\n"
-                #         f"• **Latest Signal**: {signal_text}\n"
-                #     )
-
-                #     return snapshot
- 
-              
-                def _sparkline(series, bins="▁▂▃▄▅▆▇█"):
-                    s = pd.Series(series).astype(float)
-                    if len(s) == 0 or s.nunique() == 1:
-                        return "—"
-                    x = (s - s.min()) / (s.max() - s.min())
-                    idx = np.clip((x * (len(bins)-1)).round().astype(int), 0, len(bins)-1)
-                    return "".join(bins[i] for i in idx)
-                
-                def _fmt_delta(x, pos="▲", neg="▼", zero="→", unit=""):
-                    if x > 0:  return f"{pos}{abs(x):.2f}{unit}"
-                    if x < 0:  return f"{neg}{abs(x):.2f}{unit}"
-                    return f"{zero}{abs(x):.2f}{unit}"
-                
-                def generate_market_snapshot(df, current_time, current_price, prev_close, symbol, last_n=26):
+                def generate_market_snapshot(df, current_time, current_price, prev_close, symbol):
                     """
-                    Vibrant, glanceable snapshot with:
-                    - Time, price, arrows & F%
-                    - Open & day range context
-                    - Distance to Kijun & Mid (in $ and %)
-                    - Latest signal (time ago)
-                    - Mini sparkline of last N closes
+                    Generates a concise market snapshot:
+                    - Time and current price
+                    - Opening price & where it stands now
+                    - F% change in raw dollars
+                    - Price position relative to Kijun and Bollinger Mid
+                    - Latest Buy/Sell Signal
                     """
-                    # time
+
+                    # Convert time to 12-hour format (e.g., "03:55 PM")
                     current_time_str = pd.to_datetime(current_time).strftime("%I:%M %p")
-                
-                    # core refs
-                    open_price = float(df["Open"].iloc[0]) if "Open" in df else np.nan
-                    day_high  = float(df["High"].max()) if "High" in df else np.nan
-                    day_low   = float(df["Low"].min())  if "Low"  in df else np.nan
-                
+
+                    # Get today's opening price
+                    open_price = df["Open"].iloc[0]
+
+                    # Calculate today's price changes
                     price_change = current_price - prev_close
-                    f_percent_change = (price_change / prev_close) * 10000 if prev_close else np.nan
-                
-                    # structure
-                    last_kijun = float(df["Kijun_sen"].iloc[-1]) if "Kijun_sen" in df else np.nan
-                    last_mid   = float(df["F% MA"].iloc[-1])      if "F% MA" in df else np.nan
-                
-                    # distances
-                    def pct_dist(a, b):
-                        return ((a - b) / b * 100) if (b and not np.isnan(b)) else np.nan
-                
-                    d_kijun = current_price - last_kijun if not np.isnan(last_kijun) else np.nan
-                    d_mid   = current_price - last_mid   if not np.isnan(last_mid)   else np.nan
-                
-                    d_kijun_pct = pct_dist(current_price, last_kijun) if not np.isnan(last_kijun) else np.nan
-                    d_mid_pct   = pct_dist(current_price, last_mid)   if not np.isnan(last_mid)   else np.nan
-                
-                    pos_kijun = "🟢 above Kijun" if not np.isnan(last_kijun) and current_price > last_kijun else ("🔴 below Kijun" if not np.isnan(last_kijun) else "— Kijun n/a")
-                    pos_mid   = "🟢 above Mid"   if not np.isnan(last_mid)   and current_price > last_mid   else ("🔴 below Mid"   if not np.isnan(last_mid)   else "— Mid n/a")
-                
-                    # signal + recency
-                    signal_text, signal_age = "No Signal", ""
-                    if "Wealth Signal" in df:
-                        sig_rows = df.loc[df["Wealth Signal"].astype(str).str.len() > 0, ["Wealth Signal"]].tail(1)
-                        if not sig_rows.empty:
-                            signal_text = sig_rows["Wealth Signal"].values[0]
-                            # if you have a time column, show staleness
-                            time_col = None
-                            for cand in ["Time", "Datetime", "DateTime", "Timestamp"]:
-                                if cand in df.columns:
-                                    time_col = cand
-                                    break
-                            if time_col:
-                                last_sig_idx = df.loc[df["Wealth Signal"].astype(str).str.len() > 0].index[-1]
-                                t_sig = pd.to_datetime(df.loc[last_sig_idx, time_col])
-                                t_now = pd.to_datetime(current_time)
-                                mins = int((t_now - t_sig).total_seconds() // 60)
-                                if mins >= 0:
-                                    signal_age = f" • {mins}m ago"
-                
-                    # sparkline of last closes
-                    closes = df["Close"].tail(last_n) if "Close" in df else pd.Series([])
-                    spark = _sparkline(closes)
-                
-                    # day context
-                    range_line = "—"
-                    if not np.isnan(day_high) and not np.isnan(day_low):
-                        rng = day_high - day_low
-                        from_low = current_price - day_low
-                        pct_thru = (from_low / rng * 100) if rng != 0 else np.nan
-                        if not np.isnan(pct_thru):
-                            range_line = f"🧭 Day: {day_low:.2f} → {day_high:.2f} • {_fmt_delta(rng, pos='Δ', neg='Δ', zero='Δ', unit='$')} • {pct_thru:.0f}% thru"
-                
-                    # directional badges
-                    arrow_price = _fmt_delta(price_change, unit="$")
-                    arrow_f     = _fmt_delta(f_percent_change, unit=" F%") if not np.isnan(f_percent_change) else "—"
-                    bias_badge  = "📈" if price_change > 0 else ("📉" if price_change < 0 else "⏸️")
-                
-                    # distance lines
-                    def dist_line(label, d_abs, d_pct):
-                        if np.isnan(d_abs) or np.isnan(d_pct):
-                            return f"{label}: n/a"
-                        return f"{label}: {_fmt_delta(d_abs, unit='$')} ({_fmt_delta(d_pct, unit='%', pos='▲', neg='▼', zero='→')})"
-                
-                    kijun_line = dist_line("📐 Kijun dist", d_kijun, d_kijun_pct)
-                    mid_line   = dist_line("〰️ Mid dist",   d_mid,   d_mid_pct)
-                
+                    f_percent_change = (price_change / prev_close) * 10000  # F%
+
+                    # Identify price position relative to Kijun and Bollinger Middle
+                    last_kijun = df["Kijun_sen"].iloc[-1]
+                    last_mid_band = df["F% MA"].iloc[-1]
+
+                    position_kijun = "above Kijun" if current_price > last_kijun else "below Kijun"
+                    position_mid = "above Mid Band" if current_price > last_mid_band else "below Mid Band"
+
+                    # Get the latest Buy/Sell signal
+                    latest_signal = df.loc[df["Wealth Signal"] != "", ["Wealth Signal"]].tail(1)
+                    signal_text = latest_signal["Wealth Signal"].values[0] if not latest_signal.empty else "No Signal"
+
+                    # Construct the message
                     snapshot = (
-                        f"📌 {current_time_str} — **{symbol}** {bias_badge} **${current_price:.2f}**  "
-                        f"({arrow_price} | {arrow_f})\n"
-                        f"{range_line}\n"
-                        f"🧠 Position: {pos_kijun} \n"
-                        f"{kijun_line} \n"
-                        f"🪙 Signal: **{signal_text}**{signal_age}\n"
-                        f"📈 {spark}\n"
+                        f"📌 {current_time_str} – **{symbol}** is trading at **${current_price:.2f}**\n\n"
+                        f"• Opened at **${open_price:.2f}** and is now sitting at **${current_price:.2f}**\n"
+                        f"• F% Change: **{f_percent_change:.0f} F%** (${price_change:.2f})\n"
+                        f"• Price is **{position_kijun}** & **{position_mid}**\n"
+                        f"• **Latest Signal**: {signal_text}\n"
                     )
+
                     return snapshot
-                
+
+
 
 
 
@@ -4298,7 +3135,7 @@ if st.sidebar.button("Run Analysis"):
                     return intraday
 
                 intraday = detect_new_highs_above_yesterday_high(intraday)
-     
+
 
                 # Find the last astronaut (new high) row
                 last_astronaut_idx = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"].index.max()
@@ -4656,22 +3493,8 @@ if st.sidebar.button("Run Analysis"):
                 intraday = mark_mike_check(intraday)
 
 
-                def add_sharpe_column(intraday, window=10):
-                    """
-                    Adds a rolling Sharpe Ratio column based on F_numeric over a given window.
-                    """
-                    returns = intraday["F_numeric"] / 100  # Convert from percent to decimal
-                    rolling_mean = returns.rolling(window=window).mean()
-                    rolling_std = returns.rolling(window=window).std()
-                
-                    # Avoid division by zero
-                    sharpe = rolling_mean / (rolling_std + 1e-9)
-                
-                    intraday["Sharpe_Ratio"] = sharpe.round(2)
-                    return intraday
 
-                intraday = add_sharpe_column(intraday, window=10)
-
+              
 
                 def detect_fortress_bee_clusters(df):
                     """
@@ -4773,144 +3596,6 @@ if st.sidebar.button("Run Analysis"):
 
                 intraday = entryAlert(intraday, threshold=0.1)
               
-                # Vector candle filter: crosses Kijun AND tags a Bollinger band (upper or lower)
-                def is_omen_candle(row):
-                    kijun = row["Kijun_F"]
-                    upper = row["F% Upper"]
-                    lower = row["F% Lower"]
-                    close = row["Close"]
-                    open_ = row["Open"]
-                    high = row["High"]
-                    low = row["Low"]
-                    
-                    crossed_kijun = (open_ < kijun and close > kijun) or (open_ > kijun and close < kijun)
-                    touched_band = (high >= upper) or (low <= lower)
-                    
-                    return crossed_kijun and touched_band
-                
-                intraday["Omen_Candle"] = intraday.apply(is_omen_candle, axis=1)
-
-            
-                
-                def clamp(x, lo, hi): 
-                    return np.minimum(np.maximum(x, lo), hi)
-                
-                def omen_score_row(r, prox_cap=0.5):
-                    """
-                    Expects columns:
-                      F_numeric, F% Upper, F% Lower, Kijun_F, Open, High, Low, Close,
-                      RVOL_5, z_vecE, z_jerk
-                    Returns (strength, label)
-                    """
-                    # ---------------- basics ----------------
-                    kijun   = r["Kijun_F"]
-                    f_up    = r["F% Upper"]
-                    f_lo    = r["F% Lower"]
-                    f       = r["F_numeric"]
-                    o, h, l, c = r["Open"], r["High"], r["Low"], r["Close"]
-                    rvol    = float(r.get("RVOL_5", 0) or 0)
-                    zE      = float(r.get("z_vecE", 0) or 0)
-                    zJ      = float(r.get("z_jerk", 0) or 0)
-                
-                    # band geometry
-                    half_bw = 0.5 * max((f_up - f_lo), 1e-9)   # avoid div/0
-                    # proximity to nearest edge, normalized by half band width
-                    dist_up = abs(f_up - f)
-                    dist_lo = abs(f - f_lo)
-                    dist    = min(dist_up, dist_lo)
-                    prox    = clamp(dist / half_bw, 0.0, prox_cap)  # 0=at edge, 0.5=far
-                    tagged  = (h >= f_up) or (l <= f_lo)
-                    near    = (prox <= 0.25)  # within 25% of edge
-                
-                    # direction: cross & close beyond Kijun
-                    crossed_up   = (o < kijun) and (c > kijun)
-                    crossed_down = (o > kijun) and (c < kijun)
-                
-                    # body dominance toward touched side
-                    rng  = max(h - l, 1e-9)
-                    body = abs(c - o)
-                    body_ok = (body / rng) >= 0.40
-                    # "toward edge": for up-cross, close near upper edge; for down-cross, close near lower edge
-                    toward_up   = dist_up <= dist_lo
-                    toward_down = dist_lo <  dist_up
-                    body_toward = (crossed_up and toward_up) or (crossed_down and toward_down)
-                
-                    # gates
-                    fuel_ok    = (rvol >= 1.2)                         # "horse"
-                    impulse_ok = (zE >= 1.5) or (zJ >= 2.0)
-                
-                    # score components (0–100)
-                    score = 0.0
-                    # 1) direction proof (close beyond kijun)
-                    if crossed_up or crossed_down:
-                        score += 25
-                
-                    # 2) band proximity (0 at 0.5, 25 at 0.0; tag = full 25)
-                    if tagged:
-                        score += 25
-                    else:
-                        # linear from prox_cap→0 maps to 0→25
-                        score += (1.0 - prox / prox_cap) * 25.0
-                
-                    # 3) fuel (RVOL linearly from 1.0→1.8 → 0→20)
-                    score += clamp((rvol - 1.0) / (1.8 - 1.0), 0.0, 1.0) * 20.0
-                
-                    # 4) impulse (max of zE or zJ, each clamped 0→3, scaled to 20 total)
-                    imp_unit = max(clamp(zE, 0, 3), clamp(zJ, 0, 3)) / 3.0
-                    score += imp_unit * 20.0
-                
-                    # 5) body dominance toward edge
-                    if body_ok and body_toward:
-                        score += 10.0
-                
-                    # label logic
-                    label = ""
-                    if (crossed_up or crossed_down) and fuel_ok and impulse_ok:
-                        if tagged:
-                            label = "🔥 Full Omen"
-                        elif near:
-                            label = "⚠️ Near Omen"
-                
-                    return round(score, 1), label
-                
-                def compute_omen(df):
-                    # apply row-wise
-                    out = df.apply(omen_score_row, axis=1, result_type="expand")
-                    df["Omen_Strength"] = out[0]
-                    df["Omen_Label"]    = out[1]
-                
-                    # convenience booleans
-                    df["Omen_Full"] = df["Omen_Label"].eq("🔥 Full Omen")
-                    df["Omen_Near"] = df["Omen_Label"].eq("⚠️ Near Omen")
-                
-                    # direction flags
-                    df["Omen_Bull"] = (
-                        (df["Open"] < df["Kijun_F"]) & (df["Close"] > df["Kijun_F"]) &
-                        (df["Omen_Full"] | df["Omen_Near"])
-                    )
-                    df["Omen_Bear"] = (
-                        (df["Open"] > df["Kijun_F"]) & (df["Close"] < df["Kijun_F"]) &
-                        (df["Omen_Full"] | df["Omen_Near"])
-                    )
-                    return df
-                
-                # --- call it ---
-                intraday = compute_omen(intraday)
-
-# --- plotting hints (minimal) ---
-# mask = intraday["Omen_Full"] | intraday["Omen_Near"]
-# fig_displacement.add_trace(go.Scatter(
-#     x=intraday.loc[mask, "Time"],
-#     y=intraday.loc[mask, "Cumulative_Unit"],
-#     mode="text",
-#     text=intraday.loc[mask, "Omen_Label"].str.replace(" Omen","", regex=False),
-#     textfont=dict(size=14),
-#     hovertemplate="Omen %{text}<br>Strength=%{customdata[0]}<extra></extra>",
-#     customdata=intraday.loc[mask, ["Omen_Strength"]].values,
-#     showlegend=False,
-#     name="Omen"
-# ))
-
 
                 #  def entryAlert(intraday, threshold=0.1, rvol_threshold=1.2, rvol_lookback=9):
                 #     """
@@ -5099,29 +3784,8 @@ if st.sidebar.button("Run Analysis"):
                 # Apply to your intraday DataFrame
                 intraday = add_mike_kijun_bee_emoji(intraday)
 
-           # Identify Top 3 Positive and Negative Velocity Vectors
-                def extract_top_velocity_markers(df, col_name="Velocity", time_col="Time"):
-                    # Convert to numeric (strip "%")
-                    df = df.copy()
-                    df["Velocity_Num"] = pd.to_numeric(df[col_name].str.replace("%", ""), errors="coerce")
-                    
-                    # Drop rows with NaNs
-                    df_clean = df.dropna(subset=["Velocity_Num"])
-                
-                    # Get top 3 positive and negative
-                    top_pos = df_clean.nlargest(3, "Velocity_Num")
-                    top_neg = df_clean.nsmallest(3, "Velocity_Num")
-                
-                    return top_pos, top_neg
-                
-                # Get markers
-                top_pos_vel, top_neg_vel = extract_top_velocity_markers(intraday)
-
-     
-             
 
 
-              
                 def add_mike_kijun_atr_emoji(df, atr_col="ATR"):
                     """
                     Adds 🌋 emoji at the point Mike (F_numeric) crosses Kijun_F,
@@ -5163,31 +3827,7 @@ if st.sidebar.button("Run Analysis"):
                     return df
                 intraday = add_mike_kijun_atr_emoji(intraday)
                 
-                def add_sharpe_column(intraday, window=26):
-                    """
-                    Adds a rolling Sharpe Ratio column based on F_numeric over a given window.
-                    Designed for intraday (e.g. 5-min) data.
-                
-                    - Uses F_numeric (% change) converted to decimal.
-                    - Applies rolling mean/std with min_periods=1 to avoid NaNs early on.
-                    - Adds 'Sharpe_Ratio' column rounded to 2 decimals.
-                    """
-                    # Convert % change to decimal form (e.g., 34 becomes 0.34)
-                    returns = intraday["F_numeric"] / 100
-                
-                    # Rolling mean and std with early minimum support
-                    rolling_mean = returns.rolling(window=window, min_periods=1).mean()
-                    rolling_std = returns.rolling(window=window, min_periods=1).std()
-                
-                    # Avoid division by zero (early std can be 0)
-                    sharpe = rolling_mean / (rolling_std + 1e-9)
-                
-                    # Add result to DataFrame
-                    intraday["Sharpe_Ratio"] = sharpe.round(2)
-                
-                    return intraday
-                intraday = add_sharpe_column(intraday)
-
+              
                              # --- CROSS CONDITIONS ---
                 tenkan_above_kijun = (
                     (intraday["Tenkan"].shift(1) < intraday["Kijun"].shift(1)) &
@@ -5247,31 +3887,18 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-               
-             
-                    # Quick check:
-                    # intraday.loc[intraday["Omen_On"], ["Time","Omen_Label","Omen_Direction","Omen_Strength"]].head()
 
-# --- plotting hints (minimal) ---
-# mask = intraday["Omen_Full"] | intraday["Omen_Near"]
-# fig_displacement.add_trace(go.Scatter(
-#     x=intraday.loc[mask, "Time"],
-#     y=intraday.loc[mask, "Cumulative_Unit"],
-#     mode="text",
-#     text=intraday.loc[mask, "Omen_Label"].str.replace(" Omen","", regex=False),
-#     textfont=dict(size=14),
-#     hovertemplate="Omen %{text}<br>Strength=%{customdata[0]}<extra></extra>",
-#     customdata=intraday.loc[mask, ["Omen_Strength"]].values,
-#     showlegend=False,
-#     name="Omen"
-# ))
 
-               
-                
-                
 
-                    
-                    
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5292,11 +3919,11 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","ADX_F%","+DM","-DM","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "Time","Volume","F_numeric","RVOL_5","Range","O2 Quality","Compliance","Compliance Shift","Compliance Surge","Distensibility","Distensibility Alert","Stroke Volume","Stroke Efficiency","Stroke Growth ⭐",'TD Pressure','TD REI',"TD_POQ","F% Theta","F% Cotangent","RVOL_Alert","BBW_Tight_Emoji","BBW Alert","wing_emoji","Sanyaku_Kouten","Sanyaku_Gyakuten","bat_emoji","Marengo","South_Marengo","Upper Angle","Lower Angle","tdSupplyCrossalert", "Kijun_F_Cross","ADX_Alert","STD_Alert","ATR_Exp_Alert","Tenkan_Kijun_Cross","Dollar_Move_From_F","Call_Return_%","Put_Return_%","Call_Option_Value","Tiger","Put_Option_Value","Call_Vol_Explosion","Put_Vol_Explosion","COV_Change","COV_Accel","Mike_Kijun_ATR_Emoji","Mike_Kijun_Horse_Emoji"    ]
 
                     st.dataframe(intraday[cols_to_show])
 
-                ticker_tabs = st.tabs(["Mike Plot"])
+                ticker_tabs = st.tabs(["Mike Plot", "Mike Table"])
 
 
 
@@ -5440,9 +4067,6 @@ if st.sidebar.button("Run Analysis"):
                   profile_df["%Vol"] = profile_df["F% Level"].astype(str).map(vol_percent).fillna(0)
 
 
-                  # Define most volume bin level (used in resistance)
-                  max_vol_level = profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level']
-                  max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
 
                   
                                     # Add earliest Time seen in each F% bin
@@ -5457,21 +4081,7 @@ if st.sidebar.button("Run Analysis"):
                   va_min = min(value_area_levels)
                   va_max = max(value_area_levels)
                   
-                  # # === STEP 1: Create Resistance Reference Data ===
-                  # resistance_lines = {
-                  #     "IB_High": ib_high,
-                  #     "IB_Low": ib_low,
-                  #     "High_Vol_Bin": max_vol_level,
-                  #     "High_Letter_Bin": max_letter_level,
-                  #     "VA_High": va_max,
-                  #     "VA_Low": va_min
-                  # }
-                  
-                  # res_df = pd.DataFrame({
-                  #     "Level": list(resistance_lines.values()),
-                  #     "Label": list(resistance_lines.keys())
-                  # }).sort_values(by="Level", ascending=False).reset_index(drop=True)
-                  
+
 
 
                          # Step 1: Identify the volume-dominant F% level
@@ -5506,103 +4116,58 @@ if st.sidebar.button("Run Analysis"):
                   
                   profile_df["👃🏽"] = profile_df.apply(nose_marker, axis=1)
 
-                                 
-       
-                   # Define Initial Balance from first 12 candles
-                  ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
                   
-                  ib_high = ib_data["F_numeric"].max()
-                  ib_low = ib_data["F_numeric"].min()
+                                   # Add the Ear_Emoji column to intraday based on the profile logic
+ 
+                  #  # Define Initial Balance from first 12 candles
+                  # ib_data = intraday.iloc[:12]  # First hour (12 x 5min bars)
                   
-                  # Add to intraday as constant columns
-                  intraday["IB_High"] = ib_high
-                  intraday["IB_Low"] = ib_low
+                  # ib_high = ib_data["F_numeric"].max()
+                  # ib_low = ib_data["F_numeric"].min()
+                  
+                  # # Add to intraday as constant columns
+                  # intraday["IB_High"] = ib_high
+                  # intraday["IB_Low"] = ib_low
                   
                                 
-                                    # Initialize IB breakout emojis
-                  intraday["IB_High_Break"] = ""
-                  intraday["IB_Low_Break"] = ""
+                  #                   # Initialize IB breakout emojis
+                  # intraday["IB_High_Break"] = ""
+                  # intraday["IB_Low_Break"] = ""
                   
-                  # Track prior state (inside/outside IB)
-                  intraday["Inside_IB"] = (intraday["F_numeric"] >= intraday["IB_Low"]) & (intraday["F_numeric"] <= intraday["IB_High"])
-                  intraday["Prior_Inside_IB"] = intraday["Inside_IB"].shift(1)
+                  # # Track prior state (inside/outside IB)
+                  # intraday["Inside_IB"] = (intraday["F_numeric"] >= intraday["IB_Low"]) & (intraday["F_numeric"] <= intraday["IB_High"])
+                  # intraday["Prior_Inside_IB"] = intraday["Inside_IB"].shift(1)
                   
-                  # 💸 Breakout above IB High
-                  ib_high_break = (
-                      (intraday["F_numeric"] > intraday["IB_High"]) &  # now above
-                      (intraday["Prior_Inside_IB"] == True)            # came from inside
-                  )
-                  intraday.loc[ib_high_break, "IB_High_Break"] = "💸"
+                  # # 💸 Breakout above IB High
+                  # ib_high_break = (
+                  #     (intraday["F_numeric"] > intraday["IB_High"]) &  # now above
+                  #     (intraday["Prior_Inside_IB"] == True)            # came from inside
+                  # )
+                  # intraday.loc[ib_high_break, "IB_High_Break"] = "💸"
                   
-                  # 🧧 Breakdown below IB Low
-                  ib_low_break = (
-                      (intraday["F_numeric"] < intraday["IB_Low"]) &   # now below
-                      (intraday["Prior_Inside_IB"] == True)            # came from inside
-                  )
-                  intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
+                  # # 🧧 Breakdown below IB Low
+                  # ib_low_break = (
+                  #     (intraday["F_numeric"] < intraday["IB_Low"]) &   # now below
+                  #     (intraday["Prior_Inside_IB"] == True)            # came from inside
+                  # )
+                  # intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
-                            
-                  def add_stamina_signal(intraday, profile_df, f_bins, rvol_gate=1.2):
-                      """
-                      Adds Stamina_Signal column:
-                        ⚪ = no stamina
-                        🪨 = stamina but blocked (at volume- or time-memory level)
-                        💪 = stamina + clear track
-                      """
-                      intraday = intraday.copy()
-                  
-                      # Ensure numeric
-                      for col in ["F_numeric", "RVOL_5"]:
-                          intraday[col] = pd.to_numeric(intraday[col], errors="coerce")
-                  
-                      if intraday[["F_numeric", "RVOL_5"]].isnull().all().any():
-                          # Required series are entirely NaN → skip
-                          return intraday
-                  
-                      max_vol_level    = int(profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level'])
-                      max_letter_level = int(profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level'])
-                  
-                      stamina = []
-                      last_bin = f_bins[-2]  # second-to-last edge (uppermost real bin)
-                  
-                      for mike, rvol in zip(intraday["F_numeric"], intraday["RVOL_5"]):
-                          if pd.isna(mike) or pd.isna(rvol):
-                              stamina.append("⚪")
-                              continue
-                  
-                          # Safe binning
-                          idx = np.digitize(mike, f_bins) - 1
-                          idx = max(0, min(idx, len(f_bins) - 2))
-                          current_bin = f_bins[idx]
-                  
-                          if rvol <= rvol_gate:
-                              stamina.append("⚪")
-                          elif current_bin in (max_vol_level, max_letter_level):
-                              stamina.append("🪨")
-                          else:
-                              stamina.append("💪")
-                  
-                      intraday["Stamina_Signal"] = stamina
-                      return intraday
-                  
-                  intraday = add_stamina_signal(intraday, profile_df, f_bins)
-                  
-                  print(intraday.columns[-5:])          # ‘Stamina_Signal’ should be listed
-                  print(intraday.tail()[["F_numeric", "RVOL_5", "Stamina_Signal"]])
-                  
-                  
+                     
+
+
+
 
                   
-                  #                   # === Top Dot Logic by 15-Minute Block ===
-                  top_dots = (
-                      intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
-                      .sort_values("LetterIndex")
-                      .reset_index(drop=True)
-                  )
-                  top_dots = (
-                      intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
-                      .reset_index(drop=True)
-                  )
+                                    # === Top Dot Logic by 15-Minute Block ===
+                  # top_dots = (
+                  #     intraday.loc[intraday.groupby("LetterIndex")["F_numeric"].idxmax()]
+                  #     .sort_values("LetterIndex")
+                  #     .reset_index(drop=True)
+                  # )
+                  # top_dots = (
+                  #     intraday.groupby("LetterIndex").apply(lambda g: g.loc[g["F_numeric"].idxmax()])
+                  #     .reset_index(drop=True)
+                  # )
                   # top_dots["Time"] = intraday.groupby("LetterIndex")["Time"].max().values  # Force dot to close of bracket
 
                   # Step 1: Get row of max F% per 15-min block (actual auction moment)
@@ -5633,87 +4198,19 @@ if st.sidebar.button("Run Analysis"):
                   
                   top_dots["DotColor"] = top_dots.apply(assign_dot_color, axis=1)
                   
-      
-
-
-                  # # Show DataFrame
-                  st.dataframe(profile_df[["F% Level","Time","Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
-
-                  
-                  def compute_ib_volume_weights(intraday, ib_high, ib_low):
-                        """
-                        Split the Initial Balance range into 3 equal compartments: Cellar, Core, Loft.
-                        For each, compute:
-                          - Total volume
-                          - Volume per area (pressure)
-                          - Weight (assuming unit gravity, w = mg)
-                        """
-                        df = intraday.copy()
-                        
-                        # Define IB levels
-                        ib_range = ib_high - ib_low
-                        third = ib_range / 3
-                    
-                        # Define compartment boundaries
-                        cellar_top = ib_low + third
-                        core_top = ib_low + 2 * third
-                    
-                        # Tag zones
-                        def tag_zone(row):
-                            price = row["Close"]
-                            if price < cellar_top:
-                                return "Cellar"
-                            elif price < core_top:
-                                return "Core"
-                            else:
-                                return "Loft"
-                    
-                        df["IB_Zone"] = df.apply(tag_zone, axis=1)
-                    
-                        # Compute zone stats
-                        zone_stats = df.groupby("IB_Zone")["Volume"].agg(
-                            Total_Volume="sum",
-                            Bar_Count="count"
-                        ).reset_index()
-                    
-                        # Assume equal area for all zones
-                        zone_stats["Area"] = 1  # normalized
-                    
-                        # Volume per area = pressure
-                        zone_stats["Volume_Pressure"] = zone_stats["Total_Volume"] / zone_stats["Area"]
-                    
-                        # Weight (w = m * g); here mass ~ volume, and gravity g = 1
-                        zone_stats["Weight"] = zone_stats["Total_Volume"]  # since g = 1
-                    
-                        return zone_stats
-  
-                  ib_stats = compute_ib_volume_weights(intraday, ib_high=ib_high, ib_low=ib_low)
+               
                 
 
 
-                  
 
                   
-                  def add_ib_field_force(df, resistance_col="IB_High"):
-                      df = df.copy()
                   
-                      # 1. Convert Velocity to numeric (Voltage)
-                      df["V_numeric"] = pd.to_numeric(df["Velocity"].str.replace("%", ""), errors="coerce")
-                  
-                      # 2. Charge = RVOL_5
-                      Q = df["RVOL_5"]
-                  
-                      # 3. Distance from IB High to current level
-                      d = (df[resistance_col] - df["Cumulative_Unit"]).abs().replace(0, np.nan)  # avoid div-by-zero
-                  
-                      # 4. Field = Voltage / Distance
-                      df["IB_Field_Intensity"] = df["V_numeric"] / d
-                  
-                      # 5. Electric Force = Q * Field
-                      df["IB_Electric_Force"] = Q * df["IB_Field_Intensity"]
-                  
-                      return df
-                  intraday = add_ib_field_force(intraday)
+
+
+                  # Show DataFrame
+                  st.dataframe(profile_df[["F% Level","Time", "Letters",  "%Vol","💥","Tail","✅ ValueArea","🦻🏼", "👃🏽"]])
+
+                
                                          # Initialize columns
                   intraday["🪘"] = ""
                   intraday["Drum_Y"] = np.nan
@@ -5747,14 +4244,6 @@ if st.sidebar.button("Run Analysis"):
                           intraday.at[intraday.index[i], "Drum_Y"] = now["F_numeric"] - 16
                           above = False
 
-
-                  intraday['Smoothed_Compliance'] = intraday['Compliance'].rolling(window=5, min_periods=1).mean()
- 
-                            
-                 
-                  
-                             
-                            
                   with st.expander("MIDAS Curves (Bull + Bear Anchors)", expanded=False):
                   
                       # Detect price column
@@ -5844,93 +4333,7 @@ if st.sidebar.button("Run Analysis"):
                               if curr >= 2 * prev:
                                   intraday.at[intraday.index[i], "Bull_Displacement_Double"] = "👑"
 
-
-                      intraday["Bear_Lethal_Accel"] = ""
-                      
-                      for i in range(2, len(intraday)):
-                          prev = intraday["Bear_Displacement"].iloc[i - 1]
-                          curr = intraday["Bear_Displacement"].iloc[i]
-                          delta = curr - prev
-                          recent_min = intraday["Bear_Displacement"].iloc[i-3:i].min()
-                          
-                          # Lethal if all 3 conditions met
-                          if (
-                              pd.notna(curr)
-                              and curr > 1.5 * recent_min  # explosive growth in displacement
-                              and delta > 5               # sharp jump in a single bar
-                              and curr > 20               # absolute distance confirms real separation
-                          ):
-                              intraday.at[intraday.index[i], "Bear_Lethal_Accel"] = "🥊"
-                      
-                      intraday["Bull_Lethal_Accel"] = ""
-
-                      for i in range(2, len(intraday)):
-                          prev = intraday["Bull_Displacement"].iloc[i - 1]
-                          curr = intraday["Bull_Displacement"].iloc[i]
-                          delta = curr - prev
-                          recent_min = intraday["Bull_Displacement"].iloc[i-3:i].min()
-                          
-                          if (
-                              pd.notna(curr)
-                              and curr > 1.5 * recent_min
-                              and delta > 5
-                              and curr > 20
-                          ):
-                              intraday.at[intraday.index[i], "Bull_Lethal_Accel"] = "🚀"
-
-
-
-
-
-
-                              
-                  
-                      def check_midas_3delta_trigger(df):
-                                    """
-                                    Detects conditions to trigger a 3-delta buy alert:
-                                    - A Midas Bull or Bear anchor appears
-                                    - Price crosses a TD Supply or Demand line
-                                    - The cross is in the same direction as Midas slope
-                                    Returns the dataframe with Bull3DeltaTrigger and Bear3DeltaTrigger columns
-                                    """
-                                
-                                    # 1. Detect anchor appearance
-                                    df["BullAnchor"] = df["MIDAS_Bull"].notna() & df["MIDAS_Bull"].shift(1).isna()
-                                    df["BearAnchor"] = df["MIDAS_Bear"].notna() & df["MIDAS_Bear"].shift(1).isna()
-                                
-                                    # 2. Detect price crossing TD lines
-                                    df["Crossed_TD_Demand"] = (df["F_numeric"].shift(1) < df['TD Demand Line F']) & (df["F_numeric"] >= df['TD Demand Line F'])
-                                    df["Crossed_TD_Supply"] = (df["F_numeric"].shift(1) > df['TD Supply Line F']) & (df["F_numeric"] <= df['TD Supply Line F'])
-                                
-                                    # 3. Calculate slope direction of Midas lines
-                                    df["BullSlope"] = df["MIDAS_Bull"].diff()
-                                    df["BearSlope"] = df["MIDAS_Bear"].diff()
-                                
-                                    df["BullSlopeUp"] = df["BullSlope"] > 0
-                                    df["BearSlopeDown"] = df["BearSlope"] < 0
-                                
-                                    # 4. Final trigger logic
-                                    df["Bull3DeltaTrigger"] = (
-                                        df["BullAnchor"] &
-                                        df["Crossed_TD_Demand"] &
-                                        df["BullSlopeUp"]
-                                    )
-                                
-                                    df["Bear3DeltaTrigger"] = (
-                                        df["BearAnchor"] &
-                                        df["Crossed_TD_Supply"] &
-                                        df["BearSlopeDown"]
-                                    )
-                                
-                                    return df
-                
-                      intraday = check_midas_3delta_trigger(intraday)
-
-
-
-
-
-                    
+                      # Add emojis
                       def add_mike_midas_cross_emojis(df, price_col):
                           if not all(col in df.columns for col in [price_col, "MIDAS_Bull", "MIDAS_Bear"]):
                               return df, None, None
@@ -6042,2139 +4445,329 @@ if st.sidebar.button("Run Analysis"):
 
                 
  
-                # # Display anchor info
-                # st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
-                # st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
-  
-  
-                  # Ensure 👃🏽 and 🦻🏼 columns exist
-                if "👃🏽" not in intraday.columns:
-                    intraday["👃🏽"] = ""
-                
-                if "🦻🏼" not in intraday.columns:
-                    intraday["🦻🏼"] = ""
-                
-                  
-                # Initialize the new column for the 🎯 entry signal
-                intraday["Put_FirstEntry_Emoji"] = ""
-                
-                # Step 1: Find the index of the MIDAS Bear anchor (first non-null value)
-                anchor_idx_bear = intraday["MIDAS_Bear"].first_valid_index()
-                
-                # Defensive check
-                if anchor_idx_bear is not None:
-                    # Step 2: Start scanning from the anchor forward
-                    drizzle_found = False
-                    for i in range(intraday.index.get_loc(anchor_idx_bear), len(intraday)):
-                        if intraday.iloc[i]["Drizzle_Emoji"] == "🌧️":
-                            # Step 3: Mark the first drizzle bar after anchor
-                            intraday.at[intraday.index[i], "Put_FirstEntry_Emoji"] = "🎯"
-                            drizzle_found = True
-                            break  # Only mark the first one
-                
-                intraday["Call_FirstEntry_Emoji"] = ""
+                # Display anchor info
+                st.write(f"🐻 **Bearish Anchor:** {anchor_time_bear.strftime('%I:%M %p')} — Price: {round(anchor_price_bear, 2)}")
+                st.write(f"🐂 **Bullish Anchor:** {anchor_time_bull.strftime('%I:%M %p')} — Price: {round(anchor_price_bull, 2)}")
+            
+        
+                with st.expander("🪞 MIDAS Anchor Table", expanded=False):
+                    st.dataframe(
+                        intraday[[
+                            'Time', price_col, 'Volume',
+                            'MIDAS_Bear', 'MIDAS_Bull',"Bear_Displacement","Bull_Displacement","Bear_Displacement_Double","Bull_Displacement_Change","Bear_Displacement_Change",
+                            'MIDAS_Bull_Hand', 'MIDAS_Bear_Glove',"Hold_Call","Hold_Put",
+                            'Bull_Midas_Wake', 'Bear_Midas_Wake'
+                        ]]
+                        .dropna(subset=['MIDAS_Bear', 'MIDAS_Bull'], how='all')
+                        .reset_index(drop=True)
+                    )
 
-                # Get Bull MIDAS anchor index
-                anchor_idx_bull = intraday["MIDAS_Bull"].first_valid_index()
-                
-                if anchor_idx_bull is not None:
-                    for i in range(intraday.index.get_loc(anchor_idx_bull), len(intraday)):
-                        if intraday.iloc[i]["Heaven_Cloud"] == "☁️":
-                            intraday.at[intraday.index[i], "Call_FirstEntry_Emoji"] = "🎯"
-                            break
+                # with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
+                #     fig_midas = go.Figure()
 
+                #     intraday["Bear_Displacement_Change"] = intraday["Bear_Displacement"].diff()
+                #     intraday["Bear_Displacement_Change_Smooth"] = intraday["Bear_Displacement_Change"].rolling(3).mean()
+
+                #     # Mike / F_numeric Line
+                #     fig_midas.add_trace(go.Scatter(
+                #         x=intraday["Time"],
+                #         y=intraday["F_numeric"],
+                #         mode="lines",
+                #         name="Mike (F_numeric)",
+                #         line=dict(color="white", width=2)
+                #     ))
+                
+                #     # MIDAS_Bear Line
+                #     fig_midas.add_trace(go.Scatter(
+                #         x=intraday["Time"],
+                #         y=intraday["MIDAS_Bear"],
+                #         mode="lines",
+                #         name="MIDAS_Bear",
+                #         line=dict(color="red", dash="dash")
+                #     ))
+                
+                #     # MIDAS_Bull Line
+                #     fig_midas.add_trace(go.Scatter(
+                #         x=intraday["Time"],
+                #         y=intraday["MIDAS_Bull"],
+                #         mode="lines",
+                #         name="MIDAS_Bull",
+                #         line=dict(color="green", dash="dot")
+                #     ))
+                
+                #     fig_midas.update_layout(
+                #         height=400,
+                #         plot_bgcolor="black",
+                #         paper_bgcolor="black",
+                #         font=dict(color="white"),
+                #         title="MIDAS Anchors vs Mike",
+                #         xaxis_title="Time",
+                #         yaxis_title="Price"
+                #     )
+
+                #     bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                #     fig_midas.add_trace(go.Scatter(
+                #         x=bull_hand_rows["Time"],
+                #         y=bull_hand_rows["MIDAS_Bear"] + 3,  # Position above Bear line
+                #         mode="text",
+                #         text=["👋🏽"] * len(bull_hand_rows),
+                #         textposition="top right",
+                #         textfont=dict(size=13),
+                #         showlegend=False,
+                #         hovertemplate=(
+                #             "👋🏽 Bull MIDAS Breakout<br>"
+                #             "Time: %{x|%I:%M %p}<br>"
+                #             "Above MIDAS_Bear: %{y:.2f}<extra></extra>"
+                #         )
+                #       ))
+  
+                #     bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                #     fig_midas.add_trace(go.Scatter(
+                #         x=bear_glove_rows["Time"],
+                #         y=bear_glove_rows["MIDAS_Bull"] - 3,  # Position below Bull line
+                #         mode="text",
+                #         text=["🧤"] * len(bear_glove_rows),
+                #         textposition="bottom right",
+                #         textfont=dict(size=13),
+                #         showlegend=False,
+                #         hovertemplate=(
+                #             "🧤 Bear MIDAS Breakdown<br>"
+                #             "Time: %{x|%I:%M %p}<br>"
+                #             "Below MIDAS_Bull: %{y:.2f}<extra></extra>"
+                #         )
+                #     ))
+
+                #     fig_midas.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["Bear_Displacement_Change_Smooth"],
+                #     mode="lines",
+                #     name="Bear Displacement Change (Smooth)",
+                #     line=dict(color="orangered", width=2, dash="dot"),
+                #     yaxis="y2"  # Secondary axis so it doesn't distort the price view
+                #     ))
 
               
-                            
-                                # Initialize column
-                intraday["Put_SecondEntry_Emoji"] = ""
-                
-                # Step 1: Find index of first 🎯
-                first_entry_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
-                
-                if not first_entry_idx.empty:
-                    start_idx = first_entry_idx[0]  # Get first 🎯
-                    i_start = intraday.index.get_loc(start_idx)
-                
-                    # Step 2: Loop from that index forward
-                    for i in range(i_start + 1, len(intraday) - 1):  # Leave space for lookahead
-                        prev_f = intraday["F_numeric"].iloc[i - 1]
-                        curr_f = intraday["F_numeric"].iloc[i]
-                        prev_kijun = intraday["Kijun_F"].iloc[i - 1]
-                        curr_kijun = intraday["Kijun_F"].iloc[i]
-                
-                        # Crossed down KijunF
-                        if pd.notna(prev_f) and pd.notna(prev_kijun) and pd.notna(curr_f) and pd.notna(curr_kijun):
-                            if prev_f > prev_kijun and curr_f <= curr_kijun:
-                                next_close = intraday["F_numeric"].iloc[i + 1]
-                                if next_close < curr_f:
-                                    intraday.at[intraday.index[i + 1], "Put_SecondEntry_Emoji"] = "🎯2"
-                                    break  # Only mark first valid second entry
-                
-                intraday["Call_SecondEntry_Emoji"] = ""
-
-                # Find 🎯 call entry
-                first_call_idx = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
-                
-                if not first_call_idx.empty:
-                    i_start = intraday.index.get_loc(first_call_idx[0])
-                
-                    for i in range(i_start + 1, len(intraday) - 1):
-                        prev_f = intraday["F_numeric"].iloc[i - 1]
-                        curr_f = intraday["F_numeric"].iloc[i]
-                        prev_kijun = intraday["Kijun_F"].iloc[i - 1]
-                        curr_kijun = intraday["Kijun_F"].iloc[i]
-                
-                        if prev_f < prev_kijun and curr_f >= curr_kijun:
-                            next_close = intraday["F_numeric"].iloc[i + 1]
-                            if next_close > curr_f:
-                                intraday.at[intraday.index[i + 1], "Call_SecondEntry_Emoji"] = "🎯2"
-                                break
-
-
-
-
-             
-                # Ensure F_numeric is numeric
-                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
-                
-                # Create container lists
-                nose_aid_times_2 = []
-                nose_aid_prices_2 = []
-                ear_aid_times_2 = []
-                ear_aid_prices_2 = []
-                
-                # Combine both second entries
-                second_entry_mask = (
-                    (intraday["Put_SecondEntry_Emoji"] == "🎯2") |
-                    (intraday["Call_SecondEntry_Emoji"] == "🎯2")
-                )
-                
-                for i in range(len(intraday)):
-                    if second_entry_mask.iloc[i]:
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        aid_range = intraday.iloc[lower:upper]
-                
-                        # 👃🏽 Nose aid check
-                        if (aid_range["👃🏽"] == "👃🏽").any():
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                nose_aid_times_2.append(intraday["Time"].iloc[i])
-                                nose_aid_prices_2.append(f_val + 100)
-                
-                        # 🦻🏼 Ear aid check
-                        if (aid_range["🦻🏼"] == "🦻🏼").any():
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                ear_aid_times_2.append(intraday["Time"].iloc[i])
-                                ear_aid_prices_2.append(f_val - 100)
-                
-
-
-
-                 # Initialize third entry column
-                intraday["Put_ThirdEntry_Emoji"] = ""
-                
-                # Step 1: Find 🎯 and 🎯2
-                first_entry_idx = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
-                second_entry_idx = intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]
-                
-                if not first_entry_idx.empty and not second_entry_idx.empty:
-                    first_i = intraday.index.get_loc(first_entry_idx[0])
-                    second_i = intraday.index.get_loc(second_entry_idx[0])
-                
-                    # Step 2: Check if price has crossed below IB_Low by second entry
-                    ib_low_crossed_by_second = False
-                    for i in range(first_i, second_i + 1):
-                        f = intraday["F_numeric"].iloc[i]
-                        ib_low = intraday["IB_Low"].iloc[i]
-                        if pd.notna(f) and pd.notna(ib_low) and f < ib_low:
-                            ib_low_crossed_by_second = True
-                            break
-                
-                    # Step 3: If not yet crossed, search forward for first cross below IB_Low
-                    if not ib_low_crossed_by_second:
-                        for i in range(second_i + 1, len(intraday) - 1):  # Leave space for lookahead
-                            f_prev = intraday["F_numeric"].iloc[i - 1]
-                            f_curr = intraday["F_numeric"].iloc[i]
-                            ib_low_prev = intraday["IB_Low"].iloc[i - 1]
-                            ib_low_curr = intraday["IB_Low"].iloc[i]
-                
-                            if pd.notna(f_prev) and pd.notna(f_curr) and pd.notna(ib_low_prev) and pd.notna(ib_low_curr):
-                                if f_prev > ib_low_prev and f_curr <= ib_low_curr:
-                                    # Crossed below IB_Low
-                                    f_next = intraday["F_numeric"].iloc[i + 1]
-                                    if pd.notna(f_next) and f_next < f_curr:
-                                        intraday.at[intraday.index[i + 1], "Put_ThirdEntry_Emoji"] = "🎯3"
-                                        break  # Only mark one
-                intraday["Call_ThirdEntry_Emoji"] = ""
-  
-                first_call_idx = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
-                second_call_idx = intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]
-                
-                if not first_call_idx.empty and not second_call_idx.empty:
-                    i_first = intraday.index.get_loc(first_call_idx[0])
-                    i_second = intraday.index.get_loc(second_call_idx[0])
-                
-                    # Check if IB_High was already crossed
-                    crossed_by_second = False
-                    for i in range(i_first, i_second + 1):
-                        f = intraday["F_numeric"].iloc[i]
-                        ib_high = intraday["IB_High"].iloc[i]
-                        if pd.notna(f) and pd.notna(ib_high) and f > ib_high:
-                            crossed_by_second = True
-                            break
-                
-                    if not crossed_by_second:
-                        for i in range(i_second + 1, len(intraday) - 1):
-                            f_prev = intraday["F_numeric"].iloc[i - 1]
-                            f_curr = intraday["F_numeric"].iloc[i]
-                            ib_high_prev = intraday["IB_High"].iloc[i - 1]
-                            ib_high_curr = intraday["IB_High"].iloc[i]
-                
-                            if pd.notna(f_prev) and pd.notna(f_curr) and pd.notna(ib_high_prev) and pd.notna(ib_high_curr):
-                                if f_prev < ib_high_prev and f_curr >= ib_high_curr:
-                                    f_next = intraday["F_numeric"].iloc[i + 1]
-                                    if pd.notna(f_next) and f_next > f_curr:
-                                        intraday.at[intraday.index[i + 1], "Call_ThirdEntry_Emoji"] = "🎯3"
-                                        break
-                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
-
-                # Collect indexes of entries (put or call) where 🐝 exists nearby
-                            # Ensure numeric F_numeric
-                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
-                
-                bee_aid_times = []
-                bee_aid_prices = []
-                
-                for i in range(len(intraday)):
-                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        if (intraday["BBW_Tight_Emoji"].iloc[lower:upper] == "🐝").any():
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                bee_aid_times.append(intraday["Time"].iloc[i])
-                                bee_aid_prices.append(f_val + 200)
-                bee_aid_times_2 = []
-                bee_aid_prices_2 = []
-                
-                for i in range(len(intraday)):
-                    if intraday["Put_SecondEntry_Emoji"].iloc[i] == "🎯2" or intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯2":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        if (intraday["BBW_Tight_Emoji"].iloc[lower:upper] == "🐝").any():
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                bee_aid_times_2.append(intraday["Time"].iloc[i])
-                                bee_aid_prices_2.append(f_val - 200)
-
-                
-                compliance_aid_times = []
-                compliance_aid_prices = []
-                
-                for i in range(len(intraday)):
-                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        if (intraday["Compliance Shift"].iloc[lower:upper] == "🫧").any():
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                compliance_aid_times.append(intraday["Time"].iloc[i])
-                                compliance_aid_prices.append(f_val + 300)
-
-        # Ensure F_numeric is numeric
-                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
-                
-                # Prepare profile bins for lookup
-                bin_to_ear = set(profile_df.loc[profile_df["🦻🏼"] == "🦻🏼", "F% Level"])
-                bin_to_nose = set(profile_df.loc[profile_df["👃🏽"] == "👃🏽", "F% Level"])
-                
-                # Compute bin for each row
-                f_bins = np.arange(-400, 401, 20)
-                intraday["F_Bin"] = pd.cut(intraday["F_numeric"], bins=f_bins, labels=f_bins[:-1])
-                
-                # Aid storage
-                ear_aid_times = []
-                ear_aid_prices = []
-                
-                nose_aid_times = []
-                nose_aid_prices = []
-                
-                # Loop through each row with 🎯 entry
-                for i in range(len(intraday)):
-                    if intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        sub = intraday.iloc[lower:upper]
-                
-                        if any(sub["F_Bin"].isin(bin_to_ear)):
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                ear_aid_times.append(intraday["Time"].iloc[i])
-                                ear_aid_prices.append(f_val + 260)
-                
-                        if any(sub["F_Bin"].isin(bin_to_nose)):
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                nose_aid_times.append(intraday["Time"].iloc[i])
-                                nose_aid_prices.append(f_val + 260)
-  
-                ember_aid_times = []
-                ember_aid_prices = []
-                
-                # Loop through each bar to find 🎯 call entries
-                for i in range(len(intraday)):
-                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))  # ±5 bars
-                
-                        phoenix_present = (intraday["STD_Alert"].iloc[lower:upper] == "🐦‍🔥").any()
-                        fire_present = (intraday["BBW Alert"].iloc[lower:upper] == "🔥").any()
-                
-                        if phoenix_present and fire_present:
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                ember_aid_times.append(intraday["Time"].iloc[i])
-                                ember_aid_prices.append(f_val + 288)  # Position above 🎯
-                # Ensure F_numeric is numeric
-                intraday["F_numeric"] = pd.to_numeric(intraday["F_numeric"], errors="coerce")
-                
-                # Initialize aid lists
-                comet_aid_times = []
-                comet_aid_prices = []
-                
-                # Search around Entry 2 (Put or Call)
-                for i in range(len(intraday)):
-                    if intraday["Put_SecondEntry_Emoji"].iloc[i] == "🎯2" or intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯2":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        
-                        if (intraday["ATR_Exp_Alert"].iloc[lower:upper] == "☄️").any():
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                comet_aid_times.append(intraday["Time"].iloc[i])
-                                comet_aid_prices.append(f_val + 180)  # Offset for clean stacking
-                # Step 1: Collect aid points with Volatility Composite values
-                vol_aid_times = []
-                vol_aid_prices = []
-                vol_aid_values = []
-                
-                for i in range(len(intraday)):
-                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        vol_window = intraday["Volatility_Composite"].iloc[lower:upper]
-                        if (vol_window > 10).any():
-                            f_val = intraday["F_numeric"].iloc[i]
-                            if pd.notnull(f_val):
-                                vol_aid_times.append(intraday["Time"].iloc[i])
-                                vol_aid_prices.append(f_val + 20)
-                                vol_aid_values.append(vol_window.max())  # highest value in the window
-                
-                # Plot it
-                plt.scatter(vol_aid_times, vol_aid_prices, marker="o", color="black", label="💨 Volatility Spike")
-                for t, p in zip(vol_aid_times, vol_aid_prices):
-                    plt.text(t, p, "💨", fontsize=10, ha="center", va="bottom")
-
-
-                force_aid_times = []
-                force_aid_prices = []
-                force_aid_vals = []
-                
-                # Ensure Force column is numeric
-                intraday["Unit Force"] = pd.to_numeric(intraday["Unit Force"], errors="coerce")
-                
-                # Loop through the dataset
-                for i in range(len(intraday)):
-                    # Check for a 🎯 entry
-                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        # Look for **positive Force** peak in a ±5 bar window
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        force_window = intraday["Unit Force"].iloc[lower:upper]
-                
-                        # Only keep positive values (aiding bullish)
-                        force_window = force_window[force_window > 0]
-                
-                        if not force_window.empty:
-                            peak_idx = force_window.idxmax()
-                            peak_time = intraday["Time"].loc[peak_idx]
-                            peak_val = intraday["F_numeric"].loc[peak_idx] + 360  # offset above Momentum
-                            force_val = force_window.loc[peak_idx]
-                
-                            force_aid_times.append(peak_time)
-                            force_aid_prices.append(peak_val)
-                            force_aid_vals.append(int(force_val))
-                
-                    elif intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        # Look for **negative Force** peak in a ±5 bar window
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        force_window = intraday["Unit Force"].iloc[lower:upper]
-                
-                        # Only keep negative values (aiding bearish)
-                        force_window = force_window[force_window < 0]
-                
-                        if not force_window.empty:
-                            trough_idx = force_window.idxmin()  # most negative = strongest
-                            trough_time = intraday["Time"].loc[trough_idx]
-                            trough_val = intraday["F_numeric"].loc[trough_idx] + 360
-                            force_val = force_window.loc[trough_idx]
-                
-                            force_aid_times.append(trough_time)
-                            force_aid_prices.append(trough_val)
-                            force_aid_vals.append(int(force_val))
-                cross_aid_times_call = []
-                cross_aid_prices_call = []
-                
-                call_entry_idxs = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
-                
-                for idx in call_entry_idxs:
-                    i = intraday.index.get_loc(idx)
-                    lower = max(i - 3, 0)
-                    upper = min(i + 4, len(intraday))
-                
-                    sub = intraday.iloc[lower:upper]
-                    if (sub["PE_Cross_Bull"] == True).any():
-                        cross_aid_times_call.append(intraday.at[idx, "Time"])
-                        cross_aid_prices_call.append(intraday.at[idx, "F_numeric"] + 90)
-
-
-                cross_aid_times_put = []
-                cross_aid_prices_put = []
-                
-                put_entry_idxs = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
-                
-                for idx in put_entry_idxs:
-                    i = intraday.index.get_loc(idx)
-                    lower = max(i - 3, 0)
-                    upper = min(i + 4, len(intraday))
-                
-                    sub = intraday.iloc[lower:upper]
-                    if (sub["PE_Cross_Bear"] == True).any():
-                        cross_aid_times_put.append(intraday.at[idx, "Time"])
-                        cross_aid_prices_put.append(intraday.at[idx, "F_numeric"] - 90)
-
-                momentum_aid_times = []
-                momentum_aid_prices = []
-                
-                # Ensure Unit Momentum is numeric
-                intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
-                
-                # Iterate through the dataframe
-                for i in range(len(intraday)):
-                    if intraday["Call_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        window = intraday.iloc[lower:upper]
-                
-                        # Filter out NaNs
-                        valid_window = window["Unit Momentum"].dropna()
-                        if not valid_window.empty:
-                            peak_idx = valid_window.idxmax()
-                            peak_time = intraday["Time"].loc[peak_idx]
-                            peak_value = intraday["F_numeric"].loc[peak_idx] + 300
-                            peak_momentum = valid_window.loc[peak_idx]
-                
-                            momentum_aid_times.append(peak_time)
-                            momentum_aid_prices.append(peak_value)
-                            intraday.loc[peak_idx, "Momentum_Aid_Value"] = peak_momentum
-                
-                    elif intraday["Put_FirstEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        window = intraday.iloc[lower:upper]
-                
-                        # Filter out NaNs
-                        valid_window = window["Unit Momentum"].dropna()
-                        if not valid_window.empty:
-                            trough_idx = valid_window.idxmin()
-                            trough_time = intraday["Time"].loc[trough_idx]
-                            trough_value = intraday["F_numeric"].loc[trough_idx] + 300
-                            trough_momentum = valid_window.loc[trough_idx]
-                
-                            momentum_aid_times.append(trough_time)
-                            momentum_aid_prices.append(trough_value)
-                            intraday.loc[trough_idx, "Momentum_Aid_Value"] = trough_momentum
-
-
-                
-                vol_aid_times_call = []
-                vol_aid_prices_call = []
-                
-                vol_aid_times_put = []
-                vol_aid_prices_put = []
-
-                  # Initialize containers
-                energy_aid_times = []
-                energy_aid_prices = []
-                energy_aid_vals = []
-
-
-                # # -- Cross-Check Independent Enhancers: Ear and Nose Crosses --
-                # intraday["🦻🏼_Cross"] = ""
-                # intraday["👃🏽_Cross"] = ""
-                
-                # # Use previously computed values from profile_df
-                ear_line = max_vol_level
-                nose_line = max_letter_level
-                
-                # # Loop from second row onward (to compare with previous)
-                # for i in range(1, len(intraday)):
-                #     current = intraday.iloc[i]
-                #     previous = intraday.iloc[i - 1]
-                
-                #     # Ear Cross (🦻🏼): if price crosses above or below the volume-dominant level
-                #     crossed_ear = (
-                #         (previous["F_numeric"] < ear_line and current["F_numeric"] >= ear_line) or
-                #         (previous["F_numeric"] > ear_line and current["F_numeric"] <= ear_line)
+                #     fig_midas.update_layout(
+                #         height=450,
+                #         plot_bgcolor="black",
+                #         paper_bgcolor="black",
+                #         font=dict(color="white"),
+                #         title="MIDAS Anchors vs Mike + Displacement Momentum",
+                #         xaxis_title="Time",
+                #         yaxis=dict(
+                #             title="Price",
+                #             side="left"
+                #         ),
+                #         yaxis2=dict(
+                #             title="Displacement Δ",
+                #             overlaying="y",     # Share the same x-axis
+                #             side="right",
+                #             showgrid=False
+                #         )
                 #     )
-                
-                #     # Nose Cross (👃🏽): if price crosses above or below the time-dominant level
-                #     crossed_nose = (
-                #         (previous["F_numeric"] < nose_line and current["F_numeric"] >= nose_line) or
-                #         (previous["F_numeric"] > nose_line and current["F_numeric"] <= nose_line)
-                #     )
-                
-                #     # Set emojis in row `i` (not previous one)
-                #     if crossed_ear:
-                #         intraday.at[i, "🦻🏼_Cross"] = "🦻🏼"
-                
-                #     if crossed_nose:
-                #         intraday.at[i, "👃🏽_Cross"] = "👃🏽"
-
-                
-                intraday["👃🏽_y"] = np.nan
-                intraday["🦻🏼_y"] = np.nan
-                
-                for i in range(1, len(intraday)):
-                    current = intraday.iloc[i]
-                    previous = intraday.iloc[i - 1]
-                
-                    # Ear Cross (🦻🏼)
-                    if previous["F_numeric"] < ear_line and current["F_numeric"] >= ear_line:
-                        intraday.at[i, "🦻🏼_Cross"] = "🦻🏼"
-                        intraday.at[i, "🦻🏼_y"] = current["F_numeric"] + 30  # above
-                    elif previous["F_numeric"] > ear_line and current["F_numeric"] <= ear_line:
-                        intraday.at[i, "🦻🏼_Cross"] = "🦻🏼"
-                        intraday.at[i, "🦻🏼_y"] = current["F_numeric"] - 30  # below
-                
-                    # Nose Cross (👃🏽)
-                    if previous["F_numeric"] < nose_line and current["F_numeric"] >= nose_line:
-                        intraday.at[i, "👃🏽_Cross"] = "👃🏽"
-                        intraday.at[i, "👃🏽_y"] = current["F_numeric"] + 30  # above
-                    elif previous["F_numeric"] > nose_line and current["F_numeric"] <= nose_line:
-                        intraday.at[i, "👃🏽_Cross"] = "👃🏽"
-                        intraday.at[i, "👃🏽_y"] = current["F_numeric"] - 30  # below
-                
 
 
-                # --- CALL Entries ---
-                call_entry_idxs = intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]
-                
-                for idx in call_entry_idxs:
-                    i = intraday.index.get_loc(idx)
-                    lower = max(i - 3, 0)
-                    upper = min(i + 4, len(intraday))  # +4 because Python excludes upper
-                
-                    sub = intraday.iloc[lower:upper]
-                
-                    if (
-                        (sub["BBW Alert"] == "🔥").any() or
-                        (sub["BBW_Tight"] == "🐝").any() or
-
-                        (sub["STD_Alert"] == "🐦‍🔥").any() or
-                        (sub["ATR_Exp_Alert"] == "☄️").any() or
-                        (sub["RVOL_5"] > 1.2).any()
-                    ):
-                        vol_aid_times_call.append(intraday.at[idx, "Time"])
-                        vol_aid_prices_call.append(intraday.at[idx, "F_numeric"] + 120)
-                
-                
-                # --- PUT Entries ---
-                put_entry_idxs = intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]
-                
-                for idx in put_entry_idxs:
-                    i = intraday.index.get_loc(idx)
-                    lower = max(i - 3, 0)
-                    upper = min(i + 4, len(intraday))
-                
-                    sub = intraday.iloc[lower:upper]
-                
-                    if (
-                        (sub["BBW Alert"] == "🔥").any() or
-                        (sub["BBW_Tight"] == "🐝").any() or
-
-                        (sub["STD_Alert"] == "🐦‍🔥").any() or
-                        (sub["ATR_Exp_Alert"] == "☄️").any() or
-                        (sub["RVOL_5"] > 1.2).any()
-                    ):
-                        vol_aid_times_put.append(intraday.at[idx, "Time"])
-                        vol_aid_prices_put.append(intraday.at[idx, "F_numeric"] - 120)
-
-                # Ensure Vector Energy is numeric
-                intraday["Vector Energy"] = pd.to_numeric(intraday["Vector Energy"], errors="coerce")
-                
-                for i in range(len(intraday)):
-                    if intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯" or intraday["Put_SecondEntry_Emoji"].iloc[i] == "🎯":
-                        lower = max(i - 5, 0)
-                        upper = min(i + 6, len(intraday))
-                        energy_window = intraday["Vector Energy"].iloc[lower:upper]
-                
-                        if energy_window.notna().any():
-                            if intraday["Call_SecondEntry_Emoji"].iloc[i] == "🎯":
-                                peak_idx = energy_window.idxmax()  # Most bullish
-                            else:
-                                peak_idx = energy_window.idxmin()  # Most bearish
-                
-                            peak_time = intraday["Time"].loc[peak_idx]
-                            peak_value = intraday["F_numeric"].loc[peak_idx] + 100  # Offset for visibility
-                            energy_val = energy_window.loc[peak_idx]
-                
-                            energy_aid_times.append(peak_time)
-                            energy_aid_prices.append(peak_value)
-                            energy_aid_vals.append(int(energy_val))
-                
-                            # Optional for hover
-                            intraday.loc[peak_idx, "Energy_Aid_Value"] = energy_val
+                #     st.plotly_chart(fig_midas, use_container_width=True)
 
 
 
 
-                 
-                def calculate_compliance_midas(df, bbw_col="F% BBW", vol_col="RVOL_5"):
-                    """
-                    Calculate Compliance relative to MIDAS anchors.
-                    - Bull: anchor at min
-                    - Bear: anchor at max
-                    Compliance = (BBW - BBW_at_anchor) / RVOL_5
-                    """
                 
-                    # Initialize columns
-                    df["Compliance_Bull"] = np.nan
-                    df["Compliance_Bear"] = np.nan
+                with st.expander("📉 Pure MIDAS vs Mike Plot", expanded=True):
+                    fig_midas = go.Figure()
                 
-                    # --- 🐂 Bull Midas ---
-                    if "MIDAS_Bull" in df.columns:
-                        # Anchor index
-                        bull_anchor_idx = df["MIDAS_Bull"].first_valid_index()
-                        if bull_anchor_idx is not None:
-                            bbw_anchor = df.loc[bull_anchor_idx, bbw_col]
-                            # Compliance from anchor forward
-                            df.loc[bull_anchor_idx:, "Compliance_Bull"] = (
-                                (df.loc[bull_anchor_idx:, bbw_col] - bbw_anchor) /
-                                df.loc[bull_anchor_idx:, vol_col].replace(0, np.nan)
-                            )
-                
-                    # --- 🐻 Bear Midas ---
-                    if "MIDAS_Bear" in df.columns:
-                        bear_anchor_idx = df["MIDAS_Bear"].first_valid_index()
-                        if bear_anchor_idx is not None:
-                            bbw_anchor = df.loc[bear_anchor_idx, bbw_col]
-                            df.loc[bear_anchor_idx:, "Compliance_Bear"] = (
-                                (df.loc[bear_anchor_idx:, bbw_col] - bbw_anchor) /
-                                df.loc[bear_anchor_idx:, vol_col].replace(0, np.nan)
-                            )
-                
-                    return df
-                
-                # Apply it
-                intraday = calculate_compliance_midas(intraday)
- 
-                def mark_compliance_bull_flip(df):
-                    """
-                    Marks when Compliance Bull turns negative 
-                    *after* a Bear MIDAS anchor is active.
-                    """
-                    df["Compliance_Bull_Flip"] = ""
-                
-                    if "Compliance_Bull" in df.columns and "MIDAS_Bear" in df.columns:
-                        bear_anchor_idx = df["MIDAS_Bear"].first_valid_index()
-                        if bear_anchor_idx is not None:
-                            for i in range(bear_anchor_idx + 1, len(df)):
-                                prev = df["Compliance_Bull"].iloc[i - 1]
-                                curr = df["Compliance_Bull"].iloc[i]
-                                if pd.notna(prev) and pd.notna(curr):
-                                    if prev >= 0 and curr < 0:
-                                        df.at[df.index[i], "Compliance_Bull_Flip"] = "💨"  # Aura collapse
-                    return df
-                
-                # Apply
-                intraday = mark_compliance_bull_flip(intraday)
-
-                intraday["Headphone_Cross_Emoji"] = ""
-                intraday["Headphone_Cross_Y"] = np.nan
-                intraday["Ear_Level"] = max_vol_level  # 🦻🏼 Ear Line only
-                
-                for i in range(1, len(intraday)):
-                    prev_f = intraday["F_numeric"].iloc[i - 1]
-                    curr_f = intraday["F_numeric"].iloc[i]
-                    ear = intraday["Ear_Level"].iloc[i]
-                
-                    # Crossed Up: below → above Ear line
-                    if prev_f < ear and curr_f >= ear:
-                        intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
-                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f + 43  # Above Mike
-                
-                    # Crossed Down: above → below Ear line
-                    elif prev_f > ear and curr_f <= ear:
-                        intraday.at[intraday.index[i], "Headphone_Cross_Emoji"] = "🎧"
-                        intraday.at[intraday.index[i], "Headphone_Cross_Y"] = curr_f - 43  # Below Mike
-
-                
-                            # 🐘 NOSE LINE CROSS (👃🏽)
-                intraday["Elephant_Cross_Emoji"] = ""
-                intraday["Elephant_Cross_Y"] = np.nan
-                intraday["Nose_Level"] = max_letter_level
-                
-                for i in range(1, len(intraday)):
-                    prev_f = intraday["F_numeric"].iloc[i - 1]
-                    curr_f = intraday["F_numeric"].iloc[i]
-                    nose = intraday["Nose_Level"].iloc[i]
-                
-                    # Crossed Up: below → above Nose line
-                    if prev_f < nose and curr_f >= nose:
-                        intraday.at[intraday.index[i], "Elephant_Cross_Emoji"] = "🐘"
-                        intraday.at[intraday.index[i], "Elephant_Cross_Y"] = curr_f + 33  # Above Mike
-                
-                    # Crossed Down: above → below Nose line
-                    elif prev_f > nose and curr_f <= nose:
-                        intraday.at[intraday.index[i], "Elephant_Cross_Emoji"] = "🐘"
-                        intraday.at[intraday.index[i], "Elephant_Cross_Y"] = curr_f - 33  # Below Mike
+                    # === PREP: Calculate Smoothed Displacement Change ===
+                    intraday["Bear_Displacement_Change"] = intraday["Bear_Displacement"].diff()
+                    intraday["Bear_Displacement_Change_Smooth"] = intraday["Bear_Displacement_Change"].rolling(3).mean()
 
 
-               
-                             # Ensure required columns exist
-               
+                    intraday["Bull_Displacement_Change"] = intraday["Bull_Displacement"].diff()
+                    intraday["Bull_Displacement_Change_Smooth"] = intraday["Bull_Displacement_Change"].rolling(3).mean()
 
-                def mark_compliance_bear_flip(df):
-                    """
-                    Marks when Compliance Bear turns negative 
-                    *after* a Bull MIDAS anchor is active.
-                    """
-                    df["Compliance_Bear_Flip"] = ""
+
+                    # === LAYER 1: Main Price Lines ===
+                    fig_midas.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F_numeric"],
+                        mode="lines",
+                        name="Mike (F_numeric)",
+                        line=dict(color="white", width=2),
+                        yaxis="y"
+                    ))
                 
-                    if "Compliance_Bear" in df.columns and "MIDAS_Bull" in df.columns:
-                        bull_anchor_idx = df["MIDAS_Bull"].first_valid_index()
-                        if bull_anchor_idx is not None:
-                            for i in range(bull_anchor_idx + 1, len(df)):
-                                prev = df["Compliance_Bear"].iloc[i - 1]
-                                curr = df["Compliance_Bear"].iloc[i]
-                                if pd.notna(prev) and pd.notna(curr):
-                                    if prev >= 0 and curr < 0:
-                                        df.at[df.index[i], "Compliance_Bear_Flip"] = "🌑"  # Bear aura collapse
-                    return df
+                    fig_midas.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["MIDAS_Bear"],
+                        mode="lines",
+                        name="MIDAS_Bear",
+                        line=dict(color="red", dash="dash"),
+                        yaxis="y"
+                    ))
                 
-                # Apply
-                intraday = mark_compliance_bear_flip(intraday)
-                def calculate_side_band_distance(df):
-                    """
-                    Adds Side_Dist_F (distance in F% units) from F_numeric to the
-                    Bollinger band on the Kijun side:
-                      - If F_numeric > Kijun_F → distance to Upper Band
-                      - If F_numeric < Kijun_F → distance to Lower Band
-                    Positive = inside band, 0 = at band, Negative = outside band
-                    """
-                    df = df.copy()
+                    fig_midas.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["MIDAS_Bull"],
+                        mode="lines",
+                        name="MIDAS_Bull",
+                        line=dict(color="green", dash="dot"),
+                        yaxis="y"
+                    ))
                 
-                    # Condition: bull (north kingdom) vs bear (south kingdom)
-                    df["Side_Label"] = np.where(df["F_numeric"] > df["Kijun_F"], "upper", "lower")
+                    # === LAYER 2: Emoji Markers ===
+                    bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                    fig_midas.add_trace(go.Scatter(
+                        x=bull_hand_rows["Time"],
+                        y=bull_hand_rows["MIDAS_Bear"] + 3,
+                        mode="text",
+                        text=["👋🏽"] * len(bull_hand_rows),
+                        textposition="top right",
+                        textfont=dict(size=13),
+                        showlegend=False,
+                        hovertemplate=(
+                            "👋🏽 Bull MIDAS Breakout<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Above MIDAS_Bear: %{y:.2f}<extra></extra>"
+                        ),
+                        yaxis="y"
+                    ))
                 
-                    # Distance in F% units
-                    df["Side_Dist_F"] = np.where(
-                        df["Side_Label"] == "upper",
-                        df["F% Upper"] - df["F_numeric"],  # bull → distance to upper
-                        df["F_numeric"] - df["F% Lower"],  # bear → distance to lower
+                    bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                    fig_midas.add_trace(go.Scatter(
+                        x=bear_glove_rows["Time"],
+                        y=bear_glove_rows["MIDAS_Bull"] - 3,
+                        mode="text",
+                        text=["🧤"] * len(bear_glove_rows),
+                        textposition="bottom right",
+                        textfont=dict(size=13),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🧤 Bear MIDAS Breakdown<br>"
+                            "Time: %{x|%I:%M %p}<br>"
+                            "Below MIDAS_Bull: %{y:.2f}<extra></extra>"
+                        ),
+                        yaxis="y"
+                    ))
+                
+                    # === LAYER 3: Smooth Displacement Change (Separate Panel) ===
+                    fig_midas.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Bear_Displacement_Change_Smooth"],
+                        mode="lines",
+                        name="Bear Displacement Δ (Smooth)",
+                        line=dict(color="orangered", width=2, dash="dot"),
+                        yaxis="y2"
+                    ))
+                
+                    # === FULL LAYOUT ===
+                    fig_midas.update_layout(
+                        height=600,
+                        plot_bgcolor="black",
+                        paper_bgcolor="black",
+                        font=dict(color="white"),
+                        title="MIDAS Anchors vs Mike + Displacement Momentum",
+                        xaxis=dict(
+                            title="Time",
+                            domain=[0, 1],
+                            anchor="y"
+                        ),
+                        yaxis=dict(
+                            title="Price",
+                            side="left",
+                            domain=[0.4, 1]  # Top 75% for main plot
+                        ),
+                        yaxis2=dict(
+                            title="Displacement Δ",
+                            side="left",
+                            domain=[0, 0.35],  # Bottom 20% for displacement plot
+                            showgrid=False
+                        ),
+                        legend=dict(
+                            orientation="h",
+                            yanchor="bottom",
+                            y=1.02,
+                            xanchor="right",
+                            x=1
+                        ),
+                        margin=dict(t=60, b=40)
                     )
-                
-                    return df
-                
-                # Apply
-                intraday = calculate_side_band_distance(intraday)
-                def add_vault_emoji(df):
-                    """
-                    Detects vault burst events between Bollinger bands:
-                    🕊️ = bullish slingshot (lower → upper flip)
-                    🐦‍⬛ = bearish slingshot (upper → lower flip)
-                    """
-                    df["Vault_Emoji"] = ""
-                
-                    if not all(col in df.columns for col in ["Side_Label", "Side_Dist_F"]):
-                        return df
-                
-                    for i in range(1, len(df)):
-                        prev_label = df.at[df.index[i - 1], "Side_Label"]
-                        prev_dist  = df.at[df.index[i - 1], "Side_Dist_F"]
-                        curr_label = df.at[df.index[i], "Side_Label"]
-                        curr_dist  = df.at[df.index[i], "Side_Dist_F"]
-                
-                        # 🕊️ bullish burst: jumps from hugging lower → overshooting upper
-                        if prev_label == "lower" and prev_dist > 0 and curr_label == "upper" and curr_dist < 0:
-                            df.at[df.index[i], "Vault_Emoji"] = "🕊️"
-                
-                        # 🐦‍⬛ bearish burst: jumps from hugging upper → overshooting lower
-                        elif prev_label == "upper" and prev_dist > 0 and curr_label == "lower" and curr_dist < 0:
-                            df.at[df.index[i], "Vault_Emoji"] = "🐦‍⬛"
-                
-                    return df
-                
-                # Apply before plotting
-                intraday = add_vault_emoji(intraday)
-                def add_marengo_T0(intraday, tol=5):
-                    """
-                    Detects T0 (🚪) after Entry 1.
-                    Shows only one 🚪 per Call/Put First Entry 🎯.
-                    Uses Side_Dist_F as distance measure.
-                    """
-                    out = intraday.copy()
-                
-                    # Make sure required columns exist
-                    need_cols = ["Side_Dist_F", "Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji"]
-                    for col in need_cols:
-                        if col not in out.columns:
-                            out["T0_Emoji"] = ""
-                            return out
-                
-                    # Init column
-                    out["T0_Emoji"] = ""
-                
-                    # Find all Entry 1 events (both Call & Put)
-                    entry_idx = list(out.index[out["Call_FirstEntry_Emoji"] == "🎯"]) + \
-                                list(out.index[out["Put_FirstEntry_Emoji"]  == "🎯"])
-                    entry_idx = sorted(entry_idx)
-                
-                    # Loop through each Entry 1
-                    for start in entry_idx:
-                        found = False
-                        for i in range(start + 1, len(out)):
-                            dist = out.at[out.index[i], "Side_Dist_F"]
-                            if pd.notna(dist) and dist <= tol:
-                                out.at[out.index[i], "T0_Emoji"] = "🚪"
-                                found = True
-                                break
-                        if found:
-                            continue  # move on to next Entry 1
-                
-                    return out
-                
-                # Apply
-                intraday = add_marengo_T0(intraday, tol=5)
-                def add_marengo_T1(intraday, tol=-5):
-                    """
-                    Marks T1: first acceleration beyond Bollinger band after Entry 1.
-                    tol = threshold in F% units (default = -5).
-                    """
-                    out = intraday.copy()
-                
-                    # Make sure Entry 1 exists
-                    call_idx = out.index[out["Call_FirstEntry_Emoji"] == "🎯"]
-                    put_idx  = out.index[out["Put_FirstEntry_Emoji"]  == "🎯"]
-                
-                    if len(call_idx) == 0 and len(put_idx) == 0:
-                        out["T1_Emoji"] = ""
-                        return out
-                
-                    # Get first entry index
-                    first_call_i = out.index.get_loc(call_idx[0]) if len(call_idx) > 0 else None
-                    first_put_i  = out.index.get_loc(put_idx[0])  if len(put_idx)  > 0 else None
-                    start_i = min(i for i in [first_call_i, first_put_i] if i is not None)
-                
-                    # Init column
-                    out["T1_Emoji"] = ""
-                
-                    # Loop forward after entry
-                    for i in range(start_i + 1, len(out)):
-                        if "Side_Dist_F" not in out.columns or pd.isna(out.at[out.index[i], "Side_Dist_F"]):
-                            continue
-                
-                        if out.at[out.index[i], "Side_Dist_F"] <= tol:
-                            out.at[out.index[i], "T1_Emoji"] = "🏇🏼"
-                            break  # only first acceleration
-                    return out
-                
-                # Apply
-                intraday = add_marengo_T1(intraday)
+
+                    fig_midas.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Bull_Displacement_Change_Smooth"],
+                    mode="lines",
+                    name="Bull Displacement Δ (Smooth)",
+                    line=dict(color="lightgreen", width=2, dash="dot"),
+                    yaxis="y2"
+                    ))
 
 
-   
-   
-                def add_marengo_T2(intraday):
-                    """
-                    Marks T2: momentum confirmation after T1.
-                    ⚡ appears on the first bar after T1 where Close extends in the 
-                    same direction as Entry 1 (up for calls, down for puts).
-                    """
-                    out = intraday.copy()
-                
-                    # Ensure dependencies exist
-                    need_cols = ["Close", "T1_Emoji", "Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji"]
-                    for col in need_cols:
-                        if col not in out.columns:
-                            out["T2_Emoji"] = ""
-                            return out
-                
-                    # Find Entry 1
-                    call_idx = out.index[out["Call_FirstEntry_Emoji"] == "🎯"]
-                    put_idx  = out.index[out["Put_FirstEntry_Emoji"]  == "🎯"]
-                
-                    if len(call_idx) == 0 and len(put_idx) == 0:
-                        out["T2_Emoji"] = ""
-                        return out
-                
-                    # Get first entry index
-                    first_call_i = out.index.get_loc(call_idx[0]) if len(call_idx) > 0 else None
-                    first_put_i  = out.index.get_loc(put_idx[0])  if len(put_idx)  > 0 else None
-                    start_i = min(i for i in [first_call_i, first_put_i] if i is not None)
-                
-                    # Find T1
-                    t1_idx = out.index[out["T1_Emoji"] == "🏇🏼"]
-                    if len(t1_idx) == 0:
-                        out["T2_Emoji"] = ""
-                        return out
-                    i_t1 = out.index.get_loc(t1_idx[0])
-                
-                    # Init column
-                    out["T2_Emoji"] = ""
-                
-                    # Loop after T1
-                    for i in range(i_t1 + 1, len(out)):
-                        prev_close = out.at[out.index[i - 1], "Close"]
-                        curr_close = out.at[out.index[i], "Close"]
-                
-                        if pd.isna(prev_close) or pd.isna(curr_close):
-                            continue
-                
-                        # Call case (northbound)
-                        if first_call_i is not None and first_call_i <= start_i:
-                            if curr_close > prev_close:
-                                out.at[out.index[i], "T2_Emoji"] = "⚡"
-                                break
-                
-                        # Put case (southbound)
-                        if first_put_i is not None and first_put_i <= start_i:
-                            if curr_close < prev_close:
-                                out.at[out.index[i], "T2_Emoji"] = "⚡"
-                                break
-                
-                    return out
-                
-                # Apply
-                intraday = add_marengo_T2(intraday)
-                def add_parallel_phase(intraday):
-                    """
-                    Marks ⚡ Parallel phase:
-                    After T1, as long as price stays on the correct side of Tenkan_F.
-                    - For calls: F_numeric >= Tenkan_F
-                    - For puts:  F_numeric <= Tenkan_F
-                    """
-                    out = intraday.copy()
-                    out["Parallel_Emoji"] = ""
-                
-                    # Find T1
-                    t1_idx = out.index[out["T1_Emoji"] == "🏇🏼"]
-                    if len(t1_idx) == 0:
-                        return out
-                
-                    start_i = out.index.get_loc(t1_idx[0])
-                
-                    # Loop forward bar by bar
-                    side = None
-                    if any(out["Call_FirstEntry_Emoji"] == "🎯"):
-                        side = "call"
-                    elif any(out["Put_FirstEntry_Emoji"] == "🎯"):
-                        side = "put"
-                
-                    if side is None:
-                        return out
-                
-                    for i in range(start_i + 1, len(out)):
-                        mike = out.at[out.index[i], "F_numeric"]
-                        tenkan = out.at[out.index[i], "Tenkan_F"]
-                
-                        if pd.isna(mike) or pd.isna(tenkan):
-                            continue
-                
-                        # Check condition
-                        if side == "call" and mike >= tenkan:
-                            out.at[out.index[i], "Parallel_Emoji"] = "⚡"
-                        elif side == "put" and mike <= tenkan:
-                            out.at[out.index[i], "Parallel_Emoji"] = "⚡"
-                        else:
-                            break  # exits parallel phase
-                
-                    return out
-                
-                # Apply
-                intraday = add_parallel_phase(intraday)
-                def assign_label_simple(row, intraday):
-                    if not any(tag in row["Type"] for tag in ["🎯1", "🎯2"]):
-                        return ""
-                
-                    f_val = row["F%"]
-                
-                    ib_low = intraday["IB_Low"].iloc[0]
-                    ib_high = intraday["IB_High"].iloc[0]
-                
-                    if ib_low <= f_val <= ib_high:
-                        return "Endo"
-                    elif f_val > ib_high:
-                        return "Supra"
-                    elif f_val < ib_low:
-                        return "Infra"
-                
-                    return ""
-			
-                
-                def compute_pae_1to2(entries_df, intraday):
-                    # Initialize PAE column
-                    entries_df["PAE_1to2"] = ""
-                
-                    for idx, row in entries_df.iterrows():
-                        if "🎯1" not in row["Type"]:
-                            continue  # only process Entry 1
-                
-                        entry_time = row["Time"]
-                        entry_type = row["Type"]
-                        entry_f = row["F%"]
-                
-                        # Locate entry index in intraday
-                        entry_idx = intraday.index[
-                            pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                        ][0]
-                
-                        # Find the next Entry 2 of the same side
-                        if "Call" in entry_type:
-                            next_entries = entries_df[
-                                (entries_df["Type"] == "Call 🎯2") &
-                                (entries_df.index > idx)
-                            ]
-                        else:
-                            next_entries = entries_df[
-                                (entries_df["Type"] == "Put 🎯2") &
-                                (entries_df.index > idx)
-                            ]
-                
-                        if next_entries.empty:
-                            continue  # no Entry 2 found → leave blank
-                
-                        # Take the first matching Entry 2
-                        exit_time = next_entries.iloc[0]["Time"]
-                        exit_idx = intraday.index[
-                            pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == exit_time
-                        ][0]
-                
-                        # Subset intraday from entry to exit
-                        window = intraday.loc[entry_idx:exit_idx]
-                
-                        if "Call" in entry_type:
-                            min_f = window["F_numeric"].min()
-                            pae = max(0, entry_f - min_f)
-                        else:  # Put
-                            max_f = window["F_numeric"].max()
-                            pae = max(0, max_f - entry_f)
-                
-                        entries_df.at[idx, "PAE_1to2"] = pae
-                
-                    return entries_df
-                
-                def compute_pae_2to3(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
-                    """
-                    Compute PAE (Pain After Entry) from Entry 2 ➝ Entry 3.
-                    For each Call 🎯2 or Put 🎯2, measure the worst move against the trade
-                    until the next same-side Entry 3.
-                    """
-                    pae_values = []
-                
-                    for i, row in entries_df.iterrows():
-                        entry_type = row["Type"]
-                
-                        if "🎯2" not in entry_type:
-                            pae_values.append(None)
-                            continue
-                
-                        # Find the next Entry 3 of the same side (Call or Put)
-                        side = "Call" if "Call" in entry_type else "Put"
-                        later_rows = entries_df.iloc[i+1:]
-                        next_entry3 = later_rows[later_rows["Type"] == f"{side} 🎯3"]
-                
-                        if next_entry3.empty:
-                            pae_values.append(None)
-                            continue
-                
-                        # Define entry and exit times
-                        entry_time = row["Time"]
-                        exit_time = next_entry3.iloc[0]["Time"]
-                
-                        # Map times to intraday indices
-                        entry_idx = intraday.index[
-                            pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                        ][0]
-                        exit_idx = intraday.index[
-                            pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == exit_time
-                        ][0]
-                
-                        # Clip scan range
-                        scan = intraday.loc[entry_idx:exit_idx, "F_numeric"]
-                
-                        if scan.empty:
-                            pae_values.append(None)
-                            continue
-                
-                        entry_f = scan.iloc[0]
-                
-                        if side == "Call":
-                            # Pain = max dip below entry
-                            pain = (scan.min() - entry_f)
-                        else:  # Put
-                            # Pain = max rise above entry
-                            pain = (scan.max() - entry_f)
-                
-                        # Express pain as absolute F% units (positive number = painful move)
-                        pae_values.append(abs(int(round(pain, 0))))
-                
-                    entries_df["PAE_2to3"] = pae_values
-                    return entries_df
-                def compute_pae_3to40F(entries_df: pd.DataFrame, intraday: pd.DataFrame) -> pd.DataFrame:
-                    """Compute PAE from Entry 3 until reaching +40F% in favor of the trade."""
-                    pae_values = []
-                
-                    for _, row in entries_df.iterrows():
-                        if "🎯3" not in row["Type"]:
-                            pae_values.append("")
-                            continue
-                
-                        entry_time = row["Time"]
-                        entry_type = row["Type"]
-                        entry_f = row["F%"]
-                
-                        # Locate the entry index
-                        entry_idx = intraday.index[
-                            pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                        ][0]
-                        entry_loc = intraday.index.get_loc(entry_idx)
-                
-                        # Scan forward from entry
-                        forward = intraday.iloc[entry_loc + 1 :]
-                        f_series = forward["F_numeric"]
-                
-                        # Track pain and stop once target is reached
-                        worst_pain = 0
-                        target_reached = False
-                
-                        for f in f_series:
-                            if "Call" in entry_type:
-                                # Pain is dip below entry
-                                if f < entry_f:
-                                    worst_pain = max(worst_pain, entry_f - f)
-                
-                                # Target = +40F
-                                if f >= entry_f + 40:
-                                    target_reached = True
-                                    break
-                
-                            else:  # Put
-                                if f > entry_f:
-                                    worst_pain = max(worst_pain, f - entry_f)
-                
-                                if f <= entry_f - 40:
-                                    target_reached = True
-                                    break
-                
-                        # Assign result
-                        pae_values.append(worst_pain if target_reached else "")
-                
-                    entries_df["PAE_3to40F"] = pae_values
-                    return entries_df
+
+                    st.plotly_chart(fig_midas, use_container_width=True)
+
+
 
              
-                # def assign_prototype(row):
-                #     if "Call 🎯1" in row["Type"]:
-                #         return "Ember"
-                #     elif "Put 🎯1" in row["Type"]:
-                #         return "Cliff"
-                #     return ""
 
+                # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+                #               fig_ichimoku = go.Figure()
+              
+                #               fig_ichimoku.add_trace(go.Candlestick(
+                #                   x=intraday['Time'],
+                #                   open=intraday['Open'],
+                #                   high=intraday['High'],
+                #                   low=intraday['Low'],
+                #                   close=intraday['Close'],
+                #                   name='Candles'
+                #               ))
+              
+                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'), name='Tenkan-sen'))
+                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'], line=dict(color='green'), name='Kijun-sen'))
+                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
+                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
+                #               fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
+              
+                #               fig_ichimoku.add_trace(go.Scatter(
+                #                   x=intraday['Time'],
+                #                   y=intraday['SpanA'],
+                #                   line=dict(width=0),
+                #                   showlegend=False
+                #               ))
+              
+                #               fig_ichimoku.add_trace(go.Scatter(
+                #                   x=intraday['Time'],
+                #                   y=intraday['SpanB'],
+                #                   fill='tonexty',
+                #                   fillcolor='rgba(128, 128, 128, 0.2)',
+                #                   line=dict(width=0),
+                #                   showlegend=False
+                #               ))
+              
+                #               fig_ichimoku.update_layout(
+                #                   title="Ichimoku Candlestick Chart",
+                #                   height=450,
+                #                   width=450,
+                #                   xaxis_rangeslider_visible=False,
+                #                   margin=dict(l=30, r=30, t=40, b=20)
+                #               )
+              
+                #               st.plotly_chart(fig_ichimoku, use_container_width=True)
 
-                def classify_prototype(row, intraday, threshold=50, lookback=36):
-                    entry_type = row["Type"]
-                    f = intraday["F_numeric"]
-
-                    if "Call 🎯1" in entry_type:
-                              # Find first Midas Bull anchor
-                        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
-                        if anchor_idx is None:
-                            return "Ember"
-                        anchor_pos = f.index.get_loc(anchor_idx)
-
-   # Look back a fixed window (exclude anchor bar itself)
-                        start = max(0, anchor_pos - lookback)
-                        seg = f.iloc[start:anchor_pos]
-                      
-                        if seg.empty:
-                            return "Ember"
-               
-                        pre_high = seg.max()
-
-                        fall_depth =  f.iloc[anchor_pos] - pre_high # should be negative
-      
-                               
-                        return "Ember Bounce" if fall_depth <= -threshold else "Ember Catch"
 
                            
-                    elif "Put 🎯1" in entry_type:
-                              # Find first Midas Bear anchor
-                         anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
-                         if anchor_idx is None:
-                             return "Cliff"
-                         anchor_pos = f.index.get_loc(anchor_idx)
-
-                         start = max(0, anchor_pos - lookback)
-                         seg = f.iloc[start:anchor_pos]
-
-                         if seg.empty:
-                             return "Cliff"
-                                    
-                         pre_low = seg.min()
-                         rise_height = f.iloc[anchor_pos] - pre_low  # sh
-
-                         return "Cliff Bounce" if rise_height >= threshold else "Cliff Catch"
-                      
-                    return ""
-
-                             
-                # after you create/load `intraday`, normalize its columns once
-                intraday = intraday.copy()
-                intraday.columns = intraday.columns.str.strip()
-                
-                if "Time" not in intraday.columns:
-                    # try common variants and alias them to "Time"
-                    for cand in ["time", "Time ", "timestamp", "Timestamp", "date_time", "DateTime"]:
-                        if cand in intraday.columns:
-                            intraday = intraday.rename(columns={cand: "Time"})
-                            break
-                
-                # (optional but helpful) make sure it's string-like HH:MM for your match logic
-                # if Time already has full timestamps, this still works
-                # intraday["Time_HHMM"] = pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M")
-                
-                             
-                def add_exit_columns(entries_df: pd.DataFrame) -> pd.DataFrame:
-                         """
-                         For every Entry 1 (Call 🎯1 or Put 🎯1), find the first opposite Entry 1 after it.
-                         Add Exit_Time and Exit_Price to the table.
-                         If no opposite entry exists later, exit stays blank.
-                         """
-                     
-                         # Make a copy so we don’t mutate original
-                         df = entries_df.copy()
-                     
-                         # Ensure time is datetime for ordering
-                         df["Time_dt"] = pd.to_datetime(df["Time"], format="%H:%M")
-                     
-                         # Loop through Entry 1s
-                         for idx, row in df.iterrows():
-                             if "🎯1" not in row["Type"]:
-                                 continue  # Only work on Entry 1s
-                     
-                             entry_type = row["Type"]
-                             entry_time = row["Time_dt"]
-                     
-                             # Define what opposite means
-                             if "Call" in entry_type:
-                                 opposite_mask = df["Type"].str.contains("Put 🎯1")
-                             else:
-                                 opposite_mask = df["Type"].str.contains("Call 🎯1")
-                     
-                             # Find the first opposite entry *after* this entry
-                             opposite_rows = df[opposite_mask & (df["Time_dt"] > entry_time)]
-                             if not opposite_rows.empty:
-                                 first_opposite = opposite_rows.iloc[0]
-                                 df.at[idx, "Exit_Time"] = first_opposite["Time"]
-                                 df.at[idx, "Exit_Price"] = first_opposite["Price ($)"]
-                     
-                         # Clean up helper column
-                         df.drop(columns=["Time_dt"], inplace=True)
-                     
-                         return df
-        
-                def anchor_vol_confirm(intraday: pd.DataFrame, lookaround: int = 7) -> str:
-                    """
-                    One-liner result for the session:
-                      'Confirmed' if ±lookaround bars around the first MIDAS_Bull anchor
-                      contain 🔥 in 'BBW Alert'   OR
-                               🐦‍🔥 in 'STD_Alert'.
-                      Otherwise returns ''.
-                    """
-                    # 1️⃣ Locate first Bull anchor
-                    anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
-                    if anchor_idx is None:                 # no anchor this session
-                        return ""
-                
-                    anchor_loc = intraday.index.get_loc(anchor_idx)
-                
-                    # 2️⃣ Window around the anchor
-                    lo = max(0, anchor_loc - lookaround)
-                    hi = min(len(intraday) - 1, anchor_loc + lookaround)
-                    win = intraday.iloc[lo : hi + 1]
-                
-                    # 3️⃣ Look for either alert (exact column names you showed)
-                    fire_seen   = win["BBW Alert"].astype(str).str.contains("🔥").any()   if "BBW Alert" in win.columns else False
-                    phoenix_seen = win["STD_Alert"].astype(str).str.contains("🐦‍🔥").any() if "STD_Alert" in win.columns else False
-                
-                    return "Confirmed" if (fire_seen or phoenix_seen) else ""
-           
-                def assign_suffix_simple(row, intraday, perimeter=7):
-                    """
-                    Detect suffix for Ember/Cliff entries:
-                    - If 🔥 or 🐦‍🔥 appears → VolConfirmed
-                    - If NO volatility but RVOL spike > 1.2 → Stampede
-                    """
-                
-                    entry_time = row["Time"]
-                    entry_type = row["Type"]
-                
-                    # Pick the right anchor
-                    if "Call" in entry_type:
-                        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
-                    else:
-                        anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
-                
-                    if anchor_idx is None:
-                        return ""
-                
-                    # Find entry index
-                    entry_locs = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
-                    if len(entry_locs) == 0:
-                        return ""
-                    entry_idx = entry_locs[0]
-                
-                    anchor_loc = intraday.index.get_loc(anchor_idx)
-                
-                    # Window around anchor → [anchor-7 … anchor+7]
-                    start_loc = max(0, anchor_loc - perimeter)
-                    end_loc   = min(len(intraday), anchor_loc + perimeter + 1)
-                    window = intraday.iloc[start_loc:end_loc]
-                
-                    # --- Check volatility signals
-                    vol_confirm = (window["BBW Alert"] == "🔥").any() or (window["STD_Alert"] == "🐦‍🔥").any()
-                
-                    # --- Check RVOL spike
-                    vol_spike = (window["RVOL_5"] > 1.2).any()
-                
-                    # Logic
-                    if vol_confirm:
-                        return "VolConfirmed"
-                    elif vol_spike:
-                        return "Stampede"
-                
-                    return ""
-
-                def map_stall_after_entry(row, intraday: pd.DataFrame):
-                    """For a given entry row, find the first 🚪 after that bar and return (emoji, time, price)."""
-                    # locate the entry bar by HH:MM
-                    entry_time = row["Time"]
-                    locs = intraday.index[
-                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                    ]
-                    if len(locs) == 0:
-                        return pd.Series(["", "", ""])
-                
-                    entry_idx = locs[0]
-                    entry_loc = intraday.index.get_loc(entry_idx)
-                
-                    # scan forward for the first door
-                    fwd = intraday.iloc[entry_loc+1:]
-                    hits = fwd[fwd.get("T0_Emoji", "") == "🚪"]
-                    if hits.empty:
-                        return pd.Series(["", "", ""])
-                
-                    r = hits.iloc[0]
-                    # return emoji, time (HH:MM), and price
-                    return pd.Series([
-                        "🚪",
-                        pd.to_datetime(r["Time"]).strftime("%H:%M"),
-                        r["Close"]
-                    ])
-                def map_t1_after_entry(row, intraday):
-                    """
-                    For a given entry row, find the first 🏇🏼 after that bar and return (emoji, time, price).
-                    """
-                    # OPTIONAL: only attach T1 to Entry 1 rows. If you want it on all rows, delete this guard.
-                    if "🎯1" not in row.get("Type", ""):
-                        return pd.Series(["", "", ""])
-                
-                    # locate the entry bar by HH:MM
-                    entry_time = row["Time"]
-                    locs = intraday.index[
-                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                    ]
-                    if len(locs) == 0:
-                        return pd.Series(["", "", ""])
-                
-                    entry_idx = locs[0]
-                    entry_loc = intraday.index.get_loc(entry_idx)
-                
-                    # scan forward for the first 🏇🏼
-                    fwd = intraday.iloc[entry_loc + 1 :]
-                    if "T1_Emoji" not in fwd.columns:
-                        return pd.Series(["", "", ""])
-                    hits = fwd[fwd["T1_Emoji"] == "🏇🏼"]
-                    if hits.empty:
-                        return pd.Series(["", "", ""])
-                
-                    r = hits.iloc[0]
-                    return pd.Series([
-                        "🏇🏼",
-                        pd.to_datetime(r["Time"]).strftime("%H:%M"),
-                        r["Close"],
-                    ])
 
 
-   
-                def map_t2_after_entry(row, intraday):
-                    """
-                    For a given entry row, find the first T2 (⚡) AFTER that bar.
-                    Returns (emoji, HH:MM time, price). Blank if none.
-                    """
-                    # Locate the entry bar by HH:MM
-                    entry_time = row["Time"]
-                    locs = intraday.index[
-                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                    ]
-                    if len(locs) == 0:
-                        return pd.Series(["", "", ""])
-                
-                    entry_idx = locs[0]
-                    entry_loc = intraday.index.get_loc(entry_idx)
-                
-                    # Scan forward for the first ⚡
-                    fwd = intraday.iloc[entry_loc + 1 :]
-                    if "T2_Emoji" not in fwd.columns:
-                        return pd.Series(["", "", ""])
-                
-                    hits = fwd[fwd["T2_Emoji"] == "⚡"]
-                    if hits.empty:
-                        return pd.Series(["", "", ""])
-                
-                    r = hits.iloc[0]
-                    return pd.Series([
-                        "⚡",
-                        pd.to_datetime(r["Time"]).strftime("%H:%M"),
-                        r["Close"],
-                    ])
- 
-                def add_goldmine_from_e2(intraday, dist=120):
-                    out = intraday.copy()
-                    out["Goldmine_E2_Emoji"] = ""
-                    # all E2 bars
-                    e2_idx = list(out.index[out["Call_SecondEntry_Emoji"] == "🎯2"]) + \
-                             list(out.index[out["Put_SecondEntry_Emoji"]  == "🎯2"])
-                    e2_idx = sorted(e2_idx)
-                    if not e2_idx:
-                        return out
-                
-                    for idx in e2_idx:
-                        is_call = (out.at[idx, "Call_SecondEntry_Emoji"] == "🎯2")
-                        f_anchor = out.at[idx, "F_numeric"]
-                        if pd.isna(f_anchor):
-                            continue
-                        start = out.index.get_loc(idx)
-                        for j in range(start + 1, len(out)):
-                            f = out.iloc[j]["F_numeric"]
-                            if pd.isna(f):
-                                continue
-                            if is_call and f >= f_anchor + dist:
-                                out.iat[j, out.columns.get_loc("Goldmine_E2_Emoji")] = "💰"
-                                break
-                            if (not is_call) and f <= f_anchor - dist:
-                                out.iat[j, out.columns.get_loc("Goldmine_E2_Emoji")] = "💰"
-                                break
-                    return out
-
-                
-                def add_goldmine_from_t1(intraday, dist=120):
-                    """
-                    Marks 💰 Goldmine from T1 (🏇🏼):
-                    After T1, when price (F_numeric) has moved at least `dist` F% away from Kijun_F
-                    in the correct direction.
-                    """
-                    out = intraday.copy()
-                    out["Goldmine_T1_Emoji"] = ""
-                
-                    # Find T1
-                    t1_idx = out.index[out["T1_Emoji"] == "🏇🏼"]
-                    if len(t1_idx) == 0:
-                        return out
-                
-                    start = out.index.get_loc(t1_idx[0])
-                
-                    # Determine side (from Entry 1)
-                    side = None
-                    if any(out["Call_FirstEntry_Emoji"] == "🎯"):
-                        side = "call"
-                    elif any(out["Put_FirstEntry_Emoji"] == "🎯"):
-                        side = "put"
-                
-                    if side is None:
-                        return out
-                
-                    for i in range(start + 1, len(out)):
-                        mike = out.at[out.index[i], "F_numeric"]
-                        kijun = out.at[out.index[i], "Kijun_F"]
-                
-                        if pd.isna(mike) or pd.isna(kijun):
-                            continue
-                
-                        if side == "call" and mike - kijun >= dist:
-                            out.at[out.index[i], "Goldmine_T1_Emoji"] = "💰"
-                            break
-                        if side == "put" and kijun - mike >= dist:
-                            out.at[out.index[i], "Goldmine_T1_Emoji"] = "💰"
-                            break
-                
-                    return out
-                
-                
-                # ✅ Apply both
-                intraday = add_goldmine_from_e2(intraday, dist=120)
-                intraday = add_goldmine_from_t1(intraday, dist=120)
-                
-                
-
-
-                def map_goldmine_after_t1(row, intraday: pd.DataFrame, thresh=120):
-                    """
-                    From T1 forward, check if Mike reaches the Goldmine 💰.
-                    Goldmine = ±120 F% beyond Kijun_F.
-                    Works for both Call and Put entries.
-                    """
-                    # locate entry row
-                    entry_time = row["Time"]
-                    locs = intraday.index[
-                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                    ]
-                    if len(locs) == 0:
-                        return pd.Series(["", "", ""])
-                
-                    entry_idx = locs[0]
-                    entry_loc = intraday.index.get_loc(entry_idx)
-                
-                    # find T1
-                    fwd = intraday.iloc[entry_loc+1:]
-                    t1_hits = fwd[fwd.get("T1_Emoji", "") == "🏇🏼"]
-                    if t1_hits.empty:
-                        return pd.Series(["", "", ""])
-                    t1_idx = t1_hits.index[0]
-                    t1_loc = intraday.index.get_loc(t1_idx)
-                
-                    # scan forward from T1
-                    fwd_after_t1 = intraday.iloc[t1_loc+1:]
-                    for i, r in fwd_after_t1.iterrows():
-                        mike = r["F_numeric"]
-                        kijun = r.get("Kijun_F", None)
-                
-                        if pd.isna(mike) or pd.isna(kijun):
-                            continue
-                
-                        if "Call" in row["Type"] and mike >= kijun + thresh:
-                            return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
-                        if "Put" in row["Type"] and mike <= kijun - thresh:
-                            return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
-                
-                    return pd.Series(["", "", ""])
-                
-                def map_goldmine_after_e2(row, intraday: pd.DataFrame, dist=120):
-                    """
-                    From the Entry 2 bar (the row's time), find the first 💰 hit measured
-                    as ±dist F% from the *E2 bar's F_numeric* (fixed anchor).
-                    Works when df['Type'] contains 'Call 🎯2' or 'Put 🎯2'.
-                    Returns (emoji, time, price).
-                    """
-                    # 1) Locate the E2 bar by HH:MM
-                    entry_time = row["Time"]
-                    locs = intraday.index[
-                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                    ]
-                    if len(locs) == 0:
-                        return pd.Series(["", "", ""])
-                
-                    entry_idx = locs[0]
-                    entry_loc = intraday.index.get_loc(entry_idx)
-                
-                    # 2) Infer side/level from df['Type'] (not from emoji columns)
-                    t = str(row.get("Type", ""))
-                    is_call_e2 = ("Call" in t) and ("🎯2" in t)
-                    is_put_e2  = ("Put"  in t) and ("🎯2" in t)
-                    if not (is_call_e2 or is_put_e2):
-                        return pd.Series(["", "", ""])
-                
-                    # 3) Fixed anchor at the E2 bar's F%
-                    f_anchor = intraday.at[entry_idx, "F_numeric"]
-                    if pd.isna(f_anchor):
-                        return pd.Series(["", "", ""])
-                
-                    # 4) Scan forward for +/− dist F% from that anchor
-                    fwd = intraday.iloc[entry_loc + 1 :]
-                    for _, r in fwd.iterrows():
-                        f = r.get("F_numeric", None)
-                        if pd.isna(f):
-                            continue
-                
-                        if is_call_e2 and f >= f_anchor + dist:
-                            return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
-                
-                        if is_put_e2 and f <= f_anchor - dist:
-                            return pd.Series(["💰", pd.to_datetime(r["Time"]).strftime("%H:%M"), r["Close"]])
-                
-                    return pd.Series(["", "", ""])
-
-
-             
-                def map_parallel_after_t2(row, intraday: pd.DataFrame):
-                    """
-                    For a given entry row, find T2 (⚡), then track the Parallel phase.
-                    Returns (emoji, end_time, max_gain_F).
-                    """
-                    entry_time = row["Time"]
-                
-                    # locate the entry bar by HH:MM
-                    locs = intraday.index[
-                        pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time
-                    ]
-                    if len(locs) == 0:
-                        return pd.Series(["", "", ""])
-                
-                    entry_idx = locs[0]
-                    entry_loc = intraday.index.get_loc(entry_idx)
-                
-                    # scan forward for the first T2 ⚡
-                    fwd = intraday.iloc[entry_loc+1:]
-                    hits_t2 = fwd[fwd.get("T2_Emoji", "") == "⚡"]
-                    if hits_t2.empty:
-                        return pd.Series(["", "", ""])
-                
-                    # take first T2
-                    t2 = hits_t2.iloc[0]
-                    t2_loc = intraday.index.get_loc(t2.name)
-                
-                    # from T2 onward, track Parallel phase
-                    fwd2 = intraday.iloc[t2_loc+1:]
-                    parallels = fwd2[fwd2.get("Parallel_Emoji", "") == "⚡"]
-                    if parallels.empty:
-                        return pd.Series(["⚡", pd.to_datetime(t2["Time"]).strftime("%H:%M"), 0])
-                
-                    # compute max gain relative to T2
-                    base_f = t2["F_numeric"]
-                    max_f = parallels["F_numeric"].max() if "F_numeric" in parallels else base_f
-                    gain_f = max_f - base_f
-                
-                    last = parallels.iloc[-1]
-                    return pd.Series([
-                        "⚡",
-                        pd.to_datetime(last["Time"]).strftime("%H:%M"),
-                        gain_f
-                    ])
-            
-            
-
-          
-
-	        
-                      # 👉 Add column
-
-                def assign_prefix_tailbone(row, intraday, profile_df, f_bins, pre_anchor_buffer=3):
-                     """
-                     Prefix = 'Tailbone' if any 🪶 Tail exists from (anchor-3 bars) through the entry bar,
-                     using profile *bins* (not raw F% equality).
-                     Works for Call/Put; uses Bull/Bear MIDAS first-valid index as the anchor.
-                     """
-                 
-                     # --- which anchor to use based on entry type
-                     if "Call" in row["Type"]:
-                         anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
-                     else:
-                         anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
-                 
-                     if anchor_idx is None:
-                         return ""  # no anchor → no Tailbone
-                 
-                     # --- locate entry bar by time (HH:MM) — simple and robust enough on 5-min data
-                     entry_time = row["Time"]
-                     entry_locs = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
-                     if len(entry_locs) == 0:
-                         return ""  # couldn't map entry to intraday
-                     entry_idx = entry_locs[0]
-                 
-                     anchor_loc = intraday.index.get_loc(anchor_idx)
-                     entry_loc  = intraday.index.get_loc(entry_idx)
-                     if entry_loc <= anchor_loc - pre_anchor_buffer:
-                         return ""  # entry occurs before our anchor window
-                 
-                     # --- window: [anchor-3 ... entry]
-                     start_loc = max(0, anchor_loc - pre_anchor_buffer)
-                     end_loc   = entry_loc
-                 
-                     segment_F = intraday.iloc[start_loc:end_loc+1]["F_numeric"].to_numpy()
-                 
-                     # map every bar's F% in the window to its profile bin
-                     # note: np.digitize returns 1..N; subtract 1 to index into f_bins
-                     bin_ix = np.clip(np.digitize(segment_F, f_bins) - 1, 0, len(f_bins)-1)
-                     window_bins = pd.unique(f_bins[bin_ix])
-                 
-                     # all profile bins that have a Tail 🪶
-                     tail_bins = set(profile_df.loc[profile_df["Tail"] == "🪶", "F% Level"].tolist())
-                 
-                     # Tailbone if any window bin is a tail bin (covers tails at/just before anchor, or soon after)
-                     return "Tailbone" if any(b in tail_bins for b in window_bins) else ""
-             
-
-                     # --- volatility confirmation (±lookback bars around anchor)
-                     anchor_window = intraday.iloc[
-                         max(0, anchor_loc - lookback): min(len(intraday), anchor_loc + lookback + 1)
-                     ]
-                     has_fire = "🔥" in anchor_window.get("BBW_Alert", "").astype(str).sum()
-                     has_std  = "🐦‍🔥" in anchor_window.get("STD_Alert", "").astype(str).sum()
-                 
-                     if has_fire or has_std:
-                         return candidate
-                     else:
-                         return ""   # fallback to plain Ember
-
-                intraday = intraday.rename(columns={"time": "Time"})
-
-                def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
-                    """
-                    Normalize column names before CSV export:
-                    - Lowercase
-                    - Replace spaces with underscores
-                    - Remove parentheses, $, and other special chars
-                    """
-                    df = df.copy()
-                    df.columns = (
-                        df.columns
-                        .str.strip()
-                        .str.lower()
-                        .str.replace(r"[ $()]", "", regex=True)   # remove $, (, )
-                        .str.replace(" ", "_", regex=True)        # replace spaces with underscores
-                    )
-                    return df
-
-
-
-                     
-
-
-             
-                # ----------  Helpers (cached) ----------
-                @st.cache_data(show_spinner=False)
-                def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
-                    """Build the tidy entries table (runs once unless `intraday` changes)."""
-                    entries: List[dict] = []
-            
-                            # PUTS
-                    for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
-                        entries.append({"Type": "Put 🎯1",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-})
-                    for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
-                        entries.append({"Type": "Put 🎯2",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-})
-                    for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
-                        entries.append({"Type": "Put 🎯3",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-
-                                       })
-                
-                    # CALLS
-                    for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
-                        entries.append({"Type": "Call 🎯1",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-})
-                    for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
-                        entries.append({"Type": "Call 🎯2",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-
-                                       
-                                       })
-                    for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
-                        entries.append({"Type": "Call 🎯3",
-                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-                                        "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
-
-                                       }),
- 
-          
-                    df = (pd.DataFrame(entries)
-                   .sort_values("Time")
-                   .reset_index(drop=True))
-                 
-                    df["Prototype"] = df.apply(classify_prototype, axis=1, args=(intraday,))
-                    df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
-                    df["Sideways"] = df.apply(lambda row: detect_sideways(intraday, ib_low, ib_high, row["Time"], min_bars=4),axis=1)
-	                # df["Bee"] = df.apply(check_bee_near_anchor, axis=1, args=(intraday,))
-
-                    df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
-                    df["Date"] = start_date
-
-                    df = add_exit_columns(df)   # ✅ just like the others, but cleaner
-                    df = compute_pae_1to2(df, intraday)
-                                    # 👉 map the next stall (🚪) *after* each entry row
-                    df[["T0_Emoji", "T0_Time", "T0_Price"]] = df.apply(
-                        map_stall_after_entry, axis=1, args=(intraday,), result_type="expand"
-                    )
-                    # 🏇🏼 map the first acceleration beyond band after each entry (typically after Entry 1)
-                    df[["T1_Emoji", "T1_Time", "T1_Price"]] = df.apply(
-                        map_t1_after_entry, axis=1, args=(intraday,), result_type="expand"
-                    )
-
-                                     # 🔁 Map T2 (⚡) to each entry row
-                    df[["T2_Emoji", "T2_Time", "T2_Price"]] = df.apply(
-                        map_t2_after_entry, axis=1, args=(intraday,), result_type="expand"
-                    )
-
-                    df[["Parallel_Emoji", "Parallel_Time", "Parallel_Gain"]] = df.apply(
-                    map_parallel_after_t2, axis=1, args=(intraday,), result_type="expand"
-                     )
-
-                    # E2 route
-                    df[["Goldmine_E2_Emoji", "Goldmine_E2_Time", "Goldmine_E2 Price"]] = df.apply(
-                        map_goldmine_after_e2, axis=1, args=(intraday,), result_type="expand"
-                    )
-                    
-                    # T1 route
-                    df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price"]] = df.apply(
-                        map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
-                    )
-                 
-
-                    
-                    
-                    
-
-                    df =  compute_pae_2to3(df, intraday)
-                    df = compute_pae_3to40F(df, intraday)
-               
-                    df["Prefix"] = df.apply(
-                        assign_prefix_tailbone,
-                        axis=1,
-                        args=(intraday, profile_df, f_bins)  # pass your existing profile_df and f_bins
-                    )
-                  
-              
-
-                    df["Date"] = df["Date"].astype(str)
-
-                    return df
-                def detect_sideways(intraday, ib_low, ib_high, entry_time, min_bars=4):
-               
-           
-               # --- Divide IB into thirds ---
-                        ib_third = (ib_high - ib_low) / 3
-                        cellar = (ib_low, ib_low + ib_third)
-                        core   = (ib_low + ib_third, ib_low + 2*ib_third)
-                        loft   = (ib_low + 2*ib_third, ib_high)
-           
-                        def zone_for_price(price):
-                            if cellar[0] <= price < cellar[1]:
-                                  return "Cellar"
-                            elif core[0] <= price < core[1]:
-                                  return "Core"
-                            elif loft[0] <= price <= loft[1]:
-                                return "Loft"
-                            return None
-                      
-                          # --- Locate entry index ---
-                        entry_locs = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
-                        if len(entry_locs) == 0:
-                            return ""
-                        entry_idx = entry_locs[0]
-                      
-                          # --- Scan forward from entry ---
-                        f_values = intraday.loc[entry_idx:, "F_numeric"].tolist()
-                      
-                        current_zone = None
-                        count = 0
-                      
-                        for f in f_values:
-                            z = zone_for_price(f)
-                            if z is None:
-                                break
-                      
-                            if z == current_zone:
-                                   count += 1
-                            else:
-                                  # new zone → check if last zone was sideways
-                                if current_zone and count >= min_bars:
-                                    minutes = count * 5
-                                    return f"Sideways in {current_zone} for {minutes} min"
-                                current_zone = z
-                                count = 1
-                      
-                          # check at the end
-                        if current_zone and count >= min_bars:
-                           minutes = count * 5
-                           return f"Sideways in {current_zone} for {minutes} min"
-                      
-                        return ""
-
-              
-           
-                @st.cache_data(show_spinner=False)
-                def to_csv_bytes(df: pd.DataFrame) -> bytes:
-                    """Create CSV bytes from df (cached)."""
-                    df = clean_column_names(df)
-
-                    return df.to_csv(index=False).encode("utf-8")
-                
-                
-                # ----------  Build once, reuse always ----------
-                entries_df = build_entries_df(intraday).round(2)
-                csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
-                # Force a ticker column so downstream JSON always has it
-                # if "Ticker" not in entries_df.columns:
-                #           entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
-                      # ✅ Ensure no NaN values so Mongo won’t choke
-                # entries_df = entries_df.where(pd.notnull(entries_df), "")
-                      
-                #       # ✅ Force a Ticker column if missing or empty
-            # ✅ Ensure no NaN values so Mongo won’t choke
- 
-           
-                #       # ✅ Fix ticker column intelligently
-                # if "Ticker" not in entries_df.columns or entries_df["Ticker"].isnull().all() or (entries_df["Ticker"] == "").all():
-                #     if "ticker" in entries_df.columns:
-                #         entries_df["Ticker"] = entries_df["ticker"].astype(str).str.upper()
-                #     elif "name" in entries_df.columns:
-                #         entries_df["Ticker"] = entries_df["name"].astype(str).str.upper()
-                #     else:
-                #               # only fallback if truly nothing else available
-                #         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-
-
-                # keep these in session_state so other code can reuse without recompute
-                # st.session_state.setdefault("entries_df", entries_df)
-                # st.session_state.setdefault("entries_csv", csv_bytes)
-                st.session_state["entries_df"] = entries_df
-                st.session_state["entries_csv"] = csv_bytes
-                # Optional: persist expander state across reruns
-                st.session_state.setdefault("expand_entries", True)
-
-
-
-                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-                    st.dataframe(entries_df, use_container_width=True)
-                
-                    # ---------- CSV (unchanged) ----------
-                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-                    csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
-                    st.markdown(
-                        f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
-                        unsafe_allow_html=True
-                    )
-                # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
-                    entries_df = entries_df.where(pd.notnull(entries_df), None)
-                    if "Ticker" not in entries_df.columns:
-                        entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-                    # ---------- JSON (grouped) ----------
-                    grouped_docs = {}
-                
-                    for row in entries_df.to_dict(orient="records"):
-                        # identify ticker + date key  (adjust the column names if yours differ)
-                        # ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
-                        ticker = (row.get("Ticker") or row.get("ticker") or row.get("name") or "UNKNOWN").strip().upper()
-                      
-                        date   = row["Date"]
-                        key = f"{ticker}_{date}"
-						# prefix    = str(row.get("Prefix") or "").strip().lower()
-						# prototype = str(row.get("Prototype") or "").strip().lower()
-						
-						# key  = f"{ticker}_{date}"
-						slug = f"{ticker}-{date}-{prefix}-{prototype}".strip("-").replace(" ", "-")
-
-                        # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
-                        # entry_num = row["Type"].split("🎯")[-1].strip() if "🎯" in row["Type"] else "1"
-                # Detect Call vs Put
-                        entry_type = row.get("Type", "")
-                        side = "callPath" if "Call" in entry_type else "putPath"
-
-                        # create shell doc if first time
-                        if key not in grouped_docs:
-                            # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
-                            slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
-                            slug = slug.lower().replace(" ", "-")
-                      
-
-
-                            grouped_docs[key] = {
-                              
-                                 "name": str(ticker or "UNKNOWN").lower(),
-
-                                "date"      : date,
-                                 "slug": slug,   # 👈 NEW
-                                 "archive": True,   # 👈 always included by default
-                                 "cardPng":"",
-                                 "value":"",
-                                 "opus":"",
-                                 "note":"",
-                                "Prototype" : row.get("Prototype", ""),
-                                "label"     : row.get("Label", ""),
-                                "suffix"    : row.get("Suffix", ""),
-                                "prefix"    : row.get("Prefix", ""),
-                                # "entry1"    : {                      # full data for the first entry
-                                #     "Type" : row["Type"],
-                                 
-
-                                #     "Time" : row["Time"],
-                                #     "Price ($)": row["Price ($)"],
-                                #     "F%"   : row.get("F%", ""),
-                                #     "Exit_Time":row.get("Exit_Time", ""),
-                                #     "Exit_Price":row.get("Exit_Price", ""),
-                                #     "PAE_1to2":row.get("PAE_1to2", ""),
-                                #     "PAE_2to3":row.get("PAE_2to32", ""),
-                                #     "PAE_3to40F":row.get("PAE_3to40F", ""),
-                                  
-
-                                #     "T0"   : {
-                                #         "emoji" : row.get("T0_Emoji", ""),
-                                #         "time"  : row.get("T0_Time",  ""),
-                                #         "price" : row.get("T0_Price", "")
-                                #     },
-
-                                 
-                                #     "T1"   : {
-                                #         "emoji" : row.get("T1_Emoji", ""),
-                                #         "time"  : row.get("T1_Time",  ""),
-                                #         "price" : row.get("T1_Price", "")
-                                #     },
-                                 
-                                #     "T2"   : {
-                                #           "emoji" : row.get("T2_Emoji", ""),
-                                #           "time"  : row.get("T2_Time",  ""),
-                                #           "price" : row.get("T2_Price", "")
-                                #       },
-                            
-                                                             
-                                #     # 🔽 Add Parallel
-                                #     "Parallel" : {
-                                #         "emoji" : row.get("Parallel_Emoji", ""),
-                                #         "time"  : row.get("Parallel_Time", ""),
-                                #         "gain"  : row.get("Parallel_Gain", "")
-                                #     },
-                            
-                                #     # 🔽 Add Goldmine E2
-                                #     "Goldmine_E2" : {
-                                #         "emoji" : row.get("Goldmine_E2_Emoji", ""),
-                                #         "time"  : row.get("Goldmine_E2_Time", ""),
-                                #         "price" : row.get("Goldmine_E2 Price", "")
-                                #     },
-                            
-                                #     # 🔽 Add Goldmine T1
-                                #     "Goldmine_T1" : {
-                                #         "emoji" : row.get("Goldmine_T1_Emoji", ""),
-                                #         "time"  : row.get("Goldmine_T1_Time", ""),
-                                #         "price" : row.get("Goldmine_T1 Price", "")
-                                #     }
-                                  
-                                #     # keep any other milestone fields you like...
-                                # },
-
-                                "callPath": {"entries": [], "milestones": {}},
-                                "putPath": {"entries": [], "milestones": {}},
-                                "extraEntries": []                   # will hold 🎯2, 🎯3 …
-                            }
-                        doc = grouped_docs[key]
-                        entry_obj = {
-                              "Type" : entry_type,
-                              "Time" : row.get("Time", ""),
-                              "Price": row.get("Price ($)", "")
-                          }
-
-                        if "🎯1" in entry_type:
-
-                            milestones = {
-                                "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
-                                "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
-                                "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
-                                "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
-                                "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
-                                "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")},
-                                         # 👇 Add side-specific PAE here
-
-
-                          
-                                         }
-
-                      # 👇 Add PAE as just another milestone
-                            milestones["callPae" if side == "callPath" else "putPae"] = {
-                               "1to2": row.get("PAE_1to2", ""),
-                               "2to3": row.get("PAE_2to3", ""),
-                               "3to40F": row.get("PAE_3to40F", "")
-                            }
-
-
-                                   
-                            doc[side]["milestones"] = milestones
-# Always append the entry
-                        doc[side]["entries"].append(entry_obj)
-                        #👇 must be here (not outside the loop)
-                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        if sideways_note:
-                            doc[side]["sideways"] = sideways_note
-
-                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        if sideways_note:
-                            doc[side]["milestones"]["Sideways"] = {
-                                "note": sideways_note,
-                                "from": row["Time"],  # entry start time
-                                                }
-
-                                                 # --- Add sideways condition ---
-                  
-                        # else:
-                        #     # if this row is NOT 🎯1, add the minimalist checkpoint
-                        #     if entry_num != "1":
-                        #         grouped_docs[key]["extraEntries"].append({
-                        #             "Type" : row["Type"],
-                        #             "Time" : row["Time"],
-                        #             "Price": row["Price ($)"]
-                        #         })
-                
-                    # final list to export
-                    json_ready = list(grouped_docs.values())
-                
-                    json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
-                    json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
-                    st.markdown(
-                        f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
-                        unsafe_allow_html=True
-                    )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
-                        rows=1,
+                        rows=3,
                         cols=1,
-
                         vertical_spacing=0.03,
-                         shared_xaxes=True,
+                        row_heights=[0.60, 0.20, 0.20],  
+                        subplot_titles=("F% Structure", "Option Flow (Call/Put)","Option vs MIDAS"),
+                        shared_xaxes=True,
                        
                          
-                 
                     )
 
     
@@ -8197,12 +4790,61 @@ if st.sidebar.button("Run Analysis"):
                     )
                     fig.add_trace(scatter_f, row=1, col=1)
 
+                    # # === Overlay Colored Top Dots ===
+                    # colored_dots = go.Scatter(
+                    #     x=top_dots["Time"],
+                    #     y=top_dots["F_numeric"],
+                    #     mode="markers",
+                    #     marker=dict(
+                    #         size=8,
+                    #         color=top_dots["DotColor"],
+                    #         symbol="circle"
+                    #     ),
+                    #     name="15-min Directional Dot",
+                    #     hovertemplate="Time: %{x}<br>Top F%: %{y:.2f}<extra></extra>",
+                    # )
+                    # fig.add_trace(colored_dots, row=1, col=1)
+                                        
+                    #             # === Define Dots ===
+                    # main_dot = go.Scatter(
+                    #     x=top_dots["Time"],
+                    #     y=top_dots["F_numeric"],
+                    #     mode="markers",
+                    #     marker=dict(
+                    #         color=top_dots["DotColor"],
+                    #         size=8,
+                    #         symbol="circle"
+                    #     ),
+                    #     name="15-min Top Dot",
+                    #     hovertemplate="Bracket End: %{x}<br>F%: %{y}<extra></extra>"
+                    # )
+                    
+                    # ghost_dot = go.Scatter(
+                    #     x=top_dots["Time_HighMoment"],
+                    #     y=top_dots["F_numeric"],
+                    #     mode="markers",
+                    #     marker=dict(
+                    #         color=top_dots["DotColor"],
+                    #         size=20,
+                    #         symbol="circle-open",
+                    #         opacity=0.4
+                    #     ),
+                    #     name="Ghost Dot 🫥",
+                    #     hovertemplate="Auction Push: %{x}<br>F%: %{y}<extra></extra>"
+                    # )
+                    
+                    # === Now Add to Plot ===
+                    # fig.add_trace(main_dot, row=1, col=1)
+                    # fig.add_trace(ghost_dot, row=1, col=1)
+                    #**************************************************************************************************************************************************************************
+
+
+                                                        # 🟢 40% RETRACEMENT
 
 
 
 
-
-
+#**************************************************************************************************************************************************************************
 
                     # # (A.2) Dashed horizontal line at 0
                     # fig.add_hline(
@@ -8352,6 +4994,52 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(tenkan_line, row=1, col=1)
 
 
+                    # intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
+                    # intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
+
+
+
+                                        # Span A – Yellow Line
+                    span_a_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanA_F"],
+                        mode="lines",
+                        line=dict(color="yellow", width=0.4),
+                        name="Span A (F%)"
+                    )
+                    fig.add_trace(span_a_line, row=1, col=1)
+
+                    # Span B – Blue Line
+                    span_b_line = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanB_F"],
+                        mode="lines",
+                        line=dict(color="blue", width=0.4),
+                        name="Span B (F%)"
+                    )
+                    fig.add_trace(span_b_line, row=1, col=1)
+
+                    # Invisible SpanA for cloud base
+                    fig.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanA_F"],
+                        line=dict(width=0),
+                        mode='lines',
+                        showlegend=False
+                    ), row=1, col=1)
+
+                    # SpanB with fill → grey Kumo
+                    fig.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["SpanB_F"],
+                        fill='tonexty',
+                        fillcolor='rgba(128, 128, 128, 0.25)',  # transparent grey
+                        line=dict(width=0),
+                        mode='lines',
+                        name='Kumo Cloud'
+                    ), row=1, col=1)
+
+
                                     # Mask for different RVOL thresholds
                     mask_rvol_extreme = intraday["RVOL_5"] > 1.8
                     mask_rvol_strong = (intraday["RVOL_5"] >= 1.5) & (intraday["RVOL_5"] < 1.8)
@@ -8410,7 +5098,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Upper"],
                         mode="lines",
-                        line=dict(dash="solid", color="#d3d3d3",width=1),
+                        line=dict(dash="solid", color="#bebebe",width=0.4),
                         name="Upper Band"
                     )
 
@@ -8419,7 +5107,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% Lower"],
                         mode="lines",
-                        line=dict(dash="solid", color="#d3d3d3",width=1),
+                        line=dict(dash="solid", color="#bebebe",width=0.4),
                         name="Lower Band"
                     )
 
@@ -8428,16 +5116,93 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=intraday["F% MA"],
                         mode="lines",
-                        line=dict(dash="dash",color="#d3d3d3",width=2),  # Set dash style
+                        line=dict(dash="dash",color="#d3d3d3",width=0.4),  # Set dash style
                         name="Middle Band (14-MA)"
                     )
 
 
+                    # #                   # (E) Compliance Shift Bubbles on Main Plot
+                    # shift_bubbles = go.Scatter(
+                    #     x=intraday["Time"],
+                    #     showlegend=False,
+
+                    #     y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧") + 50,
+                    #     mode="markers",
+                    #     marker=dict(size=30, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                    #     name="🫧 Compliance Shift",
+                    # )
+                    
+                   # (E) Compliance Shift Bubbles on Main Plot
+                    shift_bubbles = go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["F%"].where(intraday["Compliance Shift"] == "🫧"),
+                        mode="markers",
+                        marker=dict(size=14, symbol="circle", color="#00ccff", line=dict(color="white", width=1)),
+                        name="🫧 Compliance Shift",
+                        hovertemplate="Time: %{x|%H:%M}<br>F%%: %{y:.2f}<extra></extra>"
+                    )
+                    
+                    fig.add_trace(shift_bubbles, row=1, col=1)
+
+                   
+                    # # Create a Boolean mask for rows with surge emojis
+                    # mask_compliance_surge = intraday["Compliance Surge"] != ""
+                    
+                    # # Plot Surge Emojis using same structure as BBW Alert
+                    # scatter_compliance_surge = go.Scatter(
+                    #     x=intraday.loc[mask_compliance_surge, "Time"],
+                    #     y=intraday.loc[mask_compliance_surge, "F_numeric"] - 24,  # Offset slightly below F%
+                    #     mode="text",
+                    #     text=intraday.loc[mask_compliance_surge, "Compliance Surge"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=14),
+                    #     name="Compliance Surge",
+                    #     hovertemplate="Time: %{x}<br>Surge: %{text}<extra></extra>"
+                    # )
+                    
+                    # fig.add_trace(scatter_compliance_surge, row=1, col=1)
 
 
+                    # (G) Distensibility Alert on Main Plot
+                    
+                    # # Mask bars that triggered the 🪟 emoji
+                    # mask_distensibility = intraday["Distensibility Alert"] != ""
+                    
+                    # # Plot emoji above price (or F_numeric)but rangebut range
+                    # scatter_distensibility = go.Scatter(
+                    #     x=intraday.loc[mask_distensibility, "Time"],
+                    #     y=intraday.loc[mask_distensibility, "F_numeric"] + 70,  # Slight offset upward
+                    #     mode="text",
+                    #     text=intraday.loc[mask_distensibility, "Distensibility Alert"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=24),
+                    #     name="Distensibility 🪟",
+                    #     hovertemplate="Time: %{x|%H:%M}<br>Distensibility: %{customdata:.2f}<extra></extra>",
+                    #     customdata=intraday.loc[mask_distensibility, "Distensibility"]
+                    # )
+                    
+                    # fig.add_trace(scatter_distensibility, row=1, col=1)
 
-                 
-               
+
+                    # Create a Boolean mask for rows with Stroke Growth ⭐ emojis
+                    # mask_stroke_growth = intraday["Stroke Growth ⭐"] != ""
+                    
+                    # # Plot Stroke Growth ⭐ emojis just below the F_numeric line
+                    # scatter_stroke_growth = go.Scatter(
+                    #     x=intraday.loc[mask_stroke_growth, "Time"],
+                    #     y=intraday.loc[mask_stroke_growth, "F_numeric"] + 38,  # Adjust vertical offset if needed
+                    #     mode="text",
+                    #     text=intraday.loc[mask_stroke_growth, "Stroke Growth ⭐"],
+                    #     textposition="top center",
+                    #     textfont=dict(size=16),
+                    #     name="Stroke Growth ⭐",
+                    #     hovertemplate="Time: %{x}<br>⭐ Stroke Volume Growth<extra></extra>"
+                    # )
+                    
+                    # fig.add_trace(scatter_stroke_growth, row=1, col=1)
+
+                  
+
                     fig.add_trace(upper_band, row=1, col=1)
                     fig.add_trace(lower_band, row=1, col=1)
                     fig.add_trace(middle_band, row=1, col=1)
@@ -8452,7 +5217,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday.loc[marengo_mask, "Time"],
                         y=intraday.loc[marengo_mask, "F% Upper"] + offset,
                         mode="text",
-                        textfont=dict(size=28),
+                        textfont=dict(size=24),
                         text=["🐎"] * marengo_mask.sum(),
                         textposition="top center",
                         name="Marengo",
@@ -8475,7 +5240,7 @@ if st.sidebar.button("Run Analysis"):
                         y=intraday.loc[south_mask, "F% Lower"] - offset_south,
                         mode="text",
                         text=["🐎"] * south_mask.sum(),
-                        textfont=dict(size=28),
+                        textfont=dict(size=24),
                         textposition="bottom center",
                         name="South Marengo",
                         showlegend=True
@@ -8487,24 +5252,13 @@ if st.sidebar.button("Run Analysis"):
         
 
 # # ------------------------
-                    # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
-                    y_open_f_line = go.Scatter(
-                        x=intraday["Time"],
-                        y=[intraday["Yesterday Open F%"].iloc[0]] * len(intraday),
-                        mode="lines",
-                        line=dict(color="white", dash="dash",width=0.3),
-                        name="Yesterday Open (F%)",
-                        yaxis="y2",              # << ✅ this is key
-                        showlegend=False,
-                        hoverinfo='skip'
-                    )
 
                     # ✅ Yesterday's High - Blue Dashed Line (F% Scale)
                     y_high_f_line = go.Scatter(
                         x=intraday["Time"],
                         y=[intraday["Yesterday High F%"].iloc[0]] * len(intraday),
                         mode="lines",
-                        line=dict(color="red", dash="dash",width=0.3),
+                        line=dict(color="green", dash="dash",width=0.3),
                         name="Yesterday High (F%)",
                         yaxis="y2",              # << ✅ this is key
                         showlegend=False,
@@ -8516,7 +5270,7 @@ if st.sidebar.button("Run Analysis"):
                         x=intraday["Time"],
                         y=[intraday["Yesterday Low F%"].iloc[0]] * len(intraday),
                         mode="lines",
-                        line=dict(color="green", dash="dash", width=0.3),
+                        line=dict(color="red", dash="dash", width=0.3),
                         name="Yesterday Low (F%)",
                         yaxis="y2",              # << ✅ this is key
                         showlegend=False,
@@ -8535,8 +5289,25 @@ if st.sidebar.button("Run Analysis"):
                         hoverinfo='skip'
                     )
 
-               
-                    fig.add_traces([y_open_f_line, y_high_f_line, y_low_f_line, y_close_f_line])
+                     # 🎯 Add all lines to the F% plot
+                    # fig.add_trace(y_open_f_line, row=1, col=1)
+                    fig.add_trace(y_high_f_line, row=1, col=1)
+                    fig.add_trace(y_low_f_line, row=1, col=1)
+                    fig.add_trace(y_close_f_line, row=1, col=1)
+
+                    # scatter_drum = go.Scatter(
+                    # x=intraday.loc[intraday["🪘"] != "", "Time"],
+                    # y=intraday.loc[intraday["🪘"] != "", "Drum_Y"],
+                    # mode="text",
+                    # text=intraday.loc[intraday["🪘"] != "", "🪘"],
+                    # textposition="middle center",
+                    # textfont=dict(size=20),
+                    # name="Drum Cross",
+                    # hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
+                    # )
+                
+                    # fig.add_trace(scatter_drum, row=1, col=1)
+
 
 
                              # BBW Tight → Pink Bishops ♗
@@ -8555,7 +5326,6 @@ if st.sidebar.button("Run Analysis"):
                     
                     fig.add_trace(scatter_bishop_tight, row=1, col=1)
 
-                    fig.add_traces([y_open_f_line, y_high_f_line, y_low_f_line, y_close_f_line])
 
 
 
@@ -8621,12 +5391,12 @@ if st.sidebar.button("Run Analysis"):
 
                     atr_alert_scatter = go.Scatter(
                         x=intraday.loc[mask_atr_alert, "Time"],
-                        y=intraday.loc[mask_atr_alert, "F_numeric"]  - 8,  # place above F%
+                        y=intraday.loc[mask_atr_alert, "F_numeric"]  - 3,  # place above F%
                         mode="text",
                         textposition="bottom center",
 
                         text=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
-                        textfont=dict(size=15),
+                        textfont=dict(size=8),
                         name="ATR Expansion",
                         hoverinfo="text",
                         hovertext=intraday.loc[mask_atr_alert, "ATR_Exp_Alert"],
@@ -8641,32 +5411,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday['Time'],
-                            y=intraday['TD Supply Line F'],
-                            mode='lines',
-                            line=dict(width=0.5, color="#8A2BE2", dash='dot'),
-                            name='TD Supply F%',
-                            hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
-                        ),
-                        row=1, col=1
-                    )
+                    # fig.add_trace(
+                    #     go.Scatter(
+                    #         x=intraday['Time'],
+                    #         y=intraday['TD Supply Line F'],
+                    #         mode='lines',
+                    #         line=dict(width=0.5, color="#8A2BE2", dash='dot'),
+                    #         name='TD Supply F%',
+                    #         hovertemplate="Time: %{x}<br>Supply (F%): %{y:.2f}"
+                    #     ),
+                    #     row=1, col=1
+                    # )
 
 
 
  
-                    fig.add_trace(
-                        go.Scatter(
-                            x=intraday['Time'],
-                            y=intraday['TD Demand Line F'],
-                            mode='lines',
-                            line=dict(width=0.5, color="#5DADE2", dash='dot'),
-                            name='TD Demand F%',
-                            hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
-                        ),
-                        row=1, col=1
-                    )
+                    # fig.add_trace(
+                    #     go.Scatter(
+                    #         x=intraday['Time'],
+                    #         y=intraday['TD Demand Line F'],
+                    #         mode='lines',
+                    #         line=dict(width=0.5, color="#5DADE2", dash='dot'),
+                    #         name='TD Demand F%',
+                    #         hovertemplate="Time: %{x}<br>Demand (F%): %{y:.2f}"
+                    #     ),
+                    #     row=1, col=1
+                    # )
             
             
 
@@ -8723,7 +5493,79 @@ if st.sidebar.button("Run Analysis"):
 
                     intraday["F_shift"] = intraday["F_numeric"].shift(1)
 
-    
+                    tdst_buy_mask = intraday["TDST"].str.contains("Buy TDST", na=False)
+                    tdst_sell_mask = intraday["TDST"].str.contains("Sell TDST", na=False)
+
+                                        # Step 1: For each Buy TDST bar, get the F% level
+                    buy_tdst_levels = intraday.loc[tdst_buy_mask, "F_numeric"]
+
+                    # Step 2: Loop through each Buy TDST and track from that point forward
+                    for buy_idx, tdst_level in buy_tdst_levels.items():
+                        # Get index location of the TDST signal
+                        i = intraday.index.get_loc(buy_idx)
+
+                        # Look at all bars forward from the TDST bar
+                        future = intraday.iloc[i+1:].copy()
+
+                        # Find where F% crosses and stays above the TDST level for 2 bars
+                        above = future["F_numeric"] > tdst_level
+                        two_bar_hold = above & above.shift(-1)
+
+                        # Find the first time this happens
+                        if two_bar_hold.any():
+                            ghost_idx = two_bar_hold[two_bar_hold].index[0]  # first valid bar
+
+                            # # Plot 👻 emoji on the first bar
+                            # fig.add_trace(
+                            #     go.Scatter(
+                            #         x=[intraday.at[ghost_idx, "Time"]],
+                            #         y=[intraday.at[ghost_idx, "F_numeric"] + 8],
+                            #         mode="text",
+                            #         text=["🔑"],
+                            #         textposition="middle center",
+                            #         textfont=dict(size=20, color="purple"),
+                            #         name="Confirmed Buy TDST Breakout",
+                            #         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                            #     ),
+                            #     row=1, col=1
+                            # )
+
+
+                    # Step 1: Get all Sell TDST points (each defines its own world)
+                    sell_tdst_levels = intraday.loc[tdst_sell_mask, "F_numeric"]
+                    sell_tdst_indices = list(sell_tdst_levels.index) + [intraday.index[-1]]  # add end of session as last boundary
+
+                    # Step 2: Loop through each Sell TDST "world"
+                    for i in range(len(sell_tdst_levels)):
+                        tdst_idx = sell_tdst_levels.index[i]
+                        tdst_level = sell_tdst_levels.iloc[i]
+
+                        # Define the domain: from this Sell TDST until the next one (or end of day)
+                        domain_start = intraday.index.get_loc(tdst_idx) + 1
+                        domain_end = intraday.index.get_loc(sell_tdst_indices[i+1])  # next TDST or end
+
+                        domain = intraday.iloc[domain_start:domain_end]
+
+                        # Condition: F% crosses below and stays below for 2 bars
+                        below = domain["F_numeric"] < tdst_level
+                        confirmed = below & below.shift(-1)
+
+                        if confirmed.any():
+                            ghost_idx = confirmed[confirmed].index[0]
+                            # fig.add_trace(
+                            #     go.Scatter(
+                            #         x=[intraday.at[ghost_idx, "Time"]],
+                            #         y=[intraday.at[ghost_idx, "F_numeric"] - 8],
+                            #         mode="text",
+                            #         text=["👻"],
+                            #         textposition="middle center",
+                            #         textfont=dict(size=20, color="purple"),
+                            #         name="Confirmed Sell TDST Breakdown",
+                            #         hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                            #     ),
+                            #     row=1, col=1
+                            # )
+
 
 
                    
@@ -8739,32 +5581,32 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-                short_entry_trace = go.Scatter(
-                    x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
-                    y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
-                    mode="text",
-                    text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
-                    textposition="bottom left",
-                    textfont=dict(size=13, color="lime"),
-                    name="Short Entry (✅)"
-                )
-                fig.add_trace(short_entry_trace, row=1, col=1)
+                # short_entry_trace = go.Scatter(
+                #     x=intraday.loc[intraday["Entry_Alert_Short"], "Time"],
+                #     y=intraday.loc[intraday["Entry_Alert_Short"], "F_numeric"] - 13,
+                #     mode="text",
+                #     text=[" ✅"] * intraday["Entry_Alert_Short"].sum(),
+                #     textposition="bottom left",
+                #     textfont=dict(size=13, color="lime"),
+                #     name="Short Entry (✅)"
+                # )
+                # fig.add_trace(short_entry_trace, row=1, col=1)
 
 
 
 
 
 
-                long_entry_trace = go.Scatter(
-                    x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
-                    y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
-                    mode="text",
-                    text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
-                    textposition="top left",
-                    textfont=dict(size=13, color="lime"),
-                    name="Long Entry (✅)"
-                )
-                fig.add_trace(long_entry_trace, row=1, col=1)
+                # long_entry_trace = go.Scatter(
+                #     x=intraday.loc[intraday["Entry_Alert_Long"], "Time"],
+                #     y=intraday.loc[intraday["Entry_Alert_Long"], "F_numeric"] + 13,
+                #     mode="text",
+                #     text=[" ✅"] * intraday["Entry_Alert_Long"].sum(),
+                #     textposition="top left",
+                #     textfont=dict(size=13, color="lime"),
+                #     name="Long Entry (✅)"
+                # )
+                # fig.add_trace(long_entry_trace, row=1, col=1)
 
 
                 # 🔍 First Wake-Up Detection
@@ -8797,7 +5639,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["🦉"],
                         textposition="bottom right",
-                        textfont=dict(size=21),
+                        textfont=dict(size=28),
                         showlegend=True,
                         hoverinfo="text",
                         hovertemplate="<b>Put Wake-Up</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
@@ -8816,7 +5658,7 @@ if st.sidebar.button("Run Analysis"):
                         mode="text",
                         text=["👁️"],
                         textposition="top center",
-                        textfont=dict(size=21),
+                        textfont=dict(size=24),
                         showlegend=True,
                         hoverinfo="text",
                         hovertemplate="<b>Call Rising (No Cross)</b><br>Time: %{x}<br>F%%: %{y:.2f}<extra></extra>",
@@ -8849,9 +5691,99 @@ if st.sidebar.button("Run Analysis"):
                         ), row=1, col=1)
 
              
+                # Smooth first if needed
                 intraday["Call_Option_Smooth"] = intraday["Call_Option_Value"].rolling(3).mean()
                 intraday["Put_Option_Smooth"]  = intraday["Put_Option_Value"].rolling(3).mean()
                 
+                # 🎯 Call Flow
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Smooth"],
+                    mode="lines",
+                    name="Call Option Value",
+                    line=dict(color="darkviolet", width=1.5),
+                    showlegend=True,
+                    hovertemplate=
+                    "<b>Time:</b> %{x}<br>" +
+                    "<b>Call Option:</b> %{y:.2f}<br>" +
+                    "<b>%{text}</b><extra></extra>"
+              
+
+                ), row=2, col=1)
+                
+                # 🎯 Put Flow
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
+                    mode="lines",
+                    name="Put Option Value",
+                    line=dict(color="darkcyan", width=1.5),
+                    showlegend=True,
+                    hovertemplate=
+                    "<b>Time:</b> %{x}<br>" +
+                    "<b>Put Option:</b> %{y:.2f}<br>" +
+                    "<b>%{text}</b><extra></extra>"
+            
+
+                ), row=2, col=1)
+                
+                # Compute displacement from MIDAS curves
+                intraday["Call_vs_Bull"] = intraday["Call_Option_Smooth"] - intraday["MIDAS_Bull"]
+                intraday["Put_vs_Bear"] = intraday["Put_Option_Smooth"] - intraday["MIDAS_Bear"]
+                
+                # Plot them in Row 3
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_vs_Bull"],
+                    mode="lines",
+                    name="Call vs Midas Bull",
+                    line=dict(color="darkviolet", width=1.5, dash="dot"),
+                    showlegend=True
+                ), row=3, col=1)
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_vs_Bear"],
+                    mode="lines",
+                    name="Put vs Midas Bear",
+                    line=dict(color="darkcyan", width=1.5, dash="dot"),
+                    showlegend=True
+                ), row=3, col=1)
+
+
+
+                
+
+
+
+
+                #       # 🐅 Tiger markers on top of Call Option Value
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["tiger],
+                #     mode="text",
+                #     text=intraday["Tiger"],
+                #     textposition="top center",
+                #     showlegend=False,
+                #     name="Tiger"
+                # ), row=2, col=1)
+                
+                # horse_df = intraday[intraday["Mike_Kijun_Horse_Emoji"] == "🏇🏽"]
+                
+                # # Add trace to your figure
+                # fig.add_trace(go.Scatter(
+                #     x=horse_df["TimeIndex"],
+                #     y=horse_df["F_numeric"] + 10,
+                #     mode="text",
+                #     text=horse_df["Mike_Kijun_Horse_Emoji"],
+                #     textposition="bottom left",
+                #     textfont=dict(size=30),
+                #     name="Mike x Kijun + Horse",
+                #     showlegend=True
+                # ))
+
+                 
+
 
                                        # Add IB High to MIDAS Option Plot
                                # Loop over the subplot rows: 1 = F%, 2 = Call/Put, 3 = Midas+Option
@@ -8873,7 +5805,59 @@ if st.sidebar.button("Run Analysis"):
                     name="IB Low",
                     showlegend=True
                 ), row=1, col=1)
+                # Plot 🚀 emoji markers when Mike crosses Kijun and ATR expansion occurred recently
+             # Bullish crosses (🚀)
+
               
+         
+
+
+
+#                 # 🦻🏼 Add Ear line if it exists
+#                 fig.add_hline(y=call_ib_high, showlegend=True,     
+# line=dict(color="gold", dash="dot", width=0.6), row=2, col=1)
+                
+            # 🟡 Call IB High (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[call_ib_high, call_ib_high],
+                    mode='lines',
+                    line=dict(color="gold", dash="dot", width=0.6),
+                    name="Call IB High",
+                    hovertemplate="Call IB High: %{y:.2f}<extra></extra>"
+                ), row=2, col=1)
+                
+                # 🟡 Call IB Low (hoverable)
+                fig.add_trace(go.Scatter(
+                    x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                    y=[call_ib_low, call_ib_low],
+                    mode='lines',
+                    line=dict(color="gold", dash="dot", width=0.6),
+                    name="Call IB Low",
+                    hovertemplate="Call IB Low: %{y:.2f}<extra></extra>"
+                ), row=2, col=1)
+                
+                # # 🔷 Value Area Min (hoverable)
+                # fig.add_trace(go.Scatter(
+                #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                #     y=[va_min, va_min],
+                #     mode='lines',
+                #     line=dict(color="#0ff", dash="dot", width=0.5),
+                #     name="VA Min",
+                #     hovertemplate="Value Area Min: %{y:.2f}<extra></extra>"
+                # ), row=1, col=1)
+                
+                # # 🔷 Value Area Max (hoverable)
+                # fig.add_trace(go.Scatter(
+                #     x=[intraday['TimeIndex'].min(), intraday['TimeIndex'].max()],
+                #     y=[va_max, va_max],
+                #     mode='lines',
+                #     line=dict(color="#0ff", dash="dot", width=0.5),
+                #     name="VA Max",
+                #     hovertemplate="Value Area Max: %{y:.2f}<extra></extra>"
+                # ), row=1, col=1)
+
+
      
                 ib_third = (ib_high - ib_low) / 3
                 ib_upper_third = ib_low + 2 * ib_third
@@ -8888,9 +5872,29 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_hline(y=va_max,showlegend=True, line=dict(color="#0ff", dash="dot", width=0.5), row=1, col=1)
 
             
-       
+                # # Filter only rows where oxygen quality is rich
+                # lungs_only = intraday[intraday["O2 Quality"] == "🫁"]
 
-               
+
+                # scatter_lungs = go.Scatter(
+                # x=lungs_only["Time"],
+                # y=lungs_only["F_numeric"] - 8,
+                # mode="text",
+                # text=lungs_only["O2 Quality"],  # Will just be 🫁
+                # textposition="middle center",
+                # textfont=dict(size=9),
+                # name="Lungs Only",
+                # hovertemplate="Time: %{x}<br>O₂: %{text}<extra></extra>"
+                #   )
+
+                # fig.add_trace(scatter_lungs, row=1, col=1)
+
+             
+
+                                
+                # fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bear'], name="MIDAS Bear", line=dict(color="pink", dash="solid", width=0.9)))
+                # fig.add_trace(go.Scatter(x=intraday['TimeIndex'],showlegend=True, mode="lines", y=intraday['MIDAS_Bull'], name="MIDAS Bull",line=dict(color="pink", dash="solid", width=0.9)))
+
 
 
                 fig.add_trace(go.Scatter(
@@ -8910,15 +5914,145 @@ if st.sidebar.button("Run Analysis"):
                     line=dict(color="#1ac997", dash="dash", width=2),
                     hovertemplate="Time: %{x}<br>MIDAS Bull: %{y:.2f}<extra></extra>"
                 ))
+                # 🦻🏼 Add Ear line if it exists
+                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                
+                if not ear_row.empty:
+                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+                    fig.add_hline(
+                        y=ear_level,
+                        line=dict(color="darkgray", dash="dot", width=0.3),
+                        row=1, col=1,
+                        showlegend=True,
+                        annotation_text="🦻🏼 Ear Shift",
+                        annotation_position="top left",
+                        annotation_font=dict(color="black")
+                    )
 
+                
+   
+
+                    # Step 1: Get the F% Level marked with 🦻🏼
+                    ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
+                    
+                    # if not ear_row.empty:
+                    #     ear_level = ear_row["F% Level"].values[0]  # numeric
+                    #     # Step 2: Find a matching row in intraday that hit that F% bin and came after the ear shift
+                    #     # Convert F% bin to string to match 'F_Bin'
+                    #     ear_bin_str = str(ear_level)
+                    #     matching_rows = intraday[intraday["F_Bin"] == ear_bin_str]
+                    
+                    #     if not matching_rows.empty:
+                    #         # Use the last known time this level was touched
+                    #         last_touch = matching_rows.iloc[-1]
+                    #         fig.add_trace(go.Scatter(
+                    #             x=[last_touch["TimeIndex"]],
+                    #             y=[last_touch["F_numeric"] + 10],  # small vertical offset
+                    #             mode="text",
+                    #             text=["🦻🏼"],
+                    #             showlegend=True,
+                    #             textposition="bottom center",
+                    #             textfont=dict(size=24),
+                    #             name="Ear Shift",
+                    #             hovertemplate="Time: %{x}<br>🦻🏼: %{y}<br>%{text}"
+
+                             
+                    #         ))
+
+                
+                # Step: Add 👃🏽 marker into intraday at the bar where breakout happened
+                # Get the F% level with the most letters
+                max_letter_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+                
+                # Get the first row where current Mike broke away from that level
+                breakout_row = intraday[np.digitize(intraday[mike_col], f_bins) - 1 != max_letter_level]
+                if not breakout_row.empty:
+                    first_break = breakout_row.iloc[0].name
+                    intraday.loc[first_break, "Mike_Nose_Emoji"] = "👃🏽"
+
+
+                # # Plot 👃🏽 emoji on the intraday plot
+                # nose_df = intraday[intraday["Mike_Nose_Emoji"] == "👃🏽"]
+                
+                # fig.add_trace(go.Scatter(
+                #     x=nose_df["TimeIndex"],
+                #     y=nose_df["F_numeric"] + 10,  # Adjust position above Mike
+                #     mode="text",
+                #     text=nose_df["Mike_Nose_Emoji"],
+                #     textposition="top center",
+                #     textfont=dict(size=18),
+                #     name="Mike breaks from Letter POC 👃🏽",
+                #     showlegend=True
+                # ))
+
+
+
+                # Get the F% level with the most letters (temporal Point of Control)
+                poc_f_level = profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']
+                # Find first row where Mike exits the POC level
+                current_bins = np.digitize(intraday[mike_col], f_bins) - 1
+                intraday["Current_F_Bin"] = f_bins[current_bins]
+                
+                breakout_row_nose = intraday[intraday["Current_F_Bin"] != poc_f_level]
+                
+                # Place 👃🏽 emoji on the first breakout
+                if not breakout_row_nose.empty:
+                    first_nose_index = breakout_row_nose.iloc[0].name
+                    intraday.loc[first_nose_index, "Mike_Nose_Emoji"] = "👃🏽"
+                
+                nose_df = intraday[intraday["Mike_Nose_Emoji"] == "👃🏽"]
+                
+                fig.add_trace(go.Scatter(
+                    x=nose_df["TimeIndex"],
+                    y=nose_df["F_numeric"] + 10,
+                    mode="text",
+                    text=nose_df["Mike_Nose_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    hovertemplate="👃🏽 Nose Line: %{y}<extra></extra>",
+
+                    name="Mike breaks from Letter POC 👃🏽",
+                    showlegend=True
+                ))
+                       
+
+
+                # Get F% level (already stored in `poc_f_level`) and its earliest time
+                nose_row = profile_df[profile_df["F% Level"] == poc_f_level]
+                nose_time = nose_row["Time"].values[0] if not nose_row.empty else "N/A"
+                
+
+# 1. Add the pink dotted line as a shape (visual line)
+                fig.add_hline(
+                    y=poc_f_level,
+                    showlegend=True,
+
+                    line=dict(color="#ff1493", dash="dot", width=0.3),
+                    row=1, col=1
+                )
+                
+                
+                fig.add_trace(go.Scatter(
+                    x=[intraday["TimeIndex"].iloc[-1]],  # Just use the latest time or any valid x
+                    y=[poc_f_level],
+                    mode="markers+text",
+                    marker=dict(size=0, color="#ff1493"),
+                    text=["👃🏽 Nose (Most Price Acceptance)"],
+                    textposition="top right",
+                    name="👃🏽 Nose Line",
+                    showlegend=True,
+                    hovertemplate=(
+                          "👃🏽 Nose Line<br>"
+                          "F% Level: %{y}<br>"
+                          f"Time: {nose_time}<extra></extra>"
+                      )
+                ), row=1, col=1)
                 for _, row in profile_df.iterrows():
                     if row["Tail"] == "🪶":
-                        # Safely get matching intraday rows for this F% Level
-                        bin_str = str(row["F% Level"])
-                        time_row = intraday[intraday["F_Bin"].astype(str) == bin_str]
-                
+                          # Get actual TimeIndex from intraday at this F% Level
+                        time_row = intraday[intraday["F_Bin"] == str(row["F% Level"])]
                         if not time_row.empty:
-                            time_at_level = time_row["TimeIndex"].iloc[0]  # earliest time at that level
+                            time_at_level = time_row["TimeIndex"].iloc[0]  # earliest bar at this F% level
                 
                             fig.add_trace(go.Scatter(
                                 x=[time_at_level],
@@ -8926,52 +6060,154 @@ if st.sidebar.button("Run Analysis"):
                                 mode="text",
                                 text=["🪶"],
                                 textposition="middle right",
-                                textfont=dict(size=22),
+                                textfont=dict(size=20),
                                 showlegend=True,
-                                name="🪶 Tail",
+                                name="🪶 Tail",  # <-- Add this line
+
                                 hovertemplate=(
                                     "🪶 Tail<br>"
                                     f"F% Level: {row['F% Level']}<br>"
-                                    f"Time: {time_at_level}<extra></extra>"
+                                    f"Time: {row['Time']}<extra></extra>"
                                 )
                             ), row=1, col=1)
+  
 
 
-                                # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
-                bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+
+                # # 🚀 Bullish cross (Mike crosses above Kijun with ATR expansion)
+                # bullish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🚀"]
+                # fig.add_trace(go.Scatter(
+                #     x=bullish_df["TimeIndex"] ,
+                #     y=bullish_df["F_numeric"] + 14,
+                #     mode="text",
+                #     text=bullish_df["Mike_Kijun_ATR_Emoji"],
+                #     textposition="top right",
+                #     textfont=dict(size=20),
+                #     name="Bullish Mike x Kijun + ATR 🚀",
+                #     showlegend=True
+                # ))
+
+
+           
+
+
+                # 🧨 Bearish cross (Mike crosses below Kijun with ATR expansion)
+                bearish_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "⚓️"]
                 fig.add_trace(go.Scatter(
-                    x=bull_hand_rows["TimeIndex"],
-                    y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
+                    x=bearish_df["TimeIndex"],
+                    y=bearish_df["F_numeric"] - 14,
                     mode="text",
-                    text=["👋🏽"] * len(bull_hand_rows),
-                    textposition="top right",
-                    textfont=dict(size=22),
-                    showlegend=False,
-                    hovertemplate=(
-                        "👋🏽 Bull MIDAS Breakout<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        f"Bear MIDAS: {{y:.2f}}<extra></extra>"
-                    )
-                ), row=1, col=1)
-                
-                # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
-                bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
-                fig.add_trace(go.Scatter(
-                    x=bear_glove_rows["TimeIndex"],
-                    y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
-                    mode="text",
-                    text=["🧤"] * len(bear_glove_rows),
+                    text=bearish_df["Mike_Kijun_ATR_Emoji"],
                     textposition="bottom right",
-                    textfont=dict(size=22),
-                    showlegend=False,
-                    hovertemplate=(
-                        "🧤 Bear MIDAS Breakdown<br>"
-                        "Time: %{x|%I:%M %p}<br>"
-                        f"Bull MIDAS: {{y:.2f}}<extra></extra>"
-                    )
-                 ), row=1, col=1)
+                    textfont=dict(size=24),
+                    name="Bearish Mike x Kijun + ATR ⚓️",
+                    showlegend=True
+                ))
 
-                     
+                emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
+  
+                fig.add_trace(go.Scatter(
+                    x=emoji_df["TimeIndex"],
+                    y=emoji_df["F_numeric"] - 24,
+                    mode="text",
+                    text=emoji_df["Mike_Kijun_Bee_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Mike x Kijun + Bees",
+                    showlegend=True
+                ))
+          
+                # 🌋 Magma Pass Plot (Mike x Kijun + ATR Expansion)
+
+                volcano_df = intraday[intraday["Mike_Kijun_ATR_Emoji"] == "🌋"]
+                
+                fig.add_trace(go.Scatter(
+                    x=volcano_df["TimeIndex"],
+                    y=volcano_df["F_numeric"] - 32,  # Slightly lower to avoid overlap with 🍯
+                    mode="text",
+                    text=volcano_df["Mike_Kijun_ATR_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=18),
+                    name="Mike x Kijun + ATR Expansion",
+                    showlegend=True
+                ))
+
+                #                 # 👋🏽 Bull MIDAS Hand = price breaks **above** the Bear MIDAS line (resistance)
+                # bull_hand_rows = intraday[intraday["MIDAS_Bull_Hand"] == "👋🏽"]
+                # fig.add_trace(go.Scatter(
+                #     x=bull_hand_rows["TimeIndex"],
+                #     y=bull_hand_rows["MIDAS_Bear"] + 3,  # Adjust for spacing above line
+                #     mode="text",
+                #     text=["👋🏽"] * len(bull_hand_rows),
+                #     textposition="top right",
+                #     textfont=dict(size=22),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "👋🏽 Bull MIDAS Breakout<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         f"Bear MIDAS: {{y:.2f}}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
+                
+                # # 🧤 Bear MIDAS Glove = price breaks **below** the Bull MIDAS line (support)
+                # bear_glove_rows = intraday[intraday["MIDAS_Bear_Glove"] == "🧤"]
+                # fig.add_trace(go.Scatter(
+                #     x=bear_glove_rows["TimeIndex"],
+                #     y=bear_glove_rows["MIDAS_Bull"] - 3,  # Adjust for spacing below line
+                #     mode="text",
+                #     text=["🧤"] * len(bear_glove_rows),
+                #     textposition="bottom right",
+                #     textfont=dict(size=22),
+                #     showlegend=False,
+                #     hovertemplate=(
+                #         "🧤 Bear MIDAS Breakdown<br>"
+                #         "Time: %{x|%I:%M %p}<br>"
+                #         f"Bull MIDAS: {{y:.2f}}<extra></extra>"
+                #     )
+                # ), row=1, col=1)
+                
+                # Wake-up Emojis 📈
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Call_Option_Smooth"] ,
+                    mode="text",
+                    text=intraday["Call_Wake_Emoji"],
+                    textposition="top center",
+                    showlegend=False
+                ), row=2, col=1)
+                
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_Option_Smooth"],
+                    mode="text",
+                    text=intraday["Put_Wake_Emoji"] ,
+                    textposition="bottom center",
+                    showlegend=False
+                ), row=2, col=1)
+
+           
+                fig.add_trace(go.Scatter(
+                   x=intraday["Time"],
+                   y=intraday["Call_vs_Bull"],
+                   mode="text",
+                   text=intraday["Bull_Midas_Wake"],
+                   textposition="top center",
+                   showlegend=False,
+                   hoverinfo="skip"
+                ), row=3, col=1)
+        
+                fig.add_trace(go.Scatter(
+                    x=intraday["Time"],
+                    y=intraday["Put_vs_Bear"],
+                    mode="text",
+                    textfont=dict(size=20),
+                    text=intraday["Bear_Midas_Wake"],
+                    textposition="bottom center",
+                    showlegend=False,
+                    hovertemplate="Put vs Bear MIDAS: %{y:.2f}<extra></extra>"
+                ), row=3, col=1)
+
+                               
                                # 🦵🏼 Bull MIDAS Wake
                 if pd.notna(first_bull_midas_idx):
                     fig.add_trace(go.Scatter(
@@ -9005,109 +6241,140 @@ if st.sidebar.button("Run Analysis"):
                     ), row=1, col=1)
 
                                 
-                                   # Plot 💸 for breakout above IB High
-                high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
-                fig.add_trace(go.Scatter(
-                    x=high_break_df["TimeIndex"],
-                    y=high_break_df["F_numeric"] + 30,
-                    mode="text",
-                    text=high_break_df["IB_High_Break"],
-                    textposition="top left",
-                    textfont=dict(size=24),
-                    name="Breakout Above IB 💸",
-                    showlegend=True,
-                    hovertemplate="Time: %{x}<br>💸 IB High Breakout"
-                ), row=1, col=1)
+                #                    # Plot 💸 for breakout above IB High
+                # high_break_df = intraday[intraday["IB_High_Break"] == "💸"]
+                # fig.add_trace(go.Scatter(
+                #     x=high_break_df["TimeIndex"],
+                #     y=high_break_df["F_numeric"] + 30,
+                #     mode="text",
+                #     text=high_break_df["IB_High_Break"],
+                #     textposition="top left",
+                #     textfont=dict(size=24),
+                #     name="Breakout Above IB 💸",
+                #     showlegend=True,
+                #     hovertemplate="Time: %{x}<br>💸 IB High Breakout"
+                # ), row=1, col=1)
                 
-                # Plot 🧧 for breakdown below IB Low
-                low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
-                fig.add_trace(go.Scatter(
-                    x=low_break_df["TimeIndex"],
-                    y=low_break_df["F_numeric"] - 30,
-                    mode="text",
-                    text=low_break_df["IB_Low_Break"],
-                    textposition="bottom left",
-                    textfont=dict(size=24),
-                    name="Breakdown Below IB 🧧",
-                    showlegend=True,
-                    hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
-                ), row=1, col=1)
+                # # Plot 🧧 for breakdown below IB Low
+                # low_break_df = intraday[intraday["IB_Low_Break"] == "🧧"]
+                # fig.add_trace(go.Scatter(
+                #     x=low_break_df["TimeIndex"],
+                #     y=low_break_df["F_numeric"] - 30,
+                #     mode="text",
+                #     text=low_break_df["IB_Low_Break"],
+                #     textposition="bottom left",
+                #     textfont=dict(size=24),
+                #     name="Breakdown Below IB 🧧",
+                #     showlegend=True,
+                #     hovertemplate="Time: %{x}<br>🧧 IB Low Breakdown"
+                # ), row=1, col=1)
 
+
+
+              
+                               # 🦻🏼 Top 3 Ear Lines based on %Vol
+               
+                #              # Step 1: Filter Ear-marked rows
+                #                # 🦻🏼 Top 3 Ear Lines based on %Vol
+                # top_ears = profile_df[profile_df["🦻🏼"] == "🦻🏼"].nlargest(3, "%Vol")
                 
-                # 🦻🏼 Get the top 🦻🏼 ear level based on highest %Vol
-                ear_row = (
-                    profile_df[profile_df["🦻🏼"] == "🦻🏼"]
-                    .sort_values(by="%Vol", ascending=False)
-                    .head(1)  # only take the highest
-                )
+                # for _, row in top_ears.iterrows():
+                #     ear_level = row["F% Level"]
+                #     vol = row["%Vol"]
+                #     time = row["Time"]  # Or row["TimeIndex"] if Time is not a string
+                
+                #     fig.add_hline(
+                #         y=ear_level,
+                #         line=dict(color="darkgray", dash="dot", width=1.5),
+                #         row=1, col=1,
+                #         showlegend=False,
+                #         annotation_text="🦻🏼",
+                #         annotation_position="top left",
+                #         annotation_font=dict(color="black"),
+              
+                #     )
+
+
+             
+               # 🦻🏼 Add Ear line if it exists
+                ear_row = profile_df[profile_df["🦻🏼"] == "🦻🏼"]
                 
                 if not ear_row.empty:
-                    row = ear_row.iloc[0]
+                    ear_level = ear_row["F% Level"].values[0]  # take the first (most recent) ear
+                    fig.add_hline(
+                        y=ear_level,
+                        line=dict(color="darkgray", dash="dot", width=0.7),
+                        row=1, col=1,
+                        showlegend=True,
+                        annotation_text="🦻🏼 Ear Shift",
+                        annotation_position="top left",
+                        annotation_font=dict(color="black")
+                    )
+
+                top_ears = profile_df.nlargest(3, "%Vol")
+                
+                x_hover = intraday["TimeIndex"].iloc[-1]  # Use last bar time for clean placement
+                
+                for _, row in top_ears.iterrows():
                     ear_level = row["F% Level"]
                     vol = row["%Vol"]
                     time = row["Time"]
                 
-                    # 🦻🏼 Add Ear memory line
-                    fig.add_hline(
-                        y=ear_level,
-                        line=dict(color="darkgray", dash="dot", width=1.5),
-                        row=1, col=1,
-                        showlegend=False,
-                        annotation_text="🦻🏼 Ear Shift",
-                        annotation_position="top left",
-                        annotation_font=dict(color="black"),
-                    )
-                
-                    # 🦻🏼 Optional: Add emoji text near the memory level
                     fig.add_trace(go.Scatter(
-                        x=[intraday["TimeIndex"].iloc[-1]],  # Use last bar's timestamp
+                        x=[x_hover],
                         y=[ear_level],
                         mode="text",
-                        text=["🦻🏼"],
+                        text=["🥁"],
                         textposition="middle right",
-                        textfont=dict(size=20),
-                        showlegend=False,
-                        hovertemplate=f"🦻🏼 Top Memory Line<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>"
+                        hovertemplate=f"🥁 Top %Vol<br>%Vol: {vol:.2f}<br>Time: {time}<extra></extra>",
+                        showlegend=False
                     ), row=1, col=1)
+              
+                                        
+                top_price_levels = profile_df.nlargest(3, "Letter_Count")
                 
-              # 👃🏽 Get the F% level with the highest Letter_Count (most time spent)
-                    nose_row = (
-                        profile_df.sort_values(by="Letter_Count", ascending=False)
-                        .head(1)  # Only the top one
+                for _, row in top_price_levels.iterrows():
+                    fig.add_annotation(
+                        x=intraday["TimeIndex"].min(),  # far left
+                        y=row["F% Level"],
+                        text="💲",
+                        showarrow=False,
+                        font=dict(size=20),
+                        xanchor="right",
+                        yanchor="middle",
+                        hovertext=f"💲 Time-Zone<br>Letters: {row['Letter_Count']}<br>First Seen: {row['Time']}",
+                   
+                        ax=0, ay=0
                     )
-                    
-                    if not nose_row.empty:
-                        poc_f_level = nose_row["F% Level"].values[0]
-                        nose_time = nose_row["Time"].values[0]
-                        
-                        # Add pink dotted line for 👃🏽
-                        fig.add_hline(
-                            y=poc_f_level,
-                            line=dict(color="#ff1493", dash="dot", width=0.3),
-                            row=1, col=1,
-                            showlegend=False
-                        )
-                    
-                        # Plot 👃🏽 text marker at far right
-                        fig.add_trace(go.Scatter(
-                            x=[intraday["TimeIndex"].iloc[-1]],  # far right time
-                            y=[poc_f_level],
-                            mode="markers+text",
-                            marker=dict(size=0, color="#ff1493"),
-                            text=["👃🏽 Nose (Most Price Acceptance)"],
-                            textposition="top right",
-                            name="👃🏽 Nose Line",
-                            showlegend=False,
-                            hovertemplate=(
-                                "👃🏽 Nose Line<br>"
-                                f"F% Level: {poc_f_level}<br>"
-                                f"Time: {nose_time}<extra></extra>"
-                            )
-                        ), row=1, col=1)
-
-       
 
                 
+
+                    # mask_green_king = intraday["King_Signal"] == "👑"
+                    # scatter_green_king = go.Scatter(
+                    #     x=intraday.loc[mask_green_king, "Time"],
+                    #     y=intraday.loc[mask_green_king, "F_numeric"] + 48,
+                    #     mode="text",
+                    #     text=["♔"] * mask_green_king.sum(),
+                    #     textfont=dict(size=55, color="green"),
+                    #     name="Green King Signal (♔)",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>👑 Green Kingdom Crowned ♔<extra></extra>"
+                    # )
+
+
+                    # mask_red_king = intraday["King_Signal"] == "🔻👑"
+                    # scatter_red_king = go.Scatter(
+                    #     x=intraday.loc[mask_red_king, "Time"],
+                    #     y=intraday.loc[mask_red_king, "F_numeric"] - 48,
+                    #     mode="text",
+                    #     text=["♔"] * mask_red_king.sum(),
+                    #     textfont=dict(size=55, color="red"),
+                    #     name="Red King Signal (♔)",
+                    #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>🔻👑 Red Kingdom Crowned ♔<extra></extra>"
+                    # )
+
+
+                    # fig.add_trace(scatter_green_king, row=1, col=1)
+                    # fig.add_trace(scatter_red_king, row=1, col=1)
 
 
                     threshold = 0.5  # or even 1.0 depending on your scaling
@@ -9130,7 +6397,7 @@ if st.sidebar.button("Run Analysis"):
                     # Upward Cross Trace (♕)
                     up_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_up, "Time"],
-                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 89,  # Offset upward (adjust as needed)
+                        y=intraday.loc[mask_kijun_up, "F_numeric"] + 40,  # Offset upward (adjust as needed)
                         mode="text",
                         text=intraday.loc[mask_kijun_up, "Kijun_F_Cross_Emoji"],
                         textposition="top center",  # Positioned above the point
@@ -9142,7 +6409,7 @@ if st.sidebar.button("Run Analysis"):
                     # Downward Cross Trace (♛)
                     down_cross_trace = go.Scatter(
                         x=intraday.loc[mask_kijun_down, "Time"],
-                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 89,  # Offset downward
+                        y=intraday.loc[mask_kijun_down, "F_numeric"] - 40,  # Offset downward
                         mode="text",
                         text=intraday.loc[mask_kijun_down, "Kijun_F_Cross_Emoji"],
                         textposition="bottom center",  # Positioned below the point
@@ -9162,7 +6429,7 @@ if st.sidebar.button("Run Analysis"):
                 # Buy Horse (♘) → normal above
                 scatter_horse_buy = go.Scatter(
                     x=intraday.loc[mask_horse_buy, "Time"],
-                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 45,
+                    y=intraday.loc[mask_horse_buy, "F_numeric"] + 82,
                     mode="text",
                     text=["♘"] * mask_horse_buy.sum(),
                     textposition="top left",
@@ -9174,7 +6441,7 @@ if st.sidebar.button("Run Analysis"):
                 # Sell Horse (♞) → below and red
                 scatter_horse_sell = go.Scatter(
                     x=intraday.loc[mask_horse_sell, "Time"],
-                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 45,
+                    y=intraday.loc[mask_horse_sell, "F_numeric"] - 82,
                     mode="text",
                     text=["♞"] * mask_horse_sell.sum(),
                     textposition="bottom left",
@@ -9193,7 +6460,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Up (♗)
                 scatter_bishop_up = go.Scatter(
                     x=intraday.loc[mask_bishop_up, "Time"],
-                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 34,
+                    y=intraday.loc[mask_bishop_up, "F_numeric"] + 50,
                     mode="text",
                     text=intraday.loc[mask_bishop_up, "Kijun_Cross_Bishop"],
                     textposition="top center",
@@ -9205,7 +6472,7 @@ if st.sidebar.button("Run Analysis"):
                 # Bishop Down (♝)
                 scatter_bishop_down = go.Scatter(
                     x=intraday.loc[mask_bishop_down, "Time"],
-                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 34,
+                    y=intraday.loc[mask_bishop_down, "F_numeric"] - 50,
                     mode="text",
                     text=intraday.loc[mask_bishop_down, "Kijun_Cross_Bishop"],
                     textposition="bottom center",
@@ -9224,7 +6491,7 @@ if st.sidebar.button("Run Analysis"):
                 # White rook (up cross)
                 scatter_rook_up = go.Scatter(
                     x=intraday.loc[mask_rook_up, "Time"],
-                    y=intraday.loc[mask_rook_up, "F_numeric"] + 13,  # Offset upward
+                    y=intraday.loc[mask_rook_up, "F_numeric"] + 16,  # Offset upward
                     mode="text",
                     text=intraday.loc[mask_rook_up, "TD_Supply_Rook"],
                     textposition="top left",
@@ -9236,7 +6503,7 @@ if st.sidebar.button("Run Analysis"):
                 # Black rook (down cross)
                 scatter_rook_down = go.Scatter(
                     x=intraday.loc[mask_rook_down, "Time"],
-                    y=intraday.loc[mask_rook_down, "F_numeric"] - 13,  # Offset downward
+                    y=intraday.loc[mask_rook_down, "F_numeric"] - 16,  # Offset downward
                     mode="text",
                     text=intraday.loc[mask_rook_down, "TD_Supply_Rook"],
                     textposition="bottom left",
@@ -9245,7 +6512,34 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>TD Supply Crossed Down ♜<extra></extra>"
                 )
 
-             
+                # Add both to figure
+                fig.add_trace(scatter_rook_up, row=1, col=1)
+                fig.add_trace(scatter_rook_down, row=1, col=1)
+
+                mask_tenkan_cross_up = (
+                    (intraday["Tenkan_F"].shift(1) < intraday["MIDAS_Bull"].shift(1)) &
+                    (intraday["Tenkan_F"] >= intraday["MIDAS_Bull"])
+                )
+                
+                # # Create a new column with the emoji (optional but clean)
+                # intraday["Tenkan_Midas_CrossUp"] = np.where(mask_tenkan_cross_up, "🧲", "")
+                
+                # # Scatter plot for 🫆 (slightly above F_numeric)
+                # scatter_tenkan_cross_up = go.Scatter(
+                #     x=intraday.loc[mask_tenkan_cross_up, "Time"],
+                #     y=intraday.loc[mask_tenkan_cross_up, "F_numeric"] + 4,
+                #     mode="text",
+                #     text=intraday.loc[mask_tenkan_cross_up, "Tenkan_Midas_CrossUp"],
+                #     textposition="top right",
+                #     textfont=dict(size=24, color="orange"),
+                #     name="Tenkan Cross MIDAS Bull (🧲)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↗ MIDAS Bull 🧲<extra></extra>"
+                # )
+                
+                # # Add to figure
+                # fig.add_trace(scatter_tenkan_cross_up, row=1, col=1)
+
+
  
                 mask_pawn_up   = intraday["Tenkan_Pawn"] == "♙"
                 mask_pawn_down = intraday["Tenkan_Pawn"] == "♟️"     # <-- changed ♙ → ♟️
@@ -9253,7 +6547,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♙ Upward pawn
                 pawn_up = go.Scatter(
                     x=intraday.loc[mask_pawn_up, "Time"],
-                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 8,
+                    y=intraday.loc[mask_pawn_up, "F_numeric"] + 18,
                     mode="text",
                     text=intraday.loc[mask_pawn_up, "Tenkan_Pawn"],
                     textposition="top center",
@@ -9265,7 +6559,7 @@ if st.sidebar.button("Run Analysis"):
                 # ♟️ Downward pawn
                 pawn_down = go.Scatter(
                     x=intraday.loc[mask_pawn_down, "Time"],
-                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 8,
+                    y=intraday.loc[mask_pawn_down, "F_numeric"] - 18,
                     mode="text",
                     text=intraday.loc[mask_pawn_down, "Tenkan_Pawn"],
                     textposition="bottom center",
@@ -9277,27 +6571,54 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(pawn_up,   row=1, col=1)
                 fig.add_trace(pawn_down, row=1, col=1)
 
-                            # Calculate Chikou relation to current price
-                intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
-                                            np.where(intraday["Chikou"] < intraday["Close"], "below", "equal"))
+                #             # Calculate Chikou relation to current price
+                # intraday["Chikou_Position"] = np.where(intraday["Chikou"] > intraday["Close"], "above",
+                #                             np.where(intraday["Chikou"] < intraday["Close"], "below", "equal"))
 
-                # Detect changes in Chikou relation
-                intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
+                # # Detect changes in Chikou relation
+                # intraday["Chikou_Change"] = intraday["Chikou_Position"].ne(intraday["Chikou_Position"].shift())
 
-                # Filter first occurrence and changes
-                chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
-                intraday["Chikou_Comparison_Price"] = intraday["Close"].shift(+26)
-                intraday["Chikou_Comparison_Time"] = intraday["Time"].shift(+26)
+                # # Filter first occurrence and changes
+                # chikou_shift_mask = intraday["Chikou_Change"] & (intraday["Chikou_Position"] != "equal")
 
-                intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
-                                            np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+                # intraday["Chikou_Emoji"] = np.where(intraday["Chikou_Position"] == "above", "👨🏻‍✈️",
+                #                             np.where(intraday["Chikou_Position"] == "below", "👮🏻‍♂️", ""))
+
+                # mask_chikou_above = chikou_shift_mask & (intraday["Chikou_Position"] == "above")
+
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[mask_chikou_above, "Time"],
+                #     y=intraday.loc[mask_chikou_above, "F_numeric"] + 64,
+                #     mode="text",
+                #     text=["👨🏻‍✈️"] * mask_chikou_above.sum(),
+                #     textposition="top center",
+                #     textfont=dict(size=34),
+                #     name="Chikou Above Price",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved above<extra></extra>"
+                # ), row=1, col=1)
+
+                # mask_chikou_below = chikou_shift_mask & (intraday["Chikou_Position"] == "below")
+
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[mask_chikou_below, "Time"],
+                #     y=intraday.loc[mask_chikou_below, "F_numeric"] - 64,
+                #     mode="text",
+                #     text=["👮🏿‍♂️"] * mask_chikou_below.sum(),
+                #     textposition="bottom center",
+                #     textfont=dict(size=34),
+                #     name="Chikou Below Price",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Chikou moved below<extra></extra>"
+                # ), row=1, col=1)
+
+
+
 
 
                 cloud_mask = intraday["Heaven_Cloud"] == "☁️"
   
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[cloud_mask, "Time"],
-                    y=intraday.loc[cloud_mask, "F_numeric"] + 100,
+                    y=intraday.loc[cloud_mask, "F_numeric"] +63,
                     mode="text",
                     text=intraday.loc[cloud_mask, "Heaven_Cloud"],
                     textposition="top center",
@@ -9329,7 +6650,7 @@ if st.sidebar.button("Run Analysis"):
   
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[drizzle_mask, "Time"],
-                    y=intraday.loc[drizzle_mask, "F_numeric"] + 100,  # Position below the bar
+                    y=intraday.loc[drizzle_mask, "F_numeric"] + 63,  # Position below the bar
                     mode="text",
                     text=intraday.loc[drizzle_mask, "Drizzle_Emoji"],
                     textposition="bottom center",
@@ -9338,491 +6659,411 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Below Demand<extra></extra>"
                 ), row=1, col=1)
   
-             
+                         # Mask for Tenkan_F crossing down through MIDAS_Bear
+                mask_tenkan_cross_down = (
+                    (intraday["Tenkan_F"].shift(1) > intraday["MIDAS_Bear"].shift(1)) &
+                    (intraday["Tenkan_F"] <= intraday["MIDAS_Bear"])
+                )
+                
+                # Create a new column with the emoji (optional but clean)
+                intraday["Tenkan_Midas_CrossDown"] = np.where(mask_tenkan_cross_down, "🕸️", "")
+                
+                # Scatter plot for 🕸️ (slightly below F_numeric)
+                scatter_tenkan_cross_down = go.Scatter(
+                    x=intraday.loc[mask_tenkan_cross_down, "Time"],
+                    y=intraday.loc[mask_tenkan_cross_down, "F_numeric"] - 12,
+                    mode="text",
+                    text=intraday.loc[mask_tenkan_cross_down, "Tenkan_Midas_CrossDown"],
+                    textposition="bottom right",
+                    textfont=dict(size=28, color="black"),
+                    name="Tenkan Cross MIDAS Bear (🕸️)",
+                    hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Tenkan ↘ MIDAS Bear 🕸️<extra></extra>"
+                )
+                
+                # Add to figure
+                fig.add_trace(scatter_tenkan_cross_down, row=1, col=1)
+
 
    
-        
-
-             
-
-          
-
-
-      
-                                            
-                                
+                # bullish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] > intraday["F_numeric"])
                 
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[bullish_scout_mask, "TimeIndex"],
+                #     y=intraday.loc[bullish_scout_mask, "scout_position"] + 5,
+                #     mode="text",
+                #     text=intraday.loc[bullish_scout_mask, "scout_emoji"],
+                #     textposition="top center",
+                #     textfont=dict(size=16, color="black"),
+                #     name="Scout 🔦 (Bullish)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bullish Scout</extra>"
+                # ), row=1, col=1)
 
- 
+
+
+
+                # bearish_scout_mask = (intraday["scout_emoji"] == "🔦") & (intraday["scout_position"] < intraday["F_numeric"])
+                
+                # fig.add_trace(go.Scatter(
+                #     x=intraday.loc[bearish_scout_mask, "TimeIndex"],
+                #     y=intraday.loc[bearish_scout_mask, "scout_position"] - 5,
+                #     mode="text",
+                #     text=intraday.loc[bearish_scout_mask, "scout_emoji"],
+                #     textposition="bottom center",
+                #     textfont=dict(size=16, color="black"),
+                #     name="Scout 🔦 (Bearish)",
+                #     hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>DMI Bearish Scout</extra>"
+                # ), row=1, col=1)
+
+
+
               
-#                 astronaut_points = intraday[intraday["Astronaut_Emoji"] == "👨🏽‍🚀"]
 
-#                 scatter_astronaut = go.Scatter(
-#                     x=astronaut_points["Time"],
-#                     y=astronaut_points["F_numeric"] + 124,  # Higher offset
-#                     mode="text",
-#                     text=astronaut_points["Astronaut_Emoji"],
-#                     textposition="top center",
-#                     name="New Highs 👨🏽‍🚀",
-#                     textfont=dict(size=21),
-#                  )
- 
-# #                     # Add to figure
-#                 # fig.add_trace(up_high_trace, row=1, col=1)
- 
-
-
-                    # Filter where the Astronaut or Moon emoji exist
-                astronaut_points = intraday[intraday["Astronaut_Emoji"] != ""]
-
-                scatter_astronaut = go.Scatter(
-                    x=astronaut_points["Time"],
-                    y=astronaut_points["F_numeric"] + 124,  # Offset so it floats higher
-                    mode="text",
-                    text=astronaut_points["Astronaut_Emoji"],  # Either 👨🏽‍🚀 or 🌒
-                    textposition="top center",
-                    name="New Highs 🌒",
-                    textfont=dict(size=21),
-                   
-                )
-
-                fig.add_trace(scatter_astronaut, row=1, col=1)
+              #               # ➤ 🪽 Wing Emoji (+DI near Kijun up-cross)
+              #   wing_mask = intraday["wing_emoji"] == "🪽"
+              #   fig.add_trace(go.Scatter(
+              #       x=intraday.loc[wing_mask, "TimeIndex"],
+              #       y=intraday.loc[wing_mask, "F_numeric"] + 35,
+              #       mode="text",
+              #       text=intraday.loc[wing_mask, "wing_emoji"],
+              #       textposition="top center",
+              #       textfont=dict(size=26, color="green"),
+              #       name="Wing 🪽",
+              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>+DI & Kijun Up</extra>"
+              #   ), row=1, col=1)
+              # # ➤ 🐦‍⬛ Bat Emoji (-DI near Kijun down-cross)
 
 
-                # Filter where Swimmer or Squid exist
-                swimmer_points = intraday[intraday["Swimmer_Emoji"] != ""]
 
-                scatter_swimmer = go.Scatter(
-                    x=swimmer_points["Time"],
-                    y=swimmer_points["F_numeric"] - 104,  # Offset downward so it floats below price
-                    mode="text",
-                    text=swimmer_points["Swimmer_Emoji"],  # Either 🏊🏽‍♂️ or 🦑
-                    textposition="bottom center",
-                    name="New Lows 🏊🏽‍♂️🦑",
-                    textfont=dict(size=24),
-                    showlegend=True
-                )
-
-                fig.add_trace(scatter_swimmer, row=1, col=1)
-
+              #   bat_mask = intraday["bat_emoji"] == "🪽"
+              #   fig.add_trace(go.Scatter(
+              #       x=intraday.loc[bat_mask, "TimeIndex"],
+              #       y=intraday.loc[bat_mask, "F_numeric"] - 35,
+              #       mode="text",
+              #       text=intraday.loc[bat_mask, "bat_emoji"],
+              #       textposition="bottom center",
+              #       textfont=dict(size=26, color="red"),
+              #       name="Bat 🪽",
+              #       hovertemplate="Time: %{x}<br>F%: %{y:.2f}<extra>-DI & Kijun Down</extra>"
+              #   ), row=1, col=1)
 
   
-                first_entry_mask = intraday["Put_FirstEntry_Emoji"] == "🎯"
-                
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[first_entry_mask, "Time"],
-                    y=intraday.loc[first_entry_mask, "F_numeric"] - 34,
-                    mode="text",
-                    text=intraday.loc[first_entry_mask, "Put_FirstEntry_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="🎯 Put Entry (Midas Bear + First Drizzle)",
-                    hovertemplate="Time: %{x}<br>F%%: %{y} Put_FirstEntry_Emoji<extra></extra>"
-                ), row=1, col=1)
+        
+                # mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
+                # mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
-                second_entry_mask = intraday["Put_SecondEntry_Emoji"] == "🎯2"
-                
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[second_entry_mask, "Time"],
-                    y=intraday.loc[second_entry_mask, "F_numeric"] - 34,
-                    mode="text",
-                    text=intraday.loc[second_entry_mask, "Put_SecondEntry_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="🎯2 Put Second Entry",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
-                ), row=1, col=1)
-                
-                third_entry_mask = intraday["Put_ThirdEntry_Emoji"] == "🎯3"
-                
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[third_entry_mask, "Time"],
-                    y=intraday.loc[third_entry_mask, "F_numeric"] - 34,
-                    mode="text",
-                    text=intraday.loc[third_entry_mask, "Put_ThirdEntry_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="🎯3 Put Third Entry",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
-                ), row=1, col=1)
-                
-                # 🎯 Call Entry 1
-                call1_mask = intraday["Call_FirstEntry_Emoji"] == "🎯"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[call1_mask, "Time"],
-                    y=intraday.loc[call1_mask, "F_numeric"] + 34,
-                    mode="text",
-                    text=intraday.loc[call1_mask, "Call_FirstEntry_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="🎯 Call Entry 1",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
-                ), row=1, col=1)
-                
-                # 🎯2 Call Entry 2
-                call2_mask = intraday["Call_SecondEntry_Emoji"] == "🎯2"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[call2_mask, "Time"],
-                    y=intraday.loc[call2_mask, "F_numeric"] + 34,
-                    mode="text",
-                    text=intraday.loc[call2_mask, "Call_SecondEntry_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="🎯2 Call Entry 2",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
-                ), row=1, col=1)
-                
-                # 🎯3 Call Entry 3
-                call3_mask = intraday["Call_ThirdEntry_Emoji"] == "🎯3"
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[call3_mask, "Time"],
-                    y=intraday.loc[call3_mask, "F_numeric"] + 34,
-                    mode="text",
-                    text=intraday.loc[call3_mask, "Call_ThirdEntry_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=34),
-                    name="🎯3 Call Entry 3",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
-                ), row=1, col=1)
-
-
-
-                put_pe_mask = (intraday["Put_FirstEntry_Emoji"] == "🎯") & (intraday["Put_PE"] > intraday["Call_PE"])
-                
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[put_pe_mask, "Time"],
-                    y=intraday.loc[put_pe_mask, "F_numeric"] - 44,
-                    mode="text",
-                    text=["🧬"] * put_pe_mask.sum(),
-                    textposition="top center",
-                    textfont=dict(size=22),
-                    name="🧬 PE Enhancer (Put)",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>Elasticity confirms Put<extra></extra>"
-                ), row=1, col=1)
-
-                
-                
-                call_pe_mask = (intraday["Call_FirstEntry_Emoji"] == "🎯") & (intraday["Call_PE"] > intraday["Put_PE"])
-                
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[call_pe_mask, "Time"],
-                    y=intraday.loc[call_pe_mask, "F_numeric"] + 44,
-                    mode="text",
-                    text=["🧬"] * call_pe_mask.sum(),
-                    textposition="top center",
-                    textfont=dict(size=22),
-                    name="🧬 PE Enhancer (Call)",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>Elasticity confirms Call<extra></extra>"
-                ), row=1, col=1)
-
-
-
-                # 🏹 Call Enhancer
-                fig.add_trace(go.Scatter(
-                    x=cross_aid_times_call,
-                    y=cross_aid_prices_call ,
-                    mode="text",
-                    text=["🏹"] * len(cross_aid_times_call),
-                    textposition="top center",
-                    textfont=dict(size=20),
-                    name="🏹 PE Cross Enhancer (Call)",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>PE_Cross_Bull within ±3 bars<extra></extra>"
-                ), row=1, col=1)
-                
-                # 🏹 Put Enhancer
-                fig.add_trace(go.Scatter(
-                    x=cross_aid_times_put,
-                    y=cross_aid_prices_put,
-                    mode="text",
-                    text=["🏹"] * len(cross_aid_times_put),
-                    textposition="top center",
-                    textfont=dict(size=20),
-                    name="🏹 PE Cross Enhancer (Put)",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>PE_Cross_Bear within ±3 bars<extra></extra>"
-                ), row=1, col=1)
-
-
-
-                # 💥 Volatility Enhancer (Call)
-                fig.add_trace(go.Scatter(
-                    x=vol_aid_times_call,
-                    y=vol_aid_prices_call,
-                    mode="text",
-                    text=["💥"] * len(vol_aid_times_call),
-                    textposition="top center",
-                    textfont=dict(size=20),
-                    name="💥 Volatility Enhancer (Call)",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>Volatility surge detected<extra></extra>"
-                ), row=1, col=1)
-                
-                # 💥 Volatility Enhancer (Put)
-                fig.add_trace(go.Scatter(
-                    x=vol_aid_times_put,
-                    y=vol_aid_prices_put,
-                    mode="text",
-                    text=["💥"] * len(vol_aid_times_put),
-                    textposition="top center",
-                    textfont=dict(size=20),
-                    name="💥 Volatility Enhancer (Put)",
-                    hovertemplate="Time: %{x}<br>F%%: %{y}<br>Volatility surge detected<extra></extra>"
-                ), row=1, col=1)
-                vault_mask_dove = intraday["Vault_Emoji"] == "🕊️"
-                vault_mask_crow = intraday["Vault_Emoji"] == "🐦‍⬛"
-                
-                # 🕊️ Dove above Kijun
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[vault_mask_dove, "Time"],
-                        y=intraday.loc[vault_mask_dove, "Kijun_F"] + 60,  # offset +20 F% (tune if needed)
-                        mode="text",
-                        text=intraday.loc[vault_mask_dove, "Vault_Emoji"],
-                        textposition="bottom center",
-                        textfont=dict(size=32, color="purple"),
-                        name="Bull Vault 🕊️",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    ),
-                    row=1, col=1
-                )
-                
-                # 🐦‍⬛ Crow below Kijun
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[vault_mask_crow, "Time"],
-                        y=intraday.loc[vault_mask_crow, "Kijun_F"] - 60,  # offset -20 F% (tune if needed)
-                        mode="text",
-                        text=intraday.loc[vault_mask_crow, "Vault_Emoji"],
-                        textposition="top center",
-                        textfont=dict(size=32, color="black"),
-                        name="Bear Vault 🐦‍⬛",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    ),
-                    row=1, col=1
-)
-                # 🚪 T0 markers
-                t0_mask = intraday["T0_Emoji"] == "🚪"
-                
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[t0_mask, "Time"],
-                        y=intraday.loc[t0_mask, "F_numeric"] - 3,
-                        mode="text",
-                        text=intraday.loc[t0_mask, "T0_Emoji"],
-                        textposition="middle right",   # shift a bit for readability
-                        textfont=dict(size=20, color="orange"),
-                        name="T0 Gate",
-                        hovertemplate="Time: %{x}<br>F%: %{y:.2f}<br>Phase: T0 🚪<extra></extra>"
-                    ),
-                    row=1, col=1
-                )
-
-                 # 🏇🏼 Marengo T1 Marker (acceleration after Entry 1)
-                t1_mask = intraday["T1_Emoji"] == "🏇🏼"
-                
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[t1_mask, "Time"],
-                        y=intraday.loc[t1_mask, "F_numeric"],
-                        mode="text",
-                        text=["🏇🏼"] * t1_mask.sum(),  # you can swap 🏇🏼 for ⏩ if you prefer
-                        textposition="top center",
-                        textfont=dict(size=32, color="black"),
-                        name="Marengo T1",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>🏇🏼"
-                    ),
-                    row=1, col=1
-                )
-
-
-             # ⚡ Marengo T2 marker
-                t2_mask = intraday["T2_Emoji"] == "⚡"
-                
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[t2_mask, "Time"],
-                        y=intraday.loc[t2_mask, "F_numeric"] - 10,
-                        mode="text",
-                        text=["⚡"] * t2_mask.sum(),
-                        textposition="middle center",
-                        textfont=dict(size=26, color="orange"),
-                        name="Marengo T2",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
-                    ),
-                    row=1, col=1
-                )
-            # ⚡ Parallel markers
-                parallel_mask = intraday["Parallel_Emoji"] == "⚡"
-                
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[parallel_mask, "Time"],
-                        y=intraday.loc[parallel_mask, "F_numeric"] + 33,
-                        mode="text",
-                        text=["⚡"] * parallel_mask.sum(),   # ❌ numpy.int64 can break this
-
-                        textposition="top center",
-                        textfont=dict(size=21, color="orange"),
-                        name="Parallel ⚡",
-                        hovertemplate="Time: %{x}<br>F%: %{y}<br>Crossed Ear/Nose Line 🎧<extra></extra>"                    ),
-                    row=1, col=1
-                )
-
-                    # 💰 Goldmine markers
-                # goldmine_mask = intraday["Goldmine_Emoji"] == "💰"
-                
-                # fig.add_trace(
-                #     go.Scatter(
-                #         x=intraday.loc[goldmine_mask, "Time"],
-                #         y=intraday.loc[goldmine_mask, "F_numeric"] + 33,   # offset so emoji floats above
-                #         mode="text",
-                #         text=["💰"] * goldmine_mask.sum(),
-                #         textposition="top center",
-                #         textfont=dict(size=40, color="gold"),
-                #         name="Goldmine 💰",
-                #         hovertemplate="Time: %{x}<br>F%: %{y}<br>Reached the Goldmine 💰<extra></extra>"
-                #     ),
-                #     row=1, col=1
+                # # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
+                # scatter_tk_sun = go.Scatter(
+                #     x=intraday.loc[mask_tk_sun, "Time"],
+                #     y=intraday.loc[mask_tk_sun, "F_numeric"] + 40,  # Offset for visibility
+                #     mode="text",
+                #     text="🌞",
+                #     textposition="top center",
+                #     textfont=dict(size=24),
+                #     name="Tenkan-Kijun Bullish Cross",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
                 # )
-                mask_tk_sun = intraday["Tenkan_Kijun_Cross"] == "🦅"
-                mask_tk_moon = intraday["Tenkan_Kijun_Cross"] == "🐦‍⬛"
 
-                # 🌞 Bullish Tenkan-Kijun Cross (Sun Emoji)
-                scatter_tk_sun = go.Scatter(
-                    x=intraday.loc[mask_tk_sun, "Time"],
-                    y=intraday.loc[mask_tk_sun, "F_numeric"] + 104,  # Offset for visibility
-                    mode="text",
-                    text="🌞",
-                    textposition="top center",
+                # # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
+                # scatter_tk_moon = go.Scatter(
+                #     x=intraday.loc[mask_tk_moon, "Time"],
+                #     y=intraday.loc[mask_tk_moon, "F_numeric"] + 40,  # Offset for visibility
+                #     mode="text",
+                #     text="🌙",
+                #     textposition="bottom center",
+                #     textfont=dict(size=24),
+                #     name="Tenkan-Kijun Bearish Cross",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
+                # )
+                # # 👼🏻 Bullish Sanyaku Kouten
+                # mask_sanyaku_kouten = intraday["Sanyaku_Kouten"] == "🟩"
+                
+                # # 👺 Bearish Sanyaku Gyakuten
+                # mask_sanyaku_gyakuten = intraday["Sanyaku_Gyakuten"] == "🟥"
+                
+
+                # # 👼🏻 Sanyaku Kouten marker (Bullish)
+                # scatter_sanyaku_kouten = go.Scatter(
+                #     x=intraday.loc[mask_sanyaku_kouten, "Time"],
+                #     y=intraday.loc[mask_sanyaku_kouten, "F_numeric"] - 60,  # Lower offset
+                #     mode="text",
+                #     text="👼🏻",
+                #     textposition="bottom center",
+                #     textfont=dict(size=82),
+                #     name="Sanyaku Kouten",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>👼🏻 Sanyaku Kouten (Bullish Reversal)<extra></extra>"
+                # )
+                
+                # # 👺 Sanyaku Gyakuten marker (Bearish)
+                # scatter_sanyaku_gyakuten = go.Scatter(
+                #     x=intraday.loc[mask_sanyaku_gyakuten, "Time"],
+                #     y=intraday.loc[mask_sanyaku_gyakuten, "F_numeric"] - 60,  # Lower offset
+                #     mode="text",
+                #     text="👺",
+                #     textposition="top center",
+                #     textfont=dict(size=82),
+                #     name="Sanyaku Gyakuten",
+                #     hovertemplate="Time: %{x}<br>F%: %{y}<br>👺 Sanyaku Gyakuten (Bearish Reversal)<extra></extra>"
+                # )
+                
+                # # Add to figure
+                # fig.add_trace(scatter_sanyaku_kouten, row=1, col=1)
+                # fig.add_trace(scatter_sanyaku_gyakuten, row=1, col=1)
+
+
+
+
+
+                # # Add to the F% Plot
+                # fig.add_trace(scatter_tk_sun, row=1, col=1)
+                # fig.add_trace(scatter_tk_moon, row=1, col=1)
+
+                cross_points = intraday[intraday["Midas_Cross_IB_High"] == "🎷"]
+                fig.add_trace(go.Scatter(
+                    x=cross_points["Time"],
+                    y=cross_points[price_col] + 20,
                     textfont=dict(size=34),
-                    name="Tenkan-Kijun Bullish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Above Kijun<extra></extra>"
-                )
-
-                # 🌙 Bearish Tenkan-Kijun Cross (Moon Emoji)
-                scatter_tk_moon = go.Scatter(
-                    x=intraday.loc[mask_tk_moon, "Time"],
-                    y=intraday.loc[mask_tk_moon, "F_numeric"] - 104,  # Offset for visibility
                     mode="text",
-                    text="🌙",
-                    textposition="bottom center",
-                    textfont=dict(size=34),
-                    name="Tenkan-Kijun Bearish Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<br>Tenkan Crossed Below Kijun<extra></extra>"
-                )
-
-
-                fig.add_trace(scatter_tk_sun, row=1, col=1)
-                fig.add_trace(scatter_tk_moon, row=1, col=1)
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Headphone_Cross_Y"],
-                    text=intraday["Headphone_Cross_Emoji"],
-                    mode="text",
-                    textfont=dict(size=24),
-                    name="🎧 Ear Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-                ), row=1, col=1)
-
- 
-                # 🐘 Nose Line Cross
-                fig.add_trace(go.Scatter(
-                    x=intraday["Time"],
-                    y=intraday["Elephant_Cross_Y"],
-                    text=intraday["Elephant_Cross_Emoji"],
-                    mode="text",
-                    textfont=dict(size=24),
-                    name="🐘 Nose Cross",
-                    hovertemplate="Time: %{x}<br>F%: %{y}<extra></extra>"
-                ), row=1, col=1)
-
-
-                gm_e2_mask = intraday["Goldmine_E2_Emoji"] == "💰"
-                gm_t1_mask = intraday["Goldmine_T1_Emoji"] == "💰"
-   
-                fig.add_trace(go.Scatter(
-                    x=intraday.loc[gm_e2_mask, "Time"],
-                    y=intraday.loc[gm_e2_mask, "F_numeric"] + 33,   # float above price
-                    mode="text",
-                    text=["💰"] * int(gm_e2_mask.sum()),
+                    text=cross_points["Midas_Cross_IB_High"],
                     textposition="top center",
-                    textfont=dict(size=21, color="gold"),
-                    name="Goldmine (E2)",
-                    hovertemplate="E2 Goldmine<br>Time: %{x}<br>F%: %{y}<extra></extra>",
-                ),
-                   row=1, col=1
-            )
-                fig.add_trace(
-                    go.Scatter(
-                        x=intraday.loc[gm_t1_mask, "Time"],
-                        y=intraday.loc[gm_t1_mask, "F_numeric"] + 45,   # a bit higher so icons don’t overlap
-                        mode="text",
-                        text=["💰"] * int(gm_t1_mask.sum()),
-                        textposition="top center",
-                        textfont=dict(size=21, color="limegreen"),      # distinct hue
-                        name="Goldmine (T1)",
-                        hovertemplate="T1 Goldmine<br>Time: %{x}<br>F%: %{y}<extra></extra>",
-                    ),
-                    row=1, col=1
-                )
-
-                emoji_df = intraday[intraday["Mike_Kijun_Bee_Emoji"] == "🍯"]
-  
-                fig.add_trace(go.Scatter(
-                    x=emoji_df["TimeIndex"],
-                    y=emoji_df["F_numeric"] - 13,
-                    mode="text",
-                    text=emoji_df["Mike_Kijun_Bee_Emoji"],
-                    textposition="top center",
-                    textfont=dict(size=18),
-                    name="Mike x Kijun + Bees",
-                    showlegend=False
+                    showlegend=True
                 ))
-            
+                
+                # 🎻 plot for Bear MIDAS crossing IB Low
+                bear_cross_points = intraday[intraday["Midas_Bear_Cross_IB_Low"] == "🎻"]
+                fig.add_trace(go.Scatter(
+                    x=bear_cross_points["Time"],
+                    y=bear_cross_points[price_col] - 20,
+                    textfont=dict(size=34),
+                    mode="text",
+                    text=bear_cross_points["Midas_Bear_Cross_IB_Low"],
+                    textposition="bottom center",
+                    showlegend=True
+                ))
+
+
+
+
+
+                # # 💀 plot for Bear Displacement Doubling
+                # bear_double_points = intraday[intraday["Bear_Displacement_Double"] == "💀"]
+                # fig.add_trace(go.Scatter(
+                #     x=bear_double_points["Time"],
+                #     y=bear_double_points[price_col] - 12,  # Lower than 🎻 to avoid overlap
+                #     text=bear_double_points["Bear_Displacement_Double"],
+                #     mode="text",
+                #     textfont=dict(size=18),
+                #     textposition="bottom center",
+                #     showlegend=True,
+                #     hovertemplate="Time: %{x}<br>Bear_Displacement_Double: %{y}<br>💀 Bear_Displacement_Double<extra></extra>"
+                # ))
+                # # 👑 plot for Bull Displacement Doubling
+                # bull_double_points = intraday[intraday["Bull_Displacement_Double"] == "👑"]
+                # fig.add_trace(go.Scatter(
+                #     x=bull_double_points["Time"],
+                #     y=bull_double_points[price_col] + 12,  # Lower than 💀 and 🎻 to avoid clutter
+                #     text=bull_double_points["Bull_Displacement_Double"],
+                #     mode="text",
+                #     textfont=dict(size=10),
+                #     textposition="bottom center",
+                #     showlegend=False
+                # ))
+
+ # 🟢   SPAN A & SPAN B
+
+
+
+  
+                # # intraday["SpanA_F"] = ((intraday["SpanA"] - prev_close) / prev_close) * 10000
+                # # intraday["SpanB_F"] = ((intraday["SpanB"] - prev_close) / prev_close) * 10000
+  
+  
+  
+                #                     # Span A – Yellow Line
+                # span_a_line = go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["SpanA_F"],
+                #     mode="lines",
+                #     line=dict(color="yellow", width=0.4),
+                #     name="Span A (F%)"
+                # )
+                # fig.add_trace(span_a_line, row=1, col=1)
+  
+                # # Span B – Blue Line
+                # span_b_line = go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["SpanB_F"],
+                #     mode="lines",
+                #     line=dict(color="rgba(0, 150, 255, 0.4)", width=0.5),                    
+                #     name="Span B (F%)"
+                # )
+                # fig.add_trace(span_b_line, row=1, col=1)
+  
+                # # Invisible SpanA for cloud base
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["SpanA_F"],
+                #     line=dict(width=0),
+                #     mode='lines',
+                #     showlegend=False
+                # ), row=1, col=1)
+  
+                # # SpanB with fill → grey Kumo
+                # fig.add_trace(go.Scatter(
+                #     x=intraday["Time"],
+                #     y=intraday["SpanB_F"],
+                #     fill='tonexty',
+                #     fillcolor='rgba(20, 20, 30, 0.10)',  # transparent grey
+                #     line=dict(width=0),
+                #     mode='lines',
+                #     name='Kumo Cloud'
+                # ), row=1, col=1)
+
+                # # if yva_min is not None and yva_max is not None:
+                #     # Show in text
+                #     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
+                # if prev_close:
+                #     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
+                #     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
+                       
+                      # Show YVA and Yesterday Range
                 if yva_min is not None and yva_max is not None:
-                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
+                    st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min:.2f} → {yva_max:.2f}")
                 if prev_close:
                     range_f_pct = round((prev_high - prev_low) / prev_close * 100, 1)
                     st.markdown(f"📏 Yesterday’s Range: **{prev_low:.2f} → {prev_high:.2f}** ({yesterday_range_str} pts | {range_f_pct}%)")
-
-
-                # Force datetime index for safety
-                intraday.index = pd.to_datetime(intraday.index)
                 
-                if yva_min is not None and yva_max is not None and prev_high is not None and prev_low is not None:
+                # 🧭 Opening Position vs YVA
+                if yva_min is not None and yva_max is not None:
                     opening_price = intraday["Close"].iloc[0]
-                    first_timestamp = intraday.index[0]
-                    cutoff = first_timestamp + pd.Timedelta(minutes=30)
-                    first_window = intraday[intraday.index < cutoff]
                 
-                    last_price_window = first_window["Close"].iloc[-1]
+                    if yva_min < opening_price < yva_max:
+                        yva_position_msg = "✅ Opened **within** Yesterday's Value Area"
+                    elif opening_price >= yva_max:
+                        yva_position_msg = "⬆️ Opened **above** Yesterday's Value Area"
+                    elif opening_price <= yva_min:
+                        yva_position_msg = "⬇️ Opened **below** Yesterday's Value Area"
+                    else:
+                        yva_position_msg = "⚠️ Could not determine opening position relative to YVA"
                 
-               
+                    st.markdown(f"### {yva_position_msg}")
+
+
+                    #   # ✅ Detect Initiative Breakout from Yesterday’s Value Area
+                    # if yva_min is not None and yva_max is not None and not intraday.empty:
+                    #     opening_price = intraday["Close"].iloc[0]
+                    #     opened_inside_yva = yva_min < opening_price < yva_max
+                    
+                    #     # First 30 min = first 6 bars on 5-min timeframe
+                    #     first_6 = intraday.iloc[:6]
+                    #     broke_above_yva = first_6["Close"].max() > yva_max
+                    #     broke_below_yva = first_6["Close"].min() < yva_min
+                    
+                    #     if opened_inside_yva:
+                    #         if broke_above_yva:
+                    #             st.markdown("🚀 **Breakout Alert: Opened *inside* YVA → Broke *above* within 30 min**")
+                    #         elif broke_below_yva:
+                    #             st.markdown("🔻 **Breakout Alert: Opened *inside* YVA → Broke *below* within 30 min**")
+                    #         else:
+                    #             st.markdown("🟨 Opened inside YVA – No early breakout")
+                    
+                    #     else:
+                    #         st.markdown("🟦 Market did *not* open inside YVA")
+  
+                        # ✅ Acceptance Outside of Previous Day's Range
+                        # When price opens above yesterday's high OR below yesterday's low
+                        # AND remains there throughout the first 30 minutes
+                    
+                    opened_above_yh = opening_price > prev_high
+                    opened_below_yl = opening_price < prev_low
+                    
+                    first_6 = intraday.iloc[:6]
+                    stayed_above_yh = (first_6["Close"] > prev_high).all()
+                    stayed_below_yl = (first_6["Close"] < prev_low).all()
+                    
+                    if opened_above_yh and stayed_above_yh:
+                        st.markdown("🟢 **ACCEPTANCE ABOVE Yesterday’s High: Breakout confirmed**")
+                    
+                    elif opened_below_yl and stayed_below_yl:
+                        st.markdown("🔴 **ACCEPTANCE BELOW Yesterday’s Low: Breakdown confirmed**")
+                    
+                    elif opened_above_yh or opened_below_yl:
+                        st.markdown("🟠 **Open Outside Range but NOT Accepted (possible fade or retest)**")
+                        
+                        
+
+
+                fig.update_yaxes(title_text="Option Value", row=2, col=1)
+
+   
+                 
 
                 fig.update_layout(
-                    title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
+                    title=f"{t} – VOLMIKE.COM",
                     margin=dict(l=30, r=30, t=50, b=30),
-                    height=1080,  # Increase overall figure height (default ~450-600)
-                    showlegend=False,
-                    yaxis2=dict(
-                        overlaying="y",
-                        side="right",
-                        showgrid=False,
-                        title="F% Scale"
-                    )
+                    height=1800,  # Increase overall figure height (default ~450-600)
 
                      
                 )
 
+      
 
-            
+
                 st.plotly_chart(fig, use_container_width=True)
 
 
-     
+
 
             except Exception as e:
                 st.error(f"Error fetching data for {t}: {e}")
-            
 
-  
-            
-       
+
+
+
+
+
+
+
+        #     with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+        #         fig_ichimoku = go.Figure()
+
+        #         fig_ichimoku.add_trace(go.Candlestick(
+        #             x=intraday['Time'],
+        #             open=intraday['Open'],
+        #             high=intraday['High'],
+        #             low=intraday['Low'],
+        #             close=intraday['Close'],
+        #             name='Candles'
+        #         ))
+
+        #         fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'), name='Tenkan-sen'))
+        #         fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'], line=dict(color='green'), name='Kijun-sen'))
+        #         fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
+        #         fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
+        #         fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
+
+        #         fig_ichimoku.add_trace(go.Scatter(
+        #             x=intraday['Time'],
+        #             y=intraday['SpanA'],
+        #             line=dict(width=0),
+        #             showlegend=False
+        #         ))
+
+        #         fig_ichimoku.add_trace(go.Scatter(
+        #             x=intraday['Time'],
+        #             y=intraday['SpanB'],
+        #             fill='tonexty',
+        #             fillcolor='rgba(128, 128, 128, 0.05)'  # 5% opacity (very faint)
+        #             line=dict(width=0),
+        #             showlegend=False
+        #         ))
+
+        #         fig_ichimoku.update_layout(
+        #             title="Ichimoku Candlestick Chart",
+        #             height=450,
+        #             width=450,
+        #             xaxis_rangeslider_visible=False,
+        #             margin=dict(l=30, r=30, t=40, b=20)
+        #         )
+
+        #         st.plotly_chart(fig_ichimoku, use_container_width=True)
+        # st.write("✅ Ichimoku Expander Rendered")
