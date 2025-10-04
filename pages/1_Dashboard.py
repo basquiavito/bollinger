@@ -8042,9 +8042,9 @@ if st.sidebar.button("Run Analysis"):
 
                       # 👇 Add PAE as just another milestone
                             milestones["callPae" if side == "callPath" else "putPae"] = {
-                               "1to2": row.get("PAE_1to2", ""),
-                               "2to3": row.get("PAE_2to3", ""),
-                               "3to40F": row.get("PAE_3to40F", "")
+                               "1to2": str(row.get("PAE_1to2"), "") or ""),
+                               "2to3": str(row.get("PAE_2to3", "") or ""),
+                               "3to40F": str(row.get("PAE_3to40F", "") or "")
                             }
 
 
