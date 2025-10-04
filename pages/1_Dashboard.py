@@ -8041,23 +8041,23 @@ if st.sidebar.button("Run Analysis"):
                                          }
 
                       # 👇 Add PAE as just another milestone
-                            milestones["callPae" if side == "callPath" else "putPae"] = {
-                               "1to2": str(row.get("PAE_1to2", "") or ""),
-                               "2to3": str(row.get("PAE_2to3", "") or ""),
-                               "3to40F": str(row.get("PAE_3to40F", "") or "")
-                            }
+                            # milestones["callPae" if side == "callPath" else "putPae"] = {
+                            #    "1to2": str(row.get("PAE_1to2", "") or ""),
+                            #    "2to3": str(row.get("PAE_2to3", "") or ""),
+                            #    "3to40F": str(row.get("PAE_3to40F", "") or "")
+                            # }
 
 
                                    
                             doc[side]["milestones"] = milestones
                         doc[side]["entries"].append(entry_obj)
                      
-                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        if sideways_note:
-                            doc[side]["Sideways"] = {
-                                "note": str(sideways_note),
-                                "from": str(row.get("Time", "")),  # entry start time
-                                                }
+                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        # if sideways_note:
+                        #     doc[side]["Sideways"] = {
+                        #         "note": str(sideways_note),
+                        #         "from": str(row.get("Time", "")),  # entry start time
+                        #                         }
 
     
                     # final list to export
