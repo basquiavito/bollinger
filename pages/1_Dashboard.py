@@ -8121,6 +8121,11 @@ if st.sidebar.button("Run Analysis"):
                             doc[side]["milestones"] = milestones
 # Always append the entry
                         doc[side]["entries"].append(entry_obj)
+
+                           # --- Add sideways condition ---
+                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        if sideways_note:
+                             doc[side]["sideways"] = sideways_note
                         # else:
                         #     # if this row is NOT 🎯1, add the minimalist checkpoint
                         #     if entry_num != "1":
