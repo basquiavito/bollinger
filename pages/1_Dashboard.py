@@ -7214,7 +7214,7 @@ if st.sidebar.button("Run Analysis"):
                         fall_depth = anchor_f - pre_high   # should be negative
       
                                
-                        return "Ember Catch" if fall_depth <= -50 else "Ember Bounce"
+                        return "Ember Bounce" if fall_depth <= -50 else "Ember Catch"
 
                            
                     elif "Put 🎯1" in entry_type:
@@ -7226,7 +7226,7 @@ if st.sidebar.button("Run Analysis"):
                          pre_low = intraday.loc[:anchor_idx, "F_numeric"].min()
                          rise_height = anchor_f - pre_low   # should be positive
 
-                         return "Cliff Catch" if rise_height >= 50 else "Cliff Bounce"
+                         return "Cliff Bounce" if rise_height >= 50 else "Cliff Catch"
                       
                     return ""
 
