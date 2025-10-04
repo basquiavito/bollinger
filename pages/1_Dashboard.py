@@ -7198,23 +7198,30 @@ if st.sidebar.button("Run Analysis"):
                 #     return ""
 
 
-                def classify_prototype(row, intraday):
+                def classify_prototype(row, intraday, threshold=50, lookback=36):
                     entry_type = row["Type"]
-                      
+                    f = intraday["F_numeric"]
+
                     if "Call 🎯1" in entry_type:
                               # Find first Midas Bull anchor
                         anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
                         if anchor_idx is None:
                             return "Ember"
-                        anchor_f = intraday.loc[anchor_idx, "F_numeric"]
+                        anchor_pos = f.index.get_loc(anchor_idx)
 
+   # Look back a fixed window (exclude anchor bar itself)
+                        start = max(0, anchor_pos - lookback)
+                        seg = f.iloc[start:anchor_pos]
+                      
+                        if seg.empty:
+                            return "Ember"
+               
+                        pre_high = seg.max()
 
-                        pre_high = intraday.loc[:anchor_idx, "F_numeric"].max()
-
-                        fall_depth = anchor_f - pre_high   # should be negative
+                        fall_depth =  f.iloc[anchor_pos] - pre_high # should be negative
       
                                
-                        return "Ember Bounce" if fall_depth <= -50 else "Ember Catch"
+                        return "Ember Bounce" if fall_depth <= -threshold else "Ember Catch"
 
                            
                     elif "Put 🎯1" in entry_type:
@@ -7222,11 +7229,18 @@ if st.sidebar.button("Run Analysis"):
                          anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
                          if anchor_idx is None:
                              return "Cliff"
-                         anchor_f = intraday.loc[anchor_idx, "F_numeric"]
-                         pre_low = intraday.loc[:anchor_idx, "F_numeric"].min()
-                         rise_height = anchor_f - pre_low   # should be positive
+                         anchor_pos = f.index.get_loc(anchor_idx)
 
-                         return "Cliff Bounce" if rise_height >= 50 else "Cliff Catch"
+                         start = max(0, anchor_pos - lookback)
+                         seg = f.iloc[start:anchor_pos]
+
+                         if seg.empty:
+                             return "Cliff"
+                                    
+                         pre_low = seg.min()
+                         rise_height = f.iloc[anchor_pos] - pre_low  # sh
+
+                         return "Cliff Bounce" if rise_height >= threshold else "Cliff Catch"
                       
                     return ""
 
