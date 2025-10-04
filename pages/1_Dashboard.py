@@ -8003,7 +8003,7 @@ if st.sidebar.button("Run Analysis"):
 						# prefix    = str(row.get("Prefix") or "").strip().lower()
 						# prototype = str(row.get("Prototype") or "").strip().lower()
 						
-						key  = f"{ticker}_{date}"
+						# key  = f"{ticker}_{date}"
 						slug = f"{ticker}-{date}-{prefix}-{prototype}".strip("-").replace(" ", "-")
 
                         # 🎯 number extracted from the Type string, e.g. "Call 🎯2"
