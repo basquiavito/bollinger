@@ -7990,6 +7990,9 @@ if st.sidebar.button("Run Analysis"):
                         entry_type = row.get("Type", "")
                         side = "callPath" if "Call" in entry_type else "putPath"
 
+
+						open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
+						close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
                         # create shell doc if first time
                         if key not in grouped_docs:
                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
@@ -7997,8 +8000,8 @@ if st.sidebar.button("Run Analysis"):
                             slug = slug.lower().replace(" ", "-")
                       
 # Find open and close prices for this date
-                            session_open = intraday.iloc[0]["Close"] if not intraday.empty else None
-                            session_close = intraday.iloc[-1]["Close"] if not intraday.empty else None
+                           
+
 
 
                             grouped_docs[key] = {
@@ -8016,8 +8019,9 @@ if st.sidebar.button("Run Analysis"):
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
                                 "prefix"    : row.get("Prefix", ""),
-                                "open": round(float(session_open), 2) if session_open else None,
-                                "close": round(float(session_close), 2) if session_close else None,
+                                "open": round(open_price, 2) if open_price is not None else None,
+                                "close": round(close_price, 2) if close_price is not None else None,
+
                                 "callPath": {"entries": [], "milestones": {}},
                                 "putPath": {"entries": [], "milestones": {}},
                            }
