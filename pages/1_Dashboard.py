@@ -7945,7 +7945,7 @@ if st.sidebar.button("Run Analysis"):
                 entries_df = build_entries_df(intraday, tickers[0]).round(2)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
         
-                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
+                # entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
             
 
                 # keep these in session_state so other code can reuse without recompute
