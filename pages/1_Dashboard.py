@@ -8016,7 +8016,7 @@ if st.sidebar.button("Run Analysis"):
                             
                                 "callPath": {"entries": [], "milestones": {}},
                                 "putPath": {"entries": [], "milestones": {}},
-s                            }
+                           }
                         doc = grouped_docs[key]
                         entry_obj = {
                               "Type" : entry_type,
