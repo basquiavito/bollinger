@@ -7682,26 +7682,27 @@ if st.sidebar.button("Run Analysis"):
 
           
 
-                def check_bee_near_anchor(row, intraday, perimeter=5):
-                    entry_type = row["Type"]
-                      
-                    if "Call" in entry_type:
-                        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
-                    elif "Put" in entry_type:
-                        anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
-                    else:
-                        return ""
-                      
-                    if anchor_idx is None:
-                        return ""
-                      
-                          # ±5 bar window around the anchor
-			        loc = intraday.index.get_loc(anchor_idx)
-			        start = max(0, loc - perimeter)
-			        end   = min(len(intraday), loc + perimeter + 1)
-			        window = intraday.iloc[start:end]
-                      
-                    return "BeePresent" if (window["BBW Alert"] == "🐝").any() else ""
+         		def check_bee_near_anchor(row, intraday, perimeter=5):
+				    entry_type = row["Type"]
+				
+				    if "Call" in entry_type:
+				        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
+				    elif "Put" in entry_type:
+				        anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
+				    else:
+				        return ""
+				
+				    if anchor_idx is None:
+				        return ""
+				
+				    # ±5 bar window around the anchor
+				    loc = intraday.index.get_loc(anchor_idx)
+				    start = max(0, loc - perimeter)
+				    end = min(len(intraday), loc + perimeter + 1)
+				    window = intraday.iloc[start:end]
+				
+				    return "🐝" if (window["BBW Alert"] == "🐝").any() else ""
+
                       
                       # 👉 Add column
 
