@@ -7300,6 +7300,28 @@ if st.sidebar.button("Run Analysis"):
                      
                          return df
         
+                def check_bee_near_anchor(row, intraday, perimeter=5):
+                    entry_type = row["Type"]
+                      
+                    if "Call" in entry_type:
+                        anchor_idx = intraday["MIDAS_Bull"].first_valid_index()
+                    elif "Put" in entry_type:
+                        anchor_idx = intraday["MIDAS_Bear"].first_valid_index()
+                    else:
+                        return ""
+                      
+                    if anchor_idx is None:
+                        return ""
+                      
+                          # ±5 bar window around the anchor
+	         loc = intraday.index.get_loc(anchor_idx)
+	         start = max(0, loc - perimeter)
+	         end   = min(len(intraday), loc + perimeter + 1)
+	         window = intraday.iloc[start:end]
+                      
+                    return "BeePresent" if (window["BBW Alert"] == "🐝").any() else ""
+                      
+                      # 👉 Add column
 
                 def anchor_vol_confirm(intraday: pd.DataFrame, lookaround: int = 7) -> str:
                     """
@@ -7824,6 +7846,8 @@ if st.sidebar.button("Run Analysis"):
                     df["Prototype"] = df.apply(classify_prototype, axis=1, args=(intraday,))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Sideways"] = df.apply(lambda row: detect_sideways(intraday, ib_low, ib_high, row["Time"], min_bars=4),axis=1)
+	         df["Bee"] = df.apply(check_bee_near_anchor, axis=1, args=(intraday,))
+
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
                     df["Date"] = start_date
 
