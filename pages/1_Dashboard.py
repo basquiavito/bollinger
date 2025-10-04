@@ -8050,10 +8050,17 @@ if st.sidebar.button("Run Analysis"):
                             doc[side]["milestones"] = milestones
 # Always append the entry
                         doc[side]["entries"].append(entry_obj)
-                        #👇 must be here (not outside the loop)
-                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        # #👇 must be here (not outside the loop)
+                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        # if sideways_note:
+                        #     doc[side]["sideways"] = sideways_note
+
+					    sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
                         if sideways_note:
-                            doc[side]["sideways"] = sideways_note
+                            doc[side]["sideways"] = {
+                            "note": str(sideways_note),
+                            "from": str(row.get("Time", ""))   # safe for None
+    								}
 
                         # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
                         # if sideways_note:
