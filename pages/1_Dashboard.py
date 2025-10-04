@@ -7970,6 +7970,8 @@ if st.sidebar.button("Run Analysis"):
                     )
                 # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
                     entries_df = entries_df.where(pd.notnull(entries_df), None)
+					entries_df = entries_df.replace({np.nan: None})
+
                     if "Ticker" not in entries_df.columns:
                         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
                     # ---------- JSON (grouped) ----------
@@ -8048,20 +8050,8 @@ if st.sidebar.button("Run Analysis"):
 
                                    
                             doc[side]["milestones"] = milestones
-# Always append the entry
                         doc[side]["entries"].append(entry_obj)
-                        # #👇 must be here (not outside the loop)
-                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        # if sideways_note:
-                        #     doc[side]["sideways"] = sideways_note
-
-					    # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-         #                if sideways_note:
-         #                    doc[side]["sideways"] = {
-         #                    "note": str(sideways_note),
-         #                    "from": str(row.get("Time", ""))   # safe for None
-    					# 			}
-
+                     
                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
                         if sideways_note:
                             doc[side]["Sideways"] = {
@@ -8069,15 +8059,7 @@ if st.sidebar.button("Run Analysis"):
                                 "from": str(row.get("Time", "")),  # entry start time
                                                 }
 
-#                                                  # --- Add sideways condition ---
-                  
-#                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-# if sideways_note:
-#     doc[side]["sideways"] = {
-#         "note": str(sideways_note),
-#         "from": str(row.get("Time", ""))  # always string-safe
-#     }
-                
+    
                     # final list to export
                     json_ready = list(grouped_docs.values())
                 
