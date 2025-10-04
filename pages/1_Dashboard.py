@@ -7220,7 +7220,7 @@ if st.sidebar.button("Run Analysis"):
                       
                          return "Cliff Catch" if (anchor_f - open_f) >= 50 else "Cliff Bounce"
                       
-                 return ""
+                return ""
 
                              
                 # after you create/load `intraday`, normalize its columns once
