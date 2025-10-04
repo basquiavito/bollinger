@@ -7314,10 +7314,10 @@ if st.sidebar.button("Run Analysis"):
                         return ""
                       
                           # ±5 bar window around the anchor
-	         loc = intraday.index.get_loc(anchor_idx)
-	         start = max(0, loc - perimeter)
-	         end   = min(len(intraday), loc + perimeter + 1)
-	         window = intraday.iloc[start:end]
+			        loc = intraday.index.get_loc(anchor_idx)
+			        start = max(0, loc - perimeter)
+			        end   = min(len(intraday), loc + perimeter + 1)
+			        window = intraday.iloc[start:end]
                       
                     return "BeePresent" if (window["BBW Alert"] == "🐝").any() else ""
                       
