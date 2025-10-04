@@ -8046,7 +8046,7 @@ if st.sidebar.button("Run Analysis"):
                                    
                             doc[side]["milestones"] = milestones
 # Always append the entry
-                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
 						if sideways_note:
 						    doc[side]["milestones"]["Sideways"] = {
 						        "note": sideways_note,
