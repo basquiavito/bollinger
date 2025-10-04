@@ -134,7 +134,16 @@ tickers = st.sidebar.multiselect(
     options=default_tickers,
     default=["NVDA"]  # Start with one selected
 )
-selected_ticker = tickers[0] if tickers else "UNKNOWN"
+# selected_ticker = tickers[0] if tickers else ["UNKNOWN"]
+
+active_ticker = st.sidebar.selectbox(
+	"Active ticker for export",
+	options=tickers if tickers else ["UNKOWN],
+	index=0,
+	key="active_ticker"
+)
+
+active_ticker = (active_ticker or "UNKNOWN").upper()
 
 # Date range inputs
 start_date = st.sidebar.date_input("Start Date", value=date(2025, 8, 1))
