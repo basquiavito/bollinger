@@ -8118,22 +8118,23 @@ if st.sidebar.button("Run Analysis"):
                                "3to40F": row.get("PAE_3to40F", "")
                             }
 
+                            doc[side]["sideways"] = sideways_note
 
                                    
                             doc[side]["milestones"] = milestones
 # Always append the entry
                         doc[side]["entries"].append(entry_obj)
                         #👇 must be here (not outside the loop)
-                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        # if sideways_note:
-                        #     doc[side]["sideways"] = sideways_note
-
                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
                         if sideways_note:
-                            doc[side]["milestones"]["Sideways"] = {
-                                "note": sideways_note,
-                                "from": row["Time"],  # entry start time
-                                                }
+                            doc[side]["sideways"] = sideways_note
+
+                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        # if sideways_note:
+                        #     doc[side]["milestones"]["Sideways"] = {
+                        #         "note": sideways_note,
+                        #         "from": row["Time"],  # entry start time
+                        #                         }
 
                                                  # --- Add sideways condition ---
                   
