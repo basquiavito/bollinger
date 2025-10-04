@@ -134,16 +134,6 @@ tickers = st.sidebar.multiselect(
     options=default_tickers,
     default=["NVDA"]  # Start with one selected
 )
-# selected_ticker = tickers[0] if tickers else ["UNKNOWN"]
-
-active_ticker = st.sidebar.selectbox(
-	"Active ticker for export",
-	options=tickers if tickers else ["UNKNOWN"],
-	index=0,
-	key="active_ticker"
-)
-
-active_ticker = (active_ticker or "UNKNOWN").upper()
 
 # Date range inputs
 start_date = st.sidebar.date_input("Start Date", value=date(2025, 8, 1))
@@ -7779,7 +7769,7 @@ if st.sidebar.button("Run Analysis"):
              
                 # ----------  Helpers (cached) ----------
                 @st.cache_data(show_spinner=False)
-                def build_entries_df(intraday: pd.DataFrame, ticker: str) -> pd.DataFrame:
+                def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
                     """Build the tidy entries table (runs once unless `intraday` changes)."""
                     entries: List[dict] = []
             
@@ -7831,7 +7821,7 @@ if st.sidebar.button("Run Analysis"):
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
-                    df["Ticker"] = ticker.upper()
+                 
                     df["Prototype"] = df.apply(classify_prototype, axis=1, args=(intraday,))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Sideways"] = df.apply(lambda row: detect_sideways(intraday, ib_low, ib_high, row["Time"], min_bars=4),axis=1)
@@ -7885,9 +7875,9 @@ if st.sidebar.button("Run Analysis"):
                     )
                   
               
-                   
+
                     df["Date"] = df["Date"].astype(str)
-                    df["Ticker"] = ticker
+
                     return df
                 def detect_sideways(intraday, ib_low, ib_high, entry_time, min_bars=4):
                
@@ -7952,10 +7942,10 @@ if st.sidebar.button("Run Analysis"):
                 
                 
                 # ----------  Build once, reuse always ----------
-                entries_df = build_entries_df(intraday, selected_ticker).round(2)
+                entries_df = build_entries_df(intraday).round(2)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
         
-                # entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
+                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
             
 
                 # keep these in session_state so other code can reuse without recompute
