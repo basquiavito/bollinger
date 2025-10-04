@@ -7679,10 +7679,7 @@ if st.sidebar.button("Run Analysis"):
                         gain_f
                     ])
                     def detect_sideways(intraday, ib_low, ib_high, entry_time, min_bars=4):
-               """
-               Detect sideways condition relative to IB thirds.
-               Returns a string like 'Sideways in Core for 30 min' or '' if no condition met.
-               """
+               
            
                # --- Divide IB into thirds ---
                         ib_third = (ib_high - ib_low) / 3
