@@ -7825,7 +7825,7 @@ if st.sidebar.button("Run Analysis"):
                     df["Prototype"] = df.apply(classify_prototype, axis=1, args=(intraday,))
                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
                     df["Sideways"] = df.apply(lambda row: detect_sideways(intraday, ib_low, ib_high, row["Time"], min_bars=4),axis=1)
-	                df["Bee"] = df.apply(check_bee_near_anchor, axis=1, args=(intraday,))
+	                # df["Bee"] = df.apply(check_bee_near_anchor, axis=1, args=(intraday,))
 
                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
                     df["Date"] = start_date
