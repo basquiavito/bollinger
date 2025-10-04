@@ -7996,6 +7996,9 @@ if st.sidebar.button("Run Analysis"):
                             slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
                             slug = slug.lower().replace(" ", "-")
                       
+# Find open and close prices for this date
+                            session_open = intraday.iloc[0]["Close"] if not intraday.empty else None
+                            session_close = intraday.iloc[-1]["Close"] if not intraday.empty else None
 
 
                             grouped_docs[key] = {
@@ -8013,7 +8016,8 @@ if st.sidebar.button("Run Analysis"):
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
                                 "prefix"    : row.get("Prefix", ""),
-                            
+                                "open": round(float(session_open), 2) if session_open else None,
+                                "close": round(float(session_close), 2) if session_close else None,
                                 "callPath": {"entries": [], "milestones": {}},
                                 "putPath": {"entries": [], "milestones": {}},
                            }
