@@ -8118,7 +8118,6 @@ if st.sidebar.button("Run Analysis"):
                                "3to40F": row.get("PAE_3to40F", "")
                             }
 
-                            doc[side]["sideways"] = sideways_note
 
                                    
                             doc[side]["milestones"] = milestones
@@ -8129,12 +8128,12 @@ if st.sidebar.button("Run Analysis"):
                         if sideways_note:
                             doc[side]["sideways"] = sideways_note
 
-                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        # if sideways_note:
-                        #     doc[side]["milestones"]["Sideways"] = {
-                        #         "note": sideways_note,
-                        #         "from": row["Time"],  # entry start time
-                        #                         }
+                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        if sideways_note:
+                            doc[side]["milestones"]["Sideways"] = {
+                                "note": sideways_note,
+                                "from": row["Time"],  # entry start time
+                                                }
 
                                                  # --- Add sideways condition ---
                   
