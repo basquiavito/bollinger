@@ -7927,7 +7927,10 @@ if st.sidebar.button("Run Analysis"):
                       
                         return ""
 
-
+                df["Sideways"] = df.apply(
+                    lambda row: detect_sideways(intraday, ib_low, ib_high, row["Time"], min_bars=4),
+                    axis=1
+           )
                 @st.cache_data(show_spinner=False)
                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
                     """Create CSV bytes from df (cached)."""
