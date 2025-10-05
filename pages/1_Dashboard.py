@@ -7972,7 +7972,7 @@ if st.sidebar.button("Run Analysis"):
                     entries_df = entries_df.where(pd.notnull(entries_df), None)
                     entries_df = entries_df.replace({np.nan: None})
 
-                    if "Ticker" not in entries_df.columns:
+                    if "Ticker" not in entries_df.columns or entries_df["Ticker"].isna().all() or (entries_df["Ticker"].astype(str).str.upper() == "UNKNOWN").all():
                         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
                     # ---------- JSON (grouped) ----------
                     grouped_docs = {}
