@@ -20,6 +20,39 @@ import uuid
 import hashlib
 from typing import List
            
+def build_json_docs(entries_df: pd.DataFrame, intraday: pd.DataFrame):
+    grouped_docs = {}
+    for row in entries_df.to_dict(orient="records"):
+        ticker = row["Ticker"].upper()
+        date = row["Date"]
+        key = f"{ticker}_{date}"
+
+        side = "callPath" if "Call" in row["Type"] else "putPath"
+        open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
+        close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
+
+        if key not in grouped_docs:
+            slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}".lower().replace(" ", "-")
+            grouped_docs[key] = {
+                "name": ticker.lower(),
+                "date": date,
+                "slug": slug,
+                "archive": True,
+                "cardPng": "",
+                "Prototype": row.get("Prototype", ""),
+                "label": row.get("Label", ""),
+                "suffix": row.get("Suffix", ""),
+                "prefix": row.get("Prefix", ""),
+                "open": round(open_price, 2),
+                "close": round(close_price, 2),
+                "callPath": {"entries": [], "milestones": {}},
+                "putPath": {"entries": [], "milestones": {}},
+            }
+
+        doc = grouped_docs[key]
+        entry_obj = {"Type": row["Type"], "Time": row["Time"], "Price": row["Price ($)"]}
+        doc[side]["entries"].append(entry_obj)
+    return list(grouped_docs.values())
 
 
 def compute_value_area(
