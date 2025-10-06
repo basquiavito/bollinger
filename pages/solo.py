@@ -8057,7 +8057,7 @@ if st.sidebar.button("Run Analysis"):
  
     
 
-               with st.expander("Export Cards (JSON only · minimal test)", expanded=True):
+                with st.expander("Export Cards (JSON only · minimal test)", expanded=True):
                     df = entries_df.copy()
                 
                     # ---- SAFE Ticker selection (no Series 'or') ----
