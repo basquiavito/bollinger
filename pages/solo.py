@@ -8053,7 +8053,7 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
                     )
-                  with st.expander("Export Cards (JSON only · minimal test)", expanded=True):
+                with st.expander("Export Cards (JSON only · minimal test)", expanded=True):
                           df = entries_df.copy()
                       
                           # Ensure required columns exist and are normalized
