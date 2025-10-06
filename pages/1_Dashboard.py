@@ -7943,8 +7943,8 @@ if st.sidebar.button("Run Analysis"):
                 
                 # ----------  Build once, reuse always ----------
                 entries_df = build_entries_df(intraday).round(2)
+                entries_df["Ticker"] = tickers[0]
 					# ✅ Always set ticker explicitly
-	            entries_df["Ticker"] = tickers[0]
 
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
         
