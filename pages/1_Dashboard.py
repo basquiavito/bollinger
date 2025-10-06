@@ -19,70 +19,7 @@ import json
 import uuid
 import hashlib
 from typing import List
-           
-def build_json_docs(entries_df: pd.DataFrame, intraday: pd.DataFrame):
-    grouped_docs = {}
-    for row in entries_df.to_dict(orient="records"):
-        ticker = row["Ticker"].upper()
-        date = row["Date"]
-        key = f"{ticker}_{date}"
-
-        side = "callPath" if "Call" in row["Type"] else "putPath"
-        open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
-        close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
-
-        if key not in grouped_docs:
-            slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}".lower().replace(" ", "-")
-            grouped_docs[key] = {
-                "name": ticker.lower(),
-                "date": date,
-                "slug": slug,
-                "archive": True,
-                "cardPng": "",
-                "Prototype": row.get("Prototype", ""),
-                "label": row.get("Label", ""),
-                "suffix": row.get("Suffix", ""),
-                "prefix": row.get("Prefix", ""),
-                "open": round(open_price, 2),
-                "close": round(close_price, 2),
-                "callPath": {"entries": [], "milestones": {}},
-                "putPath": {"entries": [], "milestones": {}},
-            }
-
-        doc = grouped_docs[key]
-        entry_obj = {"Type": row["Type"], "Time": row["Time"], "Price": row["Price ($)"]}
-        doc[side]["entries"].append(entry_obj)
-    return list(grouped_docs.values())
-
-def process_ticker(ticker: str, start_date, end_date, timeframe):
-    st.write(f"📊 Processing {ticker}...")
-
-    # 1️⃣ Load data
-    intraday = load_intraday_data(ticker, start_date, end_date, timeframe)
-    if intraday is None or intraday.empty:
-        st.warning(f"No data for {ticker}")
-        return None
-
-    # 2️⃣ Build entries
-    entries_df = build_entries_df(intraday).round(2)
-    entries_df["Ticker"] = ticker
-
-    # 3️⃣ Build JSON
-    grouped_docs = build_json_docs(entries_df, intraday)
-    json_str = json.dumps(grouped_docs, indent=2, ensure_ascii=False)
-    json_bytes = json_str.encode("utf-8")
-    json_b64 = base64.b64encode(json_bytes).decode("utf-8")
-
-    # 4️⃣ Display table + download link
-    with st.expander(f"{ticker} 🎯 Entries", expanded=True):
-        st.dataframe(entries_df, use_container_width=True)
-        st.markdown(
-            f'<a href="data:application/json;base64,{json_b64}" download="{ticker}.json">⬇️ Download {ticker} JSON</a>',
-            unsafe_allow_html=True
-        )
-
-    return {"ticker": ticker, "json": json_bytes}
-
+      
 def compute_value_area(
         df: pd.DataFrame,
         mike_col: str | None = None,
@@ -8008,144 +7945,144 @@ if st.sidebar.button("Run Analysis"):
                     return df.to_csv(index=False).encode("utf-8")
                 
                 
-#                 # ----------  Build once, reuse always ----------
-#                 entries_df = build_entries_df(intraday).round(2)
-#                 entries_df["Ticker"] = tickers[0]
-# 					# ✅ Always set ticker explicitly
+                # ----------  Build once, reuse always ----------
+                entries_df = build_entries_df(intraday).round(2)
+                entries_df["Ticker"] = tickers[0]
+					# ✅ Always set ticker explicitly
 
-#                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
+                csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
         
-#                 entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
+                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
             
 
-#                 # keep these in session_state so other code can reuse without recompute
-#                 # st.session_state.setdefault("entries_df", entries_df)
-#                 # st.session_state.setdefault("entries_csv", csv_bytes)
-#                 st.session_state["entries_df"] = entries_df
-#                 st.session_state["entries_csv"] = csv_bytes
-#                 # Optional: persist expander state across reruns
-#                 st.session_state.setdefault("expand_entries", True)
+                # keep these in session_state so other code can reuse without recompute
+                # st.session_state.setdefault("entries_df", entries_df)
+                # st.session_state.setdefault("entries_csv", csv_bytes)
+                st.session_state["entries_df"] = entries_df
+                st.session_state["entries_csv"] = csv_bytes
+                # Optional: persist expander state across reruns
+                st.session_state.setdefault("expand_entries", True)
 
 
 
-#                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-#                     st.dataframe(entries_df, use_container_width=True)
+                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                    st.dataframe(entries_df, use_container_width=True)
                 
-#                     # ---------- CSV (unchanged) ----------
-#                     csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-#                     csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
-#                     st.markdown(
-#                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
-#                         unsafe_allow_html=True
-#                     )
-#                 # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
-#                     entries_df = entries_df.where(pd.notnull(entries_df), None)
-#                     entries_df = entries_df.replace({np.nan: None})
+                    # ---------- CSV (unchanged) ----------
+                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                    csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                    st.markdown(
+                        f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
+                        unsafe_allow_html=True
+                    )
+                # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
+                    entries_df = entries_df.where(pd.notnull(entries_df), None)
+                    entries_df = entries_df.replace({np.nan: None})
 
-#                     # if "Ticker" not in entries_df.columns or entries_df["Ticker"].isna().all() or (entries_df["Ticker"].astype(str).str.upper() == "UNKNOWN").all():
-#                     #     entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-#                     # ---------- JSON (grouped) ----------
-#                     grouped_docs = {}
+                    # if "Ticker" not in entries_df.columns or entries_df["Ticker"].isna().all() or (entries_df["Ticker"].astype(str).str.upper() == "UNKNOWN").all():
+                    #     entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+                    # ---------- JSON (grouped) ----------
+                    grouped_docs = {}
                 
-#                     for row in entries_df.to_dict(orient="records"):
-#                         # identify ticker + date key  (adjust the column names if yours differ)
-#                         # ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
-#                         ticker = (row.get("Ticker") or row.get("ticker") or row.get("name") or "UNKNOWN").strip().upper()
+                    for row in entries_df.to_dict(orient="records"):
+                        # identify ticker + date key  (adjust the column names if yours differ)
+                        # ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        ticker = (row.get("Ticker") or row.get("ticker") or row.get("name") or "UNKNOWN").strip().upper()
 
-#                         date   = row["Date"]
-#                         key = f"{ticker}_{date}"
+                        date   = row["Date"]
+                        key = f"{ticker}_{date}"
                 
                
-#                 # Detect Call vs Put
-#                         entry_type = row.get("Type", "")
-#                         side = "callPath" if "Call" in entry_type else "putPath"
+                # Detect Call vs Put
+                        entry_type = row.get("Type", "")
+                        side = "callPath" if "Call" in entry_type else "putPath"
 
 
-#                         open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
-#                         close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
-#                         # create shell doc if first time
-#                         if key not in grouped_docs:
-#                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
-#                             slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
-#                             slug = slug.lower().replace(" ", "-")
+                        open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
+                        close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
+                        # create shell doc if first time
+                        if key not in grouped_docs:
+                            # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
+                            slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
+                            slug = slug.lower().replace(" ", "-")
                       
-# # Find open and close prices for this date
+# Find open and close prices for this date
                            
 
 
 
-#                             grouped_docs[key] = {
+                            grouped_docs[key] = {
                               
-#                                  "name": str(ticker or "UNKNOWN").lower(),
+                                 "name": str(ticker or "UNKNOWN").lower(),
 
-#                                 "date"      : date,
-#                                  "slug": slug,   # 👈 NEW
-#                                  "archive": True,   # 👈 always included by default
-#                                  "cardPng":"",
-#                                  "value":"",
-#                                  "opus":"",
-#                                  "note":"",
-#                                 "Prototype" : row.get("Prototype", ""),
-#                                 "label"     : row.get("Label", ""),
-#                                 "suffix"    : row.get("Suffix", ""),
-#                                 "prefix"    : row.get("Prefix", ""),
-#                                 "open": round(open_price, 2) if open_price is not None else None,
-#                                 "close": round(close_price, 2) if close_price is not None else None,
+                                "date"      : date,
+                                 "slug": slug,   # 👈 NEW
+                                 "archive": True,   # 👈 always included by default
+                                 "cardPng":"",
+                                 "value":"",
+                                 "opus":"",
+                                 "note":"",
+                                "Prototype" : row.get("Prototype", ""),
+                                "label"     : row.get("Label", ""),
+                                "suffix"    : row.get("Suffix", ""),
+                                "prefix"    : row.get("Prefix", ""),
+                                "open": round(open_price, 2) if open_price is not None else None,
+                                "close": round(close_price, 2) if close_price is not None else None,
 
-#                                 "callPath": {"entries": [], "milestones": {}},
-#                                 "putPath": {"entries": [], "milestones": {}},
-#                            }
-#                         doc = grouped_docs[key]
-#                         entry_obj = {
-#                               "Type" : entry_type,
-#                               "Time" : row.get("Time", ""),
-#                               "Price": row.get("Price ($)", "")
-#                           }
+                                "callPath": {"entries": [], "milestones": {}},
+                                "putPath": {"entries": [], "milestones": {}},
+                           }
+                        doc = grouped_docs[key]
+                        entry_obj = {
+                              "Type" : entry_type,
+                              "Time" : row.get("Time", ""),
+                              "Price": row.get("Price ($)", "")
+                          }
 
-#                         if "🎯1" in entry_type:
+                        if "🎯1" in entry_type:
 
-#                             milestones = {
-#                                 "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
-#                                 "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
-#                                 "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
-#                                 "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
-#                                 "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
-#                                 "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")},
-#                                          # 👇 Add side-specific PAE here
+                            milestones = {
+                                "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
+                                "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
+                                "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
+                                "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
+                                "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
+                                "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")},
+                                         # 👇 Add side-specific PAE here
 
 
                           
-#                                          }
+                                         }
 
-#                       # 👇 Add PAE as just another milestone
-#                             # milestones["callPae" if side == "callPath" else "putPae"] = {
-#                             #    "1to2": str(row.get("PAE_1to2", "") or ""),
-#                             #    "2to3": str(row.get("PAE_2to3", "") or ""),
-#                             #    "3to40F": str(row.get("PAE_3to40F", "") or "")
-#                             # }
+                      # 👇 Add PAE as just another milestone
+                            # milestones["callPae" if side == "callPath" else "putPae"] = {
+                            #    "1to2": str(row.get("PAE_1to2", "") or ""),
+                            #    "2to3": str(row.get("PAE_2to3", "") or ""),
+                            #    "3to40F": str(row.get("PAE_3to40F", "") or "")
+                            # }
 
 
                                    
-#                             doc[side]["milestones"] = milestones
-#                         doc[side]["entries"].append(entry_obj)
+                            doc[side]["milestones"] = milestones
+                        doc[side]["entries"].append(entry_obj)
                      
-#                         # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-#                         # if sideways_note:
-#                         #     doc[side]["Sideways"] = {
-#                         #         "note": str(sideways_note),
-#                         #         "from": str(row.get("Time", "")),  # entry start time
-#                         #                         }
+                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        # if sideways_note:
+                        #     doc[side]["Sideways"] = {
+                        #         "note": str(sideways_note),
+                        #         "from": str(row.get("Time", "")),  # entry start time
+                        #                         }
 
     
-#                     # final list to export
-#                     json_ready = list(grouped_docs.values())
+                    # final list to export
+                    json_ready = list(grouped_docs.values())
                 
-#                     json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
-#                     json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
-#                     st.markdown(
-#                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
-#                         unsafe_allow_html=True
-#                     )
+                    json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
+                    json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                    st.markdown(
+                        f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
+                        unsafe_allow_html=True
+                    )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
