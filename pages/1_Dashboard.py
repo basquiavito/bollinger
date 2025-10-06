@@ -209,6 +209,12 @@ timeframe = st.sidebar.selectbox(
 
 # # 🔥 Candlestick Chart Toggle (Place this here)
 # show_candlestick = st.sidebar.checkbox("Show Candlestick Chart", value=False)
+# ======================================
+# Main Execution Loop
+# ======================================
+
+for ticker in tickers:
+    process_ticker(ticker, start_date, end_date, timeframe)
 
  
 # Gap threshold slider
