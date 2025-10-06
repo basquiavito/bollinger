@@ -19,7 +19,9 @@ import json
 import uuid
 import hashlib
 from typing import List
-      
+           
+
+
 def compute_value_area(
         df: pd.DataFrame,
         mike_col: str | None = None,
@@ -146,10 +148,8 @@ timeframe = st.sidebar.selectbox(
 
 # # 🔥 Candlestick Chart Toggle (Place this here)
 # show_candlestick = st.sidebar.checkbox("Show Candlestick Chart", value=False)
-# ======================================
-# Main Execution Loop
-# ======================================
 
+ 
 # Gap threshold slider
 gap_threshold = st.sidebar.slider(
     "Gap Threshold (%)",
@@ -7943,9 +7943,6 @@ if st.sidebar.button("Run Analysis"):
                 
                 # ----------  Build once, reuse always ----------
                 entries_df = build_entries_df(intraday).round(2)
-                entries_df["Ticker"] = tickers[0]
-					# ✅ Always set ticker explicitly
-
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
         
                 entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
@@ -7975,8 +7972,8 @@ if st.sidebar.button("Run Analysis"):
                     entries_df = entries_df.where(pd.notnull(entries_df), None)
                     entries_df = entries_df.replace({np.nan: None})
 
-                    # if "Ticker" not in entries_df.columns or entries_df["Ticker"].isna().all() or (entries_df["Ticker"].astype(str).str.upper() == "UNKNOWN").all():
-                    #     entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+                    if "Ticker" not in entries_df.columns:
+                        entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
                     # ---------- JSON (grouped) ----------
                     grouped_docs = {}
                 
@@ -7994,8 +7991,8 @@ if st.sidebar.button("Run Analysis"):
                         side = "callPath" if "Call" in entry_type else "putPath"
 
 
-                        open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
-                        close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
+                        entry_type = row.get("Type", "")
+                        side = "callPath" if "Call" in entry_type else "putPath"
                         # create shell doc if first time
                         if key not in grouped_docs:
                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
