@@ -150,10 +150,6 @@ timeframe = st.sidebar.selectbox(
 # Main Execution Loop
 # ======================================
 
-for ticker in tickers:
-    process_ticker(ticker, start_date, end_date, timeframe)
-
- 
 # Gap threshold slider
 gap_threshold = st.sidebar.slider(
     "Gap Threshold (%)",
