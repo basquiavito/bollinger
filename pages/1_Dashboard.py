@@ -54,6 +54,34 @@ def build_json_docs(entries_df: pd.DataFrame, intraday: pd.DataFrame):
         doc[side]["entries"].append(entry_obj)
     return list(grouped_docs.values())
 
+def process_ticker(ticker: str, start_date, end_date, timeframe):
+    st.write(f"📊 Processing {ticker}...")
+
+    # 1️⃣ Load data
+    intraday = load_intraday_data(ticker, start_date, end_date, timeframe)
+    if intraday is None or intraday.empty:
+        st.warning(f"No data for {ticker}")
+        return None
+
+    # 2️⃣ Build entries
+    entries_df = build_entries_df(intraday).round(2)
+    entries_df["Ticker"] = ticker
+
+    # 3️⃣ Build JSON
+    grouped_docs = build_json_docs(entries_df, intraday)
+    json_str = json.dumps(grouped_docs, indent=2, ensure_ascii=False)
+    json_bytes = json_str.encode("utf-8")
+    json_b64 = base64.b64encode(json_bytes).decode("utf-8")
+
+    # 4️⃣ Display table + download link
+    with st.expander(f"{ticker} 🎯 Entries", expanded=True):
+        st.dataframe(entries_df, use_container_width=True)
+        st.markdown(
+            f'<a href="data:application/json;base64,{json_b64}" download="{ticker}.json">⬇️ Download {ticker} JSON</a>',
+            unsafe_allow_html=True
+        )
+
+    return {"ticker": ticker, "json": json_bytes}
 
 def compute_value_area(
         df: pd.DataFrame,
