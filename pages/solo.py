@@ -8053,41 +8053,38 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
                     )
-                with st.expander("Export Cards (JSON only · minimal test)", expanded=True):
-                          df = entries_df.copy()
-                      
-                          # Ensure required columns exist and are normalized
-                          df["Ticker"] = (
-                              df.get("Ticker") or df.get("ticker") or df.get("name") or pd.Series(["UNKNOWN"] * len(df))
-                          ).astype(str).str.upper()
-                      
-                          df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%Y-%m-%d")
-                      
-                          # Optional (used for slug only; safe if missing)
-                          prefix_col = "Prefix" if "Prefix" in df.columns else None
-                          proto_col  = "Prototype" if "Prototype" in df.columns else None
-                      
-                          # Build one doc per (Ticker, Date)
-                          grouped_docs = {}
-                          for (tkr, date), g in df.groupby(["Ticker", "Date"], dropna=False):
-                              name = tkr.lower()
-                              prefix = (g[prefix_col].dropna().astype(str).iloc[0] if prefix_col else "")
-                              proto  = (g[proto_col].dropna().astype(str).iloc[0]  if proto_col  else "")
-                              slug = slugify(name, date, prefix, proto)
-                      
-                              doc = {"name": name, "date": date, "slug": slug}
-                              grouped_docs[(tkr, date)] = doc
-                      
-                          # One download button per document (no arrays)
-                          for (tkr, date), doc in sorted(grouped_docs.items()):
-                              fname = (doc["slug"] or slugify(doc["name"], doc["date"])) + ".json"
-                              st.download_button(
-                                  label=f'⬇️ Download {tkr} · {date}',
-                                  data=json.dumps(doc, ensure_ascii=False, indent=2).encode("utf-8"),
-                                  file_name=fname,
-                                  mime="application/json",
-                                  use_container_width=True
-                              )
+             # --- Minimal JSON-only export (per-doc), fixed ---
+ 
+    
+
+               with st.expander("Export Cards (JSON only · minimal test)", expanded=True):
+                    df = entries_df.copy()
+                
+                    # ---- SAFE Ticker selection (no Series 'or') ----
+                    ticker_col = next((c for c in ("Ticker", "ticker", "name") if c in df.columns), None)
+                    if ticker_col:
+                        df["Ticker"] = df[ticker_col].astype(str).str.upper()
+                    else:
+                        df["Ticker"] = pd.Series(["UNKNOWN"] * len(df), index=df.index)
+                
+                    # ---- Date normalization ----
+                    if "Date" not in df.columns:
+                        st.error("Missing 'Date' column."); st.stop()
+                    df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.strftime("%Y-%m-%d").fillna("UNKNOWN")
+                
+                    # ---- One doc per (Ticker, Date) with 3 fields ----
+                    for (tkr, date), _g in df.groupby(["Ticker", "Date"], dropna=False):
+                        name = (tkr or "UNKNOWN").lower()
+                        slug = slugify(name, date)      # minimal slug: name-date
+                        doc = {"name": name, "date": date, "slug": slug}
+                
+                        st.download_button(
+                            label=f"⬇️ Download {tkr} · {date}",
+                            data=json.dumps(doc, ensure_ascii=False, indent=2).encode("utf-8"),
+                            file_name=f"{slug}.json",
+                            mime="application/json",
+                            use_container_width=True
+        )
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
                     fig = make_subplots(
