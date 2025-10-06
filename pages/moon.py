@@ -6568,121 +6568,121 @@ if st.sidebar.button("Run Analysis"):
                                         .reset_index(drop=True))
                          
 
-     #            with st.expander("📈 Option Price Elasticity (PE)", expanded=True):
+                with st.expander("📈 Option Price Elasticity (PE)", expanded=True):
                 
-     #                fig_pe = go.Figure()
+                    fig_pe = go.Figure()
                 
-     #                # Call PE Line
-     #                fig_pe.add_trace(go.Scatter(
-     #                    x=intraday["Time"],
-     #                    y=intraday["Call_PE_x100"],
-     #                    mode="lines",
-     #                    name="Call PE",
-     #                    line=dict(color="gold", width=1.3),
-     #                    hovertemplate="Time: %{x}<br>Call PE: %{y:.1f}¢/Fpt<extra></extra>"
-     #                ))
+                    # Call PE Line
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Call_PE_x100"],
+                        mode="lines",
+                        name="Call PE",
+                        line=dict(color="gold", width=1.3),
+                        hovertemplate="Time: %{x}<br>Call PE: %{y:.1f}¢/Fpt<extra></extra>"
+                    ))
                 
-     #                # Put PE Line
-     #                fig_pe.add_trace(go.Scatter(
-     #                    x=intraday["Time"],
-     #                    y=intraday["Put_PE_x100"],
-     #                    mode="lines",
-     #                    name="Put PE",
-     #                    line=dict(color="cyan", width=1.3),
-     #                    hovertemplate="Time: %{x}<br>Put PE: %{y:.1f}¢/Fpt<extra></extra>"
-     #                ))
+                    # Put PE Line
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["Put_PE_x100"],
+                        mode="lines",
+                        name="Put PE",
+                        line=dict(color="cyan", width=1.3),
+                        hovertemplate="Time: %{x}<br>Put PE: %{y:.1f}¢/Fpt<extra></extra>"
+                    ))
                 
-     #                # Optional Threshold Lines
-     #                call_med = intraday["Call_PE_x100"].rolling(9, min_periods=1).median()
-     #                put_med  = intraday["Put_PE_x100"].rolling(9, min_periods=1).median()
+                    # Optional Threshold Lines
+                    call_med = intraday["Call_PE_x100"].rolling(9, min_periods=1).median()
+                    put_med  = intraday["Put_PE_x100"].rolling(9, min_periods=1).median()
               
                 
                
                  
      # # Layout
-     #                fig_pe.update_layout(
-     #                    height=350,
-     #                    margin=dict(l=10, r=10, t=30, b=30),
-     #                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-     #                    title_text="Option Price Elasticity (¢ per F% point)",
-     #                    xaxis_title="Time",
-     #                    yaxis_title="¢ per F-pt",
-     #                )
+                    fig_pe.update_layout(
+                        height=350,
+                        margin=dict(l=10, r=10, t=30, b=30),
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                        title_text="Option Price Elasticity (¢ per F% point)",
+                        xaxis_title="Time",
+                        yaxis_title="¢ per F-pt",
+                    )
 
 
-     #                                  # PE Cross: Bullish (Call PE crosses above Put PE)
-     #                fig_pe.add_trace(go.Scatter(
-     #                    x=intraday[intraday["PE_Cross_Bull"]]["Time"],
-     #                    y=intraday[intraday["PE_Cross_Bull"]]["Call_PE"],
-     #                    mode="text",
-     #                    text=["⚡️"] * intraday["PE_Cross_Bull"].sum(),
-     #                    textposition="top center",
-     #                    name="Bullish PE Crossover",
-     #                    showlegend=False
-     #                ))
+                                      # PE Cross: Bullish (Call PE crosses above Put PE)
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday[intraday["PE_Cross_Bull"]]["Time"],
+                        y=intraday[intraday["PE_Cross_Bull"]]["Call_PE"],
+                        mode="text",
+                        text=["⚡️"] * intraday["PE_Cross_Bull"].sum(),
+                        textposition="top center",
+                        name="Bullish PE Crossover",
+                        showlegend=False
+                    ))
                     
-     #                # PE Cross: Bearish (Put PE crosses above Call PE)
-     #                fig_pe.add_trace(go.Scatter(
-     #                    x=intraday[intraday["PE_Cross_Bear"]]["Time"],
-     #                    y=intraday[intraday["PE_Cross_Bear"]]["Put_PE"],
-     #                    mode="text",
-     #                    text=["⛓️"] * intraday["PE_Cross_Bear"].sum(),
-     #                    textposition="bottom center",
-     #                    name="Bearish PE Crossover",
-     #                    showlegend=False
-     #                ))
+                    # PE Cross: Bearish (Put PE crosses above Call PE)
+                    fig_pe.add_trace(go.Scatter(
+                        x=intraday[intraday["PE_Cross_Bear"]]["Time"],
+                        y=intraday[intraday["PE_Cross_Bear"]]["Put_PE"],
+                        mode="text",
+                        text=["⛓️"] * intraday["PE_Cross_Bear"].sum(),
+                        textposition="bottom center",
+                        name="Bearish PE Crossover",
+                        showlegend=False
+                    ))
 
 
  
-     #                st.plotly_chart(fig_pe, use_container_width=True)
+                    st.plotly_chart(fig_pe, use_container_width=True)
                 
-                # with st.expander("📊 Elasticity-Based Put/Call Ratio (PE-PCR)", expanded=True):
+                with st.expander("📊 Elasticity-Based Put/Call Ratio (PE-PCR)", expanded=True):
                 
-                #     fig_pepcr = go.Figure()
+                    fig_pepcr = go.Figure()
                 
-                #     # Main PE-PCR Line
-                #     fig_pepcr.add_trace(go.Scatter(
-                #         x=intraday["Time"],
-                #         y=intraday["PE_PCR"],
-                #         mode="lines",
-                #         name="PE-PCR",
-                #         line=dict(color="magenta", width=1.4),
-                #         hovertemplate="Time: %{x}<br>PE-PCR: %{y:.2f}<extra></extra>"
-                #     ))
+                    # Main PE-PCR Line
+                    fig_pepcr.add_trace(go.Scatter(
+                        x=intraday["Time"],
+                        y=intraday["PE_PCR"],
+                        mode="lines",
+                        name="PE-PCR",
+                        line=dict(color="magenta", width=1.4),
+                        hovertemplate="Time: %{x}<br>PE-PCR: %{y:.2f}<extra></extra>"
+                    ))
                 
-                #     # Reference lines
-                #     fig_pepcr.add_shape(
-                #         type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
-                #         y0=1.0, y1=1.0,
-                #         line=dict(color="gray", width=0.8, dash="dash"),
-                #         name="Neutral"
-                #     )
+                    # Reference lines
+                    fig_pepcr.add_shape(
+                        type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
+                        y0=1.0, y1=1.0,
+                        line=dict(color="gray", width=0.8, dash="dash"),
+                        name="Neutral"
+                    )
                 
-                #     fig_pepcr.add_shape(
-                #         type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
-                #         y0=1.5, y1=1.5,
-                #         line=dict(color="red", width=0.8, dash="dot"),
-                #         name="Bearish Threshold"
-                #     )
+                    fig_pepcr.add_shape(
+                        type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
+                        y0=1.5, y1=1.5,
+                        line=dict(color="red", width=0.8, dash="dot"),
+                        name="Bearish Threshold"
+                    )
                 
-                #     fig_pepcr.add_shape(
-                #         type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
-                #         y0=0.66, y1=0.66,
-                #         line=dict(color="green", width=0.8, dash="dot"),
-                #         name="Bullish Threshold"
-                #     )
+                    fig_pepcr.add_shape(
+                        type="line", x0=intraday["Time"].min(), x1=intraday["Time"].max(),
+                        y0=0.66, y1=0.66,
+                        line=dict(color="green", width=0.8, dash="dot"),
+                        name="Bullish Threshold"
+                    )
                 
-                #     # Layout
-                #     fig_pepcr.update_layout(
-                #         height=420,
-                #         margin=dict(l=10, r=10, t=30, b=30),
-                #         title_text="PE-Based Put/Call Ratio (Elasticity-Weighted)",
-                #         xaxis_title="Time",
-                #         yaxis_title="Put PE ÷ Call PE",
-                #         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                #     )
+                    # Layout
+                    fig_pepcr.update_layout(
+                        height=420,
+                        margin=dict(l=10, r=10, t=30, b=30),
+                        title_text="PE-Based Put/Call Ratio (Elasticity-Weighted)",
+                        xaxis_title="Time",
+                        yaxis_title="Put PE ÷ Call PE",
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                    )
                 
-                #     st.plotly_chart(fig_pepcr, use_container_width=True)
+                    st.plotly_chart(fig_pepcr, use_container_width=True)
                 
 
                 # ======================================
@@ -6947,49 +6947,49 @@ if st.sidebar.button("Run Analysis"):
 
                     # --- Jerk Markers: Top 3 Positive (⚙️) and Top 3 Negative (🧱) — below Acceleration layer ---
 
-                    # # Ensure Jerk_Vector is numeric
-                    # intraday["Jerk_num"] = pd.to_numeric(intraday["Jerk_Vector"], errors="coerce")
+                    # Ensure Jerk_Vector is numeric
+                    intraday["Jerk_num"] = pd.to_numeric(intraday["Jerk_Vector"], errors="coerce")
                     
-                    # # Drop any rows without Jerk or Cumulative_Unit or Time
-                    # valid_jerk = intraday.dropna(subset=["Jerk_num", "Cumulative_Unit", "Time"])
+                    # Drop any rows without Jerk or Cumulative_Unit or Time
+                    valid_jerk = intraday.dropna(subset=["Jerk_num", "Cumulative_Unit", "Time"])
                     
-                    # # Select top 3 positive jerk and top 3 negative jerk
-                    # top3_pos_jerk = valid_jerk.nlargest(3, "Jerk_num")
-                    # top3_neg_jerk = valid_jerk.nsmallest(3, "Jerk_num")
+                    # Select top 3 positive jerk and top 3 negative jerk
+                    top3_pos_jerk = valid_jerk.nlargest(3, "Jerk_num")
+                    top3_neg_jerk = valid_jerk.nsmallest(3, "Jerk_num")
                     
-                    # # ⚙️ Positive Jerk Markers (above the flight path)
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=top3_pos_jerk["Time"],
-                    #     y=top3_pos_jerk["Cumulative_Unit"] + 56,
-                    #     mode="text",
-                    #     text=["⚙️"] * len(top3_pos_jerk),
-                    #     textposition="top center",
-                    #     textfont=dict(size=18),
-                    #     showlegend=False,
-                    #     hovertemplate=(
-                    #         "⚙️ Jerk Surge<br>"
-                    #         "Time: %{x}<br>"
-                    #         "Jerk: %{customdata[0]:.2f}%<extra></extra>"
-                    #     ),
-                    #     customdata=top3_pos_jerk[["Jerk_num"]].values
-                    # ))
+                    # ⚙️ Positive Jerk Markers (above the flight path)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_pos_jerk["Time"],
+                        y=top3_pos_jerk["Cumulative_Unit"] + 56,
+                        mode="text",
+                        text=["⚙️"] * len(top3_pos_jerk),
+                        textposition="top center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "⚙️ Jerk Surge<br>"
+                            "Time: %{x}<br>"
+                            "Jerk: %{customdata[0]:.2f}%<extra></extra>"
+                        ),
+                        customdata=top3_pos_jerk[["Jerk_num"]].values
+                    ))
                     
-                    # # 🧱 Negative Jerk Markers (below the flight path)
-                    # fig_displacement.add_trace(go.Scatter(
-                    #     x=top3_neg_jerk["Time"],
-                    #     y=top3_neg_jerk["Cumulative_Unit"] - 56,
-                    #     mode="text",
-                    #     text=["🧱"] * len(top3_neg_jerk),
-                    #     textposition="bottom center",
-                    #     textfont=dict(size=18),
-                    #     showlegend=False,
-                    #     hovertemplate=(
-                    #         "🧱 Jerk Brake<br>"
-                    #         "Time: %{x}<br>"
-                    #         "Jerk: %{customdata[0]:.2f}%<extra></extra>"
-                    #     ),
-                    #     customdata=top3_neg_jerk[["Jerk_num"]].values
-                    # ))
+                    # 🧱 Negative Jerk Markers (below the flight path)
+                    fig_displacement.add_trace(go.Scatter(
+                        x=top3_neg_jerk["Time"],
+                        y=top3_neg_jerk["Cumulative_Unit"] - 56,
+                        mode="text",
+                        text=["🧱"] * len(top3_neg_jerk),
+                        textposition="bottom center",
+                        textfont=dict(size=18),
+                        showlegend=False,
+                        hovertemplate=(
+                            "🧱 Jerk Brake<br>"
+                            "Time: %{x}<br>"
+                            "Jerk: %{customdata[0]:.2f}%<extra></extra>"
+                        ),
+                        customdata=top3_neg_jerk[["Jerk_num"]].values
+                    ))
 
                     # intraday["Unit Momentum"] = pd.to_numeric(intraday["Unit Momentum"], errors="coerce")
                     # intraday["Vector Momentum"] = pd.to_numeric(intraday["Vector Momentum"], errors="coerce")
