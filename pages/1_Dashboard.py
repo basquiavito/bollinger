@@ -8059,11 +8059,13 @@ if st.sidebar.button("Run Analysis"):
                                 "open": round(open_price, 2) if open_price is not None else None,
                                 "close": round(close_price, 2) if close_price is not None else None,
                                 "marketProfile":mp_summary,
-                                "callPath": {"midas":{"anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",}, 
-                                                     "anchor_price": round(float(anchor_price_bull), 2) if 'anchor_price_bull' in locals() else None},
+                                "callPath": {"midas": {
+                                                 "anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",
+                                                 "anchor_price": round(float(anchor_price_bull), 2) if 'anchor_price_bull' in locals() else None
+                                            },
 
                                              "entries": [], "milestones": {}},
-                                "putPath": {"midas":{"anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",}, 
+                                "putPath":  {"midas":{"anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",}, 
                                                      "anchor_price": round(float(anchor_price_bull), 2) if 'anchor_price_bull' in locals() else None},
                                                      "entries": [], "milestones": {}},
                            }
