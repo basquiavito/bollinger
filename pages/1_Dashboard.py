@@ -19,7 +19,9 @@ import json
 import uuid
 import hashlib
 from typing import List
-      
+           
+
+
 def compute_value_area(
         df: pd.DataFrame,
         mike_col: str | None = None,
@@ -146,12 +148,6 @@ timeframe = st.sidebar.selectbox(
 
 # # 🔥 Candlestick Chart Toggle (Place this here)
 # show_candlestick = st.sidebar.checkbox("Show Candlestick Chart", value=False)
-# ======================================
-# Main Execution Loop
-# ======================================
-
-for ticker in tickers:
-    process_ticker(ticker, start_date, end_date, timeframe)
 
  
 # Gap threshold slider
@@ -7947,9 +7943,6 @@ if st.sidebar.button("Run Analysis"):
                 
                 # ----------  Build once, reuse always ----------
                 entries_df = build_entries_df(intraday).round(2)
-                entries_df["Ticker"] = tickers[0]
-					# ✅ Always set ticker explicitly
-
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
         
                 entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
@@ -7979,8 +7972,8 @@ if st.sidebar.button("Run Analysis"):
                     entries_df = entries_df.where(pd.notnull(entries_df), None)
                     entries_df = entries_df.replace({np.nan: None})
 
-                    # if "Ticker" not in entries_df.columns or entries_df["Ticker"].isna().all() or (entries_df["Ticker"].astype(str).str.upper() == "UNKNOWN").all():
-                    #     entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+                    if "Ticker" not in entries_df.columns:
+                        entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
                     # ---------- JSON (grouped) ----------
                     grouped_docs = {}
                 
@@ -8054,24 +8047,24 @@ if st.sidebar.button("Run Analysis"):
                           
                                          }
 
-                      # 👇 Add PAE as just another milestone
-                            # milestones["callPae" if side == "callPath" else "putPae"] = {
-                            #    "1to2": str(row.get("PAE_1to2", "") or ""),
-                            #    "2to3": str(row.get("PAE_2to3", "") or ""),
-                            #    "3to40F": str(row.get("PAE_3to40F", "") or "")
-                            # }
+                      👇 Add PAE as just another milestone
+                            milestones["callPae" if side == "callPath" else "putPae"] = {
+                               "1to2": str(row.get("PAE_1to2", "") or ""),
+                               "2to3": str(row.get("PAE_2to3", "") or ""),
+                               "3to40F": str(row.get("PAE_3to40F", "") or "")
+                            }
 
 
                                    
                             doc[side]["milestones"] = milestones
                         doc[side]["entries"].append(entry_obj)
                      
-                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                        # if sideways_note:
-                        #     doc[side]["Sideways"] = {
-                        #         "note": str(sideways_note),
-                        #         "from": str(row.get("Time", "")),  # entry start time
-                        #                         }
+                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        if sideways_note:
+                            doc[side]["Sideways"] = {
+                                "note": str(sideways_note),
+                                "from": str(row.get("Time", "")),  # entry start time
+                                                }
 
     
                     # final list to export
