@@ -5541,7 +5541,46 @@ if st.sidebar.button("Run Analysis"):
                   )
                   intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
 
-                            
+                              # --- Minimal MP summary (essence-of-essence) ---
+				  def safe_int(x):
+				      try:
+				          return int(x)
+				      except Exception:
+				          return None
+					
+				  va_levels = value_area_levels if isinstance(value_area_levels, list) and len(value_area_levels) else []
+				  va_low  = safe_int(min(va_levels)) if va_levels else None
+				  va_high = safe_int(max(va_levels)) if va_levels else None
+					
+				  poc_ear  = safe_int(profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level']) if len(profile_df) else None
+				  poc_nose = safe_int(profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']) if len(profile_df) else None
+					
+				# lowest-volume corridors (1–3 thinnest bins)
+				  lvn_levels = []
+				  if len(profile_df):
+					  lvn_levels = (profile_df.sort_values('%Vol', ascending=True)
+					                           .head(3)['F% Level'].astype(int).tolist())
+						
+					# tails: single-print extremes (optional but tiny + useful)
+				  upper_tail = None
+				  lower_tail = None
+				  if 'Tail' in profile_df.columns and len(profile_df):
+					  tails_df = profile_df[profile_df['Tail'] == '🪶']
+					  if len(tails_df):
+					      upper_tail = safe_int(tails_df['F% Level'].max())
+					      lower_tail = safe_int(tails_df['F% Level'].min())
+					
+				  mp_summary = {
+					    "IB_High": safe_int(ib_high),
+					    "IB_Low":  safe_int(ib_low),
+					    "VA_High": va_high,
+					    "VA_Low":  va_low,
+					    "POC_Ear":  poc_ear,   # max %Vol
+					    "POC_Nose": poc_nose,  # max Letter_Count
+					    "LVN":      lvn_levels,  # 1–3 levels
+					    "Tails":    {"upper": upper_tail, "lower": lower_tail}
+					}
+
                   def add_stamina_signal(intraday, profile_df, f_bins, rvol_gate=1.2):
                       """
                       Adds Stamina_Signal column:
