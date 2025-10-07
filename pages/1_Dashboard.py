@@ -5542,8 +5542,9 @@ if st.sidebar.button("Run Analysis"):
                   intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
                   def safe_int(x):
                       try:
-                              # --- Minimal MP summary (essence-of-essence) ---
-				          return int(x)
+                              
+						  # --- Minimal MP summary (essence-of-essence) ---
+						 return int(x)
 				      except Exception:
 				          return None
 					
