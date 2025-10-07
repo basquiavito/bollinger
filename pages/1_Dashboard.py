@@ -8066,7 +8066,7 @@ if st.sidebar.button("Run Analysis"):
 
                                              "entries": [], "milestones": {}},
                                 "putPath":  {"midas":{"anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "", 
-                                                     "anchor_price": round(float(anchor_price_bull), 2) if 'anchor_price_bull' in locals() else None},}
+                                                     "anchor_price": round(float(anchor_price_bull), 2) if 'anchor_price_bull' in locals() else None},
                                                      "entries": [], "milestones": {}},
                            
                         doc = grouped_docs[key]
