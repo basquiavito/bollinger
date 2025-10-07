@@ -5540,7 +5540,7 @@ if st.sidebar.button("Run Analysis"):
                       (intraday["Prior_Inside_IB"] == True)            # came from inside
                   )
                   intraday.loc[ib_low_break, "IB_Low_Break"] = "🧧"
-                  def safe_int(x)
+                  def safe_int(x):
 
                               # --- Minimal MP summary (essence-of-essence) ---
 				      try:
