@@ -8058,7 +8058,7 @@ if st.sidebar.button("Run Analysis"):
                                 "prefix"    : row.get("Prefix", ""),
                                 "open": round(open_price, 2) if open_price is not None else None,
                                 "close": round(close_price, 2) if close_price is not None else None,
-
+                                "marketProfile":mp_sumamry,
                                 "callPath": {"entries": [], "milestones": {}},
                                 "putPath": {"entries": [], "milestones": {}},
                            }
