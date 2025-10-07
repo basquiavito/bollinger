@@ -7767,315 +7767,315 @@ if st.sidebar.button("Run Analysis"):
 
 
              
-#                 # ----------  Helpers (cached) ----------
-#                 @st.cache_data(show_spinner=False)
-#                 def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
-#                     """Build the tidy entries table (runs once unless `intraday` changes)."""
-#                     entries: List[dict] = []
+                # ----------  Helpers (cached) ----------
+                @st.cache_data(show_spinner=False)
+                def build_entries_df(intraday: pd.DataFrame) -> pd.DataFrame:
+                    """Build the tidy entries table (runs once unless `intraday` changes)."""
+                    entries: List[dict] = []
             
-#                             # PUTS
-#                     for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
-#                         entries.append({"Type": "Put 🎯1",
-#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-#                                         "Price ($)": intraday.at[i, "Close"],
-#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
-# })
-#                     for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
-#                         entries.append({"Type": "Put 🎯2",
-#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-#                                         "Price ($)": intraday.at[i, "Close"],
-#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
-# })
-#                     for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
-#                         entries.append({"Type": "Put 🎯3",
-#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-#                                         "Price ($)": intraday.at[i, "Close"],
-#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
+                            # PUTS
+                    for i in intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"]:
+                        entries.append({"Type": "Put 🎯1",
+                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+})
+                    for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
+                        entries.append({"Type": "Put 🎯2",
+                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+})
+                    for i in intraday.index[intraday["Put_ThirdEntry_Emoji"] == "🎯3"]:
+                        entries.append({"Type": "Put 🎯3",
+                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
 
-#                                        })
+                                       })
                 
-#                     # CALLS
-#                     for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
-#                         entries.append({"Type": "Call 🎯1",
-#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-#                                         "Price ($)": intraday.at[i, "Close"],
-#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
-# })
-#                     for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
-#                         entries.append({"Type": "Call 🎯2",
-#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-#                                         "Price ($)": intraday.at[i, "Close"],
-#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
+                    # CALLS
+                    for i in intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"]:
+                        entries.append({"Type": "Call 🎯1",
+                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+})
+                    for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
+                        entries.append({"Type": "Call 🎯2",
+                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
 
                                        
-#                                        })
-#                     for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
-#                         entries.append({"Type": "Call 🎯3",
-#                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
-#                                         "Price ($)": intraday.at[i, "Close"],
-#                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
+                                       })
+                    for i in intraday.index[intraday["Call_ThirdEntry_Emoji"] == "🎯3"]:
+                        entries.append({"Type": "Call 🎯3",
+                                        "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
+                                        "Price ($)": intraday.at[i, "Close"],
+                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
 
-#                                        }),
+                                       }),
  
           
-#                     df = (pd.DataFrame(entries)
-#                    .sort_values("Time")
-#                    .reset_index(drop=True))
+                    df = (pd.DataFrame(entries)
+                   .sort_values("Time")
+                   .reset_index(drop=True))
                  
-#                     df["Prototype"] = df.apply(classify_prototype, axis=1, args=(intraday,))
-#                     df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
-#                     df["Sideways"] = df.apply(lambda row: detect_sideways(intraday, ib_low, ib_high, row["Time"], min_bars=4),axis=1)
-# 	                # df["Bee"] = df.apply(check_bee_near_anchor, axis=1, args=(intraday,))
+                    df["Prototype"] = df.apply(classify_prototype, axis=1, args=(intraday,))
+                    df["Label"] = df.apply(assign_label_simple, axis=1, args=(intraday,))
+                    df["Sideways"] = df.apply(lambda row: detect_sideways(intraday, ib_low, ib_high, row["Time"], min_bars=4),axis=1)
+	                # df["Bee"] = df.apply(check_bee_near_anchor, axis=1, args=(intraday,))
 
-#                     df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
-#                     df["Date"] = start_date
+                    df["Suffix"] = df.apply(assign_suffix_simple, axis=1, args=(intraday,))
+                    df["Date"] = start_date
 
-#                     df = add_exit_columns(df)   # ✅ just like the others, but cleaner
-#                     df = compute_pae_1to2(df, intraday)
-#                                     # 👉 map the next stall (🚪) *after* each entry row
-#                     df[["T0_Emoji", "T0_Time", "T0_Price"]] = df.apply(
-#                         map_stall_after_entry, axis=1, args=(intraday,), result_type="expand"
-#                     )
-#                     # 🏇🏼 map the first acceleration beyond band after each entry (typically after Entry 1)
-#                     df[["T1_Emoji", "T1_Time", "T1_Price"]] = df.apply(
-#                         map_t1_after_entry, axis=1, args=(intraday,), result_type="expand"
-#                     )
+                    df = add_exit_columns(df)   # ✅ just like the others, but cleaner
+                    df = compute_pae_1to2(df, intraday)
+                                    # 👉 map the next stall (🚪) *after* each entry row
+                    df[["T0_Emoji", "T0_Time", "T0_Price"]] = df.apply(
+                        map_stall_after_entry, axis=1, args=(intraday,), result_type="expand"
+                    )
+                    # 🏇🏼 map the first acceleration beyond band after each entry (typically after Entry 1)
+                    df[["T1_Emoji", "T1_Time", "T1_Price"]] = df.apply(
+                        map_t1_after_entry, axis=1, args=(intraday,), result_type="expand"
+                    )
 
-#                                      # 🔁 Map T2 (⚡) to each entry row
-#                     df[["T2_Emoji", "T2_Time", "T2_Price"]] = df.apply(
-#                         map_t2_after_entry, axis=1, args=(intraday,), result_type="expand"
-#                     )
+                                     # 🔁 Map T2 (⚡) to each entry row
+                    df[["T2_Emoji", "T2_Time", "T2_Price"]] = df.apply(
+                        map_t2_after_entry, axis=1, args=(intraday,), result_type="expand"
+                    )
 
-#                     df[["Parallel_Emoji", "Parallel_Time", "Parallel_Gain"]] = df.apply(
-#                     map_parallel_after_t2, axis=1, args=(intraday,), result_type="expand"
-#                      )
+                    df[["Parallel_Emoji", "Parallel_Time", "Parallel_Gain"]] = df.apply(
+                    map_parallel_after_t2, axis=1, args=(intraday,), result_type="expand"
+                     )
 
-#                     # E2 route
-#                     df[["Goldmine_E2_Emoji", "Goldmine_E2_Time", "Goldmine_E2 Price"]] = df.apply(
-#                         map_goldmine_after_e2, axis=1, args=(intraday,), result_type="expand"
-#                     )
+                    # E2 route
+                    df[["Goldmine_E2_Emoji", "Goldmine_E2_Time", "Goldmine_E2 Price"]] = df.apply(
+                        map_goldmine_after_e2, axis=1, args=(intraday,), result_type="expand"
+                    )
                     
-#                     # T1 route
-#                     df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price"]] = df.apply(
-#                         map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
-#                     )
+                    # T1 route
+                    df[["Goldmine_T1_Emoji", "Goldmine_T1_Time", "Goldmine_T1 Price"]] = df.apply(
+                        map_goldmine_after_t1, axis=1, args=(intraday,), result_type="expand"
+                    )
                  
 
                     
                     
                     
 
-#                     df =  compute_pae_2to3(df, intraday)
-#                     df = compute_pae_3to40F(df, intraday)
+                    df =  compute_pae_2to3(df, intraday)
+                    df = compute_pae_3to40F(df, intraday)
                
-#                     df["Prefix"] = df.apply(
-#                         assign_prefix_tailbone,
-#                         axis=1,
-#                         args=(intraday, profile_df, f_bins)  # pass your existing profile_df and f_bins
-#                     )
+                    df["Prefix"] = df.apply(
+                        assign_prefix_tailbone,
+                        axis=1,
+                        args=(intraday, profile_df, f_bins)  # pass your existing profile_df and f_bins
+                    )
                   
               
 
-#                     df["Date"] = df["Date"].astype(str)
+                    df["Date"] = df["Date"].astype(str)
 
-#                     return df
-#                 def detect_sideways(intraday, ib_low, ib_high, entry_time, min_bars=4):
+                    return df
+                def detect_sideways(intraday, ib_low, ib_high, entry_time, min_bars=4):
                
            
-#                # --- Divide IB into thirds ---
-#                         ib_third = (ib_high - ib_low) / 3
-#                         cellar = (ib_low, ib_low + ib_third)
-#                         core   = (ib_low + ib_third, ib_low + 2*ib_third)
-#                         loft   = (ib_low + 2*ib_third, ib_high)
+               # --- Divide IB into thirds ---
+                        ib_third = (ib_high - ib_low) / 3
+                        cellar = (ib_low, ib_low + ib_third)
+                        core   = (ib_low + ib_third, ib_low + 2*ib_third)
+                        loft   = (ib_low + 2*ib_third, ib_high)
            
-#                         def zone_for_price(price):
-#                             if cellar[0] <= price < cellar[1]:
-#                                   return "Cellar"
-#                             elif core[0] <= price < core[1]:
-#                                   return "Core"
-#                             elif loft[0] <= price <= loft[1]:
-#                                 return "Loft"
-#                             return None
+                        def zone_for_price(price):
+                            if cellar[0] <= price < cellar[1]:
+                                  return "Cellar"
+                            elif core[0] <= price < core[1]:
+                                  return "Core"
+                            elif loft[0] <= price <= loft[1]:
+                                return "Loft"
+                            return None
                       
-#                           # --- Locate entry index ---
-#                         entry_locs = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
-#                         if len(entry_locs) == 0:
-#                             return ""
-#                         entry_idx = entry_locs[0]
+                          # --- Locate entry index ---
+                        entry_locs = intraday.index[pd.to_datetime(intraday["Time"]).dt.strftime("%H:%M") == entry_time]
+                        if len(entry_locs) == 0:
+                            return ""
+                        entry_idx = entry_locs[0]
                       
-#                           # --- Scan forward from entry ---
-#                         f_values = intraday.loc[entry_idx:, "F_numeric"].tolist()
+                          # --- Scan forward from entry ---
+                        f_values = intraday.loc[entry_idx:, "F_numeric"].tolist()
                       
-#                         current_zone = None
-#                         count = 0
+                        current_zone = None
+                        count = 0
                       
-#                         for f in f_values:
-#                             z = zone_for_price(f)
-#                             if z is None:
-#                                 break
+                        for f in f_values:
+                            z = zone_for_price(f)
+                            if z is None:
+                                break
                       
-#                             if z == current_zone:
-#                                    count += 1
-#                             else:
-#                                   # new zone → check if last zone was sideways
-#                                 if current_zone and count >= min_bars:
-#                                     minutes = count * 5
-#                                     return f"Sideways in {current_zone} for {minutes} min"
-#                                 current_zone = z
-#                                 count = 1
+                            if z == current_zone:
+                                   count += 1
+                            else:
+                                  # new zone → check if last zone was sideways
+                                if current_zone and count >= min_bars:
+                                    minutes = count * 5
+                                    return f"Sideways in {current_zone} for {minutes} min"
+                                current_zone = z
+                                count = 1
                       
-#                           # check at the end
-#                         if current_zone and count >= min_bars:
-#                            minutes = count * 5
-#                            return f"Sideways in {current_zone} for {minutes} min"
+                          # check at the end
+                        if current_zone and count >= min_bars:
+                           minutes = count * 5
+                           return f"Sideways in {current_zone} for {minutes} min"
                       
-#                         return ""
+                        return ""
 
               
            
-#                 @st.cache_data(show_spinner=False)
-#                 def to_csv_bytes(df: pd.DataFrame) -> bytes:
-#                     """Create CSV bytes from df (cached)."""
-#                     df = clean_column_names(df)
+                @st.cache_data(show_spinner=False)
+                def to_csv_bytes(df: pd.DataFrame) -> bytes:
+                    """Create CSV bytes from df (cached)."""
+                    df = clean_column_names(df)
 
-#                     return df.to_csv(index=False).encode("utf-8")
+                    return df.to_csv(index=False).encode("utf-8")
                 
                 
-#                 # ----------  Build once, reuse always ----------
-#                 entries_df = build_entries_df(intraday).round(2)
-#                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
+                # ----------  Build once, reuse always ----------
+                entries_df = build_entries_df(intraday).round(2)
+                csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
         
-#                 entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
+                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
             
 
-#                 # keep these in session_state so other code can reuse without recompute
-#                 # st.session_state.setdefault("entries_df", entries_df)
-#                 # st.session_state.setdefault("entries_csv", csv_bytes)
-#                 st.session_state["entries_df"] = entries_df
-#                 st.session_state["entries_csv"] = csv_bytes
-#                 # Optional: persist expander state across reruns
-#                 st.session_state.setdefault("expand_entries", True)
+                # keep these in session_state so other code can reuse without recompute
+                # st.session_state.setdefault("entries_df", entries_df)
+                # st.session_state.setdefault("entries_csv", csv_bytes)
+                st.session_state["entries_df"] = entries_df
+                st.session_state["entries_csv"] = csv_bytes
+                # Optional: persist expander state across reruns
+                st.session_state.setdefault("expand_entries", True)
 
 
 
-#                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-#                     st.dataframe(entries_df, use_container_width=True)
+                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                    st.dataframe(entries_df, use_container_width=True)
                 
-#                     # ---------- CSV (unchanged) ----------
-#                     csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-#                     csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
-#                     st.markdown(
-#                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
-#                         unsafe_allow_html=True
-#                     )
-#                 # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
-#                     entries_df = entries_df.where(pd.notnull(entries_df), None)
-#                     entries_df = entries_df.replace({np.nan: None})
+                    # ---------- CSV (unchanged) ----------
+                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                    csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                    st.markdown(
+                        f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
+                        unsafe_allow_html=True
+                    )
+                # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
+                    entries_df = entries_df.where(pd.notnull(entries_df), None)
+                    entries_df = entries_df.replace({np.nan: None})
 
-#                     if "Ticker" not in entries_df.columns:
-#                         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-#                     # ---------- JSON (grouped) ----------
-#                     grouped_docs = {}
+                    if "Ticker" not in entries_df.columns:
+                        entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+                    # ---------- JSON (grouped) ----------
+                    grouped_docs = {}
                 
-#                     for row in entries_df.to_dict(orient="records"):
-#                         # identify ticker + date key  (adjust the column names if yours differ)
-#                         # ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
-#                         ticker = (row.get("Ticker") or row.get("ticker") or row.get("name") or "UNKNOWN").strip().upper()
+                    for row in entries_df.to_dict(orient="records"):
+                        # identify ticker + date key  (adjust the column names if yours differ)
+                        # ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        ticker = (row.get("Ticker") or row.get("ticker") or row.get("name") or "UNKNOWN").strip().upper()
 
-#                         date   = row["Date"]
-#                         key = f"{ticker}_{date}"
+                        date   = row["Date"]
+                        key = f"{ticker}_{date}"
                 
                
-#                 # Detect Call vs Put
-#                         entry_type = row.get("Type", "")
-#                         side = "callPath" if "Call" in entry_type else "putPath"
+                # Detect Call vs Put
+                        entry_type = row.get("Type", "")
+                        side = "callPath" if "Call" in entry_type else "putPath"
 
 
-#                         open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
-#                         close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
-#                         # create shell doc if first time
-#                         if key not in grouped_docs:
-#                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
-#                             slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
-#                             slug = slug.lower().replace(" ", "-")
+                        open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
+                        close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
+                        # create shell doc if first time
+                        if key not in grouped_docs:
+                            # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
+                            slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
+                            slug = slug.lower().replace(" ", "-")
                       
-# # Find open and close prices for this date
+# Find open and close prices for this date
                            
 
 
 
-#                             grouped_docs[key] = {
+                            grouped_docs[key] = {
                               
-#                                  "name": str(ticker or "UNKNOWN").lower(),
+                                 "name": str(ticker or "UNKNOWN").lower(),
 
-#                                 "date"      : date,
-#                                  "slug": slug,   # 👈 NEW
-#                                  "archive": True,   # 👈 always included by default
-#                                  "cardPng":"",
-#                                  "value":"",
-#                                  "opus":"",
-#                                  "note":"",
-#                                 "Prototype" : row.get("Prototype", ""),
-#                                 "label"     : row.get("Label", ""),
-#                                 "suffix"    : row.get("Suffix", ""),
-#                                 "prefix"    : row.get("Prefix", ""),
-#                                 "open": round(open_price, 2) if open_price is not None else None,
-#                                 "close": round(close_price, 2) if close_price is not None else None,
+                                "date"      : date,
+                                 "slug": slug,   # 👈 NEW
+                                 "archive": True,   # 👈 always included by default
+                                 "cardPng":"",
+                                 "value":"",
+                                 "opus":"",
+                                 "note":"",
+                                "Prototype" : row.get("Prototype", ""),
+                                "label"     : row.get("Label", ""),
+                                "suffix"    : row.get("Suffix", ""),
+                                "prefix"    : row.get("Prefix", ""),
+                                "open": round(open_price, 2) if open_price is not None else None,
+                                "close": round(close_price, 2) if close_price is not None else None,
 
-#                                 "callPath": {"entries": [], "milestones": {}},
-#                                 "putPath": {"entries": [], "milestones": {}},
-#                            }
-#                         doc = grouped_docs[key]
-#                         entry_obj = {
-#                               "Type" : entry_type,
-#                               "Time" : row.get("Time", ""),
-#                               "Price": row.get("Price ($)", "")
-#                           }
+                                "callPath": {"entries": [], "milestones": {}},
+                                "putPath": {"entries": [], "milestones": {}},
+                           }
+                        doc = grouped_docs[key]
+                        entry_obj = {
+                              "Type" : entry_type,
+                              "Time" : row.get("Time", ""),
+                              "Price": row.get("Price ($)", "")
+                          }
 
-#                         if "🎯1" in entry_type:
+                        if "🎯1" in entry_type:
 
-#                             milestones = {
-#                                 "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
-#                                 "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
-#                                 "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
-#                                 "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
-#                                 "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
-#                                 "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")},
-#                                          # 👇 Add side-specific PAE here
+                            milestones = {
+                                "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
+                                "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
+                                "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
+                                "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
+                                "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
+                                "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")},
+                                         # 👇 Add side-specific PAE here
 
 
                           
-#                                          }
+                                         }
 
-#                       #👇 Add PAE as just another milestone
-#                             milestones["callPae" if side == "callPath" else "putPae"] = {
-#                                "1to2": str(row.get("PAE_1to2", "") or ""),
-#                                "2to3": str(row.get("PAE_2to3", "") or ""),
-#                                "3to40F": str(row.get("PAE_3to40F", "") or "")
-#                             }
+                      #👇 Add PAE as just another milestone
+                            milestones["callPae" if side == "callPath" else "putPae"] = {
+                               "1to2": str(row.get("PAE_1to2", "") or ""),
+                               "2to3": str(row.get("PAE_2to3", "") or ""),
+                               "3to40F": str(row.get("PAE_3to40F", "") or "")
+                            }
 
 				
                                    
-#                             doc[side]["milestones"] = milestones
-#                         doc[side]["entries"].append(entry_obj)
+                            doc[side]["milestones"] = milestones
+                        doc[side]["entries"].append(entry_obj)
                      
-#                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-#                         if sideways_note:     
-#                             doc[side]["Sideways"] = {
-#                                 "note": str(sideways_note),
-#                                 "from": str(row.get("Time", "")),  # entry start time
-#                                                 }
+                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        if sideways_note:     
+                            doc[side]["Sideways"] = {
+                                "note": str(sideways_note),
+                                "from": str(row.get("Time", "")),  # entry start time
+                                                }
 
     
-#                     # final list to export
-#                     json_ready = list(grouped_docs.values())
+                    # final list to export
+                    json_ready = list(grouped_docs.values())
                 
-#                     json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
-#                     json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
-#                     st.markdown(
-#                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
-#                         unsafe_allow_html=True
-#                     )
+                    json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
+                    json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                    st.markdown(
+                        f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
+                        unsafe_allow_html=True
+                    )
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
