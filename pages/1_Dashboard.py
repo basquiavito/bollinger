@@ -7881,7 +7881,44 @@ if st.sidebar.button("Run Analysis"):
                     return df
                 def detect_sideways(intraday, ib_low, ib_high, entry_time, min_bars=4):
                
-           
+           # --- Minimal Market Profile summary (once per session) ---
+                def _safe_int(x):
+                    try:
+                        return int(x)
+                    except Exception:
+                        return None
+                
+                _va_levels = value_area_levels if isinstance(value_area_levels, list) else []
+                _va_low  = _safe_int(min(_va_levels)) if _va_levels else None
+                _va_high = _safe_int(max(_va_levels)) if _va_levels else None
+                
+                _poc_ear  = _safe_int(profile_df.loc[profile_df['%Vol'].idxmax(), 'F% Level'])  if len(profile_df) else None
+                _poc_nose = _safe_int(profile_df.loc[profile_df['Letter_Count'].idxmax(), 'F% Level']) if len(profile_df) else None
+                
+                _lvn = []
+                if len(profile_df):
+                    _lvn = (profile_df.sort_values('%Vol', ascending=True)
+                                      .head(3)['F% Level'].astype(int).tolist())
+                
+                _upper_tail = None
+                _lower_tail = None
+                if 'Tail' in profile_df.columns and len(profile_df):
+                    _tails = profile_df[profile_df['Tail'] == '🪶']
+                    if len(_tails):
+                        _upper_tail = _safe_int(_tails['F% Level'].max())
+                        _lower_tail = _safe_int(_tails['F% Level'].min())
+                
+                mp_summary = {
+                    "IB_High": _safe_int(ib_high),
+                    "IB_Low":  _safe_int(ib_low),
+                    "VA_High": _va_high,
+                    "VA_Low":  _va_low,
+                    "POC_Ear":  _poc_ear,   # max %Vol (volume memory)
+                    "POC_Nose": _poc_nose,  # max Letter_Count (time memory)
+                    "LVN":      _lvn,       # thinnest 1–3 levels
+                    "Tails":    {"upper": _upper_tail, "lower": _lower_tail}
+                }
+
                # --- Divide IB into thirds ---
                         ib_third = (ib_high - ib_low) / 3
                         cellar = (ib_low, ib_low + ib_third)
