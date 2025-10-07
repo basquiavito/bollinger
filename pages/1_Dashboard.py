@@ -8054,23 +8054,17 @@ if st.sidebar.button("Run Analysis"):
                                "3to40F": str(row.get("PAE_3to40F", "") or "")
                             }
 
-						# 👇 Optional insight milestone (environmental context)
-						    sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-						    milestones["Insight_Sideways"] = {
-						        "note": str(sideways_note or ""),
-						        "from": str(row.get("Time", "")),
-						        "context": "Market structure condition near Entry 1"
-						    }
+				
                                    
                             doc[side]["milestones"] = milestones
                         doc[side]["entries"].append(entry_obj)
                      
-                        # sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-                 
-                        #     doc[side]["Sideways"] = {
-                        #         "note": str(sideways_note),
-                        #         "from": str(row.get("Time", "")),  # entry start time
-                        #                         }
+                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        if sideways_note:     
+                            doc[side]["Sideways"] = {
+                                "note": str(sideways_note),
+                                "from": str(row.get("Time", "")),  # entry start time
+                                                }
 
     
                     # final list to export
