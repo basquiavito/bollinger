@@ -8007,7 +8007,28 @@ if st.sidebar.button("Run Analysis"):
 
                     return df.to_csv(index=False).encode("utf-8")
                 
+                mp = grouped_docs[key]["marketProfile"]
+
+                # Assume these are F% values for entries
+                call1_f = entry_data.get("Call_1_F")
+                call2_f = entry_data.get("Call_2_F")
+                call3_f = entry_data.get("Call_3_F")
                 
+                put1_f = entry_data.get("Put_1_F")
+                put2_f = entry_data.get("Put_2_F")
+                put3_f = entry_data.get("Put_3_F")
+                
+                mp_states = {
+                    "Call_1": determine_mp_state(call1_f, mp),
+                    "Call_2": determine_mp_state(call2_f, mp),
+                    "Call_3": determine_mp_state(call3_f, mp),
+                    "Put_1": determine_mp_state(put1_f, mp),
+                    "Put_2": determine_mp_state(put2_f, mp),
+                    "Put_3": determine_mp_state(put3_f, mp)
+                }
+                
+                grouped_docs[key]["marketProfile"]["entryStates"] = mp_states
+
                 # ----------  Build once, reuse always ----------
                 entries_df = build_entries_df(intraday).round(2)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
