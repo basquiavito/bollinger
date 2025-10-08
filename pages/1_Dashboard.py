@@ -7008,36 +7008,6 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
-
-                
-                def determine_mp_state(price_f, mp):
-                    """
-                    Classifies where price_f lies relative to Market Profile levels.
-                    Returns one of: Below_VA, Inside_VA, Above_VA_Below_IB, Inside_IB, Above_IB.
-                    """
-                    va_low = mp.get("VA_Low")
-                    va_high = mp.get("VA_High")
-                    ib_low = mp.get("IB_Low")
-                    ib_high = mp.get("IB_High")
-                
-                    if price_f is None:
-                        return None
-                
-                    if price_f < va_low:
-                        return "Below_VA"
-                    elif va_low <= price_f < va_high:
-                        return "Inside_VA"
-                    elif va_high <= price_f < ib_low:
-                        return "Above_VA_Below_IB"
-                    elif ib_low <= price_f <= ib_high:
-                        return "Inside_IB"
-                    elif price_f > ib_high:
-                        return "Above_IB"
-                    else:
-                        return "Undefined"
-
-
-                
                 def assign_label_simple(row, intraday):
                     if not any(tag in row["Type"] for tag in ["🎯1", "🎯2"]):
                         return ""
@@ -8007,28 +7977,7 @@ if st.sidebar.button("Run Analysis"):
 
                     return df.to_csv(index=False).encode("utf-8")
                 
-                mp = grouped_docs[key]["marketProfile"]
-
-                # Assume these are F% values for entries
-                call1_f = entry_data.get("Call_1_F")
-                call2_f = entry_data.get("Call_2_F")
-                call3_f = entry_data.get("Call_3_F")
                 
-                put1_f = entry_data.get("Put_1_F")
-                put2_f = entry_data.get("Put_2_F")
-                put3_f = entry_data.get("Put_3_F")
-                
-                mp_states = {
-                    "Call_1": determine_mp_state(call1_f, mp),
-                    "Call_2": determine_mp_state(call2_f, mp),
-                    "Call_3": determine_mp_state(call3_f, mp),
-                    "Put_1": determine_mp_state(put1_f, mp),
-                    "Put_2": determine_mp_state(put2_f, mp),
-                    "Put_3": determine_mp_state(put3_f, mp)
-                }
-                
-                grouped_docs[key]["marketProfile"]["entryStates"] = mp_states
-
                 # ----------  Build once, reuse always ----------
                 entries_df = build_entries_df(intraday).round(2)
                 csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
@@ -8083,10 +8032,6 @@ if st.sidebar.button("Run Analysis"):
 
                         open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
                         close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
-                        # assume you already have prev_close or yesterday_close in memory
-                        open_f = round(((open_price - prev_close) / prev_close) * 10000, 2)
-                        close_f = round(((close_price - prev_close) / prev_close) * 10000, 2)
-
                         # create shell doc if first time
                         if key not in grouped_docs:
                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
@@ -8115,10 +8060,6 @@ if st.sidebar.button("Run Analysis"):
                                 "prefix"    : row.get("Prefix", ""),
                                 "open": round(open_price, 2) if open_price is not None else None,
                                 "close": round(close_price, 2) if close_price is not None else None,
-                                "open": round(open_price, 2) if open_price is not None else None,
-                                "openF": open_f if open_f is not None else None,      # 👈 F% of open
-                                "closeF": close_f if close_f is not None else None,      # 👈 F% of open
-
                                 "marketProfile":mp_summary,
                                 "callPath": {"midas": {
                                                  "anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",
@@ -8126,8 +8067,8 @@ if st.sidebar.button("Run Analysis"):
                                             },
 
                                              "entries": [], "milestones": {}},
-                                "putPath":  {"midas":{"anchor_time": str(anchor_time_bear.strftime("%H:%M")) if 'anchor_time_bear' in locals() else "", 
-                                                     "anchor_price": round(float(anchor_price_bear), 2) if 'anchor_price_bear' in locals() else None},
+                                "putPath":  {"midas":{"anchor_time": str(anchor_time_bear.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "", 
+                                                     "anchor_price": round(float(anchor_price_bear), 2) if 'anchor_price_bull' in locals() else None},
                                                      "entries": [], "milestones": {}},
                             }
                         doc = grouped_docs[key]
