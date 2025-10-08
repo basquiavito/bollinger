@@ -8032,6 +8032,10 @@ if st.sidebar.button("Run Analysis"):
 
                         open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
                         close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
+                        # assume you already have prev_close or yesterday_close in memory
+                        open_f = round(((open_price - prev_close) / prev_close) * 10000, 2)
+                        close_f = round(((close_price - prev_close) / prev_close) * 10000, 2)
+
                         # create shell doc if first time
                         if key not in grouped_docs:
                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
@@ -8060,6 +8064,8 @@ if st.sidebar.button("Run Analysis"):
                                 "prefix"    : row.get("Prefix", ""),
                                 "open": round(open_price, 2) if open_price is not None else None,
                                 "close": round(close_price, 2) if close_price is not None else None,
+                                "open": round(open_price, 2) if open_price is not None else None,
+                                "openF": open_f if open_f is not None else None,      # 👈 F% of open
                                 "marketProfile":mp_summary,
                                 "callPath": {"midas": {
                                                  "anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",
