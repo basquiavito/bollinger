@@ -9561,8 +9561,33 @@ if st.sidebar.button("Run Analysis"):
                     name="🎯3 Call Entry 3",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
-
-
+                
+                # 🎯 Call Entry 8 (Silent Inauguration)
+                call8_mask = intraday["Call_Entry8_Emoji"] == "🎯8"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[call8_mask, "Time"],
+                    y=intraday.loc[call8_mask, "F_numeric"] + 34,   # same offset style as your Call 🎯1
+                    mode="text",
+                    text=intraday.loc[call8_mask, "Call_Entry8_Emoji"],
+                    textposition="top center",
+                    textfont=dict(size=34),
+                    name="🎯 Call Entry 8",
+                    hovertemplate="Entry 8 (Call)<br>Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+                
+                # 🎯 Put Entry 8 (Silent Inauguration)
+                put8_mask = intraday["Put_Entry8_Emoji"] == "🎯8"
+                fig.add_trace(go.Scatter(
+                    x=intraday.loc[put8_mask, "Time"],
+                    y=intraday.loc[put8_mask, "F_numeric"] - 34,   # offset opposite for clarity; use +34 if you prefer symmetry
+                    mode="text",
+                    text=intraday.loc[put8_mask, "Put_Entry8_Emoji"],
+                    textposition="bottom center",
+                    textfont=dict(size=34),
+                    name="🎯 Put Entry 8",
+                    hovertemplate="Entry 8 (Put)<br>Time: %{x}<br>F%%: %{y}<extra></extra>"
+                ), row=1, col=1)
+                
 
                 put_pe_mask = (intraday["Put_FirstEntry_Emoji"] == "🎯") & (intraday["Put_PE"] > intraday["Call_PE"])
                 
