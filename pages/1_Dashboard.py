@@ -7864,7 +7864,26 @@ if st.sidebar.button("Run Analysis"):
 
                                        }),
  
-          
+                              # --- ENTRY 8 (Silent Inauguration) ---
+                    has_call1 = (intraday.get("Call_FirstEntry_Emoji") == "🎯").fillna(False).any()
+                    has_put1  = (intraday.get("Put_FirstEntry_Emoji")  == "🎯").fillna(False).any()
+                    has_entry1 = bool(has_call1 or has_put1)
+                    
+                    if not has_entry1:
+                        cross_idx, cross_dir = find_first_kijunF_cross(intraday)
+                        if cross_idx is not None:
+                            t_str = pd.to_datetime(intraday.at[cross_idx, "Time"]).strftime("%H:%M")
+                            entry_type = "Call 🎯8" if cross_dir == "up" else "Put 🎯8"
+                            entries.append({
+                                "Type": entry_type,
+                                "Time": t_str,
+                                "Price ($)": intraday.at[cross_idx, "Close"],
+                                "F%": intraday.at[cross_idx, "F_numeric"],
+                                "Kingdom": intraday.at[cross_idx, "Kingdom"] if "Kingdom" in intraday.columns else "",
+                                "Context": "Silent Inauguration",                       # optional tag
+                                "Trigger": "Kijun_F Cross Without Entry 1"              # optional tag
+                            })
+
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
                    .reset_index(drop=True))
