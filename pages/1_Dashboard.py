@@ -6641,6 +6641,19 @@ if st.sidebar.button("Run Analysis"):
                             intraday.loc[peak_idx, "Energy_Aid_Value"] = energy_val
 
 
+                def determine_kingdom_state(intraday: pd.DataFrame) -> pd.DataFrame:
+                    intraday = intraday.copy()
+                
+                    intraday["Kingdom"] = np.where(
+                        intraday["F_numeric"] > intraday["Kijun_F"], "Green", "Red"
+                    )
+                
+                    intraday["Kingdom_Switch"] = intraday["Kingdom"].ne(intraday["Kingdom"].shift())
+                    intraday["Kingdom_Duration"] = (
+                        intraday.groupby((intraday["Kingdom_Switch"]).cumsum()).cumcount() + 1
+                    )
+                
+                    return intraday
 
 
                  
