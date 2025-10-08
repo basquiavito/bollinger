@@ -8067,8 +8067,8 @@ if st.sidebar.button("Run Analysis"):
                                             },
 
                                              "entries": [], "milestones": {}},
-                                "putPath":  {"midas":{"anchor_time": str(anchor_time_bear.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "", 
-                                                     "anchor_price": round(float(anchor_price_bear), 2) if 'anchor_price_bull' in locals() else None},
+                                "putPath":  {"midas":{"anchor_time": str(anchor_time_bear.strftime("%H:%M")) if 'anchor_time_bear' in locals() else "", 
+                                                     "anchor_price": round(float(anchor_price_bear), 2) if 'anchor_price_bear' in locals() else None},
                                                      "entries": [], "milestones": {}},
                             }
                         doc = grouped_docs[key]
