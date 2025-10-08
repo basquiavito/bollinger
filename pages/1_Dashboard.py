@@ -8222,6 +8222,24 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
                     )
+                    # --- Ensure columns exist (safe init) ---
+                    if "Call_Entry8_Emoji" not in intraday.columns:
+                        intraday["Call_Entry8_Emoji"] = ""
+                    if "Put_Entry8_Emoji" not in intraday.columns:
+                        intraday["Put_Entry8_Emoji"] = ""
+                    
+                    # --- Entry 8 detection (Silent Inauguration) ---
+                    has_call1 = (intraday.get("Call_FirstEntry_Emoji") == "🎯").fillna(False).any()
+                    has_put1  = (intraday.get("Put_FirstEntry_Emoji")  == "🎯").fillna(False).any()
+                    has_entry1 = bool(has_call1 or has_put1)
+                    
+                    if not has_entry1:
+                        cross_idx, cross_dir = find_first_kijunF_cross(intraday)  # you already have this helper
+                        if cross_idx is not None:
+                            if cross_dir == "up":
+                                intraday.at[cross_idx, "Call_Entry8_Emoji"] = "🎯8"
+                            else:
+                                intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
