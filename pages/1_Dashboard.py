@@ -7993,6 +7993,8 @@ if st.sidebar.button("Run Analysis"):
                 # Optional: persist expander state across reruns
                 st.session_state.setdefault("expand_entries", True)
 
+                anchor_price_bull = intraday.loc[anchor_idx_bull, 'Close']
+                anchor_price_bear = intraday.loc[anchor_idx_bear, 'Close']
 
 
                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
