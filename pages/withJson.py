@@ -7973,6 +7973,65 @@ if st.sidebar.button("Run Analysis"):
                     df["Date"] = df["Date"].astype(str)
 
                     return df
+
+
+            
+                def find_first_kijunF_cross(intraday: pd.DataFrame):
+                    """Return (index, direction 'up'/'down') for the first F_numeric vs Kijun_F cross."""
+                    if not {"F_numeric", "Kijun_F"}.issubset(intraday.columns):
+                        return None, None
+                    diff = intraday["F_numeric"].astype(float) - intraday["Kijun_F"].astype(float)
+                    sign = np.sign(diff).replace(0, np.nan)
+                    prev = sign.shift(1)
+                    crosses = intraday.index[(prev.notna()) & (sign.notna()) & (sign != prev)]
+                    if len(crosses) == 0:
+                        return None, None
+                    i = crosses[0]
+                    return int(i), ("up" if diff.loc[i] > 0 else "down")
+
+                def find_first_entry1_index(intraday: pd.DataFrame):
+                    """Earliest idx where either Call or Put 🎯1 appears."""
+                    idxs = []
+                    if "Call_FirstEntry_Emoji" in intraday.columns:
+                        idxs += intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"].tolist()
+                    if "Put_FirstEntry_Emoji" in intraday.columns:
+                        idxs += intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"].tolist()
+                    return (min(idxs) if idxs else None)
+
+
+                # safe init
+                for col in ["Call_Entry8_Emoji", "Put_Entry8_Emoji"]:
+                    if col not in intraday.columns:
+                        intraday[col] = ""
+                
+                cross_idx, cross_dir = find_first_kijunF_cross(intraday)
+                first_e1_idx = find_first_entry1_index(intraday)
+                
+                # Trigger if cross is before first Entry 1 (or if Entry 1 never happens)
+                if cross_idx is not None and (first_e1_idx is None or cross_idx < first_e1_idx):
+                    if cross_dir == "up":
+                        intraday.at[cross_idx, "Call_Entry8_Emoji"] = "🎯8"
+                    else:
+                        intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
+
+                # --- Ensure columns exist (safe init) ---
+                if "Call_Entry8_Emoji" not in intraday.columns:
+                    intraday["Call_Entry8_Emoji"] = ""
+                if "Put_Entry8_Emoji" not in intraday.columns:
+                    intraday["Put_Entry8_Emoji"] = ""
+                
+                # --- Entry 8 detection (Silent Inauguration) ---
+                has_call1 = (intraday.get("Call_FirstEntry_Emoji") == "🎯").fillna(False).any()
+                has_put1  = (intraday.get("Put_FirstEntry_Emoji")  == "🎯").fillna(False).any()
+                has_entry1 = bool(has_call1 or has_put1)
+                
+                if not has_entry1:
+                    cross_idx, cross_dir = find_first_kijunF_cross(intraday)  # you already have this helper
+                    if cross_idx is not None:
+                        if cross_dir == "up":
+                            intraday.at[cross_idx, "Call_Entry8_Emoji"] = "🎯8"
+                        else:
+                            intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
                 def detect_sideways(intraday, ib_low, ib_high, entry_time, min_bars=4):
              
 
@@ -8239,62 +8298,6 @@ if st.sidebar.button("Run Analysis"):
 #                     )
 
 
-                    def find_first_kijunF_cross(intraday: pd.DataFrame):
-                        """Return (index, direction 'up'/'down') for the first F_numeric vs Kijun_F cross."""
-                        if not {"F_numeric", "Kijun_F"}.issubset(intraday.columns):
-                            return None, None
-                        diff = intraday["F_numeric"].astype(float) - intraday["Kijun_F"].astype(float)
-                        sign = np.sign(diff).replace(0, np.nan)
-                        prev = sign.shift(1)
-                        crosses = intraday.index[(prev.notna()) & (sign.notna()) & (sign != prev)]
-                        if len(crosses) == 0:
-                            return None, None
-                        i = crosses[0]
-                        return int(i), ("up" if diff.loc[i] > 0 else "down")
-
-                    def find_first_entry1_index(intraday: pd.DataFrame):
-                        """Earliest idx where either Call or Put 🎯1 appears."""
-                        idxs = []
-                        if "Call_FirstEntry_Emoji" in intraday.columns:
-                            idxs += intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"].tolist()
-                        if "Put_FirstEntry_Emoji" in intraday.columns:
-                            idxs += intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"].tolist()
-                        return (min(idxs) if idxs else None)
-
-
-                    # safe init
-                    for col in ["Call_Entry8_Emoji", "Put_Entry8_Emoji"]:
-                        if col not in intraday.columns:
-                            intraday[col] = ""
-                    
-                    cross_idx, cross_dir = find_first_kijunF_cross(intraday)
-                    first_e1_idx = find_first_entry1_index(intraday)
-                    
-                    # Trigger if cross is before first Entry 1 (or if Entry 1 never happens)
-                    if cross_idx is not None and (first_e1_idx is None or cross_idx < first_e1_idx):
-                        if cross_dir == "up":
-                            intraday.at[cross_idx, "Call_Entry8_Emoji"] = "🎯8"
-                        else:
-                            intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
-
-                    # --- Ensure columns exist (safe init) ---
-                    if "Call_Entry8_Emoji" not in intraday.columns:
-                        intraday["Call_Entry8_Emoji"] = ""
-                    if "Put_Entry8_Emoji" not in intraday.columns:
-                        intraday["Put_Entry8_Emoji"] = ""
-                    
-                    # --- Entry 8 detection (Silent Inauguration) ---
-                    has_call1 = (intraday.get("Call_FirstEntry_Emoji") == "🎯").fillna(False).any()
-                    has_put1  = (intraday.get("Put_FirstEntry_Emoji")  == "🎯").fillna(False).any()
-                    has_entry1 = bool(has_call1 or has_put1)
-                    
-                    if not has_entry1:
-                        cross_idx, cross_dir = find_first_kijunF_cross(intraday)  # you already have this helper
-                        if cross_idx is not None:
-                            if cross_dir == "up":
-                                intraday.at[cross_idx, "Call_Entry8_Emoji"] = "🎯8"
-                            else:
-                                intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
 
                 with ticker_tabs[0]:
                     # -- Create Subplots: Row1=F%, Row2=Momentum
