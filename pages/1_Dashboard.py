@@ -7868,21 +7868,25 @@ if st.sidebar.button("Run Analysis"):
                     has_call1 = (intraday.get("Call_FirstEntry_Emoji") == "🎯").fillna(False).any()
                     has_put1  = (intraday.get("Put_FirstEntry_Emoji")  == "🎯").fillna(False).any()
                     has_entry1 = bool(has_call1 or has_put1)
+
                     
-                    if not has_entry1:
-                        cross_idx, cross_dir = find_first_kijunF_cross(intraday)
-                        if cross_idx is not None:
-                            t_str = pd.to_datetime(intraday.at[cross_idx, "Time"]).strftime("%H:%M")
-                            entry_type = "Call 🎯8" if cross_dir == "up" else "Put 🎯8"
-                            entries.append({
-                                "Type": entry_type,
-                                "Time": t_str,
-                                "Price ($)": intraday.at[cross_idx, "Close"],
-                                "F%": intraday.at[cross_idx, "F_numeric"],
-                                "Kingdom": intraday.at[cross_idx, "Kingdom"] if "Kingdom" in intraday.columns else "",
-                                "Context": "Silent Inauguration",                       # optional tag
-                                "Trigger": "Kijun_F Cross Without Entry 1"              # optional tag
-                            })
+                                      # --- ENTRY 8 (Silent Inauguration) ---
+                    cross_idx, cross_dir = find_first_kijunF_cross(intraday)
+                    first_e1_idx = find_first_entry1_index(intraday)
+                    
+                    # Fire Entry 8 if the cross happens before the first Entry 1 or if Entry 1 never appears
+                    if cross_idx is not None and (first_e1_idx is None or cross_idx < first_e1_idx):
+                        t_str = pd.to_datetime(intraday.at[cross_idx, "Time"]).strftime("%H:%M")
+                        entry_type = "Call 🎯8" if cross_dir == "up" else "Put 🎯8"
+                        entries.append({
+                            "Type": entry_type,
+                            "Time": t_str,
+                            "Price ($)": intraday.at[cross_idx, "Close"],
+                            "F%": intraday.at[cross_idx, "F_numeric"],
+                            "Kingdom": intraday.at[cross_idx, "Kingdom"] if "Kingdom" in intraday.columns else "",
+                            "Context": "Silent Inauguration",
+                            "Trigger": "Kijun_F Cross Before Entry 1"
+                        })
 
                     df = (pd.DataFrame(entries)
                    .sort_values("Time")
