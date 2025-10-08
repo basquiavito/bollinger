@@ -7008,6 +7008,36 @@ if st.sidebar.button("Run Analysis"):
                 
                 # Apply
                 intraday = add_parallel_phase(intraday)
+
+                
+                def determine_mp_state(price_f, mp):
+                    """
+                    Classifies where price_f lies relative to Market Profile levels.
+                    Returns one of: Below_VA, Inside_VA, Above_VA_Below_IB, Inside_IB, Above_IB.
+                    """
+                    va_low = mp.get("VA_Low")
+                    va_high = mp.get("VA_High")
+                    ib_low = mp.get("IB_Low")
+                    ib_high = mp.get("IB_High")
+                
+                    if price_f is None:
+                        return None
+                
+                    if price_f < va_low:
+                        return "Below_VA"
+                    elif va_low <= price_f < va_high:
+                        return "Inside_VA"
+                    elif va_high <= price_f < ib_low:
+                        return "Above_VA_Below_IB"
+                    elif ib_low <= price_f <= ib_high:
+                        return "Inside_IB"
+                    elif price_f > ib_high:
+                        return "Above_IB"
+                    else:
+                        return "Undefined"
+
+
+                
                 def assign_label_simple(row, intraday):
                     if not any(tag in row["Type"] for tag in ["🎯1", "🎯2"]):
                         return ""
