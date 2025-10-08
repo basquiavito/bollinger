@@ -8020,19 +8020,19 @@ if st.sidebar.button("Run Analysis"):
                 anchor_price_bull = intraday.loc[anchor_idx_bull, 'Close']
                 anchor_price_bear = intraday.loc[anchor_idx_bear, 'Close']
 
-                bg_color = "rgba(0,255,0,0.07)" if st.session_state["current_kingdom"] == "Green" else "rgba(255,0,0,0.07)"
+                # bg_color = "rgba(0,255,0,0.07)" if st.session_state["current_kingdom"] == "Green" else "rgba(255,0,0,0.07)"
                 
-                st.markdown(
-                    f"""
-                    <style>
-                    .stApp {{
-                        background-color: {bg_color};
-                        transition: background-color 1s ease-in-out;
-                    }}
-                    </style>
-                    """,
-                    unsafe_allow_html=True
-                )
+                # st.markdown(
+                #     f"""
+                #     <style>
+                #     .stApp {{
+                #         background-color: {bg_color};
+                #         transition: background-color 1s ease-in-out;
+                #     }}
+                #     </style>
+                #     """,
+                #     unsafe_allow_html=True
+                # )
 
                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
                     st.dataframe(entries_df, use_container_width=True)
