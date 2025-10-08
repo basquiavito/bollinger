@@ -8090,166 +8090,166 @@ if st.sidebar.button("Run Analysis"):
                 anchor_price_bull = intraday.loc[anchor_idx_bull, 'Close']
                 anchor_price_bear = intraday.loc[anchor_idx_bear, 'Close']
 
-                # bg_color = "rgba(0,255,0,0.07)" if st.session_state["current_kingdom"] == "Green" else "rgba(255,0,0,0.07)"
+                bg_color = "rgba(0,255,0,0.07)" if st.session_state["current_kingdom"] == "Green" else "rgba(255,0,0,0.07)"
                 
-                # st.markdown(
-                #     f"""
-                #     <style>
-                #     .stApp {{
-                #         background-color: {bg_color};
-                #         transition: background-color 1s ease-in-out;
-                #     }}
-                #     </style>
-                #     """,
-                #     unsafe_allow_html=True
-                # )
+                st.markdown(
+                    f"""
+                    <style>
+                    .stApp {{
+                        background-color: {bg_color};
+                        transition: background-color 1s ease-in-out;
+                    }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-#                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
-#                     st.dataframe(entries_df, use_container_width=True)
+                with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
+                    st.dataframe(entries_df, use_container_width=True)
                 
-#                     # ---------- CSV (unchanged) ----------
-#                     csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
-#                     csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
-#                     st.markdown(
-#                         f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
-#                         unsafe_allow_html=True
-#                     )
-#                 # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
-#                     entries_df = entries_df.where(pd.notnull(entries_df), None)
-#                     entries_df = entries_df.replace({np.nan: None})
+                    # ---------- CSV (unchanged) ----------
+                    csv_bytes = entries_df.to_csv(index=False).encode("utf-8")
+                    csv_b64 = base64.b64encode(csv_bytes).decode("utf-8")
+                    st.markdown(
+                        f'<a href="data:text/csv;base64,{csv_b64}" download="entries.csv">⬇️ Download Entries (CSV)</a>',
+                        unsafe_allow_html=True
+                    )
+                # ✅ CLEANUP: replace NaN with None (Mongo safe), ensure Ticker exists
+                    entries_df = entries_df.where(pd.notnull(entries_df), None)
+                    entries_df = entries_df.replace({np.nan: None})
 
-#                     if "Ticker" not in entries_df.columns:
-#                         entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
-#                     # ---------- JSON (grouped) ----------
-#                     grouped_docs = {}
+                    if "Ticker" not in entries_df.columns:
+                        entries_df["Ticker"] = tickers[0] if isinstance(tickers, list) and tickers else "UNKNOWN"
+                    # ---------- JSON (grouped) ----------
+                    grouped_docs = {}
                 
-#                     for row in entries_df.to_dict(orient="records"):
-#                         # identify ticker + date key  (adjust the column names if yours differ)
-#                         # ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
-#                         ticker = (row.get("Ticker") or row.get("ticker") or row.get("name") or "UNKNOWN").strip().upper()
+                    for row in entries_df.to_dict(orient="records"):
+                        # identify ticker + date key  (adjust the column names if yours differ)
+                        # ticker = row.get("name") or row.get("Ticker") or "UNKNOWN"
+                        ticker = (row.get("Ticker") or row.get("ticker") or row.get("name") or "UNKNOWN").strip().upper()
 
-#                         date   = row["Date"]
-#                         key = f"{ticker}_{date}"
+                        date   = row["Date"]
+                        key = f"{ticker}_{date}"
                 
                
-#                 # Detect Call vs Put
-#                         entry_type = row.get("Type", "")
-#                         side = "callPath" if "Call" in entry_type else "putPath"
+                # Detect Call vs Put
+                        entry_type = row.get("Type", "")
+                        side = "callPath" if "Call" in entry_type else "putPath"
 
 
-#                         open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
-#                         close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
-#                         # create shell doc if first time
-#                         if key not in grouped_docs:
-#                             # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
-#                             slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
-#                             slug = slug.lower().replace(" ", "-")
+                        open_price = float(intraday["Close"].iloc[0]) if not intraday.empty else None
+                        close_price = float(intraday["Close"].iloc[-1]) if not intraday.empty else None
+                        # create shell doc if first time
+                        if key not in grouped_docs:
+                            # ticker = row.get("Ticker") or row.get("ticker") or row.get("name")
+                            slug = f"{ticker}-{date}-{row.get('Prefix','')}-{row.get('Prototype','')}"
+                            slug = slug.lower().replace(" ", "-")
                       
-# # Find open and close prices for this date
+# Find open and close prices for this date
                            
 
 
 
-#                             grouped_docs[key] = {
+                            grouped_docs[key] = {
                               
-#                                  "name": str(ticker or "UNKNOWN").lower(),
+                                 "name": str(ticker or "UNKNOWN").lower(),
 
-#                                 "date"      : date,
-#                                  "slug": slug,   # 👈 NEW
-#                                  "archive": True,   # 👈 always included by default
-#                                  "cardPng":"",
-#                                  "value":"",
-#                                  "opus":"",
-#                                  "note":"",
-#                                 "Prototype" : row.get("Prototype", ""),
-#                                 "Kingdom": row.get("Kingdom", ""),
+                                "date"      : date,
+                                 "slug": slug,   # 👈 NEW
+                                 "archive": True,   # 👈 always included by default
+                                 "cardPng":"",
+                                 "value":"",
+                                 "opus":"",
+                                 "note":"",
+                                "Prototype" : row.get("Prototype", ""),
+                                "Kingdom": row.get("Kingdom", ""),
 
-#                                 "label"     : row.get("Label", ""),
-#                                 "suffix"    : row.get("Suffix", ""),
-#                                 "prefix"    : row.get("Prefix", ""),
-#                                 "open": round(open_price, 2) if open_price is not None else None,
-#                                 "close": round(close_price, 2) if close_price is not None else None,
-#                                 "marketProfile":mp_summary,
-#                                 "callPath": {"midas": {
-#                                                  "anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",
-#                                                  "anchor_price": round(float(anchor_price_bull), 2) if 'anchor_price_bull' in locals() else None
-#                                             },
+                                "label"     : row.get("Label", ""),
+                                "suffix"    : row.get("Suffix", ""),
+                                "prefix"    : row.get("Prefix", ""),
+                                "open": round(open_price, 2) if open_price is not None else None,
+                                "close": round(close_price, 2) if close_price is not None else None,
+                                "marketProfile":mp_summary,
+                                "callPath": {"midas": {
+                                                 "anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",
+                                                 "anchor_price": round(float(anchor_price_bull), 2) if 'anchor_price_bull' in locals() else None
+                                            },
 
-#                                              "entries": [], "milestones": {}},
-#                                 "putPath":  {"midas":{"anchor_time": str(anchor_time_bear.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "", 
-#                                                      "anchor_price": round(float(anchor_price_bear), 2) if 'anchor_price_bull' in locals() else None},
-#                                                      "entries": [], "milestones": {}},
-#                             }
+                                             "entries": [], "milestones": {}},
+                                "putPath":  {"midas":{"anchor_time": str(anchor_time_bear.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "", 
+                                                     "anchor_price": round(float(anchor_price_bear), 2) if 'anchor_price_bull' in locals() else None},
+                                                     "entries": [], "milestones": {}},
+                            }
 
 
                         
-#                         grouped_docs[key]["Kingdom_Open"] = intraday["Kingdom"].iloc[0]
-#                         grouped_docs[key]["Kingdom_Current"] = intraday["Kingdom"].iloc[-1]
-#                         doc = grouped_docs[key]
-#                         entry_obj = {
-#                               "Type" : entry_type,
-#                               "Time" : row.get("Time", ""),
-#                               "Price": row.get("Price ($)", "")
-#                           }
+                        grouped_docs[key]["Kingdom_Open"] = intraday["Kingdom"].iloc[0]
+                        grouped_docs[key]["Kingdom_Current"] = intraday["Kingdom"].iloc[-1]
+                        doc = grouped_docs[key]
+                        entry_obj = {
+                              "Type" : entry_type,
+                              "Time" : row.get("Time", ""),
+                              "Price": row.get("Price ($)", "")
+                          }
 
-#                         # if "🎯1" in entry_type:
+                        # if "🎯1" in entry_type:
 
-#                         #     milestones = {
-#                         #         "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
-#                         #         "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
-#                         #         "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
-#                         #         "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
-#                         #         "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
-#                         #         "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")},
-#                         #                  # 👇 Add side-specific PAE here
+                        #     milestones = {
+                        #         "T0": {"emoji": row.get("T0_Emoji", ""), "time": row.get("T0_Time", ""), "price": row.get("T0_Price", "")},
+                        #         "T1": {"emoji": row.get("T1_Emoji", ""), "time": row.get("T1_Time", ""), "price": row.get("T1_Price", "")},
+                        #         "T2": {"emoji": row.get("T2_Emoji", ""), "time": row.get("T2_Time", ""), "price": row.get("T2_Price", "")},
+                        #         "Parallel": {"emoji": row.get("Parallel_Emoji", ""), "time": row.get("Parallel_Time", ""), "gain": row.get("Parallel_Gain", "")},
+                        #         "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji", ""), "time": row.get("Goldmine_E2_Time", ""), "price": row.get("Goldmine_E2 Price", "")},
+                        #         "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji", ""), "time": row.get("Goldmine_T1_Time", ""), "price": row.get("Goldmine_T1 Price", "")},
+                        #                  # 👇 Add side-specific PAE here
 
 
                           
-#                         #                  }
-#                         if ("🎯1" in entry_type) or ("🎯8" in entry_type):
-#                             milestones = {
-#                                 "T0": {"emoji": row.get("T0_Emoji",""), "time": row.get("T0_Time",""), "price": row.get("T0_Price","")},
-#                                 "T1": {"emoji": row.get("T1_Emoji",""), "time": row.get("T1_Time",""), "price": row.get("T1_Price","")},
-#                                 "T2": {"emoji": row.get("T2_Emoji",""), "time": row.get("T2_Time",""), "price": row.get("T2_Price","")},
-#                                 "Parallel": {"emoji": row.get("Parallel_Emoji",""), "time": row.get("Parallel_Time",""), "gain": row.get("Parallel_Gain","")},
-#                                 "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji",""), "time": row.get("Goldmine_E2_Time",""), "price": row.get("Goldmine_E2 Price","")},
-#                                 "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji",""), "time": row.get("Goldmine_T1_Time",""), "price": row.get("Goldmine_T1 Price","")},
-#                             }
-#                             # milestones["callPae" if side == "callPath" else "putPae"] = {
-#                             #     "1to2": str(row.get("PAE_1to2","") or ""),
-#                             #     "2to3": str(row.get("PAE_2to3","") or ""),
-#                             #     "3to40F": str(row.get("PAE_3to40F","") or "")
-#                             # }
-#                             doc[side]["milestones"] = milestones
-#                       #👇 Add PAE as just another milestone
-#                             milestones["callPae" if side == "callPath" else "putPae"] = {
-#                                "1to2": str(row.get("PAE_1to2", "") or ""),
-#                                "2to3": str(row.get("PAE_2to3", "") or ""),
-#                                "3to40F": str(row.get("PAE_3to40F", "") or "")
-#                             }
+                        #                  }
+                        if ("🎯1" in entry_type) or ("🎯8" in entry_type):
+                            milestones = {
+                                "T0": {"emoji": row.get("T0_Emoji",""), "time": row.get("T0_Time",""), "price": row.get("T0_Price","")},
+                                "T1": {"emoji": row.get("T1_Emoji",""), "time": row.get("T1_Time",""), "price": row.get("T1_Price","")},
+                                "T2": {"emoji": row.get("T2_Emoji",""), "time": row.get("T2_Time",""), "price": row.get("T2_Price","")},
+                                "Parallel": {"emoji": row.get("Parallel_Emoji",""), "time": row.get("Parallel_Time",""), "gain": row.get("Parallel_Gain","")},
+                                "Goldmine_E2": {"emoji": row.get("Goldmine_E2_Emoji",""), "time": row.get("Goldmine_E2_Time",""), "price": row.get("Goldmine_E2 Price","")},
+                                "Goldmine_T1": {"emoji": row.get("Goldmine_T1_Emoji",""), "time": row.get("Goldmine_T1_Time",""), "price": row.get("Goldmine_T1 Price","")},
+                            }
+                            # milestones["callPae" if side == "callPath" else "putPae"] = {
+                            #     "1to2": str(row.get("PAE_1to2","") or ""),
+                            #     "2to3": str(row.get("PAE_2to3","") or ""),
+                            #     "3to40F": str(row.get("PAE_3to40F","") or "")
+                            # }
+                            doc[side]["milestones"] = milestones
+                      #👇 Add PAE as just another milestone
+                            milestones["callPae" if side == "callPath" else "putPae"] = {
+                               "1to2": str(row.get("PAE_1to2", "") or ""),
+                               "2to3": str(row.get("PAE_2to3", "") or ""),
+                               "3to40F": str(row.get("PAE_3to40F", "") or "")
+                            }
 
 
                                    
-#                             doc[side]["milestones"] = milestones
-#                         doc[side]["entries"].append(entry_obj)
+                            doc[side]["milestones"] = milestones
+                        doc[side]["entries"].append(entry_obj)
                      
-#                         sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
-#                         if sideways_note:
-#                             doc[side]["Sideways"] = {
-#                                 "note": str(sideways_note),
-#                                 "from": str(row.get("Time", "")),  # entry start time
-#                                                 }
+                        sideways_note = detect_sideways(intraday, ib_low, ib_high, row["Time"])
+                        if sideways_note:
+                            doc[side]["Sideways"] = {
+                                "note": str(sideways_note),
+                                "from": str(row.get("Time", "")),  # entry start time
+                                                }
 
     
-#                     # final list to export
-#                     json_ready = list(grouped_docs.values())
+                    # # final list to export
+                    # json_ready = list(grouped_docs.values())
                 
-#                     json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
-#                     json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
-#                     st.markdown(
-#                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
-#                         unsafe_allow_html=True
-#                     )
+                    # json_str  = json.dumps(json_ready, indent=2, ensure_ascii=False)
+                    # json_b64  = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+                    # st.markdown(
+                    #     f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
+                    #     unsafe_allow_html=True
+                    # )
 
 
                     def find_first_kijunF_cross(intraday: pd.DataFrame):
