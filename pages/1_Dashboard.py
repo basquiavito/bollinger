@@ -8222,6 +8222,46 @@ if st.sidebar.button("Run Analysis"):
                         f'<a href="data:application/json;base64,{json_b64}" download="entries.json">⬇️ Download Entries (JSON)</a>',
                         unsafe_allow_html=True
                     )
+
+
+                    def find_first_kijunF_cross(intraday: pd.DataFrame):
+                        """Return (index, direction 'up'/'down') for the first F_numeric vs Kijun_F cross."""
+                        if not {"F_numeric", "Kijun_F"}.issubset(intraday.columns):
+                            return None, None
+                        diff = intraday["F_numeric"].astype(float) - intraday["Kijun_F"].astype(float)
+                        sign = np.sign(diff).replace(0, np.nan)
+                        prev = sign.shift(1)
+                        crosses = intraday.index[(prev.notna()) & (sign.notna()) & (sign != prev)]
+                        if len(crosses) == 0:
+                            return None, None
+                        i = crosses[0]
+                        return int(i), ("up" if diff.loc[i] > 0 else "down")
+
+                    def find_first_entry1_index(intraday: pd.DataFrame):
+                        """Earliest idx where either Call or Put 🎯1 appears."""
+                        idxs = []
+                        if "Call_FirstEntry_Emoji" in intraday.columns:
+                            idxs += intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"].tolist()
+                        if "Put_FirstEntry_Emoji" in intraday.columns:
+                            idxs += intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"].tolist()
+                        return (min(idxs) if idxs else None)
+
+
+                    # safe init
+                    for col in ["Call_Entry8_Emoji", "Put_Entry8_Emoji"]:
+                        if col not in intraday.columns:
+                            intraday[col] = ""
+                    
+                    cross_idx, cross_dir = find_first_kijunF_cross(intraday)
+                    first_e1_idx = find_first_entry1_index(intraday)
+                    
+                    # Trigger if cross is before first Entry 1 (or if Entry 1 never happens)
+                    if cross_idx is not None and (first_e1_idx is None or cross_idx < first_e1_idx):
+                        if cross_dir == "up":
+                            intraday.at[cross_idx, "Call_Entry8_Emoji"] = "🎯8"
+                        else:
+                            intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
+
                     # --- Ensure columns exist (safe init) ---
                     if "Call_Entry8_Emoji" not in intraday.columns:
                         intraday["Call_Entry8_Emoji"] = ""
@@ -9561,12 +9601,11 @@ if st.sidebar.button("Run Analysis"):
                     name="🎯3 Call Entry 3",
                     hovertemplate="Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
-                
-                # 🎯 Call Entry 8 (Silent Inauguration)
+                # 🎯 Call Entry 8
                 call8_mask = intraday["Call_Entry8_Emoji"] == "🎯8"
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[call8_mask, "Time"],
-                    y=intraday.loc[call8_mask, "F_numeric"] + 34,   # same offset style as your Call 🎯1
+                    y=intraday.loc[call8_mask, "F_numeric"] + 34,
                     mode="text",
                     text=intraday.loc[call8_mask, "Call_Entry8_Emoji"],
                     textposition="top center",
@@ -9575,11 +9614,11 @@ if st.sidebar.button("Run Analysis"):
                     hovertemplate="Entry 8 (Call)<br>Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
                 
-                # 🎯 Put Entry 8 (Silent Inauguration)
+                # 🎯 Put Entry 8
                 put8_mask = intraday["Put_Entry8_Emoji"] == "🎯8"
                 fig.add_trace(go.Scatter(
                     x=intraday.loc[put8_mask, "Time"],
-                    y=intraday.loc[put8_mask, "F_numeric"] - 34,   # offset opposite for clarity; use +34 if you prefer symmetry
+                    y=intraday.loc[put8_mask, "F_numeric"] - 34,
                     mode="text",
                     text=intraday.loc[put8_mask, "Put_Entry8_Emoji"],
                     textposition="bottom center",
@@ -9587,7 +9626,7 @@ if st.sidebar.button("Run Analysis"):
                     name="🎯 Put Entry 8",
                     hovertemplate="Entry 8 (Put)<br>Time: %{x}<br>F%%: %{y}<extra></extra>"
                 ), row=1, col=1)
-                
+
 
                 put_pe_mask = (intraday["Put_FirstEntry_Emoji"] == "🎯") & (intraday["Put_PE"] > intraday["Call_PE"])
                 
