@@ -8092,7 +8092,7 @@ if st.sidebar.button("Run Analysis"):
                                  "opus":"",
                                  "note":"",
                                 "Prototype" : row.get("Prototype", ""),
-                                "Kingdom": row.get("Kingdom", "")
+                                "Kingdom": row.get("Kingdom", ""),
 
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
