@@ -7806,6 +7806,30 @@ if st.sidebar.button("Run Analysis"):
 
 
                      
+                
+                def find_first_kijunF_cross(intraday):
+                    """Return (index, direction 'up'/'down') for the first F_numeric vs Kijun_F cross."""
+                    if not {"F_numeric", "Kijun_F"}.issubset(intraday.columns):
+                        return None, None
+                    diff = intraday["F_numeric"].astype(float) - intraday["Kijun_F"].astype(float)
+                    sign = np.sign(diff).replace(0, np.nan)
+                    prev = sign.shift(1)
+                    crosses = intraday.index[(prev.notna()) & (sign.notna()) & (sign != prev)]
+                    if len(crosses) == 0:
+                        return None, None
+                    i = crosses[0]
+                    direction = "up" if diff.loc[i] > 0 else "down"
+                    return int(i), direction
+                
+                
+                def find_first_entry1_index(intraday):
+                    """Earliest index where either Call or Put 🎯1 appears."""
+                    idxs = []
+                    if "Call_FirstEntry_Emoji" in intraday.columns:
+                        idxs += intraday.index[intraday["Call_FirstEntry_Emoji"] == "🎯"].tolist()
+                    if "Put_FirstEntry_Emoji" in intraday.columns:
+                        idxs += intraday.index[intraday["Put_FirstEntry_Emoji"] == "🎯"].tolist()
+                    return (min(idxs) if idxs else None)
 
 
              
@@ -7863,7 +7887,7 @@ if st.sidebar.button("Run Analysis"):
                                         "F%": intraday.at[i, "F_numeric"],   # works for every row
 
                                        }),
- 
+                     
                               # --- ENTRY 8 (Silent Inauguration) ---
                     has_call1 = (intraday.get("Call_FirstEntry_Emoji") == "🎯").fillna(False).any()
                     has_put1  = (intraday.get("Put_FirstEntry_Emoji")  == "🎯").fillna(False).any()
