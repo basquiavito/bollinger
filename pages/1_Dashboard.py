@@ -8066,6 +8066,8 @@ if st.sidebar.button("Run Analysis"):
                                 "close": round(close_price, 2) if close_price is not None else None,
                                 "open": round(open_price, 2) if open_price is not None else None,
                                 "openF": open_f if open_f is not None else None,      # 👈 F% of open
+                                "closeF": close_f if close_f is not None else None,      # 👈 F% of open
+
                                 "marketProfile":mp_summary,
                                 "callPath": {"midas": {
                                                  "anchor_time": str(anchor_time_bull.strftime("%H:%M")) if 'anchor_time_bull' in locals() else "",
