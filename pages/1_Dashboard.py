@@ -6654,6 +6654,12 @@ if st.sidebar.button("Run Analysis"):
                     )
                 
                     return intraday
+                intraday = determine_kingdom_state(intraday)
+                
+                st.session_state["current_kingdom"] = intraday["Kingdom"].iloc[-1]
+                st.session_state["kingdom_since"] = intraday.loc[
+                    intraday["Kingdom_Switch"].iloc[::-1].idxmax(), "Time"
+                                    ]
 
 
                  
@@ -7791,7 +7797,9 @@ if st.sidebar.button("Run Analysis"):
                         entries.append({"Type": "Put 🎯1",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+                                        "F%": intraday.at[i, "F_numeric"], 
+                                        "Kingdom": intraday.at[i, "Kingdom"]        # 👈 from F_numeric vs Kijun_F
+# works for every row
 })
                     for i in intraday.index[intraday["Put_SecondEntry_Emoji"] == "🎯2"]:
                         entries.append({"Type": "Put 🎯2",
@@ -7812,7 +7820,10 @@ if st.sidebar.button("Run Analysis"):
                         entries.append({"Type": "Call 🎯1",
                                         "Time": pd.to_datetime(intraday.at[i, "Time"]).strftime("%H:%M"),
                                         "Price ($)": intraday.at[i, "Close"],
-                                        "F%": intraday.at[i, "F_numeric"],   # works for every row
+                                        "F%": intraday.at[i, "F_numeric"],  
+                                        "Kingdom": intraday.at[i, "Kingdom"]        # 👈 from F_numeric vs Kijun_F
+
+                                        # works for every row
 })
                     for i in intraday.index[intraday["Call_SecondEntry_Emoji"] == "🎯2"]:
                         entries.append({"Type": "Call 🎯2",
@@ -8009,6 +8020,19 @@ if st.sidebar.button("Run Analysis"):
                 anchor_price_bull = intraday.loc[anchor_idx_bull, 'Close']
                 anchor_price_bear = intraday.loc[anchor_idx_bear, 'Close']
 
+                bg_color = "rgba(0,255,0,0.07)" if st.session_state["current_kingdom"] == "Green" else "rgba(255,0,0,0.07)"
+                
+                st.markdown(
+                    f"""
+                    <style>
+                    .stApp {{
+                        background-color: {bg_color};
+                        transition: background-color 1s ease-in-out;
+                    }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
 
                 with st.expander("Track Entry 1 · 2 · 3 🎯", expanded=True):
                     st.dataframe(entries_df, use_container_width=True)
@@ -8068,6 +8092,8 @@ if st.sidebar.button("Run Analysis"):
                                  "opus":"",
                                  "note":"",
                                 "Prototype" : row.get("Prototype", ""),
+                                "Kingdom": row.get("Kingdom", "")
+
                                 "label"     : row.get("Label", ""),
                                 "suffix"    : row.get("Suffix", ""),
                                 "prefix"    : row.get("Prefix", ""),
@@ -8084,6 +8110,11 @@ if st.sidebar.button("Run Analysis"):
                                                      "anchor_price": round(float(anchor_price_bear), 2) if 'anchor_price_bull' in locals() else None},
                                                      "entries": [], "milestones": {}},
                             }
+
+
+                        
+                        grouped_docs[key]["Kingdom_Open"] = intraday["Kingdom"].iloc[0]
+                        grouped_docs[key]["Kingdom_Current"] = intraday["Kingdom"].iloc[-1]
                         doc = grouped_docs[key]
                         entry_obj = {
                               "Type" : entry_type,
