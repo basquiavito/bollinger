@@ -8064,31 +8064,31 @@ if st.sidebar.button("Run Analysis"):
                     "LVN":      _lvn,       # thinnest 1–3 levels
                     "Tails":    {"upper": _upper_tail, "lower": _lower_tail}
                 }
-                @st.cache_data(show_spinner=False)
-                def to_csv_bytes(df: pd.DataFrame) -> bytes:
-                    """Create CSV bytes from df (cached)."""
-                    df = clean_column_names(df)
+                # @st.cache_data(show_spinner=False)
+                # def to_csv_bytes(df: pd.DataFrame) -> bytes:
+                #     """Create CSV bytes from df (cached)."""
+                #     df = clean_column_names(df)
 
-                    return df.to_csv(index=False).encode("utf-8")
+                #     return df.to_csv(index=False).encode("utf-8")
                 
                 
-                # ----------  Build once, reuse always ----------
-                entries_df = build_entries_df(intraday).round(2)
-                csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
+                # # ----------  Build once, reuse always ----------
+                # entries_df = build_entries_df(intraday).round(2)
+                # csv_bytes  = to_csv_bytes(entries_df)             # cached by df content
         
-                entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
+                # entries_df["Ticker"] = entries_df.get("Ticker", entries_df.get("ticker", entries_df.get("name", "UNKNOWN")))
             
 
-                # keep these in session_state so other code can reuse without recompute
-                # st.session_state.setdefault("entries_df", entries_df)
-                # st.session_state.setdefault("entries_csv", csv_bytes)
-                st.session_state["entries_df"] = entries_df
-                st.session_state["entries_csv"] = csv_bytes
-                # Optional: persist expander state across reruns
-                st.session_state.setdefault("expand_entries", True)
+                # # keep these in session_state so other code can reuse without recompute
+                # # st.session_state.setdefault("entries_df", entries_df)
+                # # st.session_state.setdefault("entries_csv", csv_bytes)
+                # st.session_state["entries_df"] = entries_df
+                # st.session_state["entries_csv"] = csv_bytes
+                # # Optional: persist expander state across reruns
+                # st.session_state.setdefault("expand_entries", True)
 
-                anchor_price_bull = intraday.loc[anchor_idx_bull, 'Close']
-                anchor_price_bear = intraday.loc[anchor_idx_bear, 'Close']
+                # anchor_price_bull = intraday.loc[anchor_idx_bull, 'Close']
+                # anchor_price_bear = intraday.loc[anchor_idx_bear, 'Close']
 
                 # bg_color = "rgba(0,255,0,0.07)" if st.session_state["current_kingdom"] == "Green" else "rgba(255,0,0,0.07)"
                 
