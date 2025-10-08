@@ -7761,6 +7761,29 @@ if st.sidebar.button("Run Analysis"):
                      else:
                          return ""   # fallback to plain Ember
 
+
+
+
+                def find_first_kijunF_cross(intraday: pd.DataFrame) -> tuple[int | None, str | None]:
+                    """
+                    Returns (index_of_cross, direction) where direction ∈ {'up','down'}.
+                    Cross is defined in F-space: sign change of (F_numeric - Kijun_F).
+                    """
+                    if not {"F_numeric", "Kijun_F"}.issubset(intraday.columns):
+                        return None, None
+                
+                    diff = (intraday["F_numeric"].astype(float) - intraday["Kijun_F"].astype(float))
+                    sign = np.sign(diff).replace(0, np.nan)               # treat exact touch as neutral
+                    sign_prev = sign.shift(1)
+                
+                    crosses = intraday.index[(sign_prev.notna()) & (sign.notna()) & (sign != sign_prev)]
+                    if len(crosses) == 0:
+                        return None, None
+                
+                    i = crosses[0]
+                    direction = "up" if diff.loc[i] > 0 else "down"
+                    return int(i), direction
+
                 intraday = intraday.rename(columns={"time": "Time"})
 
                 def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
