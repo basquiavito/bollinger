@@ -19,7 +19,9 @@ import json
 import uuid
 import hashlib
 from typing import List
-           
+from notify import send_text
+                  
+                          
 
 
 def compute_value_area(
@@ -8308,10 +8310,7 @@ if st.sidebar.button("Run Analysis"):
                                 intraday.at[cross_idx, "Call_Entry8_Emoji"] = "🎯8"
                             else:
                                 intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
-                    from notify import send_text
-                    import streamlit as st
-                    import datetime
-                    
+            
                     if entry1_signal_detected:
                         key = f"sent_{symbol}_{datetime.date.today()}"
                         if not st.session_state.get(key, False):
