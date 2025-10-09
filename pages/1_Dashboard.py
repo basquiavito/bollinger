@@ -8308,19 +8308,28 @@ if st.sidebar.button("Run Analysis"):
                                 intraday.at[cross_idx, "Call_Entry8_Emoji"] = "🎯8"
                             else:
                                 intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
-
-                with ticker_tabs[0]:
-                    # -- Create Subplots: Row1=F%, Row2=Momentum
-                    fig = make_subplots(
-                        rows=1,
-                        cols=1,
-
-                        vertical_spacing=0.03,
-                         shared_xaxes=True,
-                       
-                         
-                 
-                    )
+                    from notify import send_text
+                    import streamlit as st
+                    import datetime
+                    
+                    if entry1_signal_detected:
+                        key = f"sent_{symbol}_{datetime.date.today()}"
+                        if not st.session_state.get(key, False):
+                            send_text(symbol, "CALL", current_price, datetime.datetime.now().strftime("%H:%M"))
+                            st.session_state[key] = True
+                    
+                                    with ticker_tabs[0]:
+                                        # -- Create Subplots: Row1=F%, Row2=Momentum
+                                        fig = make_subplots(
+                                            rows=1,
+                                            cols=1,
+                    
+                                            vertical_spacing=0.03,
+                                             shared_xaxes=True,
+                                           
+                                             
+                                     
+                                        )
 
     
 #**************************************************************************************************************************************************************************
