@@ -8311,11 +8311,7 @@ if st.sidebar.button("Run Analysis"):
                             else:
                                 intraday.at[cross_idx, "Put_Entry8_Emoji"]  = "🎯8"
             
-                    if entry1_signal_detected:
-                        key = f"sent_{symbol}_{datetime.date.today()}"
-                        if not st.session_state.get(key, False):
-                            send_text(symbol, "CALL", current_price, datetime.datetime.now().strftime("%H:%M"))
-                            st.session_state[key] = True
+                
                     
                                     with ticker_tabs[0]:
                                         # -- Create Subplots: Row1=F%, Row2=Momentum
