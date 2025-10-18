@@ -10043,7 +10043,15 @@ if st.sidebar.button("Run Analysis"):
                     line=dict(width=0),
                     showlegend=False
                 ))
-            
+                fig_ichimoku.add_trace(go.Bar(
+                    x=intraday['Time'],
+                    y=intraday['Volume'],
+                    name='Volume',
+                    yaxis='y2',
+                    marker_color='rgba(120,120,120,0.5)',
+                    hovertemplate='Volume: %{y:,}<extra></extra>'
+                ))
+
                 fig_ichimoku.update_layout(
                     title="Ichimoku Candlestick Chart",
                     height=450,
@@ -10051,7 +10059,13 @@ if st.sidebar.button("Run Analysis"):
                     xaxis_rangeslider_visible=False,
                     margin=dict(l=30, r=30, t=40, b=20)
                 )
-            
+                fig_ichimoku.update_layout(
+                    hovermode='x unified',
+                    bargap=0.0, bargroupgap=0.0,
+                    yaxis=dict(domain=[0.32, 1.0], title='Price'),
+                    yaxis2=dict(domain=[0.00, 0.27], title='Volume', showgrid=False)
+                )
+
                 st.plotly_chart(fig_ichimoku, use_container_width=True)
                 st.write("✅ Ichimoku Expander Rendered")
 
