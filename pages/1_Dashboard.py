@@ -536,50 +536,7 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-            with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
-                fig_ichimoku = go.Figure()
             
-                fig_ichimoku.add_trace(go.Candlestick(
-                    x=intraday['Time'],
-                    open=intraday['Open'],
-                    high=intraday['High'],
-                    low=intraday['Low'],
-                    close=intraday['Close'],
-                    name='Candles'
-                ))
-            
-                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'), name='Tenkan-sen'))
-                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'], line=dict(color='green'), name='Kijun-sen'))
-                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
-                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
-                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
-            
-                fig_ichimoku.add_trace(go.Scatter(
-                    x=intraday['Time'],
-                    y=intraday['SpanA'],
-                    line=dict(width=0),
-                    showlegend=False
-                ))
-            
-                fig_ichimoku.add_trace(go.Scatter(
-                    x=intraday['Time'],
-                    y=intraday['SpanB'],
-                    fill='tonexty',
-                    fillcolor='rgba(128, 128, 128, 0.2)',
-                    line=dict(width=0),
-                    showlegend=False
-                ))
-            
-                fig_ichimoku.update_layout(
-                    title="Ichimoku Candlestick Chart",
-                    height=450,
-                    width=450,
-                    xaxis_rangeslider_visible=False,
-                    margin=dict(l=30, r=30, t=40, b=20)
-                )
-            
-                st.plotly_chart(fig_ichimoku, use_container_width=True)
-                st.write("✅ Ichimoku Expander Rendered")
                 def calculate_f_percentage(intraday_df, prev_close_val):
                     if prev_close_val is not None and not intraday_df.empty:
                         intraday_df["F%"] = ((intraday_df["Close"] - prev_close_val) / prev_close_val) * 10000
@@ -10046,6 +10003,51 @@ if st.sidebar.button("Run Analysis"):
             
                 st.plotly_chart(fig, use_container_width=True)
 
+            with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+                fig_ichimoku = go.Figure()
+            
+                fig_ichimoku.add_trace(go.Candlestick(
+                    x=intraday['Time'],
+                    open=intraday['Open'],
+                    high=intraday['High'],
+                    low=intraday['Low'],
+                    close=intraday['Close'],
+                    name='Candles'
+                ))
+            
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'), name='Tenkan-sen'))
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'], line=dict(color='green'), name='Kijun-sen'))
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
+            
+                # Fill area between SpanA and SpanB
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'],
+                    y=intraday['SpanA'],
+                    line=dict(width=0),
+                    showlegend=False
+                ))
+            
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'],
+                    y=intraday['SpanB'],
+                    fill='tonexty',
+                    fillcolor='rgba(128, 128, 128, 0.2)',
+                    line=dict(width=0),
+                    showlegend=False
+                ))
+            
+                fig_ichimoku.update_layout(
+                    title="Ichimoku Candlestick Chart",
+                    height=450,
+                    width=450,
+                    xaxis_rangeslider_visible=False,
+                    margin=dict(l=30, r=30, t=40, b=20)
+                )
+            
+                st.plotly_chart(fig_ichimoku, use_container_width=True)
+                st.write("✅ Ichimoku Expander Rendered")
 
      
 
