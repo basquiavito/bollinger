@@ -10003,30 +10003,11 @@ if st.sidebar.button("Run Analysis"):
             
                 st.plotly_chart(fig, use_container_width=True)
 
-fig.update_layout(
-    title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
-    margin=dict(l=30, r=30, t=50, b=30),
-    height=1080,
-    showlegend=True,
-    yaxis2=dict(
-        overlaying="y",
-        side="right",
-        showgrid=False,
-        title="F% Scale"
-    )
-)
-
-st.plotly_chart(fig, use_container_width=True)
 
 
 
-except Exception as e:
-    st.error(f"Error fetching data for {t}: {e}")
-
-     
-
-            # except Exception as e:
-            #     st.error(f"Error fetching data for {t}: {e}")
+            except Exception as e:
+                st.error(f"Error fetching data for {t}: {e}")
             
 
   
