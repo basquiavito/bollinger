@@ -10009,6 +10009,13 @@ if st.sidebar.button("Run Analysis"):
             except Exception as e:
                 st.error(f"Error fetching data for {t}: {e}")
                         # --- AFTER the try/except is closed ---
+                win = 20
+                ma  = intraday["Close"].rolling(win, min_periods=1).mean()
+                std = intraday["Close"].rolling(win, min_periods=1).std()
+                intraday["BB_MA"]    = ma
+                intraday["BB_Upper"] = ma + 2*std
+                intraday["BB_Lower"] = ma - 2*std
+
             with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
                 fig_ichimoku = go.Figure()
             
