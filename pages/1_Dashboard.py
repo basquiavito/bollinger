@@ -10049,7 +10049,8 @@ if st.sidebar.button("Run Analysis"):
                     name='Volume',
                     yaxis='y2',
                     marker_color='rgba(120,120,120,0.5)',
-                    hovertemplate='Volume: %{y:,}<extra></extra>'
+                    customdata=np.column_stack([intraday["RVOL_5"]]),
+                    hovertemplate='Volume: %{y:,}<br>RVOL(5): %{customdata[0]:.2f}×<extra></extra>'
                 ))
                 fig_ichimoku.data[-1].marker.color = ['rgba(0,204,150,0.6)' if c >= o else 'rgba(239,85,59,0.6)' for o, c in zip(intraday['Open'], intraday['Close'])]
 
