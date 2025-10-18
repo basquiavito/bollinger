@@ -10031,6 +10031,9 @@ if st.sidebar.button("Run Analysis"):
                 fig_ichimoku.add_trace(go.Scatter(
                     x=intraday['Time'],
                     y=intraday['SpanA'],
+
+                    hoverinfo="skip" ,            # 👈 add this
+
                     line=dict(width=0),
                     showlegend=False
                 ))
@@ -10040,6 +10043,8 @@ if st.sidebar.button("Run Analysis"):
                     y=intraday['SpanB'],
                     fill='tonexty',
                     fillcolor='rgba(128, 128, 128, 0.2)',
+                    hoverinfo="skip",        # 👈 add this
+
                     line=dict(width=0),
                     showlegend=False
                 ))
@@ -10056,8 +10061,8 @@ if st.sidebar.button("Run Analysis"):
 
                 fig_ichimoku.update_layout(
                     title="Ichimoku Candlestick Chart",
-                    height=450,
-                    width=450,
+                    height=750,
+                    width=750,
                     xaxis_rangeslider_visible=False,
                     margin=dict(l=30, r=30, t=40, b=20)
                 )
@@ -10065,7 +10070,7 @@ if st.sidebar.button("Run Analysis"):
                     hovermode='x unified',
                     bargap=0.0, bargroupgap=0.0,
                     yaxis=dict(domain=[0.32, 1.0], title='Price'),
-                    yaxis2=dict(domain=[0.00, 0.27], title='Volume', showgrid=False)
+                    yaxis2=dict(domain=[0.00, 0.35], title='Volume', showgrid=False)
                 )
 
                 st.plotly_chart(fig_ichimoku, use_container_width=True)
