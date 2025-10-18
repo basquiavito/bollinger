@@ -345,7 +345,7 @@ if st.sidebar.button("Run Analysis"):
                         elif -55 <= current_val <= -44 and next_val > current_val:
                             intraday_df.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
             
-                return intraday_df
+                        return intraday_df
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
                     Adjusts Y-axis positions dynamically to prevent symbol overlap.
