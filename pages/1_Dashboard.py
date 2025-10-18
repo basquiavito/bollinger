@@ -312,7 +312,7 @@ if st.sidebar.button("Run Analysis"):
               
                 def detect_40ish_reversal(intraday):
               
-                    intraday_df["40ish"] = ""
+                    intraday["40ish"] = ""
                 
                     for i in range(len(intraday) - 1):
                         current_val = intraday.loc[i, "F_numeric"]
