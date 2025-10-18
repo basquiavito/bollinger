@@ -10034,6 +10034,15 @@ if st.sidebar.button("Run Analysis"):
                 fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
                 fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
 
+                # Ensure BB columns exist on intraday before plotting
+                if not all(c in intraday.columns for c in ["BB_MA", "BB_Upper", "BB_Lower"]):
+                    win = 20
+                    ma  = intraday["Close"].rolling(win, min_periods=1).mean()
+                    std = intraday["Close"].rolling(win, min_periods=1).std()
+                    intraday["BB_MA"]    = ma
+                    intraday["BB_Upper"] = ma + 2*std
+                    intraday["BB_Lower"] = ma - 2*std
+
                 # --- Bollinger Bands (price) ---
                 fig_ichimoku.add_trace(go.Scatter(
                     x=intraday['Time'], y=intraday['BB_Upper'],
