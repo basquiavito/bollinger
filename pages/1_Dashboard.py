@@ -10123,8 +10123,7 @@ if st.sidebar.button("Run Analysis"):
                 }
             )
 
-    except Exception as e:
-        st.error(f"Error rendering {t}: {e}")
+
 
         # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
         #     # --- Ensure price-based Bollinger bands exist (20, 2σ) ---
