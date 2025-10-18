@@ -557,7 +557,7 @@ if st.sidebar.button("Run Analysis"):
                         elif -55 <= current_val <= -44 and next_val > current_val:
                             intraday.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
             
-                        return intraday
+                    return intraday
                 intraday = detect_40ish_reversal(intraday)
                 def add_unit_percentage(intraday_df):
                     if intraday_df.empty:
