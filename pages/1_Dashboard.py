@@ -331,7 +331,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday["Date"] = intraday["Date"].dt.tz_localize(None)
                 
               
-                def detect_40ish_reversal(intraday_df):
+                def detect_40ish_reversal(intraday):
               
                     intraday_df["40ish"] = ""
                 
@@ -346,6 +346,8 @@ if st.sidebar.button("Run Analysis"):
                             intraday_df.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
             
                         return intraday_df
+                intraday = detect_40ish_reversal(intraday)
+
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
                     Adjusts Y-axis positions dynamically to prevent symbol overlap.
