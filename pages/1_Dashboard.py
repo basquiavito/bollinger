@@ -9970,7 +9970,7 @@ if st.sidebar.button("Run Analysis"):
                     title=f"VOLMIKE.COM  - {start_date.strftime('%Y-%m-%d')}",
                     margin=dict(l=30, r=30, t=50, b=30),
                     height=1080,  # Increase overall figure height (default ~450-600)
-                    showlegend=False,
+                    showlegend=True,
                     yaxis2=dict(
                         overlaying="y",
                         side="right",
