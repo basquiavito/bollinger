@@ -331,7 +331,24 @@ if st.sidebar.button("Run Analysis"):
                 intraday["Date"] = intraday["Date"].dt.tz_localize(None)
                 
               
-
+                def detect_40ish_reversal(intraday_df):
+                """
+                Flags reversals when F% is between 44% to 55% (up) or -55% to -44% (down),
+                and the next row moves significantly in the opposite direction.
+                """
+                intraday_df["40ish"] = ""
+            
+                for i in range(len(intraday_df) - 1):
+                    current_val = intraday_df.loc[i, "F_numeric"]
+                    next_val = intraday_df.loc[i + 1, "F_numeric"]
+            
+                    # 44% - 55% (Reversal Down) & -55% to -44% (Reversal Up)
+                    if 44 <= current_val <= 55 and next_val < current_val:
+                        intraday_df.loc[i, "40ish"] = "40ish UP & Reversed Down"
+                    elif -55 <= current_val <= -44 and next_val > current_val:
+                        intraday_df.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
+            
+                return intraday_df
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
                     Adjusts Y-axis positions dynamically to prevent symbol overlap.
@@ -8343,7 +8360,21 @@ if st.sidebar.button("Run Analysis"):
                     fig.add_trace(scatter_f, row=1, col=1)
 
 
+# (A.1) 40ish Reversal (star markers)
+                    mask_40ish = intraday["40ish"] != ""
+                    scatter_40ish = go.Scatter(
+                        x=intraday.loc[mask_40ish, "Time"],
+                        y=intraday.loc[mask_40ish, "F_numeric"] + 89,
+                        mode="markers",
+                        marker_symbol="star",
+                        marker_size=18,
+                        marker_color="gold",
+                        name="40ish Reversal",
+                        text=intraday.loc[mask_40ish, "40ish"],
 
+                        hovertemplate="Time: %{x}<br>F%: %{y}<br>%{text}"
+                    )
+                    fig.add_trace(scatter_40ish, row=1, col=1)
 
 
 
