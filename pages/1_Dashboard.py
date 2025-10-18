@@ -10051,6 +10051,7 @@ if st.sidebar.button("Run Analysis"):
                     marker_color='rgba(120,120,120,0.5)',
                     hovertemplate='Volume: %{y:,}<extra></extra>'
                 ))
+                fig_ichimoku.data[-1].marker.color = ['rgba(0,204,150,0.6)' if c >= o else 'rgba(239,85,59,0.6)' for o, c in zip(intraday['Open'], intraday['Close'])]
 
                 fig_ichimoku.update_layout(
                     title="Ichimoku Candlestick Chart",
