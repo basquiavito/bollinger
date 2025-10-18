@@ -310,22 +310,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday["Date"] = intraday["Date"].dt.tz_localize(None)
                 
               
-                def detect_40ish_reversal(intraday):
               
-                    intraday["40ish"] = ""
-                
-                    for i in range(len(intraday) - 1):
-                        current_val = intraday.loc[i, "F_numeric"]
-                        next_val = intraday.loc[i + 1, "F_numeric"]
-                
-                        # 44% - 55% (Reversal Down) & -55% to -44% (Reversal Up)
-                        if 44 <= current_val <= 55 and next_val < current_val:
-                            intraday.loc[i, "40ish"] = "40ish UP & Reversed Down"
-                        elif -55 <= current_val <= -44 and next_val > current_val:
-                            intraday.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
-            
-                        return intraday
-                intraday = detect_40ish_reversal(intraday)
 
                 def adjust_marker_y_positions(data, column, base_offset=5):
                     """
@@ -558,7 +543,22 @@ if st.sidebar.button("Run Analysis"):
                 intraday = calculate_f_percentage(intraday, prev_close)
  
               
-
+                def detect_40ish_reversal(intraday):
+              
+                    intraday["40ish"] = ""
+                
+                    for i in range(len(intraday) - 1):
+                        current_val = intraday.loc[i, "F_numeric"]
+                        next_val = intraday.loc[i + 1, "F_numeric"]
+                
+                        # 44% - 55% (Reversal Down) & -55% to -44% (Reversal Up)
+                        if 44 <= current_val <= 55 and next_val < current_val:
+                            intraday.loc[i, "40ish"] = "40ish UP & Reversed Down"
+                        elif -55 <= current_val <= -44 and next_val > current_val:
+                            intraday.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
+            
+                        return intraday
+                intraday = detect_40ish_reversal(intraday)
                 def add_unit_percentage(intraday_df):
                     if intraday_df.empty:
                         intraday_df["Unit%"] = ""
