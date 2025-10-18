@@ -10089,8 +10089,8 @@ if st.sidebar.button("Run Analysis"):
             
                 fig_ichimoku.update_layout(
                     title="Ichimoku Candlestick Chart",
-                    height=450,
-                    width=450,
+                    height=750,
+                    width=750,
                     xaxis_rangeslider_visible=False,
                     margin=dict(l=30, r=30, t=40, b=20)
                 )
