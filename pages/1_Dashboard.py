@@ -10010,6 +10010,14 @@ if st.sidebar.button("Run Analysis"):
                 st.error(f"Error fetching data for {t}: {e}")
                         # --- AFTER the try/except is closed ---
             with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+                 # --- Ensure price-based Bollinger bands exist (20, 2σ) ---
+                if not all(c in intraday.columns for c in ["BB_MA", "BB_Upper", "BB_Lower"]):
+                    win = 20
+                    ma = intraday["Close"].rolling(win, min_periods=1).mean()
+                    std = intraday["Close"].rolling(win, min_periods=1).std()
+                    intraday["BB_MA"]    = ma
+                    intraday["BB_Upper"] = ma + 2*std
+                    intraday["BB_Lower"] = ma - 2*std
                 fig_ichimoku = go.Figure()
             
                 fig_ichimoku.add_trace(go.Candlestick(
@@ -10026,7 +10034,42 @@ if st.sidebar.button("Run Analysis"):
                 fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
                 fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
                 fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
+              # ---- Bollinger Bands (price) ----
+                # Optional BB cloud first piece
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'],
+                    y=intraday['BB_Upper'],
+                    line=dict(width=0),
+                    mode='lines',
+                    showlegend=False
+                ))
+                # Optional BB cloud second piece (must come right after the first)
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'],
+                    y=intraday['BB_Lower'],
+                    fill='tonexty',
+                    fillcolor='rgba(128, 128, 128, 0.15)',
+                    line=dict(width=0),
+                    mode='lines',
+                    showlegend=False
+                ))
             
+                # Visible BB lines
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_Upper'],
+                    line=dict(color='darkgray', width=1.5),
+                    name='BB Upper'
+                ))
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_MA'],
+                    line=dict(color='white', width=1, dash='dash'),
+                    name='BB Middle'
+                ))
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_Lower'],
+                    line=dict(color='darkgray', width=1.5),
+                    name='BB Lower'
+                ))
                 # Cloud fill
                 fig_ichimoku.add_trace(go.Scatter(
                     x=intraday['Time'],
