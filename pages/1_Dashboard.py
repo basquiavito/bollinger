@@ -10033,7 +10033,35 @@ if st.sidebar.button("Run Analysis"):
                 fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
                 fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
                 fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
-            
+
+                # --- Bollinger Bands (price) ---
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_Upper'],
+                    line=dict(color='darkgray', width=1.5),
+                    name='BB Upper', hoverinfo="skip"
+                ))
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_MA'],
+                    line=dict(color='white', width=1, dash='dash'),
+                    name='BB Middle', hoverinfo="skip"
+                ))
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_Lower'],
+                    line=dict(color='darkgray', width=1.5),
+                    name='BB Lower', hoverinfo="skip"
+                ))
+                
+                # (optional) BB cloud
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_Upper'],
+                    line=dict(width=0), showlegend=False, hoverinfo="skip"
+                ))
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_Lower'],
+                    fill='tonexty', fillcolor='rgba(128,128,128,0.12)',
+                    line=dict(width=0), showlegend=False, hoverinfo="skip"
+                ))
+
                 # Cloud fill
                 fig_ichimoku.add_trace(go.Scatter(
                     x=intraday['Time'],
