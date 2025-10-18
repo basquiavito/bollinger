@@ -10011,97 +10011,187 @@ if st.sidebar.button("Run Analysis"):
                         # --- AFTER the try/except is closed ---
            
         
-        with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
-            # --- Ensure price-based Bollinger bands exist (20, 2σ) ---
-            if not all(c in intraday.columns for c in ["BB_MA", "BB_Upper", "BB_Lower"]):
-                win = 20
-                ma = intraday["Close"].rolling(win, min_periods=1).mean()
-                std = intraday["Close"].rolling(win, min_periods=1).std()
-                intraday["BB_MA"]    = ma
-                intraday["BB_Upper"] = ma + 2*std
-                intraday["BB_Lower"] = ma - 2*std
+        # with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+        #     # --- Ensure price-based Bollinger bands exist (20, 2σ) ---
+        #     if not all(c in intraday.columns for c in ["BB_MA", "BB_Upper", "BB_Lower"]):
+        #         win = 20
+        #         ma = intraday["Close"].rolling(win, min_periods=1).mean()
+        #         std = intraday["Close"].rolling(win, min_periods=1).std()
+        #         intraday["BB_MA"]    = ma
+        #         intraday["BB_Upper"] = ma + 2*std
+        #         intraday["BB_Lower"] = ma - 2*std
         
-            fig_ichimoku = go.Figure()
+        #     fig_ichimoku = go.Figure()
         
-            # --- Candles (price) ---
-            fig_ichimoku.add_trace(go.Candlestick(
-                x=intraday['Time'],
-                open=intraday['Open'],
-                high=intraday['High'],
-                low=intraday['Low'],
-                close=intraday['Close'],
-                name='Candles'
-            ))
+        #     # --- Candles (price) ---
+        #     fig_ichimoku.add_trace(go.Candlestick(
+        #         x=intraday['Time'],
+        #         open=intraday['Open'],
+        #         high=intraday['High'],
+        #         low=intraday['Low'],
+        #         close=intraday['Close'],
+        #         name='Candles'
+        #     ))
         
-            # --- Ichimoku ---
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'),   name='Tenkan-sen'))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'],  line=dict(color='green'), name='Kijun-sen'))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],  line=dict(color='yellow'),name='Span A'))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],  line=dict(color='blue'),  name='Span B'))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'),name='Chikou'))
+        #     # --- Ichimoku ---
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'),   name='Tenkan-sen'))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'],  line=dict(color='green'), name='Kijun-sen'))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'],  line=dict(color='yellow'),name='Span A'))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'],  line=dict(color='blue'),  name='Span B'))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'),name='Chikou'))
         
-            # --- Bollinger (price) ---
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_Upper'], line=dict(width=0), showlegend=False))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_Lower'], fill='tonexty',
-                                              fillcolor='rgba(128,128,128,0.15)', line=dict(width=0), showlegend=False))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_Upper'],
-                                              line=dict(color='darkgray', width=1.5), name='BB Upper'))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_MA'],
-                                              line=dict(color='white', width=1, dash='dash'), name='BB Middle'))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_Lower'],
-                                              line=dict(color='darkgray', width=1.5), name='BB Lower'))
+        #     # --- Bollinger (price) ---
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_Upper'], line=dict(width=0), showlegend=False))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_Lower'], fill='tonexty',
+        #                                       fillcolor='rgba(128,128,128,0.15)', line=dict(width=0), showlegend=False))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_Upper'],
+        #                                       line=dict(color='darkgray', width=1.5), name='BB Upper'))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_MA'],
+        #                                       line=dict(color='white', width=1, dash='dash'), name='BB Middle'))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['BB_Lower'],
+        #                                       line=dict(color='darkgray', width=1.5), name='BB Lower'))
         
-            # --- Ichimoku cloud fill ---
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(width=0), showlegend=False))
-            fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], fill='tonexty',
-                                              fillcolor='rgba(128,128,128,0.2)', line=dict(width=0), showlegend=False))
+        #     # --- Ichimoku cloud fill ---
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(width=0), showlegend=False))
+        #     fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], fill='tonexty',
+        #                                       fillcolor='rgba(128,128,128,0.2)', line=dict(width=0), showlegend=False))
         
-            # === VOLUME (bottom pane on y2) ===
-            # Color volume by candle direction (optional)
-            try:
-                import numpy as np
-                vol_colors = np.where(intraday['Close'] >= intraday['Open'],
-                                      'rgba(0,204,150,0.5)',  # up
-                                      'rgba(239,85,59,0.5)')  # down
-            except:
-                vol_colors = 'rgba(120,120,120,0.4)'  # fallback one color
+        #     # === VOLUME (bottom pane on y2) ===
+        #     # Color volume by candle direction (optional)
+        #     try:
+        #         import numpy as np
+        #         vol_colors = np.where(intraday['Close'] >= intraday['Open'],
+        #                               'rgba(0,204,150,0.5)',  # up
+        #                               'rgba(239,85,59,0.5)')  # down
+        #     except:
+        #         vol_colors = 'rgba(120,120,120,0.4)'  # fallback one color
         
-            fig_ichimoku.add_trace(go.Bar(
-                x=intraday['Time'],
-                y=intraday['Volume'],
-                name='Volume',
-                marker_color=vol_colors,
-                yaxis='y2',
-                hovertemplate='Vol: %{y:,}<extra></extra>'
-            ))
+        #     fig_ichimoku.add_trace(go.Bar(
+        #         x=intraday['Time'],
+        #         y=intraday['Volume'],
+        #         name='Volume',
+        #         marker_color=vol_colors,
+        #         yaxis='y2',
+        #         hovertemplate='Vol: %{y:,}<extra></extra>'
+        #     ))
         
-            # --- Layout: split panes & unify hover ---
-            fig_ichimoku.update_layout(
-                title="Ichimoku + Bollinger + Volume",
-                height=750,
-                width=900,
-                xaxis_rangeslider_visible=False,
-                hovermode='x unified',
-                margin=dict(l=30, r=30, t=40, b=20),
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
+        #     # --- Layout: split panes & unify hover ---
+        #     fig_ichimoku.update_layout(
+        #         title="Ichimoku + Bollinger + Volume",
+        #         height=750,
+        #         width=900,
+        #         xaxis_rangeslider_visible=False,
+        #         hovermode='x unified',
+        #         margin=dict(l=30, r=30, t=40, b=20),
+        #         plot_bgcolor='rgba(0,0,0,0)',
+        #         paper_bgcolor='rgba(0,0,0,0)',
         
-                # Top pane (price)
-                yaxis=dict(title='Price', domain=[0.30, 1.0]),
+        #         # Top pane (price)
+        #         yaxis=dict(title='Price', domain=[0.30, 1.0]),
         
-                # Bottom pane (volume)
-                yaxis2=dict(title='Volume', domain=[0.0, 0.25], showgrid=False),
+        #         # Bottom pane (volume)
+        #         yaxis2=dict(title='Volume', domain=[0.0, 0.25], showgrid=False),
         
-                legend=dict(orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5),
-                bargap=0.05
-            )
+        #         legend=dict(orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5),
+        #         bargap=0.05
+        #     )
         
-            st.plotly_chart(
-                fig_ichimoku,
-                use_container_width=True,
-                config={"displayModeBar": True, "scrollZoom": True, "doubleClick": "reset", "responsive": True}
-            )
-            st.write("✅ Ichimoku + Bollinger + Volume Rendered")
+        #     st.plotly_chart(
+        #         fig_ichimoku,
+        #         use_container_width=True,
+        #         config={"displayModeBar": True, "scrollZoom": True, "doubleClick": "reset", "responsive": True}
+        #     )
+        #     st.write("✅ Ichimoku + Bollinger + Volume Rendered")
+
+  
+      with st.expander("🕯️ Hidden Candlestick + Ichimoku View", expanded=True):
+                 # --- Ensure price-based Bollinger bands exist (20, 2σ) ---
+                if not all(c in intraday.columns for c in ["BB_MA", "BB_Upper", "BB_Lower"]):
+                    win = 20
+                    ma = intraday["Close"].rolling(win, min_periods=1).mean()
+                    std = intraday["Close"].rolling(win, min_periods=1).std()
+                    intraday["BB_MA"]    = ma
+                    intraday["BB_Upper"] = ma + 2*std
+                    intraday["BB_Lower"] = ma - 2*std
+                fig_ichimoku = go.Figure()
+            
+                fig_ichimoku.add_trace(go.Candlestick(
+                    x=intraday['Time'],
+                    open=intraday['Open'],
+                    high=intraday['High'],
+                    low=intraday['Low'],
+                    close=intraday['Close'],
+                    name='Candles'
+                ))
+            
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Tenkan'], line=dict(color='red'), name='Tenkan-sen'))
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Kijun'], line=dict(color='green'), name='Kijun-sen'))
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanA'], line=dict(color='yellow'), name='Span A'))
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['SpanB'], line=dict(color='blue'), name='Span B'))
+                fig_ichimoku.add_trace(go.Scatter(x=intraday['Time'], y=intraday['Chikou'], line=dict(color='purple'), name='Chikou'))
+              # ---- Bollinger Bands (price) ----
+                # Optional BB cloud first piece
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'],
+                    y=intraday['BB_Upper'],
+                    line=dict(width=0),
+                    mode='lines',
+                    showlegend=False
+                ))
+                # Optional BB cloud second piece (must come right after the first)
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'],
+                    y=intraday['BB_Lower'],
+                    fill='tonexty',
+                    fillcolor='rgba(128, 128, 128, 0.15)',
+                    line=dict(width=0),
+                    mode='lines',
+                    showlegend=False
+                ))
+            
+                # Visible BB lines
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_Upper'],
+                    line=dict(color='darkgray', width=1.5),
+                    name='BB Upper'
+                ))
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_MA'],
+                    line=dict(color='white', width=1, dash='dash'),
+                    name='BB Middle'
+                ))
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'], y=intraday['BB_Lower'],
+                    line=dict(color='darkgray', width=1.5),
+                    name='BB Lower'
+                ))
+                # Cloud fill
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'],
+                    y=intraday['SpanA'],
+                    line=dict(width=0),
+                    showlegend=False
+                ))
+            
+                fig_ichimoku.add_trace(go.Scatter(
+                    x=intraday['Time'],
+                    y=intraday['SpanB'],
+                    fill='tonexty',
+                    fillcolor='rgba(128, 128, 128, 0.2)',
+                    line=dict(width=0),
+                    showlegend=False
+                ))
+            
+                fig_ichimoku.update_layout(
+                    title="Ichimoku Candlestick Chart",
+                    height=750,
+                    width=750,
+                    xaxis_rangeslider_visible=False,
+                    margin=dict(l=30, r=30, t=40, b=20)
+                )
+            
+                st.plotly_chart(fig_ichimoku, use_container_width=True)
+                st.write("✅ Ichimoku Expander Rendered")
 
   
       
