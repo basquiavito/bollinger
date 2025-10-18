@@ -332,10 +332,7 @@ if st.sidebar.button("Run Analysis"):
                 
               
                 def detect_40ish_reversal(intraday_df):
-                """
-                Flags reversals when F% is between 44% to 55% (up) or -55% to -44% (down),
-                and the next row moves significantly in the opposite direction.
-                """
+              
                 intraday_df["40ish"] = ""
             
                 for i in range(len(intraday_df) - 1):
