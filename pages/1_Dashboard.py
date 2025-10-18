@@ -333,17 +333,17 @@ if st.sidebar.button("Run Analysis"):
               
                 def detect_40ish_reversal(intraday_df):
               
-                intraday_df["40ish"] = ""
-            
-                for i in range(len(intraday_df) - 1):
-                    current_val = intraday_df.loc[i, "F_numeric"]
-                    next_val = intraday_df.loc[i + 1, "F_numeric"]
-            
-                    # 44% - 55% (Reversal Down) & -55% to -44% (Reversal Up)
-                    if 44 <= current_val <= 55 and next_val < current_val:
-                        intraday_df.loc[i, "40ish"] = "40ish UP & Reversed Down"
-                    elif -55 <= current_val <= -44 and next_val > current_val:
-                        intraday_df.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
+                    intraday_df["40ish"] = ""
+                
+                    for i in range(len(intraday_df) - 1):
+                        current_val = intraday_df.loc[i, "F_numeric"]
+                        next_val = intraday_df.loc[i + 1, "F_numeric"]
+                
+                        # 44% - 55% (Reversal Down) & -55% to -44% (Reversal Up)
+                        if 44 <= current_val <= 55 and next_val < current_val:
+                            intraday_df.loc[i, "40ish"] = "40ish UP & Reversed Down"
+                        elif -55 <= current_val <= -44 and next_val > current_val:
+                            intraday_df.loc[i, "40ish"] = "❄️ 40ish DOWN & Reversed Up"
             
                 return intraday_df
                 def adjust_marker_y_positions(data, column, base_offset=5):
