@@ -3622,6 +3622,7 @@ if st.sidebar.button("Run Analysis"):
                 vas_flip_up = intraday[intraday["VAS_Flip_Emoji"] == "🔔"]
                 vas_flip_down = intraday[intraday["VAS_Flip_Emoji"] == "🚨"]
 
+                intraday["T"] = (intraday["ATR"] / intraday["ATR"].rolling(20).mean()) * intraday["VAS"].rolling(20).mean()
 
 
                 def calculate_f_dmi(df, period=14):
@@ -5317,7 +5318,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","VAS","ADX_F%","+DM","-DM","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","VAS","T","ADX_F%","+DM","-DM","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
