@@ -10118,38 +10118,38 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_vas_up, row=1, col=1)
                 fig.add_trace(scatter_vas_down, row=1, col=1)
                 # ------------------------------------------
-                # ✅ VAS > T (bull) and 🔴 VAS < -T (bear) emojis
+                # ✅ VAS > T (bull) and 💨 VAS < -T (bear) emojis
                 # ------------------------------------------
                 intraday["VAS_T_Emoji"] = ""
                 
                 bull_T_mask = intraday["VAS"] > intraday["T"]
                 bear_T_mask = intraday["VAS"] < -intraday["T"]
                 
-                intraday.loc[bull_T_mask, "VAS_T_Emoji"] = "🟢"   # Bullish efficiency above threshold
-                intraday.loc[bear_T_mask, "VAS_T_Emoji"] = "🔴"   # Bearish efficiency above threshold (in magnitude)
+                intraday.loc[bull_T_mask, "VAS_T_Emoji"] = "💨"   # Bullish efficiency above threshold
+                intraday.loc[bear_T_mask, "VAS_T_Emoji"] = "❄️"   # Bearish efficiency above threshold (in magnitude)
                 
-                vas_T_up   = intraday[intraday["VAS_T_Emoji"] == "🟢"]
-                vas_T_down = intraday[intraday["VAS_T_Emoji"] == "🔴"]
+                vas_T_up   = intraday[intraday["VAS_T_Emoji"] == "💨"]
+                vas_T_down = intraday[intraday["VAS_T_Emoji"] == "❄️"]
                 
-                # 🟢 Bullish T marks (a bit below the flip's +120 lane to avoid overlap)
+                # 💨 Bullish T marks (a bit below the flip's +120 lane to avoid overlap)
                 scatter_vas_T_up = go.Scatter(
                     x=vas_T_up["Time"],
                     y=vas_T_up["F_numeric"] + 80,          # BELOW the flip's +120 lane
                     mode="text",
-                    text=vas_T_up["VAS_T_Emoji"],          # 🟢
+                    text=vas_T_up["VAS_T_Emoji"],          # 💨
                     textposition="top center",
-                    name="VAS > T (Bull) 🟢",
+                    name="VAS > T (Bull) 💨",
                     textfont=dict(size=18),
                 )
                 
-                # 🔴 Bearish T marks (a bit above the flip's -120 lane to avoid overlap)
+                # ❄️ Bearish T marks (a bit above the flip's -120 lane to avoid overlap)
                 scatter_vas_T_down = go.Scatter(
                     x=vas_T_down["Time"],
                     y=vas_T_down["F_numeric"] - 80,        # ABOVE the flip's -120 lane
                     mode="text",
-                    text=vas_T_down["VAS_T_Emoji"],        # 🔴
+                    text=vas_T_down["VAS_T_Emoji"],        # ❄️
                     textposition="bottom center",
-                    name="VAS < -T (Bear) 🔴",
+                    name="VAS < -T (Bear) ❄️",
                     textfont=dict(size=18),
                 )
                 
