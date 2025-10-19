@@ -3622,7 +3622,7 @@ if st.sidebar.button("Run Analysis"):
                 vas_flip_up = intraday[intraday["VAS_Flip_Emoji"] == "🔔"]
                 vas_flip_down = intraday[intraday["VAS_Flip_Emoji"] == "🚨"]
 
-                intraday["T"] = (intraday["ATR"] / intraday["ATR"].rolling(20).mean()) * intraday["VAS"].rolling(20).mean()
+                intraday["T"] = (intraday["ATR"] / intraday["ATR"].rolling(7).mean()) * intraday["VAS"].rolling(20).mean()
 
 
                 def calculate_f_dmi(df, period=14):
