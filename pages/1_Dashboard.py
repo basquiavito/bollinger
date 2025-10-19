@@ -3619,6 +3619,9 @@ if st.sidebar.button("Run Analysis"):
                         intraday.loc[intraday.index[i], "VAS_Flip_Emoji"] = "🔔"  # Bullish ignition
                     elif prev_vas > 0 and curr_vas < 0:
                         intraday.loc[intraday.index[i], "VAS_Flip_Emoji"] = "🚨"  # Bearish ignition
+                vas_flip_up = intraday[intraday["VAS_Flip_Emoji"] == "🔔"]
+                vas_flip_down = intraday[intraday["VAS_Flip_Emoji"] == "🚨"]
+
 
 
                 def calculate_f_dmi(df, period=14):
