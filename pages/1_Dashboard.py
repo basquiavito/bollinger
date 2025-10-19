@@ -3622,8 +3622,21 @@ if st.sidebar.button("Run Analysis"):
                 vas_flip_up = intraday[intraday["VAS_Flip_Emoji"] == "🔔"]
                 vas_flip_down = intraday[intraday["VAS_Flip_Emoji"] == "🚨"]
 
-                T = intraday["VAS"].rolling(7).apply(lambda x: np.mean(np.abs(x)), raw=True) * 1.1
-                intraday["T"] = T * 1.2
+                rolling_period = 7
+                multiplier = 1.2
+                
+                # Safety: avoid NaNs/zero in early bars
+                atr_roll = intraday["ATR"].rolling(rolling_period).mean()
+                atr_scale = (intraday["ATR"] / atr_roll).replace([np.inf, -np.inf], np.nan).bfill()
+                
+                vas_mag = intraday["VAS"].rolling(rolling_period).apply(
+                    lambda x: np.mean(np.abs(x)), raw=True
+                )
+                
+                # Small floor to prevent tiny-vol spikes
+                eps = 1e-8
+                intraday["T"] = (atr_scale * np.maximum(vas_mag, eps)) * multiplier
+
 
 
                 def calculate_f_dmi(df, period=14):
