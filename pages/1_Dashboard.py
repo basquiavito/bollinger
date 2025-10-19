@@ -3600,6 +3600,27 @@ if st.sidebar.button("Run Analysis"):
                 # Apply OPS transition detection
                 intraday = detect_ops_transitions(intraday)
 
+
+
+                # ------------------------------------------
+                # 🚨 Detect VAS flips (−→+ or +→−)
+                # ------------------------------------------
+                
+             # ------------------------------------------
+                # 🚀 Detect VAS flips (−→+ and +→−)
+                # ------------------------------------------
+                intraday["VAS_Flip_Emoji"] = ""
+                
+                for i in range(1, len(intraday)):
+                    prev_vas = intraday.loc[intraday.index[i - 1], "VAS"]
+                    curr_vas = intraday.loc[intraday.index[i], "VAS"]
+                
+                    if prev_vas < 0 and curr_vas > 0:
+                        intraday.loc[intraday.index[i], "VAS_Flip_Emoji"] = "🔔"  # Bullish ignition
+                    elif prev_vas > 0 and curr_vas < 0:
+                        intraday.loc[intraday.index[i], "VAS_Flip_Emoji"] = "🚨"  # Bearish ignition
+
+
                 def calculate_f_dmi(df, period=14):
                             """
                             Computes +DI, -DI, and ADX for F% instead of price.
@@ -10008,6 +10029,34 @@ if st.sidebar.button("Run Analysis"):
                     mode='lines',
                     name='Kumo Cloud'
                 ), row=1, col=1)
+
+
+                # 🔔 Bullish flips (above the line)
+                scatter_vas_up = go.Scatter(
+                    x=vas_flip_up["Time"],
+                    y=vas_flip_up["F_numeric"] + 120,     # float ABOVE
+                    mode="text",
+                    text=vas_flip_up["VAS_Flip_Emoji"],
+                    textposition="top center",
+                    name="VAS Bullish Flip 🔔",
+                    textfont=dict(size=22),
+                )
+                
+                # 🚨 Bearish flips (below the line)
+                scatter_vas_down = go.Scatter(
+                    x=vas_flip_down["Time"],
+                    y=vas_flip_down["F_numeric"] - 120,   # float BELOW
+                    mode="text",
+                    text=vas_flip_down["VAS_Flip_Emoji"],
+                    textposition="bottom center",
+                    name="VAS Bearish Flip 🚨",
+                    textfont=dict(size=22),
+                )
+                
+                fig.add_trace(scatter_vas_up, row=1, col=1)
+                fig.add_trace(scatter_vas_down, row=1, col=1)
+
+
 
                 if yva_min is not None and yva_max is not None:
                     st.markdown(f"**📘 Yesterday’s Value Area**: {yva_min} → {yva_max}")
