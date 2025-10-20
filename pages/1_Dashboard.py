@@ -8333,6 +8333,33 @@ if st.sidebar.button("Run Analysis"):
                         obv_pts = intraday[(intraday["OBV_Crossover"] != "") & within_window]
         
 
+                        # --- OBV calculation + crossover detection ---
+                        intraday = calculate_obv(intraday)
+                        intraday = detect_obv_crossovers(intraday)   # writes "🔈"/"🔇" or ""
+                        
+                        # --- Collect Entry-1/2 bars (Call & Put) ---
+                        entry_cols = ["Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji",
+                                      "Call_SecondEntry_Emoji", "Put_SecondEntry_Emoji"]
+                        
+                        entry_idx = []
+                        for col in entry_cols:
+                            if col in intraday.columns:
+                                entry_idx.extend(intraday.index[intraday[col].isin(["🎯","🎯1","🎯2"])])
+                        
+                        entry_idx = sorted(set(entry_idx))
+                        
+                        # --- Build a ±3-bar perimeter around each entry ---
+                        window = 3
+                        within_window = pd.Series(False, index=intraday.index)
+                        for i in entry_idx:
+                            start = max(intraday.index.min(), i - window)
+                            end   = min(intraday.index.max(), i + window)
+                            within_window.loc[start:end] = True
+                        
+                        # --- Keep ONLY crossovers that fall inside those perimeters ---
+                        obv_pts  = intraday[(intraday["OBV_Crossover"] != "") & within_window]
+                        obv_bull = obv_pts[obv_pts["OBV_Crossover"] == "🔈"]  # bullish volume shift
+                        obv_bear = obv_pts[obv_pts["OBV_Crossover"] == "🔇"]  # bearish volume shift
 
                     
                     def find_first_entry1_index(intraday: pd.DataFrame):
@@ -10187,13 +10214,9 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_vas_T_down, row=1, col=1)
 
                     
-                        # Split for plotting
-                obv_bull = obv_pts[obv_pts["OBV_Crossover"] == "🔈"]  # bullish volume shift
-                obv_bear = obv_pts[obv_pts["OBV_Crossover"] == "🔇"]  # bearish volume shift
-                
-                # --- 4) Plot: simple offsets so chart stays clean ---
-                bull_offset = 60
-                bear_offset = 60
+                # Offsets so emojis float near your main line (F_numeric). Adjust if needed.
+                bull_offset = 60   # above
+                bear_offset = 60   # below
                 
                 scatter_obv_bull = go.Scatter(
                     x=obv_bull["Time"],
@@ -10217,6 +10240,7 @@ if st.sidebar.button("Run Analysis"):
                 
                 fig.add_trace(scatter_obv_bull, row=1, col=1)
                 fig.add_trace(scatter_obv_bear, row=1, col=1)
+
 
 
                 if yva_min is not None and yva_max is not None:
