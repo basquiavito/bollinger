@@ -6706,6 +6706,50 @@ if st.sidebar.button("Run Analysis"):
                     intraday["Kingdom_Switch"].iloc[::-1].idxmax(), "Time"
                                     ]
 
+                # --- Detect TD Pressure flips (one-shot) ---
+                # Assumes intraday["TD Pressure"] already computed
+                intraday["TD_Pressure_Flip"] = ""  # "", "bull", "bear"
+                
+                tp = intraday["TD Pressure"].values
+                flip_up_idx   = np.where((tp[:-1] <= 0) & (tp[1:] > 0))[0] + 1   # -→+
+                flip_down_idx = np.where((tp[:-1] >= 0) & (tp[1:] < 0))[0] + 1   # +→-
+                
+                # write flips safely with iloc
+                intraday.iloc[flip_up_idx,   intraday.columns.get_loc("TD_Pressure_Flip")] = "bull"
+                intraday.iloc[flip_down_idx, intraday.columns.get_loc("TD_Pressure_Flip")] = "bear"
+                
+                # --- Collect Entry-1 bars (Call & Put) ---
+                entry_cols_e1 = ["Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji"]
+                
+                e1_idx = []
+                for col in entry_cols_e1:
+                    if col in intraday.columns:
+                        e1_idx.extend(intraday.index[intraday[col].isin(["🎯","🎯1"])])  # your E1 marker(s)
+                
+                e1_idx = sorted(set(e1_idx))
+                
+                # --- Build position map (index→position) for windowing by bars ---
+                pos_map = {idx: pos for pos, idx in enumerate(intraday.index)}
+                
+                # --- Keep ONLY flips that occur within the 3 bars BEFORE each E1 ---
+                keep_mask = pd.Series(False, index=intraday.index)
+                
+                for idx in e1_idx:
+                    p = pos_map[idx]
+                    lo = max(0, p - 3)   # 3 bars prior
+                    hi = p               # up to the E1 bar (inclusive)
+                    keep_mask.iloc[lo:hi+1] = True
+                
+                # Filter to just those flips in-window
+                tp_flips_near_e1 = intraday[(intraday["TD_Pressure_Flip"] != "") & keep_mask]
+                
+                # Split by direction for offset (bull above, bear below)
+                tp_bull = tp_flips_near_e1[tp_flips_near_e1["TD_Pressure_Flip"] == "bull"].copy()
+                tp_bear = tp_flips_near_e1[tp_flips_near_e1["TD_Pressure_Flip"] == "bear"].copy()
+                
+                # Prepare the emoji column (🔑 for both)
+                tp_bull["TD_P_Flip_Emoji"] = "🔑"
+                tp_bear["TD_P_Flip_Emoji"] = "🔑"
 
                  
                 def calculate_compliance_midas(df, bbw_col="F% BBW", vol_col="RVOL_5"):
@@ -10221,6 +10265,32 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_obv_bull, row=1, col=1)
                 fig.add_trace(scatter_obv_bear, row=1, col=1)
 
+                # Offsets so the key floats cleanly; adjust to your scale
+                bull_offset = 90   # above
+                bear_offset = 90   # below
+                
+                scatter_tdP_bull = go.Scatter(
+                    x=tp_bull["Time"],
+                    y=tp_bull["F_numeric"] + bull_offset,   # ABOVE (bull flip)
+                    mode="text",
+                    text=tp_bull["TD_P_Flip_Emoji"],        # 🔑
+                    textposition="top center",
+                    name="TD Pressure Flip (Bull) 🔑",
+                    textfont=dict(size=20),
+                )
+                
+                scatter_tdP_bear = go.Scatter(
+                    x=tp_bear["Time"],
+                    y=tp_bear["F_numeric"] - bear_offset,   # BELOW (bear flip)
+                    mode="text",
+                    text=tp_bear["TD_P_Flip_Emoji"],        # 🔑
+                    textposition="bottom center",
+                    name="TD Pressure Flip (Bear) 🔑",
+                    textfont=dict(size=20),
+                )
+                
+                fig.add_trace(scatter_tdP_bull, row=1, col=1)
+                fig.add_trace(scatter_tdP_bear, row=1, col=1)
 
 
                 if yva_min is not None and yva_max is not None:
