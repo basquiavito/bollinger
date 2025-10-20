@@ -3457,29 +3457,7 @@ if st.sidebar.button("Run Analysis"):
                 intraday = detect_td_rei_crossovers(intraday)  # Detect TD REI crossovers
 
 
-                def calculate_td_poq(data):
-                    data['TD POQ'] = np.nan  # Use NaN for consistency
-
-                    for i in range(5, len(data)):  # Start from the 6th row for sufficient prior data
-                        if pd.notna(data['TD REI'].iloc[i]):  # Ensure TD REI is not NaN
-
-                            # Buy POQ Logic: Qualified Upside Breakout
-                            if (data['TD REI'].iloc[i] < -45 and
-                                data['Close'].iloc[i - 1] > data['Close'].iloc[i - 2] and
-                                data['Open'].iloc[i] <= data['High'].iloc[i - 1] and
-                                data['High'].iloc[i] > data['High'].iloc[i - 1]):
-                                data.loc[data.index[i], 'TD POQ'] = 'Buy POQ'
-
-                            # Sell POQ Logic: Qualified Downside Breakout
-                            elif (data['TD REI'].iloc[i] > 45 and
-                                data['Close'].iloc[i - 1] < data['Close'].iloc[i - 2] and
-                                data['Open'].iloc[i] >= data['Low'].iloc[i - 1] and
-                                data['Low'].iloc[i] < data['Low'].iloc[i - 1]):
-                                data.loc[data.index[i], 'TD POQ'] = 'Sell POQ'
-
-                    return data
-                intraday = calculate_td_poq(intraday)  # Detect TD REI crossovers
-
+      
 
 
                 def calculate_vas(data, signal_col="F_numeric", volatility_col="ATR", period=14):
@@ -5359,7 +5337,7 @@ if st.sidebar.button("Run Analysis"):
                 with st.expander("Show/Hide Data Table",  expanded=False):
                                 # Show data table, including new columns
                     cols_to_show = [
-                                    "RVOL_5","Range","Time","Volume","VAS","T","TD_POQ","ADX_F%","+DM","-DM","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
+                                    "RVOL_5","Range","Time","Volume","VAS","T", 'TD REI',"ADX_F%","+DM","-DM","Sharpe_Ratio","Call_BBW_Tight_Emoji","Put_BBW_Tight_Emoji","Compliance","Distensibility","Distensibility Alert","Volatility_Composite","Gravity_Break_Alert","F_numeric","Kijun_Cumulative","Unit%","Vector%","Unit Velocity","Velocity","Voltage","Vector_Charge","Vector_Capacitance","Charge_Polarity","Field_Intensity","Electric_Force","Unit Acceleration","Acceleration","Accel_Spike","Acceleration_Alert","Jerk_Unit","Jerk_Vector","Snap","Unit Momentum","Vector Momentum","Unit Force","Vector Force","Power","Intensity","Unit Energy","Vector Energy","Force_per_Range","Force_per_3bar_Range","Unit_Energy_per_Range","Vector_Energy_per_3bar_Range"]
 
                     st.dataframe(intraday[cols_to_show])
 
