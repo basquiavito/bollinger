@@ -8305,33 +8305,63 @@ if st.sidebar.button("Run Analysis"):
                         i = crosses[0]
                         return int(i), ("up" if diff.loc[i] > 0 else "down")
 
-                    # -------------------------------------------
-                # -------------------------------------------
-                    # OBV Aid Detection for 🎯1 / 🎯2 (Call & Put)
-                    # -------------------------------------------
-                    intraday["OBV_Aid_Emoji"] = ""
-                    intraday["OBV_Aid_Y"] = np.nan  # store Y-offset for plotting
-                    
-                    # Group entries with type info
-                    entry_map = {
-                        "Call_FirstEntry_Emoji": +60,   # above
-                        "Call_SecondEntry_Emoji": +60,  # above
-                        "Put_FirstEntry_Emoji":  -60,   # below
-                        "Put_SecondEntry_Emoji": -60,   # below
-                    }
-                    
-                    for col, offset in entry_map.items():
-                        for i in intraday.index[intraday[col].isin(["🎯", "🎯1", "🎯2"])]:
-                            start, end = max(0, i - 3), min(len(intraday) - 1, i + 3)
-                            window = intraday.loc[start:end]
-                    
-                            if "🔈" in window["OBV_Crossover"].values:
-                                intraday.at[i, "OBV_Aid_Emoji"] = "🔈"
-                                intraday.at[i, "OBV_Aid_Y"] = intraday.at[i, "F_numeric"] + offset
-                            elif "🔇" in window["OBV_Crossover"].values:
-                                intraday.at[i, "OBV_Aid_Emoji"] = "🔇"
-                                intraday.at[i, "OBV_Aid_Y"] = intraday.at[i, "F_numeric"] + offset
-
+                                          # Ensure OBV crossovers exist
+                        intraday = calculate_obv(intraday)
+                        intraday = detect_obv_crossovers(intraday)
+                        
+                        # --- 1) Collect all E1/E2 indices (Call & Put) ---
+                        entry_cols = ["Call_FirstEntry_Emoji", "Put_FirstEntry_Emoji",
+                                      "Call_SecondEntry_Emoji", "Put_SecondEntry_Emoji"]
+                        
+                        entry_idx = []
+                        for col in entry_cols:
+                            if col in intraday.columns:
+                                # your entries may be "🎯", "🎯1", or "🎯2" — include all
+                                entry_idx.extend(intraday.index[intraday[col].isin(["🎯","🎯1","🎯2"])])
+                        
+                        entry_idx = sorted(set(entry_idx))
+                        
+                        # --- 2) Build a mask: rows within ±3 bars of ANY entry ---
+                        within_window = pd.Series(False, index=intraday.index)
+                        window = 3
+                        for i in entry_idx:
+                            start = max(intraday.index.min(), i - window)
+                            end   = min(intraday.index.max(), i + window)
+                            within_window.loc[start:end] = True
+                        
+                        # --- 3) Keep ONLY crossover rows inside the perimeter ---
+                        obv_pts = intraday[(intraday["OBV_Crossover"] != "") & within_window]
+                        
+                        # Split for plotting
+                        obv_bull = obv_pts[obv_pts["OBV_Crossover"] == "🔈"]  # bullish volume shift
+                        obv_bear = obv_pts[obv_pts["OBV_Crossover"] == "🔇"]  # bearish volume shift
+                        
+                        # --- 4) Plot: simple offsets so chart stays clean ---
+                        bull_offset = 60
+                        bear_offset = 60
+                        
+                        scatter_obv_bull = go.Scatter(
+                            x=obv_bull["Time"],
+                            y=obv_bull["F_numeric"] + bull_offset,   # ABOVE
+                            mode="text",
+                            text=obv_bull["OBV_Crossover"],          # 🔈
+                            textposition="top center",
+                            name="OBV Bull Crossover 🔈",
+                            textfont=dict(size=18),
+                        )
+                        
+                        scatter_obv_bear = go.Scatter(
+                            x=obv_bear["Time"],
+                            y=obv_bear["F_numeric"] - bear_offset,   # BELOW
+                            mode="text",
+                            text=obv_bear["OBV_Crossover"],          # 🔇
+                            textposition="bottom center",
+                            name="OBV Bear Crossover 🔇",
+                            textfont=dict(size=18),
+                        )
+                        
+                        fig.add_trace(scatter_obv_bull, row=1, col=1)
+                        fig.add_trace(scatter_obv_bear, row=1, col=1)
 
 
                     
