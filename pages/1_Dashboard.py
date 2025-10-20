@@ -2828,37 +2828,64 @@ if st.sidebar.button("Run Analysis"):
 
 
 
-   # Step 1: Calculate OBV
+   # # Step 1: Calculate OBV
+   #              def calculate_obv(df):
+   #                  df["OBV"] = 0  # Initialize OBV column
+   #                  df["OBV"] = np.where(df["Close"] > df["Close"].shift(1), df["Volume"],
+   #                                      np.where(df["Close"] < df["Close"].shift(1), -df["Volume"], 0)).cumsum()
+
+   #                  # Normalize OBV to be in hundreds instead of thousands
+   #                  df["OBV"] = df["OBV"] / 10000
+
+   #                  return df
+
+   #              # Step 2: Detect OBV Crossovers
+   #              def detect_obv_crossovers(df):
+   #                  df["OBV_Crossover"] = ""
+
+   #                  for i in range(1, len(df)):
+   #                      prev_obv = df.loc[i - 1, "OBV"]
+   #                      curr_obv = df.loc[i, "OBV"]
+
+   #                      if prev_obv < 0 and curr_obv >= 0:
+   #                          df.loc[i, "OBV_Crossover"] = "🔈"  # Speaker (Bullish Volume Shift)
+   #                      elif prev_obv > 0 and curr_obv <= 0:
+   #                          df.loc[i, "OBV_Crossover"] = "🔇"  # Muted Speaker (Bearish Volume Weakness)
+
+   #                  return df
+
+   #              # Apply OBV & Crossover Detection
+   #              intraday = calculate_obv(intraday)
+   #              intraday = detect_obv_crossovers(intraday)
+
+
+                # --- Step 1: Calculate OBV ---
                 def calculate_obv(df):
-                    df["OBV"] = 0  # Initialize OBV column
-                    df["OBV"] = np.where(df["Close"] > df["Close"].shift(1), df["Volume"],
-                                        np.where(df["Close"] < df["Close"].shift(1), -df["Volume"], 0)).cumsum()
-
-                    # Normalize OBV to be in hundreds instead of thousands
-                    df["OBV"] = df["OBV"] / 10000
-
+                    # +1 / -1 / 0 based on close-to-close direction
+                    sign = np.where(df["Close"].values > np.roll(df["Close"].values, 1), 1,
+                            np.where(df["Close"].values < np.roll(df["Close"].values, 1), -1, 0))
+                    sign[0] = 0  # first bar has no prior
+                
+                    obv_raw = (sign * df["Volume"].values).cumsum()
+                    df["OBV"] = obv_raw / 10000.0  # normalize per your code
                     return df
-
-                # Step 2: Detect OBV Crossovers
+                
+                # --- Step 2: Detect OBV crossovers (index-safe with .iloc) ---
                 def detect_obv_crossovers(df):
                     df["OBV_Crossover"] = ""
-
-                    for i in range(1, len(df)):
-                        prev_obv = df.loc[i - 1, "OBV"]
-                        curr_obv = df.loc[i, "OBV"]
-
-                        if prev_obv < 0 and curr_obv >= 0:
-                            df.loc[i, "OBV_Crossover"] = "🔈"  # Speaker (Bullish Volume Shift)
-                        elif prev_obv > 0 and curr_obv <= 0:
-                            df.loc[i, "OBV_Crossover"] = "🔇"  # Muted Speaker (Bearish Volume Weakness)
-
+                
+                    obv = df["OBV"].values
+                    # crossing zero up (prev < 0, curr >= 0) → 🔈 ; crossing down (prev > 0, curr <= 0) → 🔇
+                    up_idx   = np.where((obv[:-1] < 0) & (obv[1:] >= 0))[0] + 1
+                    down_idx = np.where((obv[:-1] > 0) & (obv[1:] <= 0))[0] + 1
+                
+                    df.iloc[up_idx,   df.columns.get_loc("OBV_Crossover")] = "🔈"
+                    df.iloc[down_idx, df.columns.get_loc("OBV_Crossover")] = "🔇"
                     return df
-
-                # Apply OBV & Crossover Detection
+                
+                # Apply
                 intraday = calculate_obv(intraday)
                 intraday = detect_obv_crossovers(intraday)
-
-
 
 
 
@@ -10184,6 +10211,37 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_vas_T_down, row=1, col=1)
 
     
+                # Pick only rows that actually have a crossover
+                obv_pts  = intraday[intraday["OBV_Crossover"] != ""]
+                obv_bull = obv_pts[obv_pts["OBV_Crossover"] == "🔈"]  # bullish shift
+                obv_bear = obv_pts[obv_pts["OBV_Crossover"] == "🔇"]  # bearish shift
+                
+                # Offsets (match your style; adjust if needed)
+                bull_offset = 60   # above your F_numeric lane
+                bear_offset = 60   # below
+                
+                scatter_obv_bull = go.Scatter(
+                    x=obv_bull["Time"],
+                    y=obv_bull["F_numeric"] + bull_offset,
+                    mode="text",
+                    text=obv_bull["OBV_Crossover"],   # 🔈
+                    textposition="top center",
+                    name="OBV Bull Crossover 🔈",
+                    textfont=dict(size=18),
+                )
+                
+                scatter_obv_bear = go.Scatter(
+                    x=obv_bear["Time"],
+                    y=obv_bear["F_numeric"] - bear_offset,
+                    mode="text",
+                    text=obv_bear["OBV_Crossover"],   # 🔇
+                    textposition="bottom center",
+                    name="OBV Bear Crossover 🔇",
+                    textfont=dict(size=18),
+                )
+                
+                fig.add_trace(scatter_obv_bull, row=1, col=1)
+                fig.add_trace(scatter_obv_bear, row=1, col=1)
 
 
 
