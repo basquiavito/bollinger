@@ -8331,37 +8331,7 @@ if st.sidebar.button("Run Analysis"):
                         
                         # --- 3) Keep ONLY crossover rows inside the perimeter ---
                         obv_pts = intraday[(intraday["OBV_Crossover"] != "") & within_window]
-                        
-                        # Split for plotting
-                        obv_bull = obv_pts[obv_pts["OBV_Crossover"] == "🔈"]  # bullish volume shift
-                        obv_bear = obv_pts[obv_pts["OBV_Crossover"] == "🔇"]  # bearish volume shift
-                        
-                        # --- 4) Plot: simple offsets so chart stays clean ---
-                        bull_offset = 60
-                        bear_offset = 60
-                        
-                        scatter_obv_bull = go.Scatter(
-                            x=obv_bull["Time"],
-                            y=obv_bull["F_numeric"] + bull_offset,   # ABOVE
-                            mode="text",
-                            text=obv_bull["OBV_Crossover"],          # 🔈
-                            textposition="top center",
-                            name="OBV Bull Crossover 🔈",
-                            textfont=dict(size=18),
-                        )
-                        
-                        scatter_obv_bear = go.Scatter(
-                            x=obv_bear["Time"],
-                            y=obv_bear["F_numeric"] - bear_offset,   # BELOW
-                            mode="text",
-                            text=obv_bear["OBV_Crossover"],          # 🔇
-                            textposition="bottom center",
-                            name="OBV Bear Crossover 🔇",
-                            textfont=dict(size=18),
-                        )
-                        
-                        fig.add_trace(scatter_obv_bull, row=1, col=1)
-                        fig.add_trace(scatter_obv_bear, row=1, col=1)
+        
 
 
                     
@@ -10216,18 +10186,37 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_vas_T_up,   row=1, col=1)
                 fig.add_trace(scatter_vas_T_down, row=1, col=1)
 
-                obv_points = intraday[intraday["OBV_Aid_Emoji"] != ""]
+                    
+                        # Split for plotting
+                obv_bull = obv_pts[obv_pts["OBV_Crossover"] == "🔈"]  # bullish volume shift
+                obv_bear = obv_pts[obv_pts["OBV_Crossover"] == "🔇"]  # bearish volume shift
                 
-                scatter_obv = go.Scatter(
-                    x=obv_points["Time"],
-                    y=obv_points["OBV_Aid_Y"],
+                # --- 4) Plot: simple offsets so chart stays clean ---
+                bull_offset = 60
+                bear_offset = 60
+                
+                scatter_obv_bull = go.Scatter(
+                    x=obv_bull["Time"],
+                    y=obv_bull["F_numeric"] + bull_offset,   # ABOVE
                     mode="text",
-                    text=obv_points["OBV_Aid_Emoji"],
-                    textposition="middle center",
-                    name="OBV Aid 🔈/🔇",
+                    text=obv_bull["OBV_Crossover"],          # 🔈
+                    textposition="top center",
+                    name="OBV Bull Crossover 🔈",
                     textfont=dict(size=18),
                 )
-                fig.add_trace(scatter_obv, row=1, col=1)
+                
+                scatter_obv_bear = go.Scatter(
+                    x=obv_bear["Time"],
+                    y=obv_bear["F_numeric"] - bear_offset,   # BELOW
+                    mode="text",
+                    text=obv_bear["OBV_Crossover"],          # 🔇
+                    textposition="bottom center",
+                    name="OBV Bear Crossover 🔇",
+                    textfont=dict(size=18),
+                )
+                
+                fig.add_trace(scatter_obv_bull, row=1, col=1)
+                fig.add_trace(scatter_obv_bear, row=1, col=1)
 
 
                 if yva_min is not None and yva_max is not None:
