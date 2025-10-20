@@ -8305,6 +8305,36 @@ if st.sidebar.button("Run Analysis"):
                         i = crosses[0]
                         return int(i), ("up" if diff.loc[i] > 0 else "down")
 
+                    # -------------------------------------------
+                # -------------------------------------------
+                    # OBV Aid Detection for 🎯1 / 🎯2 (Call & Put)
+                    # -------------------------------------------
+                    intraday["OBV_Aid_Emoji"] = ""
+                    intraday["OBV_Aid_Y"] = np.nan  # store Y-offset for plotting
+                    
+                    # Group entries with type info
+                    entry_map = {
+                        "Call_FirstEntry_Emoji": +60,   # above
+                        "Call_SecondEntry_Emoji": +60,  # above
+                        "Put_FirstEntry_Emoji":  -60,   # below
+                        "Put_SecondEntry_Emoji": -60,   # below
+                    }
+                    
+                    for col, offset in entry_map.items():
+                        for i in intraday.index[intraday[col].isin(["🎯", "🎯1", "🎯2"])]:
+                            start, end = max(0, i - 3), min(len(intraday) - 1, i + 3)
+                            window = intraday.loc[start:end]
+                    
+                            if "🔈" in window["OBV_Crossover"].values:
+                                intraday.at[i, "OBV_Aid_Emoji"] = "🔈"
+                                intraday.at[i, "OBV_Aid_Y"] = intraday.at[i, "F_numeric"] + offset
+                            elif "🔇" in window["OBV_Crossover"].values:
+                                intraday.at[i, "OBV_Aid_Emoji"] = "🔇"
+                                intraday.at[i, "OBV_Aid_Y"] = intraday.at[i, "F_numeric"] + offset
+
+
+
+                    
                     def find_first_entry1_index(intraday: pd.DataFrame):
                         """Earliest idx where either Call or Put 🎯1 appears."""
                         idxs = []
@@ -10156,6 +10186,18 @@ if st.sidebar.button("Run Analysis"):
                 fig.add_trace(scatter_vas_T_up,   row=1, col=1)
                 fig.add_trace(scatter_vas_T_down, row=1, col=1)
 
+                obv_points = intraday[intraday["OBV_Aid_Emoji"] != ""]
+                
+                scatter_obv = go.Scatter(
+                    x=obv_points["Time"],
+                    y=obv_points["OBV_Aid_Y"],
+                    mode="text",
+                    text=obv_points["OBV_Aid_Emoji"],
+                    textposition="middle center",
+                    name="OBV Aid 🔈/🔇",
+                    textfont=dict(size=18),
+                )
+                fig.add_trace(scatter_obv, row=1, col=1)
 
 
                 if yva_min is not None and yva_max is not None:
